@@ -1,5 +1,6 @@
 ﻿#define WHITE_BOX_TESTING
 
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Algorithms_Sedgewick.List;
@@ -81,11 +82,31 @@ public static class Sort
 		Console.WriteLine(deque);
 		Dequeue(deque);
 		
-		
-
 		for (int i = 0; i < list.Count; i++)
 		{
 			list[i] = deque.PopLeft();
+		}
+	}
+	
+	// Implements Ex 2.1.14 in Sedgewick
+	//This seems to be a  version of gnome sort
+	public static void Dequeue2<T>(IRandomAccessList<T> list) where T : IComparable
+	{
+		var queueWithLinkedList = new QueueWithLinkedList<T>();
+
+		foreach (var item in list)
+		{
+			queueWithLinkedList.Enqueue(item);
+		}
+
+		var helper = new DequeSortHelper2<T>(queueWithLinkedList);
+		helper.Sort();
+
+		int i = 0;
+		foreach (var item in helper.Items)
+		{
+			list[i] = (item);
+			i++;
 		}
 	}
 	
@@ -229,6 +250,84 @@ public static class Sort
 #endif
 		
 		public override string ToString() => deque.ToString();
+	}
+
+	private sealed class DequeSortHelper2<T> where T : IComparable
+	{
+		private readonly IQueue<T> queue;
+
+		private int Count => queue.Count + 1;
+
+		private T Peek1 { get; set; }
+
+		private T Peek2 => queue.Peek;
+		
+		public DequeSortHelper2(IQueue<T> queue)
+		{
+			this.queue = queue;
+			DequeueToRight();
+		}
+
+		private void Enqueue(T item) => queue.Enqueue(item);
+
+		public IEnumerable<T> Items
+		{
+			get
+			{
+				yield return Peek1;
+
+				foreach (var item in queue)
+				{
+					yield return item;
+				}
+			}
+		}
+
+		private void DequeueToRight() => Peek1 = queue.Dequeue();
+
+		private void Rotate()
+		{
+			Enqueue(Peek1);
+			DequeueToRight();
+		}
+
+		private void Rotate(int n)
+		{
+			for (int i = 0; i < n; i++)
+			{
+				Rotate();
+			}
+		}
+
+		private void RotateLargest()
+		{
+			if (Less(Peek1, Peek2))
+			{
+				Rotate();
+			}
+			else
+			{
+				queue.Enqueue(queue.Dequeue());
+			}
+		}
+
+		private void RotateLargest(int n)
+		{
+			for (int i = 0; i < n; i++)
+			{
+				RotateLargest();
+			}
+		}
+
+		public void Sort()
+		{
+			for (int i = 0; i < Count; i++)
+			{
+				int m = Count - i;
+				RotateLargest(m);
+				Rotate(i + 1);
+			}
+		}
 	}
 
 	private static bool IsSortedAscending<T>(T[] array) where T : IComparable

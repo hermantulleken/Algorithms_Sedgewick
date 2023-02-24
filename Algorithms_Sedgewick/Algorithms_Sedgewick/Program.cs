@@ -9,7 +9,7 @@ namespace Algorithms_Sedgewick
 		{
 			var list = new ResizeableArray<int>{6, 1, 2, 3, 4, 5};
 			
-			Sort.Sort.Dequeue(list);
+			Sort.Sort.Dequeue2(list);
 			
 			Console.WriteLine(Formatter.List(list));
 
