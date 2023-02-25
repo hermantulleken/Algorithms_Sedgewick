@@ -71,7 +71,7 @@ public static class Sort
 
 	// Implements Ex 2.1.14 in Sedgewick
 	//This seems to be a  version of gnome sort
-	public static void Dequeue<T>(IRandomAccessList<T> list) where T : IComparable
+	public static void DequeueWithDeque<T>(IRandomAccessList<T> list) where T : IComparable
 	{
 		var deque = new DequeWithDoublyLinkedList<T>();
 
@@ -79,8 +79,7 @@ public static class Sort
 		{
 			deque.PushRight(item);
 		}
-		Console.WriteLine(deque);
-		Dequeue(deque);
+		DequeueWithDeque(deque);
 		
 		for (int i = 0; i < list.Count; i++)
 		{
@@ -90,16 +89,21 @@ public static class Sort
 	
 	// Implements Ex 2.1.14 in Sedgewick
 	//This seems to be a  version of gnome sort
-	public static void Dequeue2<T>(IRandomAccessList<T> list) where T : IComparable
+	public static void DequeueWithQueue<T>(IRandomAccessList<T> list) where T : IComparable
 	{
-		var queueWithLinkedList = new QueueWithLinkedList<T>();
+		if (list.IsEmpty)
+		{
+			return; //Nothing to do
+		}
+		
+		var queue = new QueueWithLinkedList<T>();
 
 		foreach (var item in list)
 		{
-			queueWithLinkedList.Enqueue(item);
+			queue.Enqueue(item);
 		}
-
-		var helper = new DequeSortHelper2<T>(queueWithLinkedList);
+		
+		var helper = new DequeSortHelperWithQueue<T>(queue);
 		helper.Sort();
 
 		int i = 0;
@@ -112,25 +116,25 @@ public static class Sort
 	
 	// Implements Ex 2.1.14 in Sedgewick
 	// This seems to be a  version of gnome sort
-	public static void Dequeue<T>(IDeque<T> deque) where T : IComparable
+	public static void DequeueWithDeque<T>(IDeque<T> deque) where T : IComparable
 	{
 		#if WHITE_BOX_TESTING
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-		static void CheckBottomSortedDescending(DequeueSortHelper<T> deck, int n)
-			=> Debug.Assert(IsSortedDescending(deck.TopN(n)), nameof(CheckBottomSortedDescending));
+		static void CheckBottomSortedDescending(DequeueSortHelperWithDeque<T> helper, int n)
+			=> Debug.Assert(IsSortedDescending(helper.TopN(n)), nameof(CheckBottomSortedDescending));
 
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-		static void CheckTopSortedDescending(DequeueSortHelper<T> deck, int n)
-			=> Debug.Assert(n == 0 || IsSortedDescending(deck.BottomN(n - 1)), nameof(CheckTopSortedDescending));
+		static void CheckTopSortedDescending(DequeueSortHelperWithDeque<T> helper, int n)
+			=> Debug.Assert(n == 0 || IsSortedDescending(helper.BottomN(n - 1)), nameof(CheckTopSortedDescending));
 		
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-		static void CheckTopIsSmallerThanBottom(DequeueSortHelper<T> deck, int bottomCount)
-			=> Debug.Assert(bottomCount == 0 || deck.BottomN(bottomCount).Min().CompareTo(deck.Top) >= 0, nameof(CheckTopIsSmallerThanBottom));
+		static void CheckTopIsSmallerThanBottom(DequeueSortHelperWithDeque<T> helper, int bottomCount)
+			=> Debug.Assert(bottomCount == 0 || helper.BottomN(bottomCount).Min().CompareTo(helper.Top) >= 0, nameof(CheckTopIsSmallerThanBottom));
 
 		
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-		static void CheckTopBiggerThanTop(DequeueSortHelper<T> deck, int topCount)
-			=> Debug.Assert(deck.TopN(topCount).Max().CompareTo(deck.Top) >= 0, nameof(CheckTopBiggerThanTop));
+		static void CheckTopBiggerThanTop(DequeueSortHelperWithDeque<T> helper, int topCount)
+			=> Debug.Assert(helper.TopN(topCount).Max().CompareTo(helper.Top) >= 0, nameof(CheckTopBiggerThanTop));
 			
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckResultIsSorted(IRandomAccessList<T> list)
@@ -138,23 +142,20 @@ public static class Sort
 		#endif
 
 		int count = deque.Count;
-		var deck = new DequeueSortHelper<T>(deque);
+		var helper = new DequeueSortHelperWithDeque<T>(deque);
 		
 		void GetNthSmallestOnTop(int n)
 		{
 			int stepCount = count - n;
-			Console.WriteLine(stepCount);
 			for (int i = 0; i < stepCount; i++)
 			{
-				var (top, belowTop) = deck.PeekTop2();
+				var (top, belowTop) = helper.PeekTop2();
 				if (Less(top, belowTop))
 				{
-					deck.ExchangeTop();
-					Console.WriteLine("..." + deck);
+					helper.ExchangeTop();
 				}
 				
-				deck.TopToBottom();
-				Console.WriteLine("..." + deck);
+				helper.TopToBottom();
 			}
 		}
 
@@ -162,7 +163,7 @@ public static class Sort
 		{
 			for (int i = 0; i < n; i++)
 			{
-				deck.TopToBottom();
+				helper.TopToBottom();
 			}
 		}
 
@@ -170,26 +171,22 @@ public static class Sort
 		{
 			GetNthSmallestOnTop(i);
 			
-			Console.WriteLine(deck);
-			CheckBottomSortedDescending(deck, i);
-			CheckTopIsSmallerThanBottom(deck, count - i - 1);
-			CheckTopBiggerThanTop(deck, i + 1);
+			CheckBottomSortedDescending(helper, i);
+			CheckTopIsSmallerThanBottom(helper, count - i - 1);
+			CheckTopBiggerThanTop(helper, i + 1);
 			
 			NTopToBottom(i + 1);
 			
-			Console.WriteLine(deck);
-			CheckTopSortedDescending(deck, i + 1);
-			
-			Console.WriteLine("----");
+			CheckTopSortedDescending(helper, i + 1);
 		}
 	}
 
-	public static void GnomeSort<T>(IRandomAccessList<T> list) where T : IComparable
+	public static void Gnome<T>(IRandomAccessList<T> list) where T : IComparable
 	{
 		int i = 0;
 		while (i < list.Count)
 		{
-			if (i == 0 ||  LessAt(list, i-1, i))
+			if (i == 0 ||  LessOrEqualAt(list, i - 1, i))
 			{
 				i++;
 			}
@@ -201,11 +198,11 @@ public static class Sort
 		}
 	}
 	
-	private sealed class DequeueSortHelper<T>
+	private sealed class DequeueSortHelperWithDeque<T>
 	{
 		private readonly IDeque<T> deque;
 
-		public DequeueSortHelper(IDeque<T> deque)
+		public DequeueSortHelperWithDeque(IDeque<T> deque)
 		{
 			this.deque = deque;
 		}
@@ -252,7 +249,7 @@ public static class Sort
 		public override string ToString() => deque.ToString();
 	}
 
-	private sealed class DequeSortHelper2<T> where T : IComparable
+	private sealed class DequeSortHelperWithQueue<T> : IEnumerable<T> where T : IComparable
 	{
 		private readonly IQueue<T> queue;
 
@@ -262,8 +259,14 @@ public static class Sort
 
 		private T Peek2 => queue.Peek;
 		
-		public DequeSortHelper2(IQueue<T> queue)
+		public DequeSortHelperWithQueue(IQueue<T> queue)
 		{
+			if (queue.IsEmpty)
+			{
+				//We need at least one element.
+				throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			}
+			
 			this.queue = queue;
 			DequeueToRight();
 		}
@@ -299,15 +302,15 @@ public static class Sort
 			}
 		}
 
-		private void RotateLargest()
+		private void RotateSmallest()
 		{
-			if (Less(Peek1, Peek2))
+			if (Less(Peek2, Peek1))
 			{
-				Rotate();
+				queue.Enqueue(queue.Dequeue());
 			}
 			else
 			{
-				queue.Enqueue(queue.Dequeue());
+				Rotate();
 			}
 		}
 
@@ -315,7 +318,7 @@ public static class Sort
 		{
 			for (int i = 0; i < n; i++)
 			{
-				RotateLargest();
+				RotateSmallest();
 			}
 		}
 
@@ -328,6 +331,18 @@ public static class Sort
 				Rotate(i + 1);
 			}
 		}
+
+		public IEnumerator<T> GetEnumerator()
+		{
+			yield return Peek1;
+			
+			foreach (var item in queue)
+			{
+				yield return item;
+			}
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 
 	private static bool IsSortedAscending<T>(T[] array) where T : IComparable
@@ -405,7 +420,7 @@ public static class Sort
 	internal static bool LessOrEqual<T>(T v, T w) where T : IComparable => v.CompareTo(w) <= 0;
 
 	internal static bool LessAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable => Less(list[i], list[j]);
-	internal static bool LessOrEqualAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable => Less(list[i], list[j]);
+	internal static bool LessOrEqualAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable => LessOrEqual(list[i], list[j]);
 	
 	internal static void SwapAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable => (list[i], list[j]) = (list[j], list[i]);
 }

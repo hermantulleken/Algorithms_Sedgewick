@@ -6,10 +6,14 @@ namespace Support;
 
 public static class Formatter
 {
+	public const string StripedLine = "-----";
+	public const string DottedLine = ".....";
+	
 	private const string NullString = "null";
 	private const string NameMissing = "???";
 	private const string CommaSpace = ", ";
 	private const string IndentString = "\t";
+	
 	
 	/// <summary>
 	/// <see cref="BindingFlags"/> that represent public instance fields and get-properties.
@@ -30,7 +34,7 @@ public static class Formatter
 	public static string ListVariable(IEnumerable list, string name = null)
 	{
 		string printName = string.IsNullOrEmpty(name) ? NameMissing : name;
-		return FormatKeyValue(printName, List(list));
+		return FormatKeyValue(printName, Pretty(list));
 	}
 	
 	public static string ObjectDetailVariable<T>(
@@ -42,7 +46,7 @@ public static class Formatter
 		typeWriters ??= EmptyTypeWriters;
 
 		string printName = string.IsNullOrEmpty(name) ? NameMissing : name;
-		string objText = (IsNull(obj) ? NullString : List(obj));
+		string objText = (IsNull(obj) ? NullString : Pretty(obj));
 		var type = IsNull(obj) ? typeof(T) : obj.GetType();
 
 		var builder = new StringBuilder()
@@ -108,7 +112,7 @@ public static class Formatter
 
 		if (!typeWriters.ContainsKey(fieldInfo.FieldType))
 		{
-			return List(value);
+			return Pretty(value);
 		}
 
 		if (value == null)
@@ -136,7 +140,7 @@ public static class Formatter
 
 		if (!typeWriters.ContainsKey(propertyInfo.PropertyType))
 		{
-			return List(value); //null because it is not an index property
+			return Pretty(value); //null because it is not an index property
 		}
 
 		if (value == null)
@@ -153,7 +157,7 @@ public static class Formatter
 	/// <summary>
 	/// Converts lists to strings recursively (and other objects using their <see cref="object.ToString"/> methods.)
 	/// </summary>
-	public static string List<T>(T obj)
+	public static string Pretty<T>(this T obj)
 	{
 		if (IsNull(obj))
 		{
@@ -170,7 +174,7 @@ public static class Formatter
 			//also works for dictionaries
 			case IEnumerable list:
 			{
-				string values = ToString(list);
+				string values = Pretty(list);
 
 				return Wrap(values, (obj is IDictionary) ?  braces : brackets);
 			}
@@ -190,13 +194,13 @@ public static class Formatter
 	private static string ExceptionIn(Exception exception, string exceptionSourceName)
 		=> $"Exception {exception} raised by {exceptionSourceName}";
 
-	public static string ToString<T>(IEnumerable<T> list) where T : class
+	public static string Pretty<T>(IEnumerable<T> list) where T : class
 	{
 		var stringList = list.Select(item => item == null ? NullString : item.ToString());
 
 		return string.Join(CommaSpace, stringList.ToArray());
 	}
-	public static string ToString(IEnumerable list)
+	public static string Pretty(IEnumerable list)
 	{
 		var stringList = list.Cast<object>().Select(item => item == null ? NullString : item.ToString());
 
@@ -224,5 +228,5 @@ public static class Formatter
 		=> builder.AppendLine(KeyValueToString(key, value));
 
 	internal static string KeyValueToString<TKey, TValue>(TKey key, TValue value) 
-		=> FormatKeyValue(List(key), List(value));
+		=> FormatKeyValue(Pretty(key), Pretty(value));
 }

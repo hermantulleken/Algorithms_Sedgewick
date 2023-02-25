@@ -20,5 +20,5 @@ public class DequeWithDoublyLinkedList<T> : IDeque<T>
 
 	public void Clear() => items.Clear();
 
-	public override string ToString() => Formatter.List(this);
+	public override string ToString() => Formatter.Pretty(this);
 }

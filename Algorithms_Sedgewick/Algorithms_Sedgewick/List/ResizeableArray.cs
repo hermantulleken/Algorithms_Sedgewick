@@ -85,7 +85,7 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 			
 	}
 
-	public override string ToString() => Formatter.List(this);
+	public override string ToString() => Formatter.Pretty(this);
 
 	public IEnumerator<T> GetEnumerator()
 	{

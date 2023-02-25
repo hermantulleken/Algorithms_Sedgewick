@@ -15,7 +15,7 @@ public sealed class QueueWithCircularLinkedList<T> : IQueue<T>
 		get
 		{
 			ValidateNotEmpty();
-			return items.Last();
+			return items.First();
 		}
 	}
 

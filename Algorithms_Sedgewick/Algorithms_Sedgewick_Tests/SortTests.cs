@@ -4,6 +4,7 @@ using System.Linq;
 using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Sort;
 using NUnit.Framework;
+using Support;
 
 namespace Algorithms_Sedgewick_Tests;
 
@@ -15,7 +16,10 @@ public class SortTests
 	{
 		Sort.Selection,
 		Sort.Insertion,
-		Sort.Shell
+		Sort.Shell,
+		Sort.DequeueWithDeque,
+		Sort.DequeueWithQueue,
+		Sort.Gnome
 	};
 
 	private static IEnumerable SortTestCases()
@@ -55,7 +59,7 @@ public class SortTests
 	[TestCaseSource(nameof(SortTestCases))]
 	public void SortFunctionTest(IRandomAccessList<int> input)
 	{
-		var expectedOutput = input.OrderBy(x => x).ToArray();
+		int[] expectedOutput = input.OrderBy(x => x).ToArray();
 
 		foreach (var sortFunction in SortFunctions)
 		{

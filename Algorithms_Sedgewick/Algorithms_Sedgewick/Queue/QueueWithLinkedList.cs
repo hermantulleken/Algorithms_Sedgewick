@@ -15,7 +15,7 @@ public sealed class QueueWithLinkedList<T> : IQueue<T>
 		get
 		{
 			ValidateNotEmpty();
-			return items.Last();
+			return items.First();
 		}
 	}
 

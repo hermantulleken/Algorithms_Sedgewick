@@ -7,11 +7,15 @@ namespace Algorithms_Sedgewick
 	{
 		public static void Main(string[] _)
 		{
-			var list = new ResizeableArray<int>{6, 1, 2, 3, 4, 5};
+			var list = new ResizeableArray<int>
+			{
+				//6, 1, 2, 3, 4, 5
+				1, 2, 3, 4, 5, 6, 7, 8, 9
+			};
 			
-			Sort.Sort.Dequeue2(list);
+			Sort.Sort.DequeueWithQueue(list);
 			
-			Console.WriteLine(Formatter.List(list));
+			Console.WriteLine(Formatter.Pretty(list));
 
 			
 		}
