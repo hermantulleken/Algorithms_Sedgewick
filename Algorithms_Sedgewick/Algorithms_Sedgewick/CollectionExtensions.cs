@@ -1,4 +1,6 @@
-﻿namespace Algorithms_Sedgewick;
+﻿using Algorithms_Sedgewick.List;
+
+namespace Algorithms_Sedgewick;
 
 public static class CollectionExtensions
 {
@@ -12,5 +14,16 @@ public static class CollectionExtensions
 		}
 
 		return copy;
+	}
+
+	public static ResizeableArray<T> Copy<T>(this ResizeableArray<T> array)
+	{
+		var newArray = new ResizeableArray<T>(array.Capacity);
+		foreach (var item in array)
+		{
+			newArray.Add(item);
+		}
+
+		return newArray;
 	}
 }

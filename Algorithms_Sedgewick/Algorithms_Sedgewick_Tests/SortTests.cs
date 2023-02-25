@@ -14,12 +14,13 @@ public class SortTests
 
 	private static readonly Action<IRandomAccessList<int>>[]SortFunctions = 
 	{
-		Sort.Selection,
-		Sort.Insertion,
-		Sort.Shell,
-		Sort.DequeueWithDeque,
-		Sort.DequeueWithQueue,
-		Sort.Gnome
+		Sort.SelectionSort,
+		Sort.InsertionSort,
+		Sort.ShellSort,
+		Sort.DequeueSortWithDeque,
+		Sort.DequeueSortWithQueue,
+		Sort.GnomeSort,
+		Sort.MergeSort
 	};
 
 	private static IEnumerable SortTestCases()
@@ -65,6 +66,7 @@ public class SortTests
 		{
 			sortFunction(input);
 			Assert.That(input, Is.EqualTo(expectedOutput));
+			Console.WriteLine(input.Pretty());
 		}
 	}
 }

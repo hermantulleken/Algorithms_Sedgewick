@@ -34,7 +34,10 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 
 	public IRandomAccessList<T> Copy()
 	{
-		var copy = new ResizeableArray<T>(Capacity);
+		var copy = new ResizeableArray<T>(Capacity)
+		{
+			Count = Count
+		};
 
 		for (int i = 0; i < Count; i++)
 		{

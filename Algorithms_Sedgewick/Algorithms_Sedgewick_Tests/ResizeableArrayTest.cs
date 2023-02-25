@@ -207,7 +207,7 @@ public class ResizeableArrayTest
 	    array.Add(2);
 	    array.Add(3);
 
-	    var result = array.GetEnumerator();
+	    using var result = array.GetEnumerator();
 
 	    Assert.That(result.MoveNext(), Is.True);
 	    Assert.That(result.Current, Is.EqualTo(1));
