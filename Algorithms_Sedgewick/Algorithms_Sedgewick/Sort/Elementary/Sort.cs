@@ -17,7 +17,20 @@ namespace Algorithms_Sedgewick.Sort;
 
 public static class Sort
 {
-		private sealed class DequeueSortHelperWithDeque<T>
+	private static readonly int[] CiuraGaps = { 1, 4, 10, 23, 57, 132, 301, 701 };
+
+	//From: https://stackoverflow.com/a/50470237/335144
+	private static readonly int[][] SmallArrayGaps =
+	{
+		new[] { 4, 1 }, //for 6 elements
+		new[] { 5, 1 }, //7
+		new[] { 6, 1 }, //8
+		new[] { 9, 6, 1 },//9
+		new[] { 10, 6, 1 },//10
+		new[] { 5, 1 }//10
+	};
+	
+	private sealed class DequeueSortHelperWithDeque<T>
 	{
 		private readonly IDeque<T> deque;
 
@@ -199,27 +212,65 @@ public static class Sort
 		}
 	}
 
-	public static void ShellSort<T>(IRandomAccessList<T> list) where T : IComparable
+	public static void ShellSortWithPrattSequence<T>(IRandomAccessList<T> list) where T : IComparable
 	{
 		int length = list.Count;
-		int h = 1;
+		int stepSize = 1;
 		
-		while (h < length / 3)
+		while (stepSize < length / 3)
 		{
-			h = 3 * h + 1;
+			stepSize = 3 * stepSize + 1;
 		}
 
-		while (h >= 1)
+		while (stepSize >= 1)
 		{
 			for (int i = 0; i < length; i++)
 			{
-				for (int j = i; j >= h && LessAt(list, j, j-h); j -= h)
+				for (int j = i; j >= stepSize && LessAt(list, j, j - stepSize); j -= stepSize)
 				{
-					SwapAt(list, j, j-h);
+					SwapAt(list, j, j - stepSize);
 				}
 			}
 
-			h /= 3;
+			stepSize /= 3;
+		}
+	}
+	
+	public static void ShellSort<T>(IRandomAccessList<T> list, int[] stepSizes) where T : IComparable
+	{
+		int length = list.Count;
+
+		for (int stepSizeIndex = 0; stepSizeIndex <= stepSizes.Length; stepSizeIndex++)
+		{
+			int stepSize = stepSizes[stepSizeIndex];
+			
+			for (int i = 0; i < length; i++)
+			{
+				for (int j = i; j >= stepSize && LessAt(list, j, j - stepSize); j -= stepSize)
+				{
+					SwapAt(list, j, j - stepSize);
+				}
+			}
+		}
+	}
+
+	public static void SortSmall<T>(IRandomAccessList<T> list)where T : IComparable
+	{
+		int length = list.Count;
+		
+		switch (length)
+		{
+			case <= 1:
+				return;
+			case <= 5:
+				InsertionSort(list);
+				break;
+			case < 12:
+				ShellSort(list, SmallArrayGaps[length-6]);
+				break;
+			default:
+				ShellSortWithPrattSequence(list);
+				break;
 		}
 	}
 

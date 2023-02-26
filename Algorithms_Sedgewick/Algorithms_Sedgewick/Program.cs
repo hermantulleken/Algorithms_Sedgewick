@@ -50,7 +50,7 @@ internal static class Program
 			{
 				//Sort.Sort.Selection,
 				//Sort.Sort.Insertion,
-				Sort.Sort.ShellSort,
+				Sort.Sort.ShellSortWithPrattSequence,
 				//Sort.Sort.DequeueWithDeque,
 				//Sort.Sort.DequeueWithQueue,
 				//Sort.Sort.Gnome

@@ -16,7 +16,7 @@ public class SortTests
 	{
 		Sort.SelectionSort,
 		Sort.InsertionSort,
-		Sort.ShellSort,
+		Sort.ShellSortWithPrattSequence,
 		Sort.DequeueSortWithDeque,
 		Sort.DequeueSortWithQueue,
 		Sort.GnomeSort,
