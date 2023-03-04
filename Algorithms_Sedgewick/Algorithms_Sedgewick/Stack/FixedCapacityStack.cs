@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Support;
 
 namespace Algorithms_Sedgewick;
 
@@ -71,6 +72,8 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 
 		Count = 0;
 	}
+
+	public override string ToString() => this.Pretty();
 
 	public IEnumerator<T> GetEnumerator()
 	{

@@ -5,6 +5,13 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>warnings</Nullable>
+        <Configurations>Debug;Release;WhiteBoxTesting</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'WhiteBoxTesting' ">
+      <DefineConstants>TRACE;DEBUG</DefineConstants>
+      <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
     <ItemGroup>

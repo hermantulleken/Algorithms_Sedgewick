@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using Algorithms_Sedgewick;
 using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.Sort;
 using NUnit.Framework;
 using Support;
 
@@ -20,7 +20,8 @@ public class SortTests
 		Sort.DequeueSortWithDeque,
 		Sort.DequeueSortWithQueue,
 		Sort.GnomeSort,
-		Sort.MergeSort
+		Sort.MergeSort,
+		Sort.MergeSortBottomUp
 	};
 
 	private static IEnumerable SortTestCases()
@@ -39,8 +40,11 @@ public class SortTests
 	public void SortTest(Action<IRandomAccessList<int>> sortFunction)
 	{
 		var list = TestArray.Copy();
-		sortFunction(list);
 
+		var listStr1 = list.Pretty();
+		
+		sortFunction(list);
+		var listStr2 = list.Pretty();
 		Assert.That(list, Is.EqualTo(TestArray.OrderBy(x => x).ToArray()));
 	}
 

@@ -1,22 +1,57 @@
-﻿#if DEBUG
-#define WHITE_BOX_TESTING
-#endif
-
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Algorithms_Sedgewick.List;
-
-#if WHITE_BOX_TESTING
 using Support;
-#endif
 
-namespace Algorithms_Sedgewick.Sort;
+namespace Algorithms_Sedgewick;
 
 
 
 public static class Sort
 {
+
+	public struct MergeSortConfig
+	{
+		public static MergeSortConfig Vanilla => new()
+		{
+			SkipMergeWhenSorted = false,
+			SmallArraySortAlgorithm = SortAlgorithm.Merge,
+			SmallArraySize = 0,
+			UseFastMerge = false
+		};
+		
+		public static MergeSortConfig Optimized => new()
+		{
+			SkipMergeWhenSorted = true,
+			SmallArraySortAlgorithm = SortAlgorithm.Insert,
+			SmallArraySize = 12,
+			UseFastMerge = true
+		};
+		
+		public enum SortAlgorithm
+		{
+			Small,
+			Insert,
+			Shell,
+			Merge
+		};
+		
+		public bool SkipMergeWhenSorted = true;
+		public SortAlgorithm SmallArraySortAlgorithm = SortAlgorithm.Small;
+		public bool UseFastMerge = true;
+		public int SmallArraySize = 12;
+
+		public MergeSortConfig()
+		{
+		}
+	}
+	
+#if WHITEBOXTESTING
+	public static readonly Counter<string> Counter = new Counter<string>();	
+#endif
+	
 	private static readonly int[] CiuraGaps = { 1, 4, 10, 23, 57, 132, 301, 701 };
 
 	//From: https://stackoverflow.com/a/50470237/335144
@@ -66,22 +101,17 @@ public static class Sort
 			deque.PushLeft(top);
 		}
 
-#if WHITE_BOX_TESTING
-
+#if WHITEBOXTESTING
 		public T[] ToArray() => deque.ToArray();
 		public T[] ToReverseArray() => deque.Reverse().ToArray(); //We reverse the list so the top is at 0
-
 		public T[] TopN(int n) => ToReverseArray().Take(n).ToArray();
-
 		public T[] BottomN(int n) => ToReverseArray().TakeLast(n).ToArray();
-
-		
 #endif
 		
 		public override string ToString() => deque.ToString();
 	}
 
-	private sealed class DequeSortHelperWithQueue<T> : IEnumerable<T> where T : IComparable
+	private sealed class DequeSortHelperWithQueue<T> : IEnumerable<T> where T : IComparable<T>
 	{
 		private readonly IQueue<T> queue;
 
@@ -177,8 +207,9 @@ public static class Sort
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 	
-	public static void SelectionSort<T>(IRandomAccessList<T> list) where T : IComparable
+	public static void SelectionSort<T>(IRandomAccessList<T> list) where T : IComparable<T>
 	{
+		ClearCounter();
 		int length = list.Count;
 		
 		for (int i = 0; i < length; i++)
@@ -197,23 +228,30 @@ public static class Sort
 			SwapAt(list, i, minIndex);
 		}
 	}
-	
-	public static void InsertionSort<T>(IRandomAccessList<T> list) where T : IComparable
+
+	public static void InsertionSort<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	{
+		ClearCounter();
+		InsertionSort(list, 0, list.Count);
+	}
+
+	public static void InsertionSort<T>(IRandomAccessList<T> list, int start, int end) where T : IComparable<T>
 	{ 
-		int length = list.Count;
+		//int length = list.Count;
 		
-		for (int i = 1; i < length; i++)
+		for (int i = start + 1; i < end; i++)
 		{ 
 			// Insert a[i] among a[i-1], a[i-2], a[i-3]... ..
-			for (int j = i; j > 0 && LessAt(list, j, j - 1); j--)
+			for (int j = i; j > start && LessAt(list, j, j - 1); j--)
 			{
 				SwapAt(list, j, j - 1);
 			}
 		}
 	}
 
-	public static void ShellSortWithPrattSequence<T>(IRandomAccessList<T> list) where T : IComparable
+	public static void ShellSortWithPrattSequence<T>(IRandomAccessList<T> list) where T : IComparable<T>
 	{
+		ClearCounter();
 		int length = list.Count;
 		int stepSize = 1;
 		
@@ -236,8 +274,9 @@ public static class Sort
 		}
 	}
 	
-	public static void ShellSort<T>(IRandomAccessList<T> list, int[] stepSizes) where T : IComparable
+	public static void ShellSort<T>(IRandomAccessList<T> list, int[] stepSizes) where T : IComparable<T>
 	{
+		ClearCounter();
 		int length = list.Count;
 
 		for (int stepSizeIndex = 0; stepSizeIndex <= stepSizes.Length; stepSizeIndex++)
@@ -254,8 +293,9 @@ public static class Sort
 		}
 	}
 
-	public static void SortSmall<T>(IRandomAccessList<T> list)where T : IComparable
+	public static void SortSmall<T>(IRandomAccessList<T> list)where T : IComparable<T>
 	{
+		ClearCounter();
 		int length = list.Count;
 		
 		switch (length)
@@ -276,8 +316,9 @@ public static class Sort
 
 	// Implements Ex 2.1.14 in Sedgewick
 	//This seems to be a  version of gnome sort
-	public static void DequeueSortWithDeque<T>(IRandomAccessList<T> list) where T : IComparable
+	public static void DequeueSortWithDeque<T>(IRandomAccessList<T> list) where T : IComparable<T>
 	{
+		ClearCounter();
 		var deque = new DequeWithDoublyLinkedList<T>();
 
 		foreach (var item in list)
@@ -294,8 +335,9 @@ public static class Sort
 	
 	// Implements Ex 2.1.14 in Sedgewick
 	//This seems to be a  version of gnome sort
-	public static void DequeueSortWithQueue<T>(IRandomAccessList<T> list) where T : IComparable
+	public static void DequeueSortWithQueue<T>(IRandomAccessList<T> list) where T : IComparable<T>
 	{
+		ClearCounter();
 		if (list.IsEmpty)
 		{
 			return; //Nothing to do
@@ -321,29 +363,30 @@ public static class Sort
 	
 	// Implements Ex 2.1.14 in Sedgewick
 	// This seems to be a  version of gnome sort
-	public static void DequeueSortWithDeque<T>(IDeque<T> deque) where T : IComparable
+	public static void DequeueSortWithDeque<T>(IDeque<T> deque) where T : IComparable<T>
 	{
-		#if WHITE_BOX_TESTING
+		ClearCounter();
+		
+		#if WHITEBOXTESTING
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckBottomSortedDescending(DequeueSortHelperWithDeque<T> helper, int n)
-			=> Debug.Assert(IsSortedDescending(helper.TopN(n)), nameof(CheckBottomSortedDescending));
+			=> Debug.Assert(IsSortedDescending(helper.TopN(n).ToRandomAccessList()), nameof(CheckBottomSortedDescending));
 
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckTopSortedDescending(DequeueSortHelperWithDeque<T> helper, int n)
-			=> Debug.Assert(n == 0 || IsSortedDescending(helper.BottomN(n - 1)), nameof(CheckTopSortedDescending));
+			=> Debug.Assert(n == 0 || IsSortedDescending(helper.BottomN(n - 1).ToRandomAccessList()), nameof(CheckTopSortedDescending));
 		
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckTopIsSmallerThanBottom(DequeueSortHelperWithDeque<T> helper, int bottomCount)
 			=> Debug.Assert(bottomCount == 0 || helper.BottomN(bottomCount).Min().CompareTo(helper.Top) >= 0, nameof(CheckTopIsSmallerThanBottom));
 
-		
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckTopBiggerThanTop(DequeueSortHelperWithDeque<T> helper, int topCount)
 			=> Debug.Assert(helper.TopN(topCount).Max().CompareTo(helper.Top) >= 0, nameof(CheckTopBiggerThanTop));
 			
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-		static void CheckResultIsSorted(IRandomAccessList<T> list)
-			=> Debug.Assert(IsSorted(list), nameof(CheckResultIsSorted));
+		static void CheckResultIsSorted(DequeueSortHelperWithDeque<T> helper)
+			=> Debug.Assert(IsSortedAscending(helper.ToArray().ToRandomAccessList()), nameof(CheckResultIsSorted));
 		#endif
 
 		int count = deque.Count;
@@ -375,21 +418,29 @@ public static class Sort
 		for (int i = 0; i < count; i++)
 		{
 			GetNthSmallestOnTop(i);
-#if WHITE_BOX_TESTING
+#if WHITEBOXTESTING
 			CheckBottomSortedDescending(helper, i);
 			CheckTopIsSmallerThanBottom(helper, count - i - 1);
 			CheckTopBiggerThanTop(helper, i + 1);
 #endif
 			NTopToBottom(i + 1);
 		
-#if WHITE_BOX_TESTING
+#if WHITEBOXTESTING
 			CheckTopSortedDescending(helper, i + 1);
 #endif
 		}
+		
+		deque.Clear();
+		
+#if WHITEBOXTESTING
+		CheckResultIsSorted(helper);
+#endif
+		// TODO: We need to copy the elements into the original deck (right?)
 	}
 
-	public static void GnomeSort<T>(IRandomAccessList<T> list) where T : IComparable
+	public static void GnomeSort<T>(IRandomAccessList<T> list) where T : IComparable<T>
 	{
+		ClearCounter();
 		int i = 0;
 		while (i < list.Count)
 		{
@@ -405,8 +456,12 @@ public static class Sort
 		}
 	}
 
-	public static void MergeSort<T>(IRandomAccessList<T> list) where T : IComparable
+	public static void MergeSort<T>(IRandomAccessList<T> list) where T : IComparable<T>
+		=> MergeSort(list, default);
+	
+	public static void MergeSort<T>(IRandomAccessList<T> list, MergeSortConfig config) where T : IComparable<T>
 	{
+		ClearCounter();
 		var helpList = new T[list.Count];
 		
 		void Sort(int start, int end)
@@ -415,23 +470,73 @@ public static class Sort
 			{
 				return;
 			}
-
+			
 			int middle = start + (end - start) / 2;
 
-			Sort(start, middle);
-			Sort(middle, end);
-			Merge(list, helpList, start, middle, end);
+			if (config.SmallArraySortAlgorithm == MergeSortConfig.SortAlgorithm.Insert && end - start < 12)
+			{
+				InsertionSort(list, start, middle);
+				InsertionSort(list, start, middle);
+			}
+			else
+			{
+				Sort(start, middle);
+				Sort(middle, end);
+
+			}
+			
+			// list[middle] > list[middle + 1]
+			if (!config.SkipMergeWhenSorted || ((middle + 1 < end) && LessAt(list, middle + 1, middle))) //Improvement 2 on p. 275
+			{
+				if (config.UseFastMerge)
+				{
+					FastMerge(list, helpList, start, middle, end);
+				}
+				else
+				{
+					Merge(list, helpList, start, middle, end);
+				}
+			}
 		}
 		
 		Sort(0, list.Count);
 	}
 	
-	
-
-
-	private static bool IsSortedAscending<T>(T[] array) where T : IComparable
+	//P. 278
+	public static void MergeSortBottomUp<T>(IRandomAccessList<T> list) where T : IComparable<T>
 	{
-		for (int i = 1; i < array.Length; i++)
+		ClearCounter();
+		
+		var helpList = new T[list.Count];
+		
+		Sort();
+
+		void Sort()
+		{
+			int length = list.Count;
+
+			for (int leftListSize = 1; leftListSize < length; leftListSize += leftListSize)
+			{
+				int mergedListSize = leftListSize + leftListSize;
+				
+				for (int leftListStart = 0; leftListStart < length - leftListSize; leftListStart += mergedListSize)
+				{
+					int rightListStart = leftListStart + leftListSize;
+					int rightListEnd = Math.Min(leftListStart + mergedListSize, length);
+					
+					//Note: The indices are modified since I changed how the parameters of Merge are interpreted.
+					Merge(list, helpList, leftListStart, rightListStart, rightListEnd); 
+				}
+			}
+		}
+	}
+
+	public static bool IsSortedAscending<T>(IRandomAccessList<T> array) where T : IComparable<T> 
+		=> IsSortedAscending(array, 0, array.Count);
+	
+	private static bool IsSortedAscending<T>(IRandomAccessList<T> array, int start, int end) where T : IComparable<T>
+	{
+		for (int i = start + 1; i < end; i++)
 		{
 			if (array[i].CompareTo(array[i - 1]) < 0)
 			{
@@ -441,10 +546,14 @@ public static class Sort
 
 		return true;
 	}
+
+	public static bool IsSortedDescending<T>(IRandomAccessList<T> array) where T : IComparable<T> 
+		=> IsSortedDescending(array, 0, array.Count);
+
 	
-	public static bool IsSortedDescending<T>(T[] array) where T : IComparable
+	public static bool IsSortedDescending<T>(IRandomAccessList<T> array, int start, int end) where T : IComparable<T>
 	{
-		for (int i = 1; i < array.Length; i++)
+		for (int i = start + 1; i < end; i++)
 		{
 			if (array[i].CompareTo(array[i - 1]) > 0)
 			{
@@ -500,49 +609,162 @@ public static class Sort
 		return true;
 	}
 	
-	internal static bool Less<T>(T v, T w) where T : IComparable => v.CompareTo(w) < 0;
-	internal static bool LessOrEqual<T>(T v, T w) where T : IComparable => v.CompareTo(w) <= 0;
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static bool Less<T>(T v, T w) where T : IComparable<T>
+	{
+		AddCompareTo();
+		return v.CompareTo(w) < 0;
+	}
 
-	internal static bool LessAt<T>(T[] list, int i, int j) where T : IComparable => Less(list[i], list[j]);
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static bool LessAt<T>(T[] list, int i, int j) where T : IComparable<T>
+	{
+		AddCompareTo();
+		return Less(list[i], list[j]);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static bool LessAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable<T>
+	{
+		AddCompareTo();
+		return Less(list[i], list[j]);
+	}
 	
-	internal static bool LessAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable => Less(list[i], list[j]);
-	internal static bool LessOrEqualAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable => LessOrEqual(list[i], list[j]);
-	
-	internal static void SwapAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable => (list[i], list[j]) = (list[j], list[i]);
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static bool LessOrEqual<T>(T v, T w) where T : IComparable<T>
+	{
+		AddCompareTo();
+		return v.CompareTo(w) <= 0;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static bool LessOrEqualAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable<T>
+	{
+		AddCompareTo();
+		return LessOrEqual(list[i], list[j]);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static void SwapAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable<T>
+	{
+		AddSwap();
+		(list[i], list[j]) = (list[j], list[i]);
+	}
 
 	// p.271
 	//I made changes to the end and mid points, so that this is roughly equivalent to their (list, start, middle, end + 1)
-	private static void Merge<T>(IRandomAccessList<T> list, T[] helpList, int start, int middle, int end) where T : IComparable
+	//rightStartIndex is also the leftEndIndex;
+	private static void Merge<T>(
+		IRandomAccessList<T> list, 
+		T[] helpList, 
+		int leftStartIndex, 
+		int rightStartIndex, 
+		int rightEndIndex) where T : IComparable<T>
 	{
-		int i = start;
-		int j = middle; //this is middle + 1 in original
-		for (int k = start; k < end; k++)//this is <= in original
+		for (int k = leftStartIndex; k < rightEndIndex; k++)//this is <= in original
 		{
 			helpList[k] = list[k];
 		}
 
-		for (int k = start; k < end; k++) //this is <= in original
+		int leftIndex = leftStartIndex;
+		int rightIndex = rightStartIndex; //this is middle + 1 in original
+		
+		for (int k = leftStartIndex; k < rightEndIndex; k++) //this is <= in original
 		{
-			if (i >= middle) //This is > in the original
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			void TakeAt(ref int index)
 			{
-				list[k] = helpList[j];
-				j++;
+				list[k] = helpList[index];
+				index++;
 			}
-			else if (j >= end)
+			
+			if (leftIndex >= rightStartIndex) //This is > in the original
 			{
-				list[k] = helpList[i];
-				i++;
+				TakeAt(ref rightIndex);
 			}
-			else if (LessAt(helpList, j, i))
+			else if (rightIndex >= rightEndIndex)
 			{
-				list[k] = helpList[j];
-				j++;
+				TakeAt(ref leftIndex);
+			}
+			else if (LessAt(helpList, rightIndex, leftIndex))
+			{
+				TakeAt(ref rightIndex);
 			}
 			else
 			{
-				list[k] = helpList[i];
-				i++;
+				TakeAt(ref leftIndex);
 			}
 		}
+	}
+	
+	// Ex 2.2.10
+	private static void FastMerge<T>(
+		IRandomAccessList<T> list, 
+		T[] helpList, 
+		int leftStartIndex, 
+		int rightStartIndex, 
+		int rightEndIndex) where T : IComparable<T>
+	{
+		for (int k = leftStartIndex; k < rightStartIndex; k++)
+		{
+			helpList[k] = list[k];
+		}
+
+		int lastIndex = rightEndIndex - 1;
+		
+		for (int k = rightStartIndex; k < rightEndIndex; k++)
+		{
+			int offsetFromStart = k - rightStartIndex;
+			helpList[k] = list[lastIndex - offsetFromStart];
+		}
+
+		int leftIndex = leftStartIndex;
+		int rightIndex = lastIndex;
+		
+		for (int k = leftStartIndex; k < rightEndIndex; k++) 
+		{
+			if (LessAt(helpList, leftIndex, rightIndex))
+			{
+				list[k] = helpList[leftIndex];
+				leftIndex++;
+			}
+			else
+			{
+				list[k] = helpList[rightIndex];
+				rightIndex--;
+			}
+		}
+	}
+	
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	public static void WriteCounts()
+	{
+#if WHITEBOXTESTING
+		Console.WriteLine(Counter.Counts.Pretty());
+#endif
+	}
+	
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	private static void AddCompareTo()
+	{
+#if WHITEBOXTESTING
+		Counter.Add("CompareTo");
+#endif
+	}
+	
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	private static void AddSwap()
+	{
+#if WHITEBOXTESTING
+		Counter.Add("Swap");
+#endif
+	}
+	
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	private static void ClearCounter()
+	{
+#if WHITEBOXTESTING
+		Counter.Clear();
+#endif
 	}
 }

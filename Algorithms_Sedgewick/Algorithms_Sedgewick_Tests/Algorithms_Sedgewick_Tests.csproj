@@ -5,6 +5,15 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <Configurations>Debug;Release;WhiteBoxTesting</Configurations>
+
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'WhiteBoxTesting' ">
+      <DefineConstants>TRACE;DEBUG</DefineConstants>
+      <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
     <ItemGroup>

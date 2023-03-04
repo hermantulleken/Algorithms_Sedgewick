@@ -1,9 +1,30 @@
 using System.Diagnostics;
+using Algorithms_Sedgewick.List;
 
 namespace Algorithms_Sedgewick;
 
 public static class AlgorithmExtensions
 {
+	public static T Last<T>(this IRandomAccessList<T> source)
+	{
+		if (source.IsEmpty)
+		{
+			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+		}
+
+		return source[^1];
+	}
+	
+	public static T First<T>(this IRandomAccessList<T> source)
+	{
+		if (source.IsEmpty)
+		{
+			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+		}
+
+		return source[0];
+	}
+	
 	public static LinkedList<T>.Node Nth<T>(this LinkedList<T> list, int n) => list.Nodes.Skip(n).First();
 	
 	public static LinkedList<T>.Node RemoveNth<T>(this LinkedList<T> list, int n)

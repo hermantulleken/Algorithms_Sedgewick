@@ -10,19 +10,26 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		WhiteBoxTesting|Any CPU = WhiteBoxTesting|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{ECA91B9A-02BF-4D4F-BCBC-0DF8B4BA411D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ECA91B9A-02BF-4D4F-BCBC-0DF8B4BA411D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECA91B9A-02BF-4D4F-BCBC-0DF8B4BA411D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECA91B9A-02BF-4D4F-BCBC-0DF8B4BA411D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECA91B9A-02BF-4D4F-BCBC-0DF8B4BA411D}.WhiteBoxTesting|Any CPU.ActiveCfg = WhiteBoxTesting|Any CPU
+		{ECA91B9A-02BF-4D4F-BCBC-0DF8B4BA411D}.WhiteBoxTesting|Any CPU.Build.0 = WhiteBoxTesting|Any CPU
 		{05069449-BDB9-410C-AA87-136951174F09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{05069449-BDB9-410C-AA87-136951174F09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05069449-BDB9-410C-AA87-136951174F09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05069449-BDB9-410C-AA87-136951174F09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05069449-BDB9-410C-AA87-136951174F09}.WhiteBoxTesting|Any CPU.ActiveCfg = WhiteBoxTesting|Any CPU
+		{05069449-BDB9-410C-AA87-136951174F09}.WhiteBoxTesting|Any CPU.Build.0 = WhiteBoxTesting|Any CPU
 		{08110A09-0736-47C5-A005-962C89CB6559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{08110A09-0736-47C5-A005-962C89CB6559}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08110A09-0736-47C5-A005-962C89CB6559}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08110A09-0736-47C5-A005-962C89CB6559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08110A09-0736-47C5-A005-962C89CB6559}.WhiteBoxTesting|Any CPU.ActiveCfg = WhiteBoxTesting|Any CPU
+		{08110A09-0736-47C5-A005-962C89CB6559}.WhiteBoxTesting|Any CPU.Build.0 = WhiteBoxTesting|Any CPU
 	EndGlobalSection
 EndGlobal
