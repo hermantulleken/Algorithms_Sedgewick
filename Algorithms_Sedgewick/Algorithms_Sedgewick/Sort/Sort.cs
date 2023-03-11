@@ -1,17 +1,16 @@
 ﻿using System.Collections;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using Algorithms_Sedgewick.Buffer;
 using Algorithms_Sedgewick.List;
 using Support;
 
-namespace Algorithms_Sedgewick;
-
-
+namespace Algorithms_Sedgewick.Sort;
 
 public static class Sort
 {
-
 	public struct MergeSortConfig
 	{
 		public static MergeSortConfig Vanilla => new()
@@ -26,7 +25,7 @@ public static class Sort
 		{
 			SkipMergeWhenSorted = true,
 			SmallArraySortAlgorithm = SortAlgorithm.Insert,
-			SmallArraySize = 12,
+			SmallArraySize = 8,
 			UseFastMerge = true
 		};
 		
@@ -38,13 +37,17 @@ public static class Sort
 			Merge
 		};
 		
-		public bool SkipMergeWhenSorted = true;
-		public SortAlgorithm SmallArraySortAlgorithm = SortAlgorithm.Small;
-		public bool UseFastMerge = true;
-		public int SmallArraySize = 12;
+		public bool SkipMergeWhenSorted;
+		public SortAlgorithm SmallArraySortAlgorithm;
+		public bool UseFastMerge;
+		public int SmallArraySize;
 
 		public MergeSortConfig()
 		{
+			SkipMergeWhenSorted = false;
+			SmallArraySortAlgorithm = SortAlgorithm.Merge;
+			SmallArraySize = 0;
+			UseFastMerge = false;
 		}
 	}
 	
@@ -65,7 +68,7 @@ public static class Sort
 		new[] { 5, 1 }//10
 	};
 	
-	private sealed class DequeueSortHelperWithDeque<T>
+	private sealed class DequeueSortHelperWithDeque<T> : IEnumerable<T>
 	{
 		private readonly IDeque<T> deque;
 
@@ -107,8 +110,11 @@ public static class Sort
 		public T[] TopN(int n) => ToReverseArray().Take(n).ToArray();
 		public T[] BottomN(int n) => ToReverseArray().TakeLast(n).ToArray();
 #endif
-		
+
+		public IEnumerator<T> GetEnumerator() => deque.GetEnumerator();
+
 		public override string ToString() => deque.ToString();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 
 	private sealed class DequeSortHelperWithQueue<T> : IEnumerable<T> where T : IComparable<T>
@@ -190,9 +196,11 @@ public static class Sort
 			{
 				int m = Count - i;
 				RotateLargest(m);
-				Rotate(i + 1);
+				Rotate(i);
 			}
 		}
+
+		public override string ToString() => $"{Peek1} {queue.ToString()}";
 
 		public IEnumerator<T> GetEnumerator()
 		{
@@ -319,13 +327,28 @@ public static class Sort
 	public static void DequeueSortWithDeque<T>(IRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearCounter();
+		
+		if (list.Count <= 1)
+		{
+			return;
+		}
+		
 		var deque = new DequeWithDoublyLinkedList<T>();
 
 		foreach (var item in list)
 		{
 			deque.PushRight(item);
 		}
+		
+		int countBefore = deque.Count;
+		Debug.Assert(countBefore == list.Count);
+		
 		DequeueSortWithDeque(deque);
+
+		int countAfter = deque.Count;
+		
+		Debug.Assert(countBefore == countAfter);
+
 		
 		for (int i = 0; i < list.Count; i++)
 		{
@@ -338,11 +361,11 @@ public static class Sort
 	public static void DequeueSortWithQueue<T>(IRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearCounter();
-		if (list.IsEmpty)
+		if (list.Count <= 1)
 		{
-			return; //Nothing to do
+			return;
 		}
-		
+
 		var queue = new QueueWithLinkedList<T>();
 
 		foreach (var item in list)
@@ -385,8 +408,8 @@ public static class Sort
 			=> Debug.Assert(helper.TopN(topCount).Max().CompareTo(helper.Top) >= 0, nameof(CheckTopBiggerThanTop));
 			
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-		static void CheckResultIsSorted(DequeueSortHelperWithDeque<T> helper)
-			=> Debug.Assert(IsSortedAscending(helper.ToArray().ToRandomAccessList()), nameof(CheckResultIsSorted));
+		static void CheckIsSorted(IEnumerable<T> helper)
+			=> Debug.Assert(IsSortedAscending(helper.ToArray().ToRandomAccessList()), nameof(CheckIsSorted));
 		#endif
 
 		int count = deque.Count;
@@ -394,7 +417,7 @@ public static class Sort
 		
 		void GetNthSmallestOnTop(int n)
 		{
-			int stepCount = count - n;
+			int stepCount = count - n - 1;
 			for (int i = 0; i < stepCount; i++)
 			{
 				var (top, belowTop) = helper.PeekTop2();
@@ -430,12 +453,10 @@ public static class Sort
 #endif
 		}
 		
-		deque.Clear();
-		
 #if WHITEBOXTESTING
-		CheckResultIsSorted(helper);
+		CheckIsSorted(helper);
+		CheckIsSorted(deque);
 #endif
-		// TODO: We need to copy the elements into the original deck (right?)
 	}
 
 	public static void GnomeSort<T>(IRandomAccessList<T> list) where T : IComparable<T>
@@ -475,35 +496,34 @@ public static class Sort
 
 			if (config.SmallArraySortAlgorithm == MergeSortConfig.SortAlgorithm.Insert && end - start < 12)
 			{
-				InsertionSort(list, start, middle);
-				InsertionSort(list, start, middle);
+				InsertionSort(list, start, end);
+				return;
+			}
+
+			Sort(start, middle);
+			Sort(middle, end);
+
+			// list[middle] > list[middle + 1]
+			if (config.SkipMergeWhenSorted && LessOrEqualAt(list, middle - 1, middle)) return;
+			
+			if (config.UseFastMerge)
+			{
+				FastMerge(list, helpList, start, middle, end);
 			}
 			else
 			{
-				Sort(start, middle);
-				Sort(middle, end);
-
-			}
-			
-			// list[middle] > list[middle + 1]
-			if (!config.SkipMergeWhenSorted || ((middle + 1 < end) && LessAt(list, middle + 1, middle))) //Improvement 2 on p. 275
-			{
-				if (config.UseFastMerge)
-				{
-					FastMerge(list, helpList, start, middle, end);
-				}
-				else
-				{
-					Merge(list, helpList, start, middle, end);
-				}
+				Merge(list, helpList, start, middle, end);
 			}
 		}
 		
 		Sort(0, list.Count);
 	}
-	
-	//P. 278
+
 	public static void MergeSortBottomUp<T>(IRandomAccessList<T> list) where T : IComparable<T>
+		=> MergeSortBottomUp(list, MergeSortConfig.Optimized);
+	
+	// P. 278
+	public static void MergeSortBottomUp<T>(IRandomAccessList<T> list, MergeSortConfig config) where T : IComparable<T>
 	{
 		ClearCounter();
 		
@@ -514,8 +534,21 @@ public static class Sort
 		void Sort()
 		{
 			int length = list.Count;
+			int mergeStartSize = 1;
+			
+			if (config.SmallArraySortAlgorithm == MergeSortConfig.SortAlgorithm.Insert)
+			{
+				mergeStartSize = config.SmallArraySize;
+			
+				for (int leftListStart = 0; leftListStart < length; leftListStart += mergeStartSize)
+				{
+					int leftListEnd = Math.Min(leftListStart + mergeStartSize, length);
+					InsertionSort(list, leftListStart, leftListEnd);
+				}
+			}
 
-			for (int leftListSize = 1; leftListSize < length; leftListSize += leftListSize)
+			//mergedListSize2 is 1 if no algo is used instead of Merge for small lists
+			for (int leftListSize = mergeStartSize; leftListSize < length; leftListSize += leftListSize)
 			{
 				int mergedListSize = leftListSize + leftListSize;
 				
@@ -523,18 +556,143 @@ public static class Sort
 				{
 					int rightListStart = leftListStart + leftListSize;
 					int rightListEnd = Math.Min(leftListStart + mergedListSize, length);
+
+					if (config.SkipMergeWhenSorted && LessOrEqualAt(list, rightListStart - 1, rightListStart)) continue;
 					
-					//Note: The indices are modified since I changed how the parameters of Merge are interpreted.
-					Merge(list, helpList, leftListStart, rightListStart, rightListEnd); 
+					if (config.UseFastMerge)
+					{
+						FastMerge(list, helpList, leftListStart, rightListStart, rightListEnd);
+					}
+					else
+					{
+						//Note: The indices are modified since I changed how the parameters of Merge are interpreted.
+						Merge(list, helpList, leftListStart, rightListStart, rightListEnd);
+					}
 				}
 			}
+		}
+	}
+	
+	public static void MergeSortNatural<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	{
+		var helpList = new T[list.Count];
+
+		int FindEndIndexOfSorted(int start)
+		{
+			for (int i = start + 1; i < list.Count; i++)
+			{
+				if (LessAt(list, i, i - 1))
+				{
+					return i;
+				}
+			}
+
+			return list.Count;
+		}
+
+		int leftStart = 0;
+		int leftEnd = FindEndIndexOfSorted(leftStart);
+
+		if (leftEnd == list.Count)
+		{
+			return;
+		}
+
+		int rightEnd = FindEndIndexOfSorted(leftEnd);
+		Merge(list, helpList, leftStart, leftEnd, rightEnd);
+	}
+
+	
+	// Ex. 2.2.15
+	public static void MergeSortBottomsUpWithQueues<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	{
+		if (list.Count <= 1)
+		{
+			return;
+		}
+		
+		var majorQueue = new QueueWithLinkedList<QueueWithLinkedList<T>>();
+		
+		for (int i = 0; i < list.Count - 1; i += 2)
+		{
+			var item1 = list[i];
+			var item2 = list[i+1];
+			var minorQueue = new QueueWithLinkedList<T>();
+			
+			if(Less(item1, item2))
+			{
+				minorQueue.Enqueue(item1);
+				minorQueue.Enqueue(item2);
+			}
+			else
+			{
+				minorQueue.Enqueue(item2);
+				minorQueue.Enqueue(item1);
+			}
+			
+			majorQueue.Enqueue(minorQueue);
+		}
+
+		if (list.Count % 2 == 1)
+		{
+			var minorQueue = new QueueWithLinkedList<T>();
+			minorQueue.Enqueue(list[^1]);
+			majorQueue.Enqueue(minorQueue);
+		}
+
+		var sortedQueue = new QueueWithLinkedList<T>();
+		while (majorQueue.Count > 1)
+		{
+			var leftQueue = majorQueue.Dequeue();
+			var rightQueue = majorQueue.Dequeue();
+			
+			Merge(leftQueue, rightQueue, sortedQueue);
+			majorQueue.Enqueue(sortedQueue);
+			
+			leftQueue.Clear();
+			sortedQueue = leftQueue;
+		}
+
+		var result = majorQueue.Dequeue();
+
+		for (int i = 0; i < list.Count; i++)
+		{
+			list[i] = result.Dequeue();
 		}
 	}
 
 	public static bool IsSortedAscending<T>(IRandomAccessList<T> array) where T : IComparable<T> 
 		=> IsSortedAscending(array, 0, array.Count);
+
+	public static bool AreElementsEqual<T>(IRandomAccessList<T> array1, IRandomAccessList<T> array2, int start, int end) where T : IComparable<T>
+	{
+		if (end > array1.Count)
+		{
+			throw new ArgumentOutOfRangeException(nameof(end));
+		}
+		
+		if (end > array2.Count)
+		{
+			throw new ArgumentOutOfRangeException(nameof(end));
+		}
+
+		if (start < 0 || start > end)
+		{
+			throw new ArgumentOutOfRangeException(nameof(start));
+		}
+
+		for (int i = start; i < end; i++)
+		{
+			if (array1[i].CompareTo(array2[i]) != 0) 
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 	
-	private static bool IsSortedAscending<T>(IRandomAccessList<T> array, int start, int end) where T : IComparable<T>
+	public static bool IsSortedAscending<T>(IRandomAccessList<T> array, int start, int end) where T : IComparable<T>
 	{
 		for (int i = start + 1; i < end; i++)
 		{
@@ -697,6 +855,30 @@ public static class Sort
 		}
 	}
 	
+	
+	// p.271
+	//I made changes to the end and mid points, so that this is roughly equivalent to their (list, start, middle, end + 1)
+	//rightStartIndex is also the leftEndIndex;
+	private static void Merge3<T>(
+		IRandomAccessList<T> list,
+		T[] helpList,
+		int list0Start,
+		int list1Start,
+		int list2Start,
+		int list2End) where T : IComparable<T>
+	{
+		for (int k = list0Start; k < list2End; k++)//this is <= in original
+		{
+			helpList[k] = list[k];
+		}
+
+		int list0Index = list0Start;
+		int list1Index = list1Start;
+		int list2Index = list2Start;
+		
+		
+	}
+
 	// Ex 2.2.10
 	private static void FastMerge<T>(
 		IRandomAccessList<T> list, 
@@ -732,6 +914,33 @@ public static class Sort
 			{
 				list[k] = helpList[rightIndex];
 				rightIndex--;
+			}
+		}
+	}
+
+	// Ex. 2.2.14
+	public static void Merge<T>(IQueue<T> leftQueue, IQueue<T> rightQueue, IQueue<T> result) where T : IComparable<T>
+	{
+		void TakeRight() => result.Enqueue(rightQueue.Dequeue());
+		void TakeLeft() => result.Enqueue(leftQueue.Dequeue());
+
+		while (!leftQueue.IsEmpty || !rightQueue.IsEmpty)
+		{
+			if (leftQueue.IsEmpty)
+			{
+				TakeRight();
+			}
+			else if (rightQueue.IsEmpty)
+			{
+				TakeLeft();
+			}
+			else if (Less(leftQueue.Peek, rightQueue.Peek))
+			{
+				TakeLeft();
+			}
+			else
+			{
+				TakeRight();
 			}
 		}
 	}

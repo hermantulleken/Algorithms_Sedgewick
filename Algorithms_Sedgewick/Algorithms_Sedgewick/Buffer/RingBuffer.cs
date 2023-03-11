@@ -167,7 +167,9 @@ public sealed class RingBuffer<T> : IBuffer<T>
     
 	private void ValidateIndex(int index)
 	{
-		if (!IndexInRange(index)) 
+		if (!IndexInRange(index))
+		{
 			throw new ArgumentOutOfRangeException(nameof(index));
+		}
 	}
 }

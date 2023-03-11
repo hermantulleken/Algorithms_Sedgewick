@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using Support;
 
 namespace Algorithms_Sedgewick;
 
@@ -11,8 +12,26 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	*/ 
 	public sealed record Node
 	{
+		#if WHITEBOXTESTING
+		private const int RecursiveStringLimit = 100;
+		#endif
+		
 		public T Item;
 		public Node NextNode;
+		
+#if WHITEBOXTESTING
+		public override string ToString() => ToDebugString();
+		public string ToDebugString() => ToDebugString(RecursiveStringLimit);
+
+		private string ToDebugString(int depth) =>
+			NextNode == null 
+				? Item.ToString() 
+				: depth == 0 
+					? "..." 
+					: $"{Item} [{NextNode.ToDebugString(depth - 1)}]";
+#else
+		public override string ToString() => $"Node:{{{Item}}}";
+#endif
 	}
 
 	private Node front;
@@ -49,6 +68,9 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty)
 		{
+			Count++;
+			version++;
+			
 			return InsertFirstItem(item);
 		}
 
@@ -65,6 +87,9 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty)
 		{
+			Count++;
+			version++;
+			
 			return InsertFirstItem(item);
 		}
 
@@ -199,6 +224,8 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		Count += otherCount;
 		version++;
 	}
+
+	public string ToString() => First.ToString();
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	

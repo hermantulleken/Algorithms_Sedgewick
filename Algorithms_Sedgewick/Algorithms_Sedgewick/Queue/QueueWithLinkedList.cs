@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Support;
 
 namespace Algorithms_Sedgewick;
 
@@ -23,6 +24,8 @@ public sealed class QueueWithLinkedList<T> : IQueue<T>
 
 	public T Dequeue() => items.RemoveFromFront().Item;
 	public void Clear() => items.Clear();
+
+	public override string ToString() => items.ToString();
 
 	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
 

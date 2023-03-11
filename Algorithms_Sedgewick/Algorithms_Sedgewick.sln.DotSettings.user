@@ -4,5 +4,7 @@
     &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net6.0::Algorithms_Sedgewick_Tests.ResizeableArrayTest&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net6.0::Algorithms_Sedgewick_Tests.SortTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net6.0::Algorithms_Sedgewick_Tests.TestGeometricAlgorithms&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net6.0::Algorithms_Sedgewick_Tests.LinkedListTests.TestInsertAtFront&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net6.0::Algorithms_Sedgewick_Tests.LinkedListTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

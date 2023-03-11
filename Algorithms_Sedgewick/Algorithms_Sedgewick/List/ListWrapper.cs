@@ -1,4 +1,5 @@
 using System.Collections;
+using Support;
 
 namespace Algorithms_Sedgewick.List;
 
@@ -29,6 +30,8 @@ public static class ListExtensions
 
 		public IEnumerator<T> GetEnumerator() => list.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public override string ToString() => list.Pretty();
 	}
 	
 	public static IRandomAccessList<T> ToRandomAccessList<T>(this IList<T> list) => new ListWrapper<T>(list);

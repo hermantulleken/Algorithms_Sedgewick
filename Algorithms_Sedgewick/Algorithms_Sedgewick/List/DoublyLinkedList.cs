@@ -22,7 +22,12 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 
 	public bool IsEmpty => front == null;
 	public bool IsSingleton => front == back;
-	public int Count { get; private set; } = 0;
+
+	public int Count
+	{
+		get; 
+		private set;
+	} = 0;
 
 	public Node First
 	{
@@ -50,6 +55,8 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty)
 		{
+			Count++;
+			version++;
 			return InsertFirstItem(item);
 		}
 
@@ -66,6 +73,8 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty)
 		{
+			Count++;
+			version++;
 			return InsertFirstItem(item);
 		}
 
@@ -96,7 +105,8 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		if (IsSingleton)
 		{
 			front = back = null;
-			
+			Count--;
+			version++;
 			return removedNode;
 		}
 
@@ -121,7 +131,8 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		if (IsSingleton)
 		{
 			front = back = null;
-			
+			Count--;
+			version++;
 			return removedNode;
 		}
 
