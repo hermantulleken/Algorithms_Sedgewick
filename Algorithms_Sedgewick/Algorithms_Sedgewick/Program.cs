@@ -49,13 +49,14 @@ internal static class Program
 	private static void TimeSorts()
 	{
 		const int testCount = 1;
-		const int itemCountBase = 1 << 22;
+		const int itemCountBase = 1 << 7;
 		
-		Action<IRandomAccessList<int>> AndPrintCounter(Action<IRandomAccessList<int>> action) =>
+		Action<IRandomAccessList<int>> AndPrintWhiteBoxInfo(Action<IRandomAccessList<int>> action) =>
 			list =>
 			{
 				action(list);
 				Sort.WriteCounts();
+				Sort.WriteEvents();
 			};
 		
 		for(int i = 1; i <= testCount; i++)
@@ -100,7 +101,7 @@ internal static class Program
 				list => Sort.MergeKSortBottomUp(list, 6),
 				list => Sort.MergeKSortBottomUp(list, 7),
 			}
-				.Select(AndPrintCounter);
+				.Select(AndPrintWhiteBoxInfo);
 
 			var names = new List<string>
 			{
