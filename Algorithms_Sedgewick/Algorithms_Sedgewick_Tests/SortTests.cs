@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using Algorithms_Sedgewick;
 using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Sort;
 using NUnit.Framework;
@@ -31,6 +30,11 @@ public class SortTests
 		list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Vanilla with{UseFastMerge = true}),
 		list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = Sort.MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
 		Sort.MergeSortBottomsUpWithQueues,
+		Sort.Merge3Sort,
+		list => Sort.MergeKSort(list, 3),
+		list => Sort.MergeKSort(list, 4),
+		list => Sort.MergeKSortBottomUp(list, 3),
+		list => Sort.MergeKSortBottomUp(list, 4)
 	};
 
 	private static readonly Action<IRandomAccessList<int>, int, int>[] PartialSortFunctions =

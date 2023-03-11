@@ -1,9 +1,7 @@
 ﻿using System.Collections;
-using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Algorithms_Sedgewick.Buffer;
 using Algorithms_Sedgewick.List;
 using Support;
 
@@ -52,7 +50,8 @@ public static class Sort
 	}
 	
 #if WHITEBOXTESTING
-	public static readonly Counter<string> Counter = new Counter<string>();	
+	public static readonly Counter<string> Counter = new();
+	public static readonly HashSet<string> HasHappened = new();
 #endif
 	
 	private static readonly int[] CiuraGaps = { 1, 4, 10, 23, 57, 132, 301, 701 };
@@ -573,6 +572,43 @@ public static class Sort
 		}
 	}
 	
+	public static void MergeKSortBottomUp<T>(IRandomAccessList<T> list, int k) where T : IComparable<T>
+	{
+		ClearCounter();
+		
+		var helpList = new T[list.Count];
+		var startIndexes = new int[k + 1];
+		var indexes = new int[k];
+		
+		Sort();
+
+		void Sort()
+		{
+			int length = list.Count;
+
+			for (int leftListSize = 1; leftListSize < length; leftListSize *= k)
+			{
+				int mergedListSize = leftListSize * k;
+				
+				for (int leftListStart = 0; leftListStart < length; leftListStart += mergedListSize)
+				{
+					int start = leftListStart;
+					int end = Math.Min(leftListStart + mergedListSize, length);
+
+					startIndexes[0] = start;
+					startIndexes[^1] = end;
+
+					for (int i = 1; i < k; i++)
+					{
+						startIndexes[i] = Math.Min(startIndexes[i - 1] + leftListSize, end);
+					}
+					
+					MergeK(list, helpList, startIndexes, indexes);
+				}
+			}
+		}
+	}
+	
 	public static void MergeSortNatural<T>(IRandomAccessList<T> list) where T : IComparable<T>
 	{
 		var helpList = new T[list.Count];
@@ -854,11 +890,36 @@ public static class Sort
 			}
 		}
 	}
+
+	// Ex. 2.2.22
+	public static void Merge3Sort<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	{
+		ClearCounter();
+		var helpList = new T[list.Count];
+		
+		void Sort(int start, int end)
+		{
+			if (end <= start + 1)
+			{
+				return;
+			}
+
+			int subListLength = (end - start + 2) / 3;
+			int end0 = start + subListLength;
+			int end1 = end0 + subListLength;
+			
+			Sort(start, end0);
+			Sort(end0, end1);
+			Sort(end1, end);
+			
+			Merge3(list, helpList, start, end0, end1, end);
+		}
+		
+		Sort(0, list.Count);
+	}
 	
-	
-	// p.271
-	//I made changes to the end and mid points, so that this is roughly equivalent to their (list, start, middle, end + 1)
-	//rightStartIndex is also the leftEndIndex;
+
+	// Ex. 2.2.22
 	private static void Merge3<T>(
 		IRandomAccessList<T> list,
 		T[] helpList,
@@ -876,7 +937,153 @@ public static class Sort
 		int list1Index = list1Start;
 		int list2Index = list2Start;
 		
+		for (int i = list0Start; i < list2End; i++)
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			void TakeAt(ref int index)
+			{
+				list[i] = helpList[index];
+				index++;
+			}
+			
+			// Takes the smallest element at index0 or index1, if these indices are below the given end points
+			//index0..end0 and index1..end1 represents two sublists,
+			void TakesSmallestAt(ref int index0, int end0, ref int index1, int end1)
+			{
+				if (index0 >= end0)
+				{
+					TakeAt(ref index1);
+				}
+				else if (index1 >= end1)
+				{
+					TakeAt(ref index0);
+				}
+				else if (LessAt(helpList, index0, index1))
+				{
+					TakeAt(ref index0);
+				}
+				else
+				{
+					TakeAt(ref index1);
+				}
+			}
+			
+			if (list0Index >= list1Start) //list 0 is empty
+			{
+				TakesSmallestAt(ref list1Index, list2Start, ref list2Index, list2End);
+			}
+			else if (list1Index >= list2Start) //list 1 is empty
+			{
+				TakesSmallestAt(ref list0Index, list1Start, ref list2Index, list2End);
+			}
+			else if(list2Index >= list2End) //list 2 is empty
+			{
+				TakesSmallestAt(ref list0Index, list1Start, ref list1Index, list2Start);
+			}
+			else if (LessAt(helpList, list0Index, list1Index) && LessAt(helpList, list0Index, list2Index))
+			{ // 0 1 2 or 0 2 1
+				TakeAt(ref list0Index);
+			}
+			else if (LessAt(helpList, list1Index, list2Index))
+			{ //1 0 2 or 1 2 0
+				TakeAt(ref list1Index);
+			}
+			else 
+			{ //2 0 1 or 2 1 0
+				TakeAt(ref list2Index);
+			}
+		}
+	}
+	
+	// Ex. 2.2.22
+	public static void MergeKSort<T>(IRandomAccessList<T> list, int k = 3) where T : IComparable<T>
+	{
+		ClearCounter();
+
+		if (k <= 1)
+		{
+			throw new ArgumentException(null, nameof(k));
+		}
 		
+		var helpList = new T[list.Count];
+
+		void Sort(int start, int end)
+		{
+			if (end <= start + 1)
+			{
+				return;
+			}
+			int[] startIndexes = new int[k + 1];
+			int[] indexes = new int[k];
+			
+			startIndexes[0] = start;
+			startIndexes[^1] = end;
+			
+			int subListLength = (end - start + k - 1) / k;
+			
+			for (int i = 1; i < k; i++)
+			{
+				startIndexes[i] = Math.Min(startIndexes[i - 1] + subListLength, end);
+			}
+
+			for (int i = 1; i < k + 1; i++)
+			{
+				Sort(startIndexes[i - 1], startIndexes[i]);
+			}
+			
+			MergeK(list, helpList, startIndexes, indexes);
+		}
+		
+		Sort(0, list.Count);
+	}
+
+	// Ex. 2.25
+	public static void MergeK<T>(
+		IRandomAccessList<T> list,
+		T[] helpList,
+		int[] startIndices,
+		int[] indexes) where T : IComparable<T>
+	{
+		Debug.Assert(startIndices.Length == indexes.Length + 1);
+
+		for (int k = startIndices[0]; k < startIndices[^1]; k++)
+		{
+			helpList[k] = list[k];
+		}
+
+		for (int i = 0; i < indexes.Length; i++)
+		{
+			indexes[i] = startIndices[i];
+		}//last one is not copied - it is in fact the end
+
+		for (int k = startIndices[0]; k < startIndices[^1]; k++)
+		{
+			int smallestElementIndex = -1;
+				
+			//Find the first non-edmpty list
+			for (int i = 0; i < indexes.Length; i++)
+			{
+				if (indexes[i] < startIndices[i + 1])
+				{
+					smallestElementIndex = i;
+					break;
+				}
+			}
+
+			// Find the smallest element from the lists
+			for (int i = smallestElementIndex + 1; i < indexes.Length; i++)
+			{
+				if (indexes[i] >= startIndices[i + 1]) continue;
+
+				if (LessAt(helpList, indexes[i], indexes[smallestElementIndex]))
+				{
+					smallestElementIndex = i;
+				}
+			}
+
+			list[k] = helpList[indexes[smallestElementIndex]];
+			indexes[smallestElementIndex]++;
+		}
 	}
 
 	// Ex 2.2.10
