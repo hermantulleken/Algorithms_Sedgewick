@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
 using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.Sort;
 using NUnit.Framework;
 using Support;
+using static Algorithms_Sedgewick.Sort.Sort;
 
 namespace Algorithms_Sedgewick_Tests;
 
@@ -15,46 +14,44 @@ public class SortTests
 	[DatapointSource]
 	private static readonly Action<IRandomAccessList<int>>[]SortFunctions = 
 	{
-		Sort.SelectionSort,
-		Sort.InsertionSort,
-		Sort.ShellSortWithPrattSequence,
-		Sort.DequeueSortWithDeque,
-		Sort.DequeueSortWithQueue,
-		Sort.GnomeSort,
-		Sort.MergeSort,
-		list => Sort.MergeSort(list, Sort.MergeSortConfig.Vanilla with{SkipMergeWhenSorted = true}),
-		list => Sort.MergeSort(list, Sort.MergeSortConfig.Vanilla with{UseFastMerge = true}),
-		list => Sort.MergeSort(list, Sort.MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = Sort.MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
-		Sort.MergeSortBottomUp,
-		list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Vanilla with{SkipMergeWhenSorted = true}),
-		list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Vanilla with{UseFastMerge = true}),
-		list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = Sort.MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
-		Sort.MergeSortBottomsUpWithQueues,
-		Sort.Merge3Sort,
-		list => Sort.MergeKSort(list, 3),
-		list => Sort.MergeKSort(list, 4),
-		list => Sort.MergeKSortBottomUp(list, 3),
-		list => Sort.MergeKSortBottomUp(list, 4)
+		SelectionSort,
+		InsertionSort,
+		ShellSortWithPrattSequence,
+		DequeueSortWithDeque,
+		DequeueSortWithQueue,
+		GnomeSort,
+		MergeSort,
+		list => MergeSort(list, MergeSortConfig.Vanilla with{SkipMergeWhenSorted = true}),
+		list => MergeSort(list, MergeSortConfig.Vanilla with{UseFastMerge = true}),
+		list => MergeSort(list, MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
+		MergeSortBottomUp,
+		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{SkipMergeWhenSorted = true}),
+		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{UseFastMerge = true}),
+		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
+		MergeSortBottomsUpWithQueues,
+		Merge3Sort,
+		list => MergeKSort(list, 3),
+		list => MergeKSort(list, 4),
+		list => MergeKSortBottomUp(list, 3),
+		list => MergeKSortBottomUp(list, 4),
+		MergeSortNatural,
+		list => QuickSort(list, QuickSortConfig.Vanilla),
+		list => QuickSort(list, QuickSortConfig.Vanilla with {PivotSelection = QuickSortConfig.PivotSelectionAlgorithm.MedianOfThreeFirst}),
 	};
 
 	private static readonly Action<IRandomAccessList<int>, int, int>[] PartialSortFunctions =
 	{
-		Sort.InsertionSort,
+		InsertionSort,
 	};
 
-	[DatapointSource]
-	private static IEnumerable SortTestCases()
+	[DatapointSource] 
+	private IRandomAccessList<int>[] lists = 
 	{
-		yield return new TestCaseData(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }.ToRandomAccessList())
-			.SetName("Sorts in ascending order");
-
-		yield return new TestCaseData(new[] { 9, 8, 7, 6, 5, 4, 3, 2, 1 }.ToRandomAccessList())
-			.SetName("Sorts in descending order");
-
-		yield return new TestCaseData(TestArray.OrderBy(x => x).ToArray().ToRandomAccessList())
-			.SetName("Leaves the original array intact");
-	}
-
+		new [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }.ToRandomAccessList(),
+		new [] {9, 8, 7, 6, 5, 4, 3, 2, 1 }.ToRandomAccessList(),
+		TestArray
+	};
+	
 	[TestCaseSource(nameof(SortFunctions))]
 	public void SortTest(Action<IRandomAccessList<int>> sortFunction)
 	{
@@ -105,8 +102,8 @@ public class SortTests
 
 		sortFunction(list, startIndex, endIndex);
 		
-		Assert.That(Sort.AreElementsEqual(TestArray, list, 0, startIndex), Is.True);
-		Assert.That(Sort.IsSortedAscending(list, startIndex, endIndex));
-		Assert.That(Sort.AreElementsEqual(TestArray, list, endIndex, TestArray.Count), Is.True);
+		Assert.That(AreElementsEqual(TestArray, list, 0, startIndex), Is.True);
+		Assert.That(IsSortedAscending(list, startIndex, endIndex));
+		Assert.That(AreElementsEqual(TestArray, list, endIndex, TestArray.Count), Is.True);
 	}
 }

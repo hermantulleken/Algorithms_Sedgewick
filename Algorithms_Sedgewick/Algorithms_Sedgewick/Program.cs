@@ -1,8 +1,7 @@
 ﻿using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Sort;
-using Support;
+using static Algorithms_Sedgewick.Sort.Sort;
 using Timer = Support.Timer;
-//namespace Algorithms_Sedgewick;
 
 //Note: The methods in this class are infinite. Use Take to get a finite amount of elements. 
 public static class Generator
@@ -37,9 +36,9 @@ internal static class Program
 {
 	public static void Main(string[] _)
 	{
-		// var list = new ResizeableArray<int>() { 3, 6, 9, 1, 4, 8, 2, 5, 7, 0 };
+		// var list = new ResizeableArray<int>() {1, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		//
-		// Sort.MergeKSortBottomUp(list, 3);
+		// Sort.MergeSortNatural(list);
 		//
 		// Console.WriteLine(list.Pretty());
 
@@ -49,14 +48,14 @@ internal static class Program
 	private static void TimeSorts()
 	{
 		const int testCount = 1;
-		const int itemCountBase = 1 << 7;
+		const int itemCountBase = 1 << 23;
 		
 		Action<IRandomAccessList<int>> AndPrintWhiteBoxInfo(Action<IRandomAccessList<int>> action) =>
 			list =>
 			{
 				action(list);
-				Sort.WriteCounts();
-				Sort.WriteEvents();
+				WriteCounts();
+				WriteEvents();
 			};
 		
 		for(int i = 1; i <= testCount; i++)
@@ -75,31 +74,35 @@ internal static class Program
 				Sort.DequeueSortWithQueue,
 				Sort.GnomeSort,*/
 				
-				list => Sort.MergeSort(list, Sort.MergeSortConfig.Vanilla),
+				list => MergeSort(list, MergeSortConfig.Vanilla),
 				/*list => Sort.MergeSort(list, Sort.MergeSortConfig.Vanilla with{SkipMergeWhenSorted = true}),
 				list => Sort.MergeSort(list, Sort.MergeSortConfig.Vanilla with{UseFastMerge = true}),
 				list => Sort.MergeSort(list, Sort.MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = Sort.MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 12}),
 				list => Sort.MergeSort(list, Sort.MergeSortConfig.Optimized),*/
 				
-				list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Vanilla),
+				list => MergeSortBottomUp(list, MergeSortConfig.Vanilla),
 				/*list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Vanilla with{SkipMergeWhenSorted = true}),
 				list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Vanilla with{UseFastMerge = true}),
 				list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = Sort.MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 12}),
 				list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Optimized),*/
 				
 				//Sort.MergeSortBottomsUpWithQueues,
-				Sort.Merge3Sort,
-				list => Sort.MergeKSort(list, 3),
-				list => Sort.MergeKSort(list, 4),
-				list => Sort.MergeKSort(list, 5),
-				list => Sort.MergeKSort(list, 6),
-				list => Sort.MergeKSort(list, 7),
+				Merge3Sort,
+				list => MergeKSort(list, 3),
+				list => MergeKSort(list, 4),
+				list => MergeKSort(list, 5),
+				list => MergeKSort(list, 6),
+				list => MergeKSort(list, 7),
 				
-				list => Sort.MergeKSortBottomUp(list, 3),
-				list => Sort.MergeKSortBottomUp(list, 4),
-				list => Sort.MergeKSortBottomUp(list, 5),
-				list => Sort.MergeKSortBottomUp(list, 6),
-				list => Sort.MergeKSortBottomUp(list, 7),
+				list => MergeKSortBottomUp(list, 3),
+				list => MergeKSortBottomUp(list, 4),
+				list => MergeKSortBottomUp(list, 5),
+				list => MergeKSortBottomUp(list, 6),
+				list => MergeKSortBottomUp(list, 7),
+				
+				//Sort.MergeSortNatural,
+				list => QuickSort(list, QuickSortConfig.Vanilla),
+				list => QuickSort(list, QuickSortConfig.Vanilla with{ PivotSelection = QuickSortConfig.PivotSelectionAlgorithm.MedianOfThreeFirst}),
 			}
 				.Select(AndPrintWhiteBoxInfo);
 
@@ -125,18 +128,22 @@ internal static class Program
 				nameof(Sort.MergeSortBottomUp) + "5",*/
 				
 				//nameof(Sort.MergeSortBottomsUpWithQueues),
-				nameof(Sort.Merge3Sort),
-				nameof(Sort.MergeKSort) + "3",
-				nameof(Sort.MergeKSort) + "4",
-				nameof(Sort.MergeKSort) + "5",
-				nameof(Sort.MergeKSort) + "6",
-				nameof(Sort.MergeKSort) + "7",
+				nameof(Merge3Sort),
+				nameof(MergeKSort) + "3",
+				nameof(MergeKSort) + "4",
+				nameof(MergeKSort) + "5",
+				nameof(MergeKSort) + "6",
+				nameof(MergeKSort) + "7",
 				
-				nameof(Sort.MergeKSortBottomUp) + "3",
-				nameof(Sort.MergeKSortBottomUp) + "4",
-				nameof(Sort.MergeKSortBottomUp) + "5",
-				nameof(Sort.MergeKSortBottomUp) + "6",
-				nameof(Sort.MergeKSortBottomUp) + "7",
+				nameof(MergeKSortBottomUp) + "3",
+				nameof(MergeKSortBottomUp) + "4",
+				nameof(MergeKSortBottomUp) + "5",
+				nameof(MergeKSortBottomUp) + "6",
+				nameof(MergeKSortBottomUp) + "7",
+				
+				//nameof(Sort.MergeSortNatural),
+				nameof(QuickSort),
+				nameof(QuickSort),
 			};
 
 			var times = Timer.Time<IRandomAccessList<int>>(sorters, () => items.Copy());
