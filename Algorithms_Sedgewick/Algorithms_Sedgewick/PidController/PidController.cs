@@ -1,4 +1,4 @@
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.PidController;
 
 public sealed class PidController
 {

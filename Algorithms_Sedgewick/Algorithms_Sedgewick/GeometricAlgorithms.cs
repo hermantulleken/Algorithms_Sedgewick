@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Numerics;
 using Algorithms_Sedgewick.List;
+using Algorithms_Sedgewick.Stack;
 
 namespace Algorithms_Sedgewick;
 

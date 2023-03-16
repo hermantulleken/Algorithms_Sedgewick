@@ -1,6 +1,6 @@
 using Algorithms_Sedgewick.Buffer;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.PidController;
 
 public sealed class Integrator
 {

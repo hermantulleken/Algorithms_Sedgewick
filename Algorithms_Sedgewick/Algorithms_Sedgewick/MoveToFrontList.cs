@@ -1,4 +1,6 @@
-﻿namespace Algorithms_Sedgewick;
+﻿using Algorithms_Sedgewick.List;
+
+namespace Algorithms_Sedgewick;
 
 public class MoveToFrontList<T>
 {

@@ -1,4 +1,5 @@
 ﻿using Algorithms_Sedgewick.Buffer;
+using Algorithms_Sedgewick.Stack;
 
 namespace Algorithms_Sedgewick;
 

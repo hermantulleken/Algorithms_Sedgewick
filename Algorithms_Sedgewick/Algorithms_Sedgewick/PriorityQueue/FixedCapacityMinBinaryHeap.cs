@@ -2,17 +2,21 @@
 using Support;
 using static System.Diagnostics.Debug;
 
-namespace Algorithms_Sedgewick.Sort;
+namespace Algorithms_Sedgewick.PriorityQueue;
 /// <summary>
 /// A container that allows efficient insertions and
 /// retrieval of the minimum element. 
 /// </summary>
 //Note: This is a min binary heap, so comparisons in sink and swim are inverted compared to text book
 //Note: The first element in the array is not used
-public sealed class FixedCapacityBinaryHeap<T> where T : IComparable<T>
+public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : IComparable<T>
 {
 	private const string EmptyHeapPresentation = "()";
+
+#if WHITEBOXTESTING
 	private const string InvalidStateMarker = "~";
+#endif
+	
 	private const int StartIndex = 1;
 	
 	private readonly T[] items;
@@ -26,12 +30,25 @@ public sealed class FixedCapacityBinaryHeap<T> where T : IComparable<T>
 	public bool IsEmpty => Count == 0;
 	public bool IsSingleton => Count == 1;
 	public bool IsFull => Count == Capacity;
-	
+
+	public T PeekMin
+	{
+		get
+		{
+			if (IsEmpty)
+			{
+				ThrowHelper.ThrowContainerEmpty();
+			}
+			
+			return items[StartIndex];
+		}
+	}
+
 #if WHITEBOXTESTING
 	private bool IsReferenceType { get; }
 #endif
 	
-	public FixedCapacityBinaryHeap(int capacity)
+	public FixedCapacityMinBinaryHeap(int capacity)
 	{
 		Capacity = capacity;
 		
@@ -54,7 +71,7 @@ public sealed class FixedCapacityBinaryHeap<T> where T : IComparable<T>
 	{
 		if (IsFull)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerFull);
+			ThrowHelper.ThrowContainerFull();
 		}
 
 		SetStateInvalid();
@@ -81,7 +98,7 @@ public sealed class FixedCapacityBinaryHeap<T> where T : IComparable<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 		
 		SetStateInvalid();
@@ -126,11 +143,11 @@ public sealed class FixedCapacityBinaryHeap<T> where T : IComparable<T>
 
 	private string AddBrackets(string str) => $"({str})";
 
-	private bool LessAt(int i, int j) => Sort.LessAt(items, i, j);
+	private bool LessAt(int i, int j) => Sort.Sort.LessAt(items, i, j);
 
-	private void SwapAt(int i, int j) => Sort.SwapAt(items, i, j);
+	private void SwapAt(int i, int j) => Sort.Sort.SwapAt(items, i, j);
 
-	private void MoveAt(int sourceIndex, int destinationIndex) => Sort.MoveAt(items, sourceIndex, destinationIndex);
+	private void MoveAt(int sourceIndex, int destinationIndex) => Sort.Sort.MoveAt(items, sourceIndex, destinationIndex);
 
 	private void Swim(int k)
 	{

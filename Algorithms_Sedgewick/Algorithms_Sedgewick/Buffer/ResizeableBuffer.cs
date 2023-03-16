@@ -21,7 +21,7 @@ public class ResizeableBuffer<T> : IBuffer<T>
 		switch (newCapacity)
 		{
 			case < 0:
-				throw new ArgumentOutOfRangeException(nameof(newCapacity), ContainerErrorMessages.CapacityCannotBeNegative);
+				throw ThrowHelper.CapacityCannotBeNegativeException(newCapacity);
 			case 0:
 				buffer = new ZeroCapacityBuffer<T>();
 				return;

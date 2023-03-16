@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.Stack;
 
 public sealed class StackWithLinkedList<T> : IStack<T>
 {
-	private readonly LinkedList<T> items = new LinkedList<T>();
+	private readonly List.LinkedList<T> items = new List.LinkedList<T>();
 
 	public int Count => items.Count;
 
@@ -33,7 +33,7 @@ public sealed class StackWithLinkedList<T> : IStack<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 	}
 }

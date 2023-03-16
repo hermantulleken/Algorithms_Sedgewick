@@ -1,4 +1,4 @@
-﻿namespace Algorithms_Sedgewick;
+﻿namespace Algorithms_Sedgewick.Queue;
 
 public interface IQueue<T> : IEnumerable<T>
 {

@@ -11,10 +11,10 @@ public sealed class FullCapacity2Buffer<T> : IBuffer<T>
 	public int Capacity => 2;
     
 	public T First 
-		=> (Count == 0) ? throw Buffer.EmptyBufferInvalid() : FirstUnsafe;
+		=> (Count == 0) ? throw ThrowHelper.ContainerEmptyException : FirstUnsafe;
     
 	public T Last 
-		=> (Count == 0) ? throw Buffer.EmptyBufferInvalid() : LastUnsafe;
+		=> (Count == 0) ? throw ThrowHelper.ContainerEmptyException : LastUnsafe;
     
 	private T FirstUnsafe => firstIsItem1 ? item1 : item2;
 	private T LastUnsafe => firstIsItem1 ? item2 : item1;

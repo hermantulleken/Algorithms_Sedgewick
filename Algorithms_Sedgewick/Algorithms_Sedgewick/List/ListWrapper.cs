@@ -5,7 +5,7 @@ namespace Algorithms_Sedgewick.List;
 
 public static class ListExtensions
 {
-	private sealed class ListWrapper<T> : IRandomAccessList<T>
+	private sealed class ListWrapper<T> : IReadonlyRandomAccessList<T>
 	{
 		private readonly IList<T> list;
 
@@ -23,7 +23,7 @@ public static class ListExtensions
 			set => list[index] = value;
 		}
 
-		public IRandomAccessList<T> Copy() => list.ToList().ToRandomAccessList();
+		public IReadonlyRandomAccessList<T> Copy() => list.ToList().ToRandomAccessList();
 		
 		public static implicit operator  ListWrapper<T>(T[] list) => new(list);
 		public static implicit operator  ListWrapper<T>(List<T> list) => new(list);
@@ -34,5 +34,5 @@ public static class ListExtensions
 		public override string ToString() => list.Pretty();
 	}
 	
-	public static IRandomAccessList<T> ToRandomAccessList<T>(this IList<T> list) => new ListWrapper<T>(list);
+	public static IReadonlyRandomAccessList<T> ToRandomAccessList<T>(this IList<T> list) => new ListWrapper<T>(list);
 }

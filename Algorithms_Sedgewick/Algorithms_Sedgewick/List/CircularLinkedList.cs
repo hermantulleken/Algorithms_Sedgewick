@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.List;
 
 public sealed class CircularLinkedList<T> : IEnumerable<T>
 {
@@ -66,9 +66,9 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
-
+		
 		var removedNode = front;
 		
 		if (IsSingleton)
@@ -162,7 +162,7 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 	{
 		if (version != versionAtStartOfIteration)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.IteratingOverModifiedList);
+			ThrowHelper.ThrowIteratingOverModifiedContainer();
 		}
 	}
 		
@@ -170,7 +170,7 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 	}
 

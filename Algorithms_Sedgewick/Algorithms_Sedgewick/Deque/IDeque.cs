@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.Deque;
 
 public interface IDeque<T> : IEnumerable<T>
 {

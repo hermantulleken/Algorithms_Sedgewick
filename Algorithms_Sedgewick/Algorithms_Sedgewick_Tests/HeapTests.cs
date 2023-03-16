@@ -1,4 +1,5 @@
-﻿using Algorithms_Sedgewick.Sort;
+﻿using Algorithms_Sedgewick.PriorityQueue;
+using Algorithms_Sedgewick.Sort;
 using NUnit.Framework;
 
 namespace Algorithms_Sedgewick_Tests;
@@ -8,7 +9,7 @@ public class HeapTests
 	[Test]
 	public void TestPushPop()
 	{
-		var heap = new FixedCapacityBinaryHeap<int>(10);
+		var heap = new FixedCapacityMinBinaryHeap<int>(10);
 		
 		heap.Push(3);
 		heap.Push(5);

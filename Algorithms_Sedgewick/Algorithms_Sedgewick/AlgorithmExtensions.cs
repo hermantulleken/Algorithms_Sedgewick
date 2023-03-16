@@ -1,5 +1,6 @@
-using System.Diagnostics;
 using Algorithms_Sedgewick.List;
+using Algorithms_Sedgewick.Queue;
+using static System.Diagnostics.Debug;
 using static Algorithms_Sedgewick.Sort.Sort;
 
 namespace Algorithms_Sedgewick;
@@ -8,11 +9,105 @@ public static class AlgorithmExtensions
 {
 	private static readonly Random Random = new ();
 	
-	public static T First<T>(this IRandomAccessList<T> source)
+	/// <summary>
+	/// Finds the index in a sorted list at which an item can be inserted so that all the
+	/// elements to the left are smaller or equal, and all the elements to the right are larger
+	/// than the item.
+	/// </summary>
+	/// <typeparam name="T">The type of the elements in the list. Must implement <see cref="IComparable{T}"/>.</typeparam>
+	/// <param name="sortedList">The sorted list to search for the item.</param>
+	/// <param name="item">The item to find the index for.</param>
+	/// <returns>The index at which the item can be inserted while maintaining the sorted order.</returns>
+	/// <remarks>
+	/// If the item is smaller than all the items in the list, the method returns <c>0</c>.
+	/// If the item is greater than all the items in the list, the method returns <c>sortedList.Count</c>.
+	/// </remarks>
+	/*
+		We return the last (and not first or any other) index that preserves the order of the list if the item is inserted
+		so that the number of elements we need to move when inserting the item is minimal. 
+	*/
+	public static int FindInsertionIndex<T>(this IReadonlyRandomAccessList<T> sortedList, T item) where T : IComparable<T>
+	{
+	    // Ensure that the input list is sorted.
+	    Assert(IsSorted(sortedList));
+	    
+	    // Define a binary search algorithm to find the insertion point for the item.
+	    int Find(int start, int end)
+	    {
+	        while (end > start + 1)
+	        {
+	            int mid = (start + end) / 2;
+	    
+	            Assert(start != mid); //because end > start + 1
+	            Assert(mid != end);
+
+	            // If the item is less than the midpoint, search the left half of the list.
+	            if (Less(item, sortedList[mid]))
+	            {
+	                end = mid;
+	            }
+	            // Otherwise, search the right half of the list.
+	            else
+	            {
+	                start = mid;
+	            }
+	        }
+	        
+	        // When there are only two elements left, return the index of the correct element.
+	        Assert(end == start + 1);
+	        return Less(item, sortedList[start]) ? start : end;
+	    }
+
+	    // Handle special cases where the list is empty or the item is outside the bounds of the list.
+	    return sortedList.IsEmpty 
+	        ? 0 
+	        : Less(item, sortedList[0]) 
+	            ? 0 
+	            : Less(sortedList[^1], item) 
+	                ? sortedList.Count 
+	                : Find(0, sortedList.Count);
+	    
+	}
+	
+	public static void InsertSorted<T>(this ResizeableArray<T> list, T item) where T : IComparable<T>
+	{
+		Assert(IsSorted(list));
+		
+		int insertionIndex = list.FindInsertionIndex(item);
+		list.InsertAt(item, insertionIndex);
+	}
+
+	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list) where T : IComparable<T>
+	{
+		switch (list.Count)
+		{
+			case 0:
+				ThrowHelper.ThrowContainerEmpty();
+				break;
+			case 1:
+				return 0;
+		}
+
+		var min = list[0];
+		int minIndex = 0;
+		
+		for (int i = 1; i < list.Count; i++)
+		{
+			if (Less(list[i], min))
+			{
+				minIndex = i;
+				min = list[i];
+			}
+		}
+
+		return minIndex;
+	}
+
+	public static T First<T>(this IReadonlyRandomAccessList<T> source)
 	{
 		if (source.IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 
 		return source[0];
@@ -59,21 +154,21 @@ public static class AlgorithmExtensions
 		}
 	}
 
-	public static T Last<T>(this IRandomAccessList<T> source)
+	public static T Last<T>(this IReadonlyRandomAccessList<T> source)
 	{
 		if (source.IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 
 		return source[^1];
 	}
 
-	public static IEnumerable<LinkedList<T>.Node> NodesBeforeThat<T>(this LinkedList<T> list, Func<LinkedList<T>.Node, bool> predicate)
+	public static IEnumerable<List.LinkedList<T>.Node> NodesBeforeThat<T>(this List.LinkedList<T> list, Func<List.LinkedList<T>.Node, bool> predicate)
 	{
 		if (list.IsEmpty || list.Count == 1)
 		{
-			return Array.Empty<LinkedList<T>.Node>();
+			return Array.Empty<List.LinkedList<T>.Node>();
 		}
 		
 		return list.Nodes
@@ -81,9 +176,9 @@ public static class AlgorithmExtensions
 			.Where(node => predicate(node.NextNode));
 	}
 
-	public static LinkedList<T>.Node Nth<T>(this LinkedList<T> list, int n) => list.Nodes.Skip(n).First();
+	public static List.LinkedList<T>.Node Nth<T>(this List.LinkedList<T> list, int n) => list.Nodes.Skip(n).First();
 
-	public static void RemoveIf<T>(this LinkedList<T> list, Func<LinkedList<T>.Node, bool> predicate)
+	public static void RemoveIf<T>(this List.LinkedList<T> list, Func<List.LinkedList<T>.Node, bool> predicate)
 	{
 		if (list.IsEmpty)
 		{
@@ -103,7 +198,7 @@ public static class AlgorithmExtensions
 			return;
 		}
 
-		Debug.Assert(current != null);
+		Assert(current != null);
 		
 		while (current.NextNode != null)
 		{
@@ -116,7 +211,7 @@ public static class AlgorithmExtensions
 		}
 	}
 
-	public static LinkedList<T>.Node RemoveNth<T>(this LinkedList<T> list, int n)
+	public static List.LinkedList<T>.Node RemoveNth<T>(this List.LinkedList<T> list, int n)
 	{
 		if (n < 0 || n >= list.Count)
 		{
@@ -136,12 +231,43 @@ public static class AlgorithmExtensions
 	/// Shuffles a list so that each permutation is equally likely
 	/// </summary>
 	// Fisher-Yates shuffle from https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
-	public static void Shuffle<T>(this IRandomAccessList<T> list)
+	public static void Shuffle<T>(this IReadonlyRandomAccessList<T> list)
 	{
 		for (int i = list.Count - 1; i > 0; i--)
 		{
 			int j = Random.Next(i + 1); //Common mistake: to use i or list.Count here instead of i + 1
 			SwapAt(list, i, j);
 		}
+	}
+
+	public static void InsertSorted<T>(this List.LinkedList<T> list, T item) where T : IComparable<T>
+	{
+		if (list.Count == 0)
+		{
+			list.InsertAtFront(item);
+			return;
+		}
+		
+		var node = list.First;
+
+		if (Less(item, node.Item))
+		{
+			list.InsertAtFront(item);
+			return;
+		}
+
+		while (node.NextNode != null)
+		{
+			if (Less(item, node.NextNode.Item))
+			{
+				list.InsertAfter(node, item);
+				return;
+			}
+
+			node = node.NextNode;
+		}
+		
+		Assert(node == list.Last);
+		list.InsertAtBack(item);
 	}
 }

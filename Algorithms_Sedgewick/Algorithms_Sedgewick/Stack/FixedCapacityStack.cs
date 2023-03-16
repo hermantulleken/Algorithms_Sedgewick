@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using Support;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.Stack;
 
 /// <summary>
 /// A stack with a fixed capacity;
@@ -31,7 +31,7 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 	{
 		items = capacity switch
 		{
-			< 0 => throw new ArgumentException(ContainerErrorMessages.CapacityCannotBeNegative, nameof(capacity)),
+			< 0 => throw ThrowHelper.CapacityCannotBeNegativeException(capacity),
 			0 => Array.Empty<T>(),
 			_ => new T[capacity]
 		};
@@ -43,7 +43,7 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 	{
 		if (IsFull)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerFull);
+			ThrowHelper.ThrowContainerFull();
 		}
 
 		items[Count] = item;
@@ -93,7 +93,7 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 	{
 		if (version != versionAtStartOfIteration)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.IteratingOverModifiedList);
+			ThrowHelper.ThrowIteratingOverModifiedContainer();
 		}
 	}
 
@@ -101,7 +101,7 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 	}
 }

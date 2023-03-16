@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using Algorithms_Sedgewick.List;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.Stack;
 
 public sealed class StackWithResizeableArray<T> : IStack<T>
 {
@@ -39,7 +39,7 @@ public sealed class StackWithResizeableArray<T> : IStack<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 	}
 }

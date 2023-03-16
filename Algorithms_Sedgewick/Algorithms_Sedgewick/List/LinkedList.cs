@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
-using Support;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.List;
 
 public sealed class LinkedList<T> : IEnumerable<T>
 {
@@ -111,7 +110,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 
 		var removedNode = front;
@@ -235,7 +234,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	{
 		if (version != versionAtStartOfIteration)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.IteratingOverModifiedList);
+			ThrowHelper.ThrowIteratingOverModifiedContainer();
 		}
 	}
 		
@@ -243,7 +242,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 	}
 }

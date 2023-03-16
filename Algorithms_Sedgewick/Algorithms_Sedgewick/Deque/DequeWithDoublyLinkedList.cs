@@ -1,7 +1,8 @@
 ﻿using System.Collections;
+using Algorithms_Sedgewick.List;
 using Support;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.Deque;
 
 public class DequeWithDoublyLinkedList<T> : IDeque<T>
 {

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Algorithms_Sedgewick.Queue;
 
 namespace Algorithms_Sedgewick.Buffer;
 

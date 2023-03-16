@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-
+using Algorithms_Sedgewick.Deque;
 using Algorithms_Sedgewick.List;
+using Algorithms_Sedgewick.Queue;
 using Support;
 
 using static System.Diagnostics.Debug;
@@ -60,14 +61,12 @@ public static class Sort
 			MedianOfThreeFirst
 		}
 
-		public static QuickSortConfig Vanilla = new()
+		public static readonly QuickSortConfig Vanilla = new()
 		{
 			PivotSelection = PivotSelectionAlgorithm.First
 		};
 		
 		public PivotSelectionAlgorithm PivotSelection;
-		
-		
 	}
 
 	/// <summary>
@@ -101,7 +100,7 @@ public static class Sort
 			if (queue.IsEmpty)
 			{
 				//We need at least one element.
-				throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+				ThrowHelper.ThrowContainerEmpty();
 			}
 			
 			this.queue = queue;
@@ -244,7 +243,7 @@ public static class Sort
 		new[] { 5, 1 }//10
 	};
 
-	public static bool AreElementsEqual<T>(IRandomAccessList<T> array1, IRandomAccessList<T> array2, int start, int end) where T : IComparable<T>
+	public static bool AreElementsEqual<T>(IReadonlyRandomAccessList<T> array1, IReadonlyRandomAccessList<T> array2, int start, int end) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		
@@ -277,7 +276,7 @@ public static class Sort
 
 	// Implements Ex 2.1.14 in Sedgewick
 	//This seems to be a  version of gnome sort
-	public static void DequeueSortWithDeque<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void DequeueSortWithDeque<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		
@@ -318,23 +317,23 @@ public static class Sort
 		#if WHITEBOXTESTING
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckBottomSortedDescending(DequeueSortHelperWithDeque<T> helper, int n)
-			=> Debug.Assert(IsSortedDescending(helper.TopN(n).ToRandomAccessList()), nameof(CheckBottomSortedDescending));
+			=> Assert(IsSortedDescending(helper.TopN(n).ToRandomAccessList()), nameof(CheckBottomSortedDescending));
 
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckTopSortedDescending(DequeueSortHelperWithDeque<T> helper, int n)
-			=> Debug.Assert(n == 0 || IsSortedDescending(helper.BottomN(n - 1).ToRandomAccessList()), nameof(CheckTopSortedDescending));
+			=> Assert(n == 0 || IsSortedDescending(helper.BottomN(n - 1).ToRandomAccessList()), nameof(CheckTopSortedDescending));
 		
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckTopIsSmallerThanBottom(DequeueSortHelperWithDeque<T> helper, int bottomCount)
-			=> Debug.Assert(bottomCount == 0 || helper.BottomN(bottomCount).Min().CompareTo(helper.Top) >= 0, nameof(CheckTopIsSmallerThanBottom));
+			=> Assert(bottomCount == 0 || helper.BottomN(bottomCount).Min().CompareTo(helper.Top) >= 0, nameof(CheckTopIsSmallerThanBottom));
 
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckTopBiggerThanTop(DequeueSortHelperWithDeque<T> helper, int topCount)
-			=> Debug.Assert(helper.TopN(topCount).Max().CompareTo(helper.Top) >= 0, nameof(CheckTopBiggerThanTop));
+			=> Assert(helper.TopN(topCount).Max().CompareTo(helper.Top) >= 0, nameof(CheckTopBiggerThanTop));
 			
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckIsSorted(IEnumerable<T> helper)
-			=> Debug.Assert(IsSortedAscending(helper.ToArray().ToRandomAccessList()), nameof(CheckIsSorted));
+			=> Assert(IsSortedAscending(helper.ToArray().ToRandomAccessList()), nameof(CheckIsSorted));
 		#endif
 
 		int count = deque.Count;
@@ -386,7 +385,7 @@ public static class Sort
 
 	// Implements Ex 2.1.14 in Sedgewick
 	//This seems to be a  version of gnome sort
-	public static void DequeueSortWithQueue<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void DequeueSortWithQueue<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		if (list.Count <= 1)
@@ -413,7 +412,7 @@ public static class Sort
 	}
 
 	// From https://en.wikipedia.org/wiki/Gnome_sort
-	public static void GnomeSort<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void GnomeSort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		int i = 0;
@@ -431,16 +430,14 @@ public static class Sort
 		}
 	}
 
-	public static void InsertionSort<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void InsertionSort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		InsertionSort(list, 0, list.Count);
 	}
 
-	public static void InsertionSort<T>(IRandomAccessList<T> list, int start, int end) where T : IComparable<T>
-	{ 
-		//int length = list.Count;
-		
+	public static void InsertionSort<T>(IReadonlyRandomAccessList<T> list, int start, int end) where T : IComparable<T>
+	{
 		for (int i = start + 1; i < end; i++)
 		{ 
 			// Insert a[i] among a[i-1], a[i-2], a[i-3]... ..
@@ -459,7 +456,7 @@ public static class Sort
 	/// or null, <see cref="Comparer{T}.Default"/> is used.</param>
 	/// <typeparam name="T"></typeparam>
 	/// <returns><see langword="true"/> the list is sorted, <see langword="false"/> otherwise.</returns>
-	public static bool IsSorted<T>([NotNull] IRandomAccessList<T> list, [AllowNull] IComparer<T> comparer = null)
+	public static bool IsSorted<T>([NotNull] IReadonlyRandomAccessList<T> list, [AllowNull] IComparer<T> comparer = null)
 	{
 		if (list == null)
 		{
@@ -496,10 +493,10 @@ public static class Sort
 		return true;
 	}
 
-	public static bool IsSortedAscending<T>(IRandomAccessList<T> array) where T : IComparable<T> 
+	public static bool IsSortedAscending<T>(IReadonlyRandomAccessList<T> array) where T : IComparable<T> 
 		=> IsSortedAscending(array, 0, array.Count);
 
-	public static bool IsSortedAscending<T>(IRandomAccessList<T> array, int start, int end) where T : IComparable<T>
+	public static bool IsSortedAscending<T>(IReadonlyRandomAccessList<T> array, int start, int end) where T : IComparable<T>
 	{
 		for (int i = start + 1; i < end; i++)
 		{
@@ -512,11 +509,11 @@ public static class Sort
 		return true;
 	}
 
-	public static bool IsSortedDescending<T>(IRandomAccessList<T> array) where T : IComparable<T> 
+	public static bool IsSortedDescending<T>(IReadonlyRandomAccessList<T> array) where T : IComparable<T> 
 		=> IsSortedDescending(array, 0, array.Count);
 
 
-	public static bool IsSortedDescending<T>(IRandomAccessList<T> array, int start, int end) where T : IComparable<T>
+	public static bool IsSortedDescending<T>(IReadonlyRandomAccessList<T> array, int start, int end) where T : IComparable<T>
 	{
 		for (int i = start + 1; i < end; i++)
 		{
@@ -560,7 +557,7 @@ public static class Sort
 	}
 
 	// Ex. 2.2.22
-	public static void Merge3Sort<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void Merge3Sort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		var helpList = new T[list.Count];
@@ -588,7 +585,7 @@ public static class Sort
 
 	// Ex. 2.25
 	public static void MergeK<T>(
-		IRandomAccessList<T> list,
+		IReadonlyRandomAccessList<T> list,
 		T[] helpList,
 		int[] startIndices,
 		int[] indexes) where T : IComparable<T>
@@ -636,7 +633,7 @@ public static class Sort
 	}
 	
 	// Ex. 2.2.22
-	public static void MergeKSort<T>(IRandomAccessList<T> list, int k = 3) where T : IComparable<T>
+	public static void MergeKSort<T>(IReadonlyRandomAccessList<T> list, int k = 3) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 
@@ -678,7 +675,7 @@ public static class Sort
 		Sort(0, list.Count);
 	}
 
-	public static void MergeKSortBottomUp<T>(IRandomAccessList<T> list, int k) where T : IComparable<T>
+	public static void MergeKSortBottomUp<T>(IReadonlyRandomAccessList<T> list, int k) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		
@@ -715,10 +712,10 @@ public static class Sort
 		}
 	}
 
-	public static void MergeSort<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void MergeSort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 		=> MergeSort(list, default);
 
-	public static void MergeSort<T>(IRandomAccessList<T> list, MergeSortConfig config) where T : IComparable<T>
+	public static void MergeSort<T>(IReadonlyRandomAccessList<T> list, MergeSortConfig config) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		var helpList = new T[list.Count];
@@ -758,7 +755,7 @@ public static class Sort
 	}
 	
 	// Ex. 2.2.15
-	public static void MergeSortBottomsUpWithQueues<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void MergeSortBottomsUpWithQueues<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		if (list.Count <= 1)
 		{
@@ -815,11 +812,11 @@ public static class Sort
 		}
 	}
 
-	public static void MergeSortBottomUp<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void MergeSortBottomUp<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 		=> MergeSortBottomUp(list, MergeSortConfig.Optimized);
 
 	// P. 278
-	public static void MergeSortBottomUp<T>(IRandomAccessList<T> list, MergeSortConfig config) where T : IComparable<T>
+	public static void MergeSortBottomUp<T>(IReadonlyRandomAccessList<T> list, MergeSortConfig config) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		
@@ -873,7 +870,7 @@ public static class Sort
 	}
 
 	// Ex. 2.2.16
-	public static void MergeSortNatural<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void MergeSortNatural<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		
@@ -935,7 +932,7 @@ public static class Sort
 		}
 	}
 
-	public static int Partition<T>(IRandomAccessList<T> list, int start, int end, QuickSortConfig config) where T : IComparable<T>
+	public static int Partition<T>(IReadonlyRandomAccessList<T> list, int start, int end, QuickSortConfig config) where T : IComparable<T>
 	{
 		int i = start;
 		int j = end + 1;
@@ -984,7 +981,7 @@ public static class Sort
 		return j;
 	}
 	
-	public static void QuickSort<T>(IRandomAccessList<T> list, QuickSortConfig config) where T : IComparable<T>
+	public static void QuickSort<T>(IReadonlyRandomAccessList<T> list, QuickSortConfig config) where T : IComparable<T>
 	{
 		if (list.Count <= 1)
 		{
@@ -1005,7 +1002,7 @@ public static class Sort
 		}
 	}
 
-	public static void QuickTwoKey<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void QuickTwoKey<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		//Case 1: small element at start, large element at end 
 		void Case1(int start, int end)
@@ -1084,7 +1081,7 @@ public static class Sort
 		Case3(start, end);
 	}
 	
-	public static void SelectionSort<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void SelectionSort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		int length = list.Count;
@@ -1106,7 +1103,7 @@ public static class Sort
 		}
 	}
 
-	public static void ShellSort<T>(IRandomAccessList<T> list, int[] stepSizes) where T : IComparable<T>
+	public static void ShellSort<T>(IReadonlyRandomAccessList<T> list, int[] stepSizes) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		int length = list.Count;
@@ -1125,7 +1122,7 @@ public static class Sort
 		}
 	}
 
-	public static void ShellSortWithPrattSequence<T>(IRandomAccessList<T> list) where T : IComparable<T>
+	public static void ShellSortWithPrattSequence<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		int length = list.Count;
@@ -1150,7 +1147,7 @@ public static class Sort
 		}
 	}
 
-	public static void SortSmall<T>(IRandomAccessList<T> list)where T : IComparable<T>
+	public static void SortSmall<T>(IReadonlyRandomAccessList<T> list)where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();
 		int length = list.Count;
@@ -1199,7 +1196,7 @@ public static class Sort
 		=> Less(list[i], list[j]);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static bool LessAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable<T>
+	internal static bool LessAt<T>(IReadonlyRandomAccessList<T> list, int i, int j) where T : IComparable<T>
 		=> Less(list[i], list[j]);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1210,11 +1207,11 @@ public static class Sort
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static bool LessOrEqualAt<T>(IRandomAccessList<T> list, int i, int j) where T : IComparable<T> 
+	internal static bool LessOrEqualAt<T>(IReadonlyRandomAccessList<T> list, int i, int j) where T : IComparable<T> 
 		=> LessOrEqual(list[i], list[j]);
 	
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void SwapAt<T>(IRandomAccessList<T> list, int i, int j)
+	internal static void SwapAt<T>(IReadonlyRandomAccessList<T> list, int i, int j)
 	{
 		AddSwap();
 		(list[i], list[j]) = (list[j], list[i]);
@@ -1228,7 +1225,7 @@ public static class Sort
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void MoveAt<T>(IRandomAccessList<T> list, int sourceIndex, int destinationIndex)
+	internal static void MoveAt<T>(IReadonlyRandomAccessList<T> list, int sourceIndex, int destinationIndex)
 	{
 		list[destinationIndex] = list[sourceIndex];
 		list[sourceIndex] = default;
@@ -1253,7 +1250,7 @@ public static class Sort
 	
 	// Note: We use this algorithm instead of the shorter one above so that we can count the number of comparrisons.
 	// Should we use if statements instead?
-	private static int MedianOfThree<T>(IRandomAccessList<T> list, int a, int b, int c) where T : IComparable<T> 
+	private static int MedianOfThree<T>(IReadonlyRandomAccessList<T> list, int a, int b, int c) where T : IComparable<T> 
 		=> LessAt(list, a, b)
 			? LessAt(list, b, c)
 				? b
@@ -1331,7 +1328,7 @@ public static class Sort
 
 	// Ex 2.2.10
 	private static void FastMerge<T>(
-		IRandomAccessList<T> list, 
+		IReadonlyRandomAccessList<T> list, 
 		T[] helpList, 
 		int leftStartIndex, 
 		int rightStartIndex, 
@@ -1369,10 +1366,10 @@ public static class Sort
 	}
 
 	// p.271
-	//I made changes to the end and mid points, so that this is roughly equivalent to their (list, start, middle, end + 1)
-	//rightStartIndex is also the leftEndIndex;
+	// I made changes to the end and mid points, so that this is roughly equivalent to their (list, start, middle, end + 1)
+	// rightStartIndex is also the leftEndIndex;
 	private static void Merge<T>(
-		IRandomAccessList<T> list, 
+		IReadonlyRandomAccessList<T> list, 
 		T[] helpList, 
 		int leftStartIndex, 
 		int rightStartIndex, 
@@ -1417,7 +1414,7 @@ public static class Sort
 
 	// Ex. 2.2.22
 	private static void Merge3<T>(
-		IRandomAccessList<T> list,
+		IReadonlyRandomAccessList<T> list,
 		T[] helpList,
 		int list0Start,
 		int list1Start,

@@ -1,18 +1,20 @@
 ﻿using System.Collections;
+using Algorithms_Sedgewick.Deque;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.Stack;
 
 //With deck
 public class BoundedStack<T> : IStack<T>
 {
-	public int Count { get; }
-	public T Peek { get; }
+	public int Count => deque.Count;
+
+	public T Peek => deque.PeekRight;
 	public int MaxSize { get; }
 	public bool IsEmpty => Count == 0;
 	
 	public bool IsFull => Count == MaxSize;
 
-	private DequeWithDoublyLinkedList<T> deque = new();
+	private readonly DequeWithDoublyLinkedList<T> deque = new();
 	
 	public BoundedStack(int maxSize)
 	{
@@ -38,7 +40,7 @@ public class BoundedStack<T> : IStack<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 
 		return deque.PopRight();

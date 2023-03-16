@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.Bag;
 
 public sealed class BagWithLinkedList<T> : IBag<T>
 {
-	private readonly LinkedList<T> items = new ();
+	private readonly List.LinkedList<T> items = new ();
 
 	public int Count => items.Count;
 

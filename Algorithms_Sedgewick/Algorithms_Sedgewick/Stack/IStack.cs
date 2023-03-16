@@ -1,4 +1,4 @@
-﻿namespace Algorithms_Sedgewick;
+﻿namespace Algorithms_Sedgewick.Stack;
 
 public interface IStack<T> : IEnumerable<T>
 {

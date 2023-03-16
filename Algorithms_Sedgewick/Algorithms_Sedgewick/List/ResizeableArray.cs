@@ -4,7 +4,7 @@ using Support;
 
 namespace Algorithms_Sedgewick.List;
 
-public sealed class ResizeableArray<T> : IRandomAccessList<T>
+public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 {
 	[NotNull]
 	private T[] items;
@@ -32,7 +32,7 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		}
 	}
 
-	public IRandomAccessList<T> Copy()
+	public IReadonlyRandomAccessList<T> Copy()
 	{
 		var copy = new ResizeableArray<T>(Capacity)
 		{
@@ -51,7 +51,7 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 	{
 		items = capacity switch
 		{
-			< 0 => throw new ArgumentException(ContainerErrorMessages.CapacityCannotBeNegative, nameof(capacity)),
+			< 0 => throw ThrowHelper.CapacityCannotBeNegativeException(capacity),
 			0 => Array.Empty<T>(),
 			_ => new T[capacity]
 		};
@@ -72,11 +72,46 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		version++;
 	}
 
+	public void InsertAt(T item, int index = 0)
+	{
+		if (IsFull)
+		{
+			Grow();
+		}
+
+		for (int i = Count; i > index; i--)
+		{
+			items[i] = items[i - 1];
+		}
+
+		items[index] = item;
+		version++;
+		Count++;
+	}
+
+	public T DeleteAt(int index = 0)
+	{
+		ValidateIndex(index);
+		
+		var firstItem = items[index];
+		version++;
+		Count--;
+		
+		for (int i = index; i < Count; i++)
+		{
+			items[i] = items[i + 1];
+		}
+
+		items[Count] = default;
+		
+		return firstItem;
+	}
+
 	public T RemoveLast()
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 
 		Count--;
@@ -109,7 +144,8 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		switch (Capacity)
 		{
 			case ResizeableArray.MaxCapacity:
-				throw new Exception(ContainerErrorMessages.TheContainerIsAtMaximumCapacity);
+				ThrowHelper.ThrowTheContainerIsAtMaximumCapacity();
+				break;
 			case < ResizeableArray.HalfMaxCapacity:
 				Capacity *= 2;
 				break;
@@ -140,7 +176,7 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 	{
 		if (version != versionAtStartOfIteration)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.IteratingOverModifiedList);
+			ThrowHelper.ThrowIteratingOverModifiedContainer();
 		}
 	}
 	

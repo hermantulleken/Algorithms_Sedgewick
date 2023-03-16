@@ -1,6 +1,7 @@
 ﻿using System.Collections;
+using Algorithms_Sedgewick.List;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.Queue;
 
 public sealed class QueueWithCircularLinkedList<T> : IQueue<T>
 {
@@ -32,7 +33,7 @@ public sealed class QueueWithCircularLinkedList<T> : IQueue<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 	}
 }

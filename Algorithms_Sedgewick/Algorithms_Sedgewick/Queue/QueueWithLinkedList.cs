@@ -1,11 +1,10 @@
 ﻿using System.Collections;
-using Support;
 
-namespace Algorithms_Sedgewick;
+namespace Algorithms_Sedgewick.Queue;
 
 public sealed class QueueWithLinkedList<T> : IQueue<T>
 {
-	private readonly LinkedList<T> items = new();
+	private readonly List.LinkedList<T> items = new();
 
 	public int Count => items.Count;
 
@@ -35,7 +34,7 @@ public sealed class QueueWithLinkedList<T> : IQueue<T>
 	{
 		if (IsEmpty)
 		{
-			throw new InvalidOperationException(ContainerErrorMessages.ContainerEmpty);
+			ThrowHelper.ThrowContainerEmpty();
 		}
 	}
 }

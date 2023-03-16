@@ -1,4 +1,4 @@
-﻿namespace Algorithms_Sedgewick;
+﻿namespace Algorithms_Sedgewick.Bag;
 
 public interface IBag<T> : IEnumerable<T>
 {

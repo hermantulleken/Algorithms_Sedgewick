@@ -15,11 +15,11 @@ public sealed class RingBuffer<T> : IBuffer<T>
 	public T First 
 		=> Count > 0 
 			? this[0] 
-			: throw Buffer.EmptyBufferInvalid();
+			: throw ThrowHelper.ContainerEmptyException;
 	public T Last 
 		=> Count > 0
 			? this[Count - 1]
-			: throw Buffer.EmptyBufferInvalid();
+			: throw ThrowHelper.ContainerEmptyException;
     
 	public T this[int index]
 	{
@@ -40,7 +40,7 @@ public sealed class RingBuffer<T> : IBuffer<T>
 	{
 		if (capacity <= 0)
 		{
-			throw new ArgumentOutOfRangeException(nameof(capacity), ContainerErrorMessages.CapacityCannotBeNegativeOrZero);
+			ThrowHelper.ThrowCapacityCannotBeNegativeOrZero(capacity);
 		}
         
 		Capacity = capacity;

@@ -6,8 +6,8 @@ public sealed class ZeroCapacityBuffer<T> : IBuffer<T>
 {
 	public int Count => 0;
 	public int Capacity => 0;
-	public T First => throw Buffer.EmptyBufferInvalid();
-	public T Last  => throw Buffer.EmptyBufferInvalid();
+	public T First => throw ThrowHelper.ContainerEmptyException;
+	public T Last  => throw ThrowHelper.ContainerEmptyException;
     
 	/// <summary>
 	/// This method has no effect, since the capacity is 0.
