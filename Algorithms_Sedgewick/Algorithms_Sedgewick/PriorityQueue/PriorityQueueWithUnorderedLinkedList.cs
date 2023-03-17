@@ -31,7 +31,10 @@ public sealed class PriorityQueueWithUnorderedLinkedList<T> : IPriorityQueue<T> 
 		}
 
 		var minNode = items.RemoveFromFront();
-		MoveMinToFront();
+		if (Count > 1)
+		{
+			MoveMinToFront();
+		}
 		
 		return minNode.Item;
 	}
@@ -39,7 +42,10 @@ public sealed class PriorityQueueWithUnorderedLinkedList<T> : IPriorityQueue<T> 
 	public void Push(T item)
 	{
 		items.InsertAtFront(item);
-		MoveMinToFront();
+		if (Count > 1)
+		{
+			MoveMinToFront();
+		}
 	}
 
 	private List.LinkedList<T>.Node GetNodeBeforeMinNode()
@@ -51,13 +57,10 @@ public sealed class PriorityQueueWithUnorderedLinkedList<T> : IPriorityQueue<T> 
 		
 		foreach (var node in items.Nodes)
 		{
-			if(node.NextNode != null)
+			if(node.NextNode != null && Sort.Sort.Less(node.NextNode.Item, minNode.Item))
 			{
-				if (Sort.Sort.Less(node.NextNode.Item, minNode.Item))
-				{
-					nodeBeforeMinNode = node;
-					minNode = node.NextNode;
-				}
+				nodeBeforeMinNode = node;
+				minNode = node.NextNode;
 			}
 		}
 
@@ -66,11 +69,7 @@ public sealed class PriorityQueueWithUnorderedLinkedList<T> : IPriorityQueue<T> 
 
 	private void MoveMinToFront()
 	{
-		if (Count == 1)
-		{
-			return; //Min already in front
-		}
-
+		Debug.Assert(Count > 1);
 		var nodeBeforeMinNode = GetNodeBeforeMinNode();
 
 		if (nodeBeforeMinNode != null)

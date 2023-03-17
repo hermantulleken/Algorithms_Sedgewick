@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Support;
 
 namespace Algorithms_Sedgewick.List;
@@ -164,11 +165,11 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 		items = newItems;
 	}
 		
-	private void ValidateIndex(int index)
+	private void ValidateIndex(int index, [CallerArgumentExpression("index")] string indexArgName=null)
 	{
 		if (index < 0 || index >= Count)
 		{
-			throw new IndexOutOfRangeException();
+			throw new ArgumentOutOfRangeException(indexArgName);
 		}
 	}
 

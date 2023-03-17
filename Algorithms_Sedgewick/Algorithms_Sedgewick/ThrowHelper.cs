@@ -1,8 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
+using Algorithms_Sedgewick.List;
 
 namespace Algorithms_Sedgewick;
 
-internal class ThrowHelper
+internal static class ThrowHelper
 {
 	internal static readonly InvalidOperationException ContainerEmptyException = new InvalidOperationException(ContainerEmpty);
 	internal static readonly InvalidOperationException ContainerFullException = new InvalidOperationException(ContainerFull);
@@ -39,5 +40,35 @@ internal class ThrowHelper
 	
 	internal static void ThrowIteratingOverModifiedContainer() 
 		=> throw IteratingOverModifiedContainerException;
+	
+	internal static T ThrowIfNull<T>(this T obj, [CallerArgumentExpression("obj")] string objArgName=null)
+	{
+		if (obj == null)
+		{
+			throw new ArgumentException(objArgName);
+		}
+
+		return obj;
+	}
+
+	internal static T[] ThrowIfEmpty<T>(this T[] list, [CallerArgumentExpression("list")] string listArgName = null)
+	{
+		if (list.Length == 0)
+		{
+			ThrowContainerEmpty();
+		}
+
+		return list;
+	}
+	
+	internal static IReadonlyRandomAccessList<T> ThrowIfEmpty<T>(this IReadonlyRandomAccessList<T> list, [CallerArgumentExpression("list")] string listArgName = null)
+	{
+		if (list.IsEmpty)
+		{
+			ThrowContainerEmpty();
+		}
+
+		return list;
+	}
 	
 }

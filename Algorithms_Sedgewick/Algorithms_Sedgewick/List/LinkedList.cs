@@ -141,6 +141,13 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		}
 	}
 
+	/// <summary>
+	/// Removes the node after the specified node.
+	/// </summary>
+	/// <param name="node">The node whose successor is to be removed.</param>
+	/// <returns>The removed node.</returns>
+	/// <exception cref="System.ArgumentNullException">Thrown when the input node is null.</exception>
+	/// <exception cref="System.InvalidOperationException">Thrown when the input node does not have a successor to remove.</exception>
 	public Node RemoveAfter(Node node)
 	{
 		if (node == null)
@@ -150,7 +157,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 
 		if (node.NextNode == null)
 		{
-			throw new Exception("No node after");
+			throw new InvalidOperationException("There is no node after the given node that can be removed.");
 		}
 
 		//Also works if node.NextNode.NextNode is null
@@ -158,7 +165,8 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		var removedNode = node.NextNode;
 
 		node.NextNode = newNextNode;
-		
+		Count--;
+		version++;
 		return removedNode;
 	}
 	
@@ -176,6 +184,8 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		};
 
 		node.NextNode = newNode;
+		Count++;
+		version++;
 
 		return newNode;
 	}
@@ -224,7 +234,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		version++;
 	}
 
-	public string ToString() => First.ToString();
+	public override string ToString() => First.ToString();
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	

@@ -3,7 +3,7 @@ using Algorithms_Sedgewick.Stack;
 
 namespace Algorithms_Sedgewick;
 
-public class TestAlgorithms
+public static class TestAlgorithms
 {
 	public static bool AreDelimitersBalanced(string s)
 	{ 

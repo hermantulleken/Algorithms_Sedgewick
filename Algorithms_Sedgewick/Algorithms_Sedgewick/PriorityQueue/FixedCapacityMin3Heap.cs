@@ -3,13 +3,8 @@ using Support;
 using static System.Diagnostics.Debug;
 
 namespace Algorithms_Sedgewick.PriorityQueue;
-/// <summary>
-/// A container that allows efficient insertions and
-/// retrieval of the minimum element. 
-/// </summary>
-//Note: This is a min binary heap, so comparisons in sink and swim are inverted compared to text book
-//Note: The first element in the array is not used
-public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : IComparable<T>
+
+public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<T>
 {
 	private const string EmptyHeapPresentation = "()";
 
@@ -48,7 +43,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 	private bool IsReferenceType { get; }
 #endif
 	
-	public FixedCapacityMinBinaryHeap(int capacity)
+	public FixedCapacityMin3Heap(int capacity)
 	{
 		Capacity = capacity;
 		
@@ -153,10 +148,10 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 	{
 		Assert(k > StartIndex);
 		
-		while (k > StartIndex && LessAt(k, k / 2))
+		while (k > StartIndex && LessAt(k, k / 3))
 		{
-			SwapAt(k / 2, k);
-			k /= 2;
+			SwapAt(k / 3, k);
+			k /= 3;
 		}
 	}
 
@@ -164,11 +159,15 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 	{
 		Assert(Count != 1);
 		
-		while (2 * k <= Count)
+		while (3 * k <= Count)
 		{
-			int j = 2 * k;
+			int j = 3 * k;
 			
-			if (j < Count && LessAt(j + 1, j))
+			if (j < Count && LessAt(j + 2, j))
+			{
+				j++;
+			}
+			else if (j < Count && LessAt(j + 1, j))
 			{
 				j++;
 			}
@@ -325,5 +324,5 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 		//4 -> 3
 
 		return IsSingleton ? StartIndex : lastIndex / 2 + 1;
-	}
+	} 
 }

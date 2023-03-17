@@ -1,6 +1,6 @@
 ﻿namespace Support;
 
-public class Diagnostics
+public static class Diagnostics
 {
 	public const string WhiteBoxTestingDefine = "WHITEBOXTESTING";
 }

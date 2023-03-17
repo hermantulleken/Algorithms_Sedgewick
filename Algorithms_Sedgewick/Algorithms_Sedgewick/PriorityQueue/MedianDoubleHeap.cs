@@ -9,46 +9,18 @@ namespace Algorithms_Sedgewick.PriorityQueue;
 //This implementation uses a wrapper max heap that may npt be so performant. 
 public sealed class MedianDoubleHeap<T> where T : IComparable<T>
 {
-	private readonly struct InvertedComparable : IComparable<InvertedComparable>
-	{
-		public T Item { get; }
+	
 
-		public InvertedComparable(T item)
-		{
-			Item = item;
-		}
-
-		public int CompareTo(InvertedComparable other) => other.Item.CompareTo(Item);
-	}
-
-	public sealed class MaxHeap
-	{
-		private readonly FixedCapacityMinBinaryHeap<InvertedComparable> minHeap;
-
-		public int Count => minHeap.Count;
-
-		public MaxHeap(int capacity)
-		{
-			minHeap = new FixedCapacityMinBinaryHeap<InvertedComparable>(capacity);
-		}
-
-		public void Push(T item) => minHeap.Push(new InvertedComparable(item));
-		public T PopMax() => minHeap.PopMin().Item;
-		public T Peek => minHeap.PeekMin.Item;
-
-		public override string ToString() => minHeap.ToString();
-	}
-
-	private readonly MaxHeap smallestHalf;
+	private readonly FixedCapacityMaxBinaryHeap<T> smallestHalf;
 	private readonly FixedCapacityMinBinaryHeap<T> biggestHalf;
 
 	public MedianDoubleHeap(int capacity)
 	{
 		biggestHalf = new FixedCapacityMinBinaryHeap<T>(capacity);
-		smallestHalf = new MaxHeap(capacity);
+		smallestHalf = new FixedCapacityMaxBinaryHeap<T>(capacity);
 	}
 
-	public T PeekMedian => smallestHalf.Peek;
+	public T PeekMedian => smallestHalf.PeekMax;
 
 	public void Push(T item)
 	{

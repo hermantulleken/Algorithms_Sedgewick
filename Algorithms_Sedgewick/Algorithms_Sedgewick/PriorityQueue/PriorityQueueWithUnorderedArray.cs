@@ -1,4 +1,5 @@
 ﻿using Algorithms_Sedgewick.List;
+using static Algorithms_Sedgewick.Sort.Sort;
 using static Algorithms_Sedgewick.ThrowHelper;
 
 namespace Algorithms_Sedgewick.PriorityQueue;
@@ -36,21 +37,29 @@ public sealed class PriorityQueueWithUnorderedArray<T> : IPriorityQueue<T> where
 
 		var min = items[LastIndex];
 		items.DeleteAt(LastIndex);
-		MoveMinToLast();
+
+		if (Count > 1)
+		{
+			MoveMinToLast();
+		}
 		
 		return min;
 	}
 
 	public void Push(T item)
 	{
-		if (!IsFull)
+		if (IsFull)
 		{
 			ThrowContainerFull();
 		}
 
 		items.Add(item);
-		MoveMinToLast();
+
+		if (Count > 1)
+		{
+			MoveMinToLast();
+		}
 	}
 
-	private void MoveMinToLast() => Sort.Sort.SwapAt(items,LastIndex, items.FindIndexOfMin());
+	private void MoveMinToLast() => SwapAt(items,LastIndex, items.FindIndexOfMin());
 }

@@ -233,7 +233,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 	{
 		if (nodeToRemove == null)
 		{
-			throw new Exception("No node to remove.");
+			throw new ArgumentNullException(nameof(nodeToRemove));
 		}
 		
 		var nodeBeforeRemoval = nodeToRemove.PreviousNode;

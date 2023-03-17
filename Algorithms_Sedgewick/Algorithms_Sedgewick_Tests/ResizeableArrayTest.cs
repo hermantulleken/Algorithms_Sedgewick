@@ -156,9 +156,9 @@ public class ResizeableArrayTest
     public void Indexer_Get_WhenIndexOutOfRange_ThrowsIndexOutOfRangeException()
     {
         var arr = new ResizeableArray<int>();
-        Assert.Throws<IndexOutOfRangeException>(() =>
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
         {
-	        var s = arr[0];
+	        _ = arr[0];
         });
     }
 
@@ -175,20 +175,17 @@ public class ResizeableArrayTest
     public void Indexer_Set_WhenIndexOutOfRange_ThrowsIndexOutOfRangeException()
     {
         var arr = new ResizeableArray<int>();
-        Assert.Throws<IndexOutOfRangeException>(() => arr[0] = 1);
+        Assert.Throws<ArgumentOutOfRangeException>(() => arr[0] = 1);
     }
 
     [Test]
     public void Enumerator_ReturnsAllElements()
     {
-        var arr = new ResizeableArray<int>();
-        arr.Add(1);
-        arr.Add(2);
-        arr.Add(3);
+        var arr = new ResizeableArray<int> { 1, 2, 3 };
 
         var result = new List<int>();
 
-        foreach (var item in arr)
+        foreach (int item in arr)
         {
             result.Add(item);
         }

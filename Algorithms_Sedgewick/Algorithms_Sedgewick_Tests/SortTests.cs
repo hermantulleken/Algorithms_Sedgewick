@@ -7,6 +7,7 @@ using static Algorithms_Sedgewick.Sort.Sort;
 
 namespace Algorithms_Sedgewick_Tests;
 
+[Parallelizable]
 public class SortTests
 {
 	private static readonly IReadonlyRandomAccessList<int> TestArray = new []{5, 9, 1, 23, 6, 2, 6, 18, 2, 3, 7, 6, 11, 71, 8, 4,  19}.ToRandomAccessList();
@@ -56,12 +57,8 @@ public class SortTests
 	public void SortTest(Action<IReadonlyRandomAccessList<int>> sortFunction)
 	{
 		var list = TestArray.Copy();
-
-		var listStr1 = list.Pretty();
-		
 		sortFunction(list);
-		var listStr2 = list.Pretty();
-		var expected = TestArray.OrderBy(x => x).ToArray();
+		int[] expected = TestArray.OrderBy(x => x).ToArray();
 		Assert.That(list, Is.EqualTo(expected));
 	}
 
@@ -83,18 +80,14 @@ public class SortTests
 	{
 		int[] expectedOutput = input.OrderBy(x => x).ToArray();
 
-		//foreach (var sortFunction in SortFunctions)
-		{
-			sortFunction(input);
-			Assert.That(input, Is.EqualTo(expectedOutput));
-			Console.WriteLine(input.Pretty());
-		}
+		sortFunction(input);
+		Assert.That(input, Is.EqualTo(expectedOutput));
+		Console.WriteLine(input.Pretty());
 	}
 
 	[TestCaseSource(nameof(PartialSortFunctions))]
 	public void TestPartialSort(Action<IReadonlyRandomAccessList<int>, int, int> sortFunction)
 	{
-		//Action<IRandomAccessList<int>, int, int> sortAlgorithm = Sort.InsertionSort;
 		int startIndex = 4;
 		int endIndex = 7;
 		

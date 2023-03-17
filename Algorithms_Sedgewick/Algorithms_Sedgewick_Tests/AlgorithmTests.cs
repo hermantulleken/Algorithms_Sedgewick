@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 namespace Algorithms_Sedgewick_Tests;
 
+[Parallelizable]
 public class AlgorithmTests
 {
 	private static readonly ResizeableArray<int> Empty = new();

@@ -2,7 +2,7 @@
 
 namespace Support;
 
-public class Timer
+public static class Timer
 {
 	public static IList<long> Time(IEnumerable<Action> actions)
 	{

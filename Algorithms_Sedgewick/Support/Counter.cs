@@ -10,13 +10,13 @@ public class Counter<T>
 	public IEnumerable<KeyValuePair<T, int>> Counts => counts;
 	public void Add(T key)
 	{
-		if (!counts.ContainsKey(key))
+		if (counts.ContainsKey(key))
 		{
-			counts[key] = 1;
+			counts[key]++;
 		}
 		else
 		{
-			counts[key]++;
+			counts[key] = 1;
 		}
 	}
 

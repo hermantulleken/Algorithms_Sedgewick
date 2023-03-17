@@ -7,6 +7,7 @@ using Support;
 
 namespace Algorithms_Sedgewick_Tests;
 
+[Parallelizable]
 public class TestGeometricAlgorithms
 {
 	[Test]
@@ -36,7 +37,6 @@ public class TestGeometricAlgorithms
 			new Vector2(2, 0),
 			new Vector2(2, 2),
 			new Vector2(0, 2),
-		
 			new Vector2(1, 1)
 		};
 

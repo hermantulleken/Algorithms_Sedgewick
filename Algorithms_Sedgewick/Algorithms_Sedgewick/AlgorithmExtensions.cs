@@ -8,7 +8,127 @@ namespace Algorithms_Sedgewick;
 public static class AlgorithmExtensions
 {
 	private static readonly Random Random = new ();
+
+	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list) where T : IComparable<T>
+		=> list.FindIndexOfMin(0, list.Count);
+	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list, int start, int end) where T : IComparable<T>
+	{
+		int length = end - start;
+		
+		switch (length)
+		{
+			case 0:
+				ThrowHelper.ThrowContainerEmpty();
+				break;
+			case 1:
+				return 0;
+		}
+
+		var min = list[start];
+		int minIndex = start;
+		
+		for (int i = start + 1; i < end; i++)
+		{
+			if (Less(list[i], min))
+			{
+				minIndex = i;
+				min = list[i];
+			}
+		}
+
+		return minIndex;
+	}
+
+	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list) where T : IComparable<T>
+		=> list.FindIndexOfMax(0, list.Count);
 	
+	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list, int start, int end) where T : IComparable<T>
+	{
+		int length = end - start;
+		switch (length)
+		{
+			case 0:
+				ThrowHelper.ThrowContainerEmpty();
+				break;
+			case 1:
+				return 0;
+		}
+
+		var max = list[start];
+		int maxIndex = start;
+		
+		for (int i = start + 1; i < end; i++)
+		{
+			if (Less(max, list[i]))
+			{
+				maxIndex = i;
+				max = list[i];
+			}
+		}
+
+		return maxIndex;
+	}
+	
+	public static int FindIndexOfMin<T>(this T[] list) where T : IComparable<T>
+		=> list.FindIndexOfMin(0, list.Length);
+	public static int FindIndexOfMin<T>(this T[] list, int start, int end) where T : IComparable<T>
+	{
+		int length = end - start;
+		
+		switch (length)
+		{
+			case 0:
+				ThrowHelper.ThrowContainerEmpty();
+				break;
+			case 1:
+				return 0;
+		}
+
+		var min = list[start];
+		int minIndex = start;
+		
+		for (int i = start + 1; i < end; i++)
+		{
+			if (Less(list[i], min))
+			{
+				minIndex = i;
+				min = list[i];
+			}
+		}
+
+		return minIndex;
+	}
+
+	public static int FindIndexOfMax<T>(this T[] list) where T : IComparable<T>
+		=> list.FindIndexOfMax(0, list.Length);
+	
+	public static int FindIndexOfMax<T>(this T[] list, int start, int end) where T : IComparable<T>
+	{
+		int length = end - start;
+		switch (length)
+		{
+			case 0:
+				ThrowHelper.ThrowContainerEmpty();
+				break;
+			case 1:
+				return 0;
+		}
+
+		var max = list[start];
+		int maxIndex = start;
+		
+		for (int i = start + 1; i < end; i++)
+		{
+			if (Less(max, list[i]))
+			{
+				maxIndex = i;
+				max = list[i];
+			}
+		}
+
+		return maxIndex;
+	}
+
 	/// <summary>
 	/// Finds the index in a sorted list at which an item can be inserted so that all the
 	/// elements to the left are smaller or equal, and all the elements to the right are larger
@@ -68,7 +188,16 @@ public static class AlgorithmExtensions
 	                : Find(0, sortedList.Count);
 	    
 	}
-	
+
+	public static T First<T>(this IReadonlyRandomAccessList<T> source)
+	{
+		source
+			.ThrowIfNull()
+			.ThrowIfEmpty();
+
+		return source[0];
+	}
+
 	public static void InsertSorted<T>(this ResizeableArray<T> list, T item) where T : IComparable<T>
 	{
 		Assert(IsSorted(list));
@@ -77,40 +206,35 @@ public static class AlgorithmExtensions
 		list.InsertAt(item, insertionIndex);
 	}
 
-	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list) where T : IComparable<T>
+	public static void InsertSorted<T>(this List.LinkedList<T> list, T item) where T : IComparable<T>
 	{
-		switch (list.Count)
+		if (list.Count == 0)
 		{
-			case 0:
-				ThrowHelper.ThrowContainerEmpty();
-				break;
-			case 1:
-				return 0;
+			list.InsertAtFront(item);
+			return;
 		}
-
-		var min = list[0];
-		int minIndex = 0;
 		
-		for (int i = 1; i < list.Count; i++)
+		var node = list.First;
+
+		if (Less(item, node.Item))
 		{
-			if (Less(list[i], min))
+			list.InsertAtFront(item);
+			return;
+		}
+
+		while (node.NextNode != null)
+		{
+			if (Less(item, node.NextNode.Item))
 			{
-				minIndex = i;
-				min = list[i];
+				list.InsertAfter(node, item);
+				return;
 			}
+
+			node = node.NextNode;
 		}
-
-		return minIndex;
-	}
-
-	public static T First<T>(this IReadonlyRandomAccessList<T> source)
-	{
-		if (source.IsEmpty)
-		{
-			ThrowHelper.ThrowContainerEmpty();
-		}
-
-		return source[0];
+		
+		Assert(node == list.Last);
+		list.InsertAtBack(item);
 	}
 
 	public static IEnumerable<T> JosephusSequence<T>(this IEnumerable<T> list, int m)
@@ -156,11 +280,10 @@ public static class AlgorithmExtensions
 
 	public static T Last<T>(this IReadonlyRandomAccessList<T> source)
 	{
-		if (source.IsEmpty)
-		{
-			ThrowHelper.ThrowContainerEmpty();
-		}
-
+		source
+			.ThrowIfNull()
+			.ThrowIfEmpty();
+		
 		return source[^1];
 	}
 
@@ -226,7 +349,7 @@ public static class AlgorithmExtensions
 		var previous = list.Nth(n - 1);
 		return list.RemoveAfter(previous);
 	}
-	
+
 	/// <summary>
 	/// Shuffles a list so that each permutation is equally likely
 	/// </summary>
@@ -238,36 +361,5 @@ public static class AlgorithmExtensions
 			int j = Random.Next(i + 1); //Common mistake: to use i or list.Count here instead of i + 1
 			SwapAt(list, i, j);
 		}
-	}
-
-	public static void InsertSorted<T>(this List.LinkedList<T> list, T item) where T : IComparable<T>
-	{
-		if (list.Count == 0)
-		{
-			list.InsertAtFront(item);
-			return;
-		}
-		
-		var node = list.First;
-
-		if (Less(item, node.Item))
-		{
-			list.InsertAtFront(item);
-			return;
-		}
-
-		while (node.NextNode != null)
-		{
-			if (Less(item, node.NextNode.Item))
-			{
-				list.InsertAfter(node, item);
-				return;
-			}
-
-			node = node.NextNode;
-		}
-		
-		Assert(node == list.Last);
-		list.InsertAtBack(item);
 	}
 }

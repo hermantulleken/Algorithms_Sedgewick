@@ -1,11 +1,9 @@
-﻿
-using System.Linq;
-using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.List;
+﻿using Algorithms_Sedgewick.List;
 using NUnit.Framework;
 
 namespace Algorithms_Sedgewick_Tests;
 
+[Parallelizable]
 public class LinkedListTests
 {
 	private const int ArbitraryElement = 100;
