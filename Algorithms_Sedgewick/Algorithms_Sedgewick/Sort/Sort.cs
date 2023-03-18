@@ -129,7 +129,7 @@ public static class Sort
 			}
 		}
 
-		public override string ToString() => $"{Peek1} {queue.ToString()}";
+		public override string ToString() => $"{Peek1} {queue}";
 
 		private void DequeueToRight() => Peek1 = queue.Dequeue();
 
@@ -427,6 +427,60 @@ public static class Sort
 				SwapAt(list, i - 1, i);
 				i--;
 			}
+		}
+	}
+
+	public static void HeapSort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
+	{
+		if (list.Count <= 1)
+		{
+			return;
+		}
+		
+		int GetChildIndex(int index) => 2 * index + 1;
+		//int GetParentIndex(int index) => (index - 1) / 2;
+		
+		void Sink(int k, int count)
+		{
+			Assert(list.Count != 1);
+
+			int child = GetChildIndex(k);
+			
+			while (child < count)
+			{
+				if (child < count && LessAt(list, child, child+1))
+				{
+					child++;
+				}
+
+				if (!LessAt(list, k, child))
+				{
+					break;
+				}
+			
+				SwapAt(list, k, child);
+				k = child;
+				child = GetChildIndex(child);
+			}
+		}
+
+		int count = list.Count;
+		Console.WriteLine(list.Pretty());
+		
+		for (int k = (count - 1) / 2; k >= 0; k--)
+		{
+			Sink(k, count);
+			Console.WriteLine(list.Pretty());
+		}
+
+		int i = count-1;
+		
+		while (i >= 1)
+		{
+			SwapAt(list, 0, i);
+			i--;
+			Sink(0, i);
+			Console.WriteLine(list.Pretty());
 		}
 	}
 
@@ -1081,6 +1135,74 @@ public static class Sort
 		Case3(start, end);
 	}
 	
+	
+	//Note: This changes the order of the elements in the array.
+	public static IComparable<T> SelectNthLowest<T>(IReadonlyRandomAccessList<T> list, int n, QuickSortConfig config) where T : IComparable<T>
+	{
+		MoveNLowestToLeft(list, n, config);
+		return list[n];
+	}
+	
+	//Note: This changes the order of the elements in the array.
+	public static void MoveNLowestToLeft<T>(IReadonlyRandomAccessList<T> list, int n, QuickSortConfig config) where T : IComparable<T>
+	{
+		list.ThrowIfNull();
+		n.ThrowIfOutOfRange(list.Count);
+		
+		list.Shuffle();
+		
+		int start = 0;
+		int end = list.Count - 1;
+		
+		while (end > start)
+		{
+			int j = Partition(list, start, end, config);
+			
+			if (j == n)
+			{
+				return;
+			}
+
+			if (j > n)
+			{
+				end = j - 1;
+			}
+			else
+			{
+				Assert(j < n);
+				start = j + 1;
+			}
+		}
+	}
+
+	private struct LabeledItem<T> : IComparable<LabeledItem<T>> where T : IComparable<T>
+	{
+		public T Item;
+		public int Label;
+
+		public int CompareTo(LabeledItem<T> other)
+		{
+			int res = Item.CompareTo(other.Item);
+
+			return res == 0 ? Label - other.Label : res;
+		}
+	}
+	
+	//Cannot do this without using custom comparator
+	public static void SortStable<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
+	{
+		var labelledList = list
+			.Select((item, i) => new LabeledItem<T>(){Item = item, Label = i})
+			.ToResizableArray(list.Count);
+		
+		QuickSort(labelledList, QuickSortConfig.Vanilla);
+		
+		for (int i = 0; i < list.Count; i++)
+		{
+			list[i] = labelledList[i].Item;
+		}
+	}
+
 	public static void SelectionSort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
 		ClearWhiteBoxContainers();

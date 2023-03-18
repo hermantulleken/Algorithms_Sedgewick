@@ -51,6 +51,19 @@ internal static class ThrowHelper
 		return obj;
 	}
 
+	internal static int ThrowIfOutOfRange(this int n, int end, [CallerArgumentExpression("n")] string objArgName = null)
+		=> ThrowIfOutOfRange(n, 0, end, objArgName);
+	
+	internal static int ThrowIfOutOfRange(this int n, int start, int end, [CallerArgumentExpression("n")] string objArgName=null)
+	{
+		if (n < start || n >= end)
+		{
+			throw new ArgumentOutOfRangeException(objArgName);
+		}
+
+		return n;
+	}
+
 	internal static T[] ThrowIfEmpty<T>(this T[] list, [CallerArgumentExpression("list")] string listArgName = null)
 	{
 		if (list.Length == 0)

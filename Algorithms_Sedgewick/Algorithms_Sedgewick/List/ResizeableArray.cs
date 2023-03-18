@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Support;
@@ -124,7 +125,38 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 			
 	}
 
-	public override string ToString() => Formatter.Pretty(this);
+	//Ignores negative values
+	public void RemoveLast(int n)
+	{
+		if (n <= 0)
+		{
+			return;
+		}
+		
+		if (IsEmpty)
+		{
+			ThrowHelper.ThrowContainerEmpty();
+		}
+
+		RemoveLastAlreadyChecked(n > Count ? Count : n);
+		
+	}
+
+	private void RemoveLastAlreadyChecked(int n)
+	{
+		Debug.Assert(n > 0);
+		Debug.Assert(n <= Count);
+		
+		for(int i = Count - n; i < Count; i++)
+		{
+			items[i] = default; //Don't hold on to references we don't need.
+		}
+
+		Count -= n;
+		version++;
+	}
+
+	public override string ToString() => this.Pretty();
 
 	public IEnumerator<T> GetEnumerator()
 	{
@@ -183,13 +215,12 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 	
 	public void Clear()
 	{
-		for (int i = 0; i < Count; i++)
+		if (IsEmpty)
 		{
-			items[i] = default;
+			return;
 		}
-		
-		Count = 0;
-		version++;
+
+		RemoveLastAlreadyChecked(Count);
 	}
 }
 

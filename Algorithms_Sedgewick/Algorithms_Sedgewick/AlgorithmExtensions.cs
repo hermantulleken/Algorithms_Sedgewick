@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Queue;
 using static System.Diagnostics.Debug;
@@ -8,6 +9,43 @@ namespace Algorithms_Sedgewick;
 public static class AlgorithmExtensions
 {
 	private static readonly Random Random = new ();
+	
+	
+
+	// Ex. 2.5.4
+	public static void SortAndRemoveDuplicates<T>(this ResizeableArray<T> list) where T : IComparable<T>
+	{
+		
+		bool EqualAt(int i, int j) => list[i].CompareTo(list[j]) == 0;
+		
+		list.ThrowIfNull();
+		
+		if (list.Count <= 1)
+		{
+			return;
+		}
+		
+		ShellSortWithPrattSequence(list);
+
+		int i = 0;
+		int j = 1;
+		
+		while (j < list.Count)
+		{
+			if (EqualAt(i, j))
+			{
+				j++;
+			}
+			else
+			{
+				list[i + 1] = list[j];
+				i++;
+				j++;
+			}
+		}
+			
+		list.RemoveLast(list.Count - i - 1);
+	}
 
 	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 		=> list.FindIndexOfMin(0, list.Count);

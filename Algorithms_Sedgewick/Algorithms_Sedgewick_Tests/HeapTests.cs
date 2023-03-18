@@ -1,4 +1,6 @@
 ﻿using System;
+using Algorithms_Sedgewick;
+using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.PriorityQueue;
 using NUnit.Framework;
 using Support;
@@ -11,13 +13,13 @@ public class HeapTests
 	{
 		public string Name { get; }
 		public int Age { get; }
-	
+		
 		public Person(string name, int age)
 		{
 			Name = name;
 			Age = age;
 		}
-	
+		
 		public int CompareTo(Person other) => Age.CompareTo(other.Age);
 	}
 	

@@ -43,7 +43,10 @@ internal static class Program
 		//
 		// Console.WriteLine(list.Pretty());
 
-		TimeSorts();
+		var list = "SORTEXAMPLE".ToResizableArray(100);
+		Sort.Sort.HeapSort(list);
+
+		//TimeSorts();
 	}
 
 	private static void TimeSorts()

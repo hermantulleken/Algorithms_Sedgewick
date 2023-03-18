@@ -12,6 +12,10 @@ public static class Formatter
 	public const BindingFlags AllInstances = PublicInstances | BindingFlags.NonPublic;
 
 	public const string DottedLine = ".....";
+	
+	private const string Brackets = "[{0}]";
+	private const string Parentheses = "({0})";
+	private const string Braces = "{{{0}}}";
 
 
 	/// <summary>
@@ -78,15 +82,12 @@ public static class Formatter
 	/// <summary>
 	/// Converts lists to strings recursively (and other objects using their <see cref="object.ToString"/> methods.)
 	/// </summary>
-	public static string Pretty<T>(this T obj)
+	public static string Pretty<T>(this T obj, params int[] specialIndexes)
 	{
 		if (IsNull(obj))
 		{
 			return NullString;
 		}
-
-		const string brackets = "[{0}]";
-		const string braces = "{{{0}}}";
 
 		switch (obj)
 		{
@@ -95,9 +96,9 @@ public static class Formatter
 			//also works for dictionaries
 			case IEnumerable list:
 			{
-				string values = Pretty(list);
+				string values = Pretty(list, specialIndexes);
 
-				return Wrap(values, (obj is IDictionary) ?  braces : brackets);
+				return values.Wrap((obj is IDictionary) ?  Braces : Brackets);
 			}
 			default:
 				try
@@ -119,9 +120,18 @@ public static class Formatter
 		return string.Join(CommaSpace, stringList.ToArray());
 	}
 
-	public static string Pretty(IEnumerable list)
+	public static string Pretty(IEnumerable list, int[] specialIndexes)
 	{
-		var stringList = list.Cast<object>().Select(item => item == null ? NullString : item.ToString());
+		string ToString(object item, bool isSpecial)
+		{
+			string str = item == null ? NullString : item.ToString();
+			
+			return isSpecial ? str.Wrap(Parentheses) : str;
+		}
+
+		var stringList = list
+			.Cast<object>()
+			.Select((item, i) => ToString(item, specialIndexes.Contains(i)));
 
 		return string.Join(CommaSpace, stringList.ToArray());
 	}
@@ -229,7 +239,7 @@ public static class Formatter
 		return typeWriters[propertyInfo.PropertyType](value);
 	}
 
-	private static string Wrap(string str, string bracketsFormatString)
+	private static string Wrap(this string str, string bracketsFormatString)
 		=> string.Format(bracketsFormatString, str);
 
 	public static T Log<T>(this T obj)

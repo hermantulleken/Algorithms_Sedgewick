@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Algorithms_Sedgewick.List;
+using Algorithms_Sedgewick.Sort;
 using NUnit.Framework;
 using Support;
 using static Algorithms_Sedgewick.Sort.Sort;
@@ -21,6 +22,7 @@ public class SortTests
 		DequeueSortWithDeque,
 		DequeueSortWithQueue,
 		GnomeSort,
+		HeapSort,
 		MergeSort,
 		list => MergeSort(list, MergeSortConfig.Vanilla with{SkipMergeWhenSorted = true}),
 		list => MergeSort(list, MergeSortConfig.Vanilla with{UseFastMerge = true}),
@@ -98,5 +100,18 @@ public class SortTests
 		Assert.That(AreElementsEqual(TestArray, list, 0, startIndex), Is.True);
 		Assert.That(IsSortedAscending(list, startIndex, endIndex));
 		Assert.That(AreElementsEqual(TestArray, list, endIndex, TestArray.Count), Is.True);
+	}
+
+	[Test]
+	public void TestSelect()
+	{
+		var list = new ResizeableArray<int>() { 5, 3, 6, 2, 8, 2, 1, 7 };
+		var config = QuickSortConfig.Vanilla;
+		
+		Assert.That(SelectNthLowest(list, 0, config), Is.EqualTo(1));
+		Assert.That(SelectNthLowest(list, 1, config), Is.EqualTo(2));
+		Assert.That(SelectNthLowest(list, 2, config), Is.EqualTo(2));
+		Assert.That(SelectNthLowest(list, 5, config), Is.EqualTo(6));
+		Assert.That(SelectNthLowest(list, 7, config), Is.EqualTo(8));
 	}
 }
