@@ -45,7 +45,7 @@ internal static class ThrowHelper
 	{
 		if (obj == null)
 		{
-			throw new ArgumentException(objArgName);
+			throw new ArgumentNullException(objArgName);
 		}
 
 		return obj;

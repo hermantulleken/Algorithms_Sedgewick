@@ -66,9 +66,12 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 	/// </summary>
 	/// <param name="item"></param>
 	/// <exception cref="InvalidOperationException">the heap is full.</exception>
+	/// <exception cref="ArgumentNullException"><paramref name="item"/> is null</exception>
 	//Question: should we allow null? Yes, no reason not to.
 	public void Push(T item)
 	{
+		item.ThrowIfNull();
+		
 		if (IsFull)
 		{
 			ThrowHelper.ThrowContainerFull();

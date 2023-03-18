@@ -48,6 +48,8 @@ public sealed class PriorityQueueWithUnorderedArray<T> : IPriorityQueue<T> where
 
 	public void Push(T item)
 	{
+		item.ThrowIfNull();
+		
 		if (IsFull)
 		{
 			ThrowContainerFull();

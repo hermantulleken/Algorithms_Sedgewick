@@ -44,6 +44,8 @@ public sealed class PriorityQueueWithOrderedArray<T> : IPriorityQueue<T> where T
 
 	public void Push(T item)
 	{
+		item.ThrowIfNull();
+		
 		if (IsFull)
 		{
 			ThrowContainerFull();

@@ -10,17 +10,26 @@ public class Counter<T>
 	public IEnumerable<KeyValuePair<T, int>> Counts => counts;
 	public void Add(T key)
 	{
-		if (counts.ContainsKey(key))
+		lock (counts)
 		{
-			counts[key]++;
-		}
-		else
-		{
-			counts[key] = 1;
+			if (counts.ContainsKey(key))
+			{
+				counts[key]++;
+			}
+			else
+			{
+				counts[key] = 1;
+			}
 		}
 	}
 
-	public void Clear() => counts.Clear();
+	public void Clear()
+	{
+		lock (counts)
+		{
+			counts.Clear();
+		}
+	}
 
 	public override string ToString() => counts.Pretty();
 }

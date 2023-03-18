@@ -41,6 +41,8 @@ public sealed class PriorityQueueWithUnorderedLinkedList<T> : IPriorityQueue<T> 
 
 	public void Push(T item)
 	{
+		item.ThrowIfNull();
+
 		items.InsertAtFront(item);
 		if (Count > 1)
 		{

@@ -6,13 +6,12 @@ namespace Algorithms_Sedgewick.PriorityQueue;
 
 public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<T>
 {
+	private const int Base = 3;
 	private const string EmptyHeapPresentation = "()";
 
 #if WHITEBOXTESTING
 	private const string InvalidStateMarker = "~";
 #endif
-	
-	private const int StartIndex = 1;
 	
 	private readonly T[] items;
 
@@ -35,7 +34,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 				ThrowHelper.ThrowContainerEmpty();
 			}
 			
-			return items[StartIndex];
+			return items[0];
 		}
 	}
 
@@ -48,7 +47,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 		Capacity = capacity;
 		
 		//We have one extra space that is not used to make the calculations simpler
-		items = new T[StartIndex + capacity];
+		items = new T[capacity];
 		Count = 0;
 		
 #if WHITEBOXTESTING
@@ -64,6 +63,8 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 	//Question: should we allow null? Yes, no reason not to.
 	public void Push(T item)
 	{
+		item.ThrowIfNull();
+		
 		if (IsFull)
 		{
 			ThrowHelper.ThrowContainerFull();
@@ -71,13 +72,14 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 
 		SetStateInvalid();
 		
-		Count++;
 		items[Count] = item;
-		
-		if(Count > 1)
+
+		if(Count > 0)
 		{
 			Swim(Count); //Assumes that swim does not depend on the value of count.
 		}
+		
+		Count++;
 		
 		SetStateValid();
 		AssertSatisfyHeapProperty();
@@ -97,20 +99,20 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 		}
 		
 		SetStateInvalid();
-		var min = items[StartIndex];
+		var min = items[0];
 		Count--;
 		
 		if (IsEmpty)
 		{
-			items[StartIndex] = default;
+			items[0] = default;
 		}
 		else if (Count > 0)
 		{
-			MoveAt(Count + 1, StartIndex);
+			MoveAt(Count, 0);
 
 			if (Count > 1)
 			{
-				Sink(StartIndex);
+				Sink(0);
 			}
 		}
 		
@@ -122,7 +124,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 	}
 
 #if WHITEBOXTESTING
-	public bool SatisfyHeapProperty() => SatisfyHeapProperty(StartIndex);
+	public bool SatisfyHeapProperty() => SatisfyHeapProperty(0);
 	public string ToDebugString() => isStateValid ? ToPrettyString() : InvalidStateMarker + ToPrettyString();
 	public override string ToString() => ToDebugString();
 #else
@@ -133,8 +135,8 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 		=> IsEmpty 
 			? EmptyHeapPresentation
 			: IsSingleton
-				? AddBrackets(ToPrettyString(StartIndex))
-				: ToPrettyString(StartIndex);
+				? AddBrackets(ToPrettyString(0))
+				: ToPrettyString(0);
 
 	private string AddBrackets(string str) => $"({str})";
 
@@ -146,55 +148,88 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 
 	private void Swim(int k)
 	{
-		Assert(k > StartIndex);
+		Assert(k > 0);
+
+		int parent = GetParentIndex(k);
 		
-		while (k > StartIndex && LessAt(k, k / 3))
+		while (k > 0 && LessAt(k, parent))
 		{
-			SwapAt(k / 3, k);
-			k /= 3;
+			SwapAt(parent, k);
+			k = parent;
+			parent = GetParentIndex(k);
 		}
 	}
 
+	private int IndexOfMinAt(int index0, int index1, int index2)
+	{
+		Assert(index0 < Count);
+		Assert(index0 < index1);
+		Assert(index1 < index2);
+
+		if (index1 >= Count)
+		{
+			return index0;
+		}
+
+		int indexOfMin = LessAt(index0, index1) ? index0 : index1;
+
+		if (index2 >= Count)
+		{
+			return indexOfMin;
+		}
+
+		indexOfMin = LessAt(indexOfMin, index2) ? indexOfMin : index2;
+
+		return indexOfMin;
+	}
+	
 	private void Sink(int k)
 	{
 		Assert(Count != 1);
+		int leftChild = GetChildIndex(k);
 		
-		while (3 * k <= Count)
+		while (leftChild < Count)
 		{
-			int j = 3 * k;
-			
-			if (j < Count && LessAt(j + 2, j))
-			{
-				j++;
-			}
-			else if (j < Count && LessAt(j + 1, j))
-			{
-				j++;
-			}
+			int minChild = IndexOfMinAt(leftChild, leftChild + 1, leftChild + 2);
 
-			if (!LessAt(j, k))
+			if (LessAt(minChild, k))
+			{
+				SwapAt(k, minChild);
+			}
+			else
 			{
 				break;
 			}
 			
-			SwapAt(k, j);
-			k = j;
+			k = minChild;
+			leftChild = GetChildIndex(k);
 		}
 	}
 
 	private string ToPrettyString(int k)
 	{
-		Assert(k != 0);
 		Assert(!IsEmpty);
 		
-		int leftChild = 2 * k;
-		int rightChild = leftChild + 1;
+		int child0 = GetChildIndex(k);
+		int child1 = child0 + 1;
+		int child2 = child1 + 1;
 
-		return leftChild > Count
-			? items[k].ToString()
-			: rightChild > Count
-				? $"({items[k]}, {ToPrettyString(leftChild)}, . )"
-				: $"({items[k]}, {ToPrettyString(leftChild)}, {ToPrettyString(rightChild)})";
+		if (child0 >= Count)
+		{
+			return items[k].ToString();
+		}
+
+		if (child1 >= Count)
+		{
+			return $"({items[k]}, {ToPrettyString(child0)}, . .)";
+		}
+
+		if (child2 >= Count)
+		{
+			return $"({items[k]}, {ToPrettyString(child0)}, {ToPrettyString(child1)}, .)";
+		}
+
+		return $"({items[k]}, {ToPrettyString(child0)}, {ToPrettyString(child1)}, {ToPrettyString(child2)})";
 	}
 
 	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
@@ -215,29 +250,36 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 		
 		Assert(isStateValid); //Otherwise the heap property is not supposed to hold
 		
-		int leftChild = 2 * k;
-		int rightChild = leftChild + 1;
+		int child0 = GetChildIndex(k);
+		int child1 = child0 + 1;
+		int child2 = child1 + 1;
 		
-		if (leftChild > Count)
+		if (child0 >= Count)
 		{
-			//Does not have a left child, and therefore also not a right child
-			Assert(rightChild >= Count);
-			
 			return true;
 		}
 
-		if (LessAt(leftChild, k))
+		if (LessAt(child0, k))
 		{
 			return false;
 		}
 		
-		if (rightChild > Count)
+		if (child1 >= Count)
 		{
-			//does not have a right child
 			return true;
 		}
 
-		if (LessAt(rightChild, k))
+		if (LessAt(child1, k))
+		{
+			return false;
+		}
+		
+		if (child2 >= Count)
+		{
+			return true;
+		}
+
+		if (LessAt(child2, k))
 		{
 			return false;
 		}
@@ -251,9 +293,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 		Assert(IsReferenceType);
 		
 		// ReSharper disable CompareNonConstrainedGenericWithNull
-		Assert(items[0] == null);
-		
-		for (int i = Count + StartIndex; i < items.Length; i++)
+		for (int i = Count; i < items.Length; i++)
 		{
 			Assert(items[i] == null);
 		}
@@ -316,13 +356,13 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 	private int GetFirstLeaveIndex()
 	{
 		Assert(!IsEmpty);
-		int lastIndex = Count;
+		int lastIndex = Count - 1;
 
-		//1 -> 1
-		//2 -> 2
-		//3 -> 2
-		//4 -> 3
+		return IsSingleton ? 0 : GetParentIndex(lastIndex) + 1;
+	}
 
-		return IsSingleton ? StartIndex : lastIndex / 2 + 1;
-	} 
+	private static int GetChildIndex(int index) => Base * index + 1;
+
+	//1 -> 0, 2-> 0, 3 -> 0
+	private static int GetParentIndex(int index) => (index - 1) / Base;
 }

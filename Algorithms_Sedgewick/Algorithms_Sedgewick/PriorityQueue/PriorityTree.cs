@@ -13,50 +13,6 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 		public Node Parent;
 		public Node RightChild;
 
-		public void SetLeftChild(Node child)
-		{
-			LeftChild = child;
-			
-			if (child != null)
-			{
-				child.Parent = this;
-			}
-		}
-
-		public void SetRightChild(Node child)
-		{
-			RightChild = child;
-
-			if (child != null)
-			{
-				child.Parent = this;
-			}
-		}
-
-		public void CutLeftChild()
-		{
-			if (LeftChild == null)
-			{
-				return;
-			}
-			
-			Assert(LeftChild.Parent == this);
-			LeftChild.Parent = null;
-			LeftChild = null;
-		}
-
-		public void CutRightChild()
-		{
-			if (RightChild == null)
-			{
-				return;
-			}
-			
-			Assert(RightChild.Parent == this);
-			RightChild.Parent = null;
-			RightChild = null;
-		}
-
 		public void BindLeftChild(Node child)
 		{
 			
@@ -110,7 +66,111 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 			RightChild = child;
 		}
 
+		public void CutChildren()
+		{
+			CutLeftChild();
+			CutRightChild();
+		}
+
+		public void CutLeftChild()
+		{
+			if (LeftChild == null)
+			{
+				return;
+			}
+			
+			Assert(LeftChild.Parent == this);
+			LeftChild.Parent = null;
+			LeftChild = null;
+		}
+
+		public void CutRightChild()
+		{
+			if (RightChild == null)
+			{
+				return;
+			}
+			
+			Assert(RightChild.Parent == this);
+			RightChild.Parent = null;
+			RightChild = null;
+		}
+
+		public void SetLeftChild(Node child)
+		{
+			LeftChild = child;
+			
+			if (child != null)
+			{
+				child.Parent = this;
+			}
+		}
+
+		public void SetRightChild(Node child)
+		{
+			RightChild = child;
+
+			if (child != null)
+			{
+				child.Parent = this;
+			}
+		}
+		
 		public void SwapWithParent()
+		{
+			var parent = Parent;
+			var grandparent = parent.Parent;
+			var leftChild = LeftChild;
+			var rightChild = RightChild;
+
+			bool parentIsLeftChild = grandparent != null && grandparent.LeftChild == parent;
+			bool isLeftChild = parent.LeftChild == this;
+
+			var oppositeChild = isLeftChild ? parent.RightChild : parent.LeftChild;
+
+			if (grandparent != null)
+			{
+				if (parentIsLeftChild)
+				{
+					grandparent.CutLeftChild();
+				}
+				else
+				{
+					grandparent.CutRightChild();
+				}
+			}
+
+			parent.CutChildren();
+			CutChildren();
+
+			if (grandparent != null)
+			{
+				if (parentIsLeftChild)
+				{
+					grandparent.SetLeftChild(this);
+				}
+				else
+				{
+					grandparent.SetRightChild(this);
+				}
+			}
+
+			if (isLeftChild)
+			{
+				SetLeftChild(parent);
+				SetRightChild(oppositeChild);
+			}
+			else
+			{
+				SetLeftChild(oppositeChild);
+				SetRightChild(parent);
+			}
+
+			parent.SetLeftChild(leftChild);
+			parent.SetRightChild(rightChild);
+		}
+
+		public void SwapWithParent2()
 		{
 			var b = Parent;
 			
@@ -189,11 +249,19 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 			return false;
 		}
 
-		private void ClearParent() => Parent = null;
+		public override string ToString() => Pretty(5);
 
 		private void ClearLeftChild() => LeftChild = null;
 
+		private void ClearParent() => Parent = null;
+
 		private void ClearRightChild() => RightChild = null;
+
+		private bool IsLeftChildOfParent()
+		{
+			Assert(Parent != null);
+			return Parent.LeftChild == this;
+		}
 
 		private string Pretty(int maxDepth)
 		{
@@ -208,22 +276,14 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 
 			return $"({Item} | P{parentString} : {leftString} {rightString})";
 		}
-
-		public override string ToString() => Pretty(5);
-
-		private bool IsLeftChildOfParent()
-		{
-			Assert(Parent != null);
-			return Parent.LeftChild == this;
-		}
 	}
 
 	private bool IsEmpty => root == null;
 
 	private bool IsSingleton => !IsEmpty && root.LeftChild == null && root.RightChild == null;
+	private readonly QueueWithLinkedList<Node> searchQueue;
 
 	private Node root;
-	private readonly QueueWithLinkedList<Node> searchQueue;
 
 	public PriorityTree()
 	{
@@ -267,6 +327,101 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
         Count--;
 		
 		return min;
+	}
+
+	//GetFirstNodeWithEmptyChild is O(n), therefor so is this method :-/
+	public void Push(T item)
+	{
+		item.ThrowIfNull();
+		
+		var node = new Node() { Item = item };
+		
+		if (IsEmpty)
+		{
+			root = node;
+			Count++;
+			return;
+		}
+
+		var lastNode = GetFirstNodeWithEmptyChild();
+
+		if (lastNode.LeftChild == null)
+		{
+			lastNode.BindLeftChild(node);
+		}
+		else
+		{
+			Assert(lastNode.RightChild == null);
+			lastNode.BindRightChild(node);
+		}
+		
+		Swim(node);
+		Count++;
+	}
+
+	public override string ToString() => root.ToString();
+
+	private Node GetFirstNodeWithEmptyChild()
+	{
+		searchQueue.Enqueue(root);
+
+		while (!searchQueue.IsEmpty)
+		{
+			var nextNode = searchQueue.Dequeue();
+
+			if (nextNode.LeftChild == null || nextNode.RightChild == null)
+			{
+				Assert(nextNode.RightChild == null);
+				searchQueue.Clear();
+				return nextNode;
+			}
+			
+			if (nextNode.LeftChild != null)
+			{
+				searchQueue.Enqueue(nextNode.LeftChild);
+			}
+			
+			if (nextNode.RightChild != null)
+			{
+				searchQueue.Enqueue(nextNode.RightChild);
+			}
+		}
+		
+		//Not reachable
+		Assert(false);
+		return null;
+	}
+
+	private Node GetLastNode()
+	{
+		searchQueue.Enqueue(root);
+
+		while (!searchQueue.IsEmpty)
+		{
+			var nextNode = searchQueue.Dequeue();
+
+			if (searchQueue.IsEmpty)
+			{
+				if (nextNode.LeftChild == null && nextNode.RightChild == null)
+				{
+					return nextNode;
+				}
+			}
+
+			if (nextNode.LeftChild != null)
+			{
+				searchQueue.Enqueue(nextNode.LeftChild);
+			}
+
+			if (nextNode.RightChild != null)
+			{
+				searchQueue.Enqueue(nextNode.RightChild);
+			}
+		}
+		
+		//Not reachable
+		Assert(false);
+		return null;
 	}
 
 	private void MoveNodeToRoot(Node node)
@@ -319,32 +474,6 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 		root = node;
 	}
 
-	//GetFirstNodeWithEmptyChild is O(n), therefor so is this method :-/
-	public void Push(T item)
-	{
-		var node = new Node() { Item = item };
-		
-		if (IsEmpty)
-		{
-			root = node;
-			return;
-		}
-
-		var lastNode = GetFirstNodeWithEmptyChild();
-
-		if (lastNode.LeftChild == null)
-		{
-			lastNode.BindLeftChild(node);
-		}
-		else
-		{
-			Assert(lastNode.RightChild == null);
-			lastNode.BindRightChild(node);
-		}
-		
-		Swim(node);
-	}
-
 	private void Sink(Node node)
 	{
 		while (node.LeftChild != null) //if left child is null so is right child
@@ -392,70 +521,5 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 		{
 			root = node;
 		}
-	}
-
-	public override string ToString() => root.ToString();
-
-	private Node GetFirstNodeWithEmptyChild()
-	{
-		searchQueue.Enqueue(root);
-
-		while (!searchQueue.IsEmpty)
-		{
-			var nextNode = searchQueue.Dequeue();
-
-			if (nextNode.LeftChild == null || nextNode.RightChild == null)
-			{
-				Assert(nextNode.RightChild == null);
-				searchQueue.Clear();
-				return nextNode;
-			}
-			
-			if (nextNode.LeftChild != null)
-			{
-				searchQueue.Enqueue(nextNode.LeftChild);
-			}
-			
-			if (nextNode.RightChild != null)
-			{
-				searchQueue.Enqueue(nextNode.RightChild);
-			}
-		}
-		
-		//Not reachable
-		Assert(false);
-		return null;
-	}
-	
-	private Node GetLastNode()
-	{
-		searchQueue.Enqueue(root);
-
-		while (!searchQueue.IsEmpty)
-		{
-			var nextNode = searchQueue.Dequeue();
-
-			if (searchQueue.IsEmpty)
-			{
-				if (nextNode.LeftChild == null && nextNode.RightChild == null)
-				{
-					return nextNode;
-				}
-			}
-
-			if (nextNode.LeftChild != null)
-			{
-				searchQueue.Enqueue(nextNode.LeftChild);
-			}
-
-			if (nextNode.RightChild != null)
-			{
-				searchQueue.Enqueue(nextNode.RightChild);
-			}
-		}
-		
-		//Not reachable
-		Assert(false);
-		return null;
 	}
 }

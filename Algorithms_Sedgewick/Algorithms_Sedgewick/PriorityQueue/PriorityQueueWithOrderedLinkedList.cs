@@ -33,5 +33,5 @@ public sealed class PriorityQueueWithOrderedLinkedList<T> : IPriorityQueue<T> wh
 		return minNode.Item;
 	}
 
-	public void Push(T item) => items.InsertSorted(item);
+	public void Push(T item) => items.InsertSorted(item.ThrowIfNull());
 }
