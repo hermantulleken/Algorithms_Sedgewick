@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Queue;
+using System.Collections.Generic;
 using static System.Diagnostics.Debug;
 using static Algorithms_Sedgewick.Sort.Sort;
 
@@ -9,46 +9,70 @@ namespace Algorithms_Sedgewick;
 public static class AlgorithmExtensions
 {
 	private static readonly Random Random = new ();
-	
-	
 
-	// Ex. 2.5.4
-	public static void SortAndRemoveDuplicates<T>(this ResizeableArray<T> list) where T : IComparable<T>
+	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list) where T : IComparable<T>
+		=> list.FindIndexOfMax(0, list.Count);
+
+	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list, int start, int end) where T : IComparable<T>
 	{
-		
-		bool EqualAt(int i, int j) => list[i].CompareTo(list[j]) == 0;
-		
-		list.ThrowIfNull();
-		
-		if (list.Count <= 1)
+		int length = end - start;
+		switch (length)
 		{
-			return;
+			case 0:
+				ThrowHelper.ThrowContainerEmpty();
+				break;
+			case 1:
+				return 0;
 		}
-		
-		ShellSortWithPrattSequence(list);
 
-		int i = 0;
-		int j = 1;
+		var max = list[start];
+		int maxIndex = start;
 		
-		while (j < list.Count)
+		for (int i = start + 1; i < end; i++)
 		{
-			if (EqualAt(i, j))
+			if (Less(max, list[i]))
 			{
-				j++;
-			}
-			else
-			{
-				list[i + 1] = list[j];
-				i++;
-				j++;
+				maxIndex = i;
+				max = list[i];
 			}
 		}
-			
-		list.RemoveLast(list.Count - i - 1);
+
+		return maxIndex;
+	}
+
+	public static int FindIndexOfMax<T>(this T[] list) where T : IComparable<T>
+		=> list.FindIndexOfMax(0, list.Length);
+
+	public static int FindIndexOfMax<T>(this T[] list, int start, int end) where T : IComparable<T>
+	{
+		int length = end - start;
+		switch (length)
+		{
+			case 0:
+				ThrowHelper.ThrowContainerEmpty();
+				break;
+			case 1:
+				return 0;
+		}
+
+		var max = list[start];
+		int maxIndex = start;
+		
+		for (int i = start + 1; i < end; i++)
+		{
+			if (Less(max, list[i]))
+			{
+				maxIndex = i;
+				max = list[i];
+			}
+		}
+
+		return maxIndex;
 	}
 
 	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 		=> list.FindIndexOfMin(0, list.Count);
+
 	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list, int start, int end) where T : IComparable<T>
 	{
 		int length = end - start;
@@ -77,38 +101,9 @@ public static class AlgorithmExtensions
 		return minIndex;
 	}
 
-	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list) where T : IComparable<T>
-		=> list.FindIndexOfMax(0, list.Count);
-	
-	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list, int start, int end) where T : IComparable<T>
-	{
-		int length = end - start;
-		switch (length)
-		{
-			case 0:
-				ThrowHelper.ThrowContainerEmpty();
-				break;
-			case 1:
-				return 0;
-		}
-
-		var max = list[start];
-		int maxIndex = start;
-		
-		for (int i = start + 1; i < end; i++)
-		{
-			if (Less(max, list[i]))
-			{
-				maxIndex = i;
-				max = list[i];
-			}
-		}
-
-		return maxIndex;
-	}
-	
 	public static int FindIndexOfMin<T>(this T[] list) where T : IComparable<T>
 		=> list.FindIndexOfMin(0, list.Length);
+
 	public static int FindIndexOfMin<T>(this T[] list, int start, int end) where T : IComparable<T>
 	{
 		int length = end - start;
@@ -135,36 +130,6 @@ public static class AlgorithmExtensions
 		}
 
 		return minIndex;
-	}
-
-	public static int FindIndexOfMax<T>(this T[] list) where T : IComparable<T>
-		=> list.FindIndexOfMax(0, list.Length);
-	
-	public static int FindIndexOfMax<T>(this T[] list, int start, int end) where T : IComparable<T>
-	{
-		int length = end - start;
-		switch (length)
-		{
-			case 0:
-				ThrowHelper.ThrowContainerEmpty();
-				break;
-			case 1:
-				return 0;
-		}
-
-		var max = list[start];
-		int maxIndex = start;
-		
-		for (int i = start + 1; i < end; i++)
-		{
-			if (Less(max, list[i]))
-			{
-				maxIndex = i;
-				max = list[i];
-			}
-		}
-
-		return maxIndex;
 	}
 
 	/// <summary>
@@ -399,5 +364,38 @@ public static class AlgorithmExtensions
 			int j = Random.Next(i + 1); //Common mistake: to use i or list.Count here instead of i + 1
 			SwapAt(list, i, j);
 		}
+	}
+	
+	// Ex. 2.5.4
+	public static void SortAndRemoveDuplicates<T>(this ResizeableArray<T> list) where T : IComparable<T>
+	{
+		bool EqualAt(int i, int j) => list[i].CompareTo(list[j]) == 0;
+		list.ThrowIfNull();
+		
+		if (list.Count <= 1)
+		{
+			return;
+		}
+		
+		ShellSortWithPrattSequence(list);
+
+		int i = 0;
+		int j = 1;
+		
+		while (j < list.Count)
+		{
+			if (EqualAt(i, j))
+			{
+				j++;
+			}
+			else
+			{
+				list[i + 1] = list[j];
+				i++;
+				j++;
+			}
+		}
+			
+		list.RemoveLast(list.Count - i - 1);
 	}
 }
