@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Diagnostics;
+﻿namespace Algorithms_Sedgewick.List;
 
-namespace Algorithms_Sedgewick.List;
+using System.Collections;
+using System.Diagnostics;
 
 public sealed class LinkedList<T> : IEnumerable<T>
 {
@@ -17,6 +17,19 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		
 		public T Item;
 		public Node NextNode;
+		
+		public IEnumerable<Node> Rest
+		{
+			get
+			{
+				var node = this;
+				while (node.NextNode != null)
+				{
+					yield return node.NextNode;
+					node = node.NextNode;
+				}
+			}
+		}
 		
 #if WHITEBOXTESTING
 		public override string ToString() => ToDebugString();
@@ -62,6 +75,8 @@ public sealed class LinkedList<T> : IEnumerable<T>
 			return back;
 		}
 	}
+
+	
 
 	public Node InsertAtBack(T item)
 	{

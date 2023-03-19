@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Algorithms_Sedgewick.List;
+using global::System.Collections.Generic;
 
 namespace Algorithms_Sedgewick;
 
@@ -17,11 +18,20 @@ internal static class ThrowHelper
 	internal const string TheContainerIsAtMaximumCapacity = "The container is at maximum capacity.";
 	internal const string ContainerFull = "The container is full.";
 
+	//{0} - minimum needed
+	internal const string NotEnoughElements = "The container does not have enough elements. It needs at least {0}.";
+	
+	//{0} - key
+	internal const string KeyNotFound = "Key {0} not found in conainer.";
+
 	internal static ArgumentException CapacityCannotBeNegativeOrZeroException(int argument, [CallerArgumentExpression("argument")] string argumentName = null) 
 		=> new(CapacityCannotBeNegativeOrZero, argumentName);
 	
 	internal static ArgumentException CapacityCannotBeNegativeException(int argument, [CallerArgumentExpression("argument")] string argumentName = null) 
 		=> new(CapacityCannotBeNegative, argumentName);
+
+	internal static KeyNotFoundException KeyNotFoundException<TKey>(TKey key) 
+		=> new(string.Format(KeyNotFound, key));
 	
 	internal static void ThrowContainerEmpty() 
 		=> throw ContainerEmptyException;
@@ -83,5 +93,16 @@ internal static class ThrowHelper
 
 		return list;
 	}
-	
+
+	public static void ThrowKeyNotFound<TKey>(TKey key) 
+		=> throw KeyNotFoundException(key);
+
+	public static void ThrowNotEnoughElements(int minNeeded)
+		=> throw new InvalidOperationException(string.Format(NotEnoughElements, minNeeded));
+
+	[Obsolete("Use a one of the other Throw methods that will throw a more specific exception.")]
+	public static void ThrowException(string message)
+	{
+		throw new Exception(message);
+	}
 }

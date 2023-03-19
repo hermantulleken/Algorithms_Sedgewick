@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Algorithms_Sedgewick.SymbolTable;
+namespace Algorithms_Sedgewick;
 
 public static class Comparable
 {

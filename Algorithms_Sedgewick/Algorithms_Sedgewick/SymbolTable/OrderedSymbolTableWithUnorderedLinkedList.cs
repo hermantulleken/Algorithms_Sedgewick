@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿namespace Algorithms_Sedgewick.SymbolTable;
+
+using System.Collections.Generic;
 using System.Diagnostics;
-using Algorithms_Sedgewick.PriorityQueue;
+using PriorityQueue;
 
-namespace Algorithms_Sedgewick.SymbolTable;
-
-public class SymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSymbolTable<TKey, TValue>
+public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSymbolTable<TKey, TValue>
 {
 	private readonly Comparer<TKey> comparer;
 
@@ -50,7 +50,7 @@ public class SymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSymbolTab
 		}
 	}
 
-	public SymbolTableWithUnorderedLinkedList(Comparer<TKey> comparer)
+	public OrderedSymbolTableWithUnorderedLinkedList(Comparer<TKey> comparer)
 	{
 		this.comparer = comparer;
 		list = new List.LinkedList<KeyValuePair<TKey, TValue>>();

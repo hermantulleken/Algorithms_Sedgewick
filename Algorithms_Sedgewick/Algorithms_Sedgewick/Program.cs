@@ -1,5 +1,6 @@
 ﻿using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Sort;
+using global::System.Collections.Generic;
 using Timer = Support.Timer;
 
 namespace Algorithms_Sedgewick;
@@ -45,6 +46,9 @@ internal static class Program
 
 		var list = "SORTEXAMPLE".ToResizableArray(100);
 		Sort.Sort.HeapSort(list);
+
+		var pair = new KeyValuePair<string, string>();
+		Console.WriteLine(pair);
 
 		//TimeSorts();
 	}

@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using Algorithms_Sedgewick.Deque;
 using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Queue;
+using global::System.Collections.Generic;
 using Support;
 
 using static System.Diagnostics.Debug;
@@ -1370,8 +1371,10 @@ public static class Sort
 		};
 	*/
 	
-	// Note: We use this algorithm instead of the shorter one above so that we can count the number of comparrisons.
-	// Should we use if statements instead?
+	/*
+		Note: We use this algorithm instead of the shorter one above so that we can count the number of comparrisons.
+			Should we use if statements instead?
+	 */
 	private static int MedianOfThree<T>(IReadonlyRandomAccessList<T> list, int a, int b, int c) where T : IComparable<T> 
 		=> LessAt(list, a, b)
 			? LessAt(list, b, c)

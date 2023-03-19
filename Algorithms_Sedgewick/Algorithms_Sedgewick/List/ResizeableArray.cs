@@ -1,10 +1,10 @@
+namespace Algorithms_Sedgewick.List;
+
 using System.Collections;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Support;
-
-namespace Algorithms_Sedgewick.List;
+using static System.Diagnostics.Debug;
 
 public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 {
@@ -12,11 +12,18 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 	private T[] items;
 	private int version;
 
-	public int Capacity { get; private set; }
-	public int Count { get; private set; }
-	public bool IsFull => Count == Capacity;
+    /// <inheritdoc/>
 	public bool IsEmpty => Count == 0;
-
+	
+	public int Capacity { get; private set; }
+	
+	/// <inheritdoc />
+	public int Count { get; private set; }
+	
+	
+	public bool IsFull => Count == Capacity;
+	
+	/// <inheritdoc />
 	public T this[int index]
 	{
 		get
@@ -38,7 +45,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 	{
 		var copy = new ResizeableArray<T>(Capacity)
 		{
-			Count = Count
+			Count = Count,
 		};
 
 		for (int i = 0; i < Count; i++)
@@ -144,8 +151,8 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 
 	private void RemoveLastAlreadyChecked(int n)
 	{
-		Debug.Assert(n > 0);
-		Debug.Assert(n <= Count);
+		Assert(n > 0);
+		Assert(n <= Count);
 		
 		for(int i = Count - n; i < Count; i++)
 		{

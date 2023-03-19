@@ -1,5 +1,6 @@
 ﻿using Algorithms_Sedgewick.Buffer;
 using Algorithms_Sedgewick.Stack;
+using global::System.Collections.Generic;
 
 namespace Algorithms_Sedgewick;
 

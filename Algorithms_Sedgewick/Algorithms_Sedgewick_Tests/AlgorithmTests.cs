@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Algorithms_Sedgewick;
 using Algorithms_Sedgewick.List;
@@ -74,7 +75,7 @@ public class AlgorithmTests
 
 	[TestCaseSource(nameof(FindTestCases))]
 	public int TestEqualsSecond(IReadonlyRandomAccessList<int> list, int itemToPlace)
-		=> list.FindInsertionIndex(itemToPlace);
+		=> list.FindInsertionIndex(itemToPlace, Comparer<int>.Default);
 
 	#region Remove Duplicates
 

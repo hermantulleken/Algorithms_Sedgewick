@@ -1,12 +1,12 @@
 using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Queue;
-using System.Collections.Generic;
+using Algorithms_Sedgewick.Buffer;
 using static System.Diagnostics.Debug;
 using static Algorithms_Sedgewick.Sort.Sort;
 
 namespace Algorithms_Sedgewick;
 
-public static class AlgorithmExtensions
+public static class Algorithms
 {
 	private static readonly Random Random = new ();
 
@@ -140,6 +140,7 @@ public static class AlgorithmExtensions
 	/// <typeparam name="T">The type of the elements in the list. Must implement <see cref="IComparable{T}"/>.</typeparam>
 	/// <param name="sortedList">The sorted list to search for the item.</param>
 	/// <param name="item">The item to find the index for.</param>
+	/// <param name="comparer">The <see cref="IComparer{T}"/> to use for comparisons.</param>
 	/// <returns>The index at which the item can be inserted while maintaining the sorted order.</returns>
 	/// <remarks>
 	/// If the item is smaller than all the items in the list, the method returns <c>0</c>.
@@ -148,8 +149,13 @@ public static class AlgorithmExtensions
 	/*
 		We return the last (and not first or any other) index that preserves the order of the list if the item is inserted
 		so that the number of elements we need to move when inserting the item is minimal. 
+		
+		Uses binary search. 
+		
+		TODO: May not work correctly if equal keys are present.
 	*/
-	public static int FindInsertionIndex<T>(this IReadonlyRandomAccessList<T> sortedList, T item) where T : IComparable<T>
+	public static int FindInsertionIndex<T>(
+		this IReadonlyRandomAccessList<T> sortedList, T item, IComparer<T> comparer)
 	{
 	    // Ensure that the input list is sorted.
 	    Assert(IsSorted(sortedList));
@@ -165,7 +171,7 @@ public static class AlgorithmExtensions
 	            Assert(mid != end);
 
 	            // If the item is less than the midpoint, search the left half of the list.
-	            if (Less(item, sortedList[mid]))
+	            if (comparer.Less(item, sortedList[mid]))
 	            {
 	                end = mid;
 	            }
@@ -178,20 +184,43 @@ public static class AlgorithmExtensions
 	        
 	        // When there are only two elements left, return the index of the correct element.
 	        Assert(end == start + 1);
-	        return Less(item, sortedList[start]) ? start : end;
+	        return comparer.Less(item, sortedList[start]) ? start : end;
 	    }
 
 	    // Handle special cases where the list is empty or the item is outside the bounds of the list.
 	    return sortedList.IsEmpty 
 	        ? 0 
-	        : Less(item, sortedList[0]) 
+	        : comparer.Less(item, sortedList[0]) 
 	            ? 0 
-	            : Less(sortedList[^1], item) 
+	            : comparer.Less(sortedList[^1], item) 
 	                ? sortedList.Count 
 	                : Find(0, sortedList.Count);
 	    
 	}
 
+	public static List.LinkedList<T>.Node FindInsertionNode<T>(this List.LinkedList<T> sortedList, T item, IComparer<T> comparer)
+	{
+		//TODO: Should these be exceptions?
+		Assert(!sortedList.IsEmpty);
+		
+		//Note: if item < firstItem we need to add it at the front
+		// item >= firstItem
+		Assert(comparer.LessOrEqual(sortedList.First.Item, item));
+
+		foreach (var node in sortedList.Nodes)
+		{
+			if (comparer.Less(node.Item, item))
+			{
+				return node;
+			}
+			//else item <= node.Item
+		}
+		
+		Assert(false, "Unexpected point reach. Item is less than or equal to all items in the sorted list.");
+
+		return null;
+	}
+	
 	public static T First<T>(this IReadonlyRandomAccessList<T> source)
 	{
 		source
@@ -203,10 +232,17 @@ public static class AlgorithmExtensions
 
 	public static void InsertSorted<T>(this ResizeableArray<T> list, T item) where T : IComparable<T>
 	{
+		InsertSorted(list, item, Comparer<T>.Default);
+	}
+
+	//TODO: Test the output
+	public static int InsertSorted<T>(this ResizeableArray<T> list, T item, IComparer<T> comparer)
+	{
 		Assert(IsSorted(list));
 		
-		int insertionIndex = list.FindInsertionIndex(item);
+		int insertionIndex = list.FindInsertionIndex(item, comparer);
 		list.InsertAt(item, insertionIndex);
+		return insertionIndex;
 	}
 
 	public static void InsertSorted<T>(this List.LinkedList<T> list, T item) where T : IComparable<T>
@@ -397,5 +433,48 @@ public static class AlgorithmExtensions
 		}
 			
 		list.RemoveLast(list.Count - i - 1);
+	}
+	
+	public static void SortAndRemoveDuplicatesWithBuffer<T>(this ResizeableArray<T> list) where T : IComparable<T>
+	{
+		bool Equal(T left, T right) => left.CompareTo(right) == 0;
+		list.ThrowIfNull();
+		
+		if (list.Count <= 1)
+		{
+			return;
+		}
+		
+		ShellSortWithPrattSequence(list);
+		
+		var sorted =  list
+			.Buffer2()
+			.Where(buffer => !Equal(buffer.First, buffer.Last))
+			.Select(buffer => buffer.First)
+			.ToArray();
+
+		//TODO: Add Copy method for arrays
+		for (int i = 0; i < sorted.Length; i++)
+		{
+			list[i] = sorted[i];
+		}
+		
+		list.RemoveLast(list.Count - sorted.Length);
+	}
+
+
+	public static IEnumerable<FullCapacity2Buffer<T>> Buffer2<T>(this IEnumerable<T> list)
+	{
+		var buffer = new FullCapacity2Buffer<T>();
+		
+		foreach (var item in list)
+		{
+			buffer.Insert(item);
+			
+			if (buffer.Count == 2)
+			{
+				yield return buffer;
+			}
+		}
 	}
 }

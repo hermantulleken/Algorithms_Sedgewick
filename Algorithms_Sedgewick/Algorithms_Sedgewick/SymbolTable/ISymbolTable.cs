@@ -2,6 +2,10 @@ using System.Collections.Generic;
 
 namespace Algorithms_Sedgewick.SymbolTable;
 
+/*
+	Note: This is almost what C# calls a dictionary. 
+	I stick with the book name, to avoid getting confused with C# dictionaries. 
+*/
 public interface ISymbolTable<TKey, TValue>
 {
 	public bool IsEmpty => Count == 0;

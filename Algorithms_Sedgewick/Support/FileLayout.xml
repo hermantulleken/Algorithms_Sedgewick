@@ -182,21 +182,7 @@
                 <Name />
             </Entry.SortBy>
         </Entry>
-
-        <Entry DisplayName="Properties, Indexers">
-            <Entry.Match>
-                <Or>
-                    <Kind Is="Property" />
-                    <Kind Is="Indexer" />
-                </Or>
-            </Entry.Match>
-            <Entry.SortBy>
-                <Access/>
-                <Static/>
-                <Name/>
-            </Entry.SortBy>
-        </Entry>
-
+       
         <Entry DisplayName="Fields">
             <Entry.Match>
                 <And>
@@ -214,6 +200,20 @@
                 <Name />
             </Entry.SortBy>
         </Entry>
+        
+        <Entry DisplayName="Properties, Indexers">
+            <Entry.Match>
+                <Or>
+                    <Kind Is="Property" />
+                    <Kind Is="Indexer" />
+                </Or>
+            </Entry.Match>
+            <Entry.SortBy>
+                <Access/>
+                <Static/>
+                <Name/>
+            </Entry.SortBy>
+        </Entry>
 
         <Entry DisplayName="Constructors">
             <Entry.Match>
@@ -225,12 +225,20 @@
             </Entry.SortBy>
         </Entry>
 
+        
 
-
+        <Entry DisplayName="All other members">
+            <Entry.SortBy>
+                <Access/>
+                <Static/>
+                <Name/>
+            </Entry.SortBy>
+        </Entry>
+        
         <Entry DisplayName="Interface Implementations" Priority="100">
             <Entry.Match>
                 <And>
-                    <Kind Is="Member" />
+                    <Kind Is="Method" />
                     <ImplementsInterface />
                 </And>
             </Entry.Match>
@@ -240,15 +248,6 @@
                 <ImplementsInterface Immediate="true" />
             </Entry.SortBy>
         </Entry>
-
-        <Entry DisplayName="All other members">
-            <Entry.SortBy>
-                <Access/>
-                <Static/>
-                <Name/>
-            </Entry.SortBy>
-        </Entry>
-
-       
+        
     </TypePattern>
 </Patterns>

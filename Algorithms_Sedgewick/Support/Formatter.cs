@@ -17,7 +17,6 @@ public static class Formatter
 	private const string Parentheses = "({0})";
 	private const string Braces = "{{{0}}}";
 
-
 	/// <summary>
 	/// <see cref="BindingFlags"/> that represent public instance fields and get-properties.
 	/// </summary>
@@ -113,27 +112,30 @@ public static class Formatter
 		}
 	}
 
-	public static string Pretty<T>(IEnumerable<T> list) where T : class
+	public static string Pretty<T>(IEnumerable<T> list, int[] specialIndexes) where T : class
 	{
-		var stringList = list.Select(item => item == null ? NullString : item.ToString());
+		var stringList = list.Select((item, i) => ToString(item, specialIndexes.Contains(i)));
 
 		return string.Join(CommaSpace, stringList.ToArray());
 	}
 
+	public static string Pretty<TKey, TValue>(this KeyValuePair<TKey, TValue> pair)
+		=> FormatKeyValue(pair.ToString(), pair.Value.Pretty()).Wrap(Braces);
+
 	public static string Pretty(IEnumerable list, int[] specialIndexes)
 	{
-		string ToString(object item, bool isSpecial)
-		{
-			string str = item == null ? NullString : item.ToString();
-			
-			return isSpecial ? str.Wrap(Parentheses) : str;
-		}
-
 		var stringList = list
 			.Cast<object>()
 			.Select((item, i) => ToString(item, specialIndexes.Contains(i)));
 
 		return string.Join(CommaSpace, stringList.ToArray());
+	}
+
+	private static string ToString<T>(T item, bool isSpecial)
+	{
+		string str = item == null ? NullString : item.ToString();
+			
+		return isSpecial ? str.Wrap(Parentheses) : str;
 	}
 
 	internal static string KeyValueToString<TKey, TValue>(TKey key, TValue value) 

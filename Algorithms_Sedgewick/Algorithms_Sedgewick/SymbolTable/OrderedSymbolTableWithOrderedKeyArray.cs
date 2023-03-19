@@ -1,26 +1,26 @@
 ﻿namespace Algorithms_Sedgewick.SymbolTable;
 
 using System.Collections.Generic;
-using Algorithms_Sedgewick.List;
+using List;
 
-namespace Algorithms_Sedgewick.SymbolTable;
 
-public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
+// Ex. 3.1.12
+public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
-	private readonly ResizeableArray<KeyValuePair<TKey, TValue>> array;
+	private readonly ResizeableArray<TKey> keys;
+	private readonly ResizeableArray<TValue> values;
 
 	private readonly IComparer<TKey> comparer;
-	private readonly IComparer<KeyValuePair<TKey, TValue>> pairComparer;
-
-	public OrderedSymbolTableWithOrderedArray(IComparer<TKey> comparer)
+	
+	public OrderedSymbolTableWithOrderedKeyArray(IComparer<TKey> comparer)
 	{
-		array = new ResizeableArray<KeyValuePair<TKey, TValue>>();
+		keys = new ResizeableArray<TKey>();
+		values = new ResizeableArray<TValue>();
 		this.comparer = comparer;
-		pairComparer = comparer.Convert<TKey, KeyValuePair<TKey, TValue>>(PairToKey);
 	}
 
-	public int Count => array.Count;
-	public IEnumerable<TKey> Keys => array.Select(pair => pair.Key);
+	public int Count => keys.Count;
+	public IEnumerable<TKey> Keys => keys;
 
 	public TValue this[TKey key]
 	{
@@ -28,7 +28,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 		{
 			if (TryFindKey(key, out int index))
 			{
-				return array[index].Value;
+				return values[index];
 			}
 
 			throw ThrowHelper.KeyNotFoundException(key);
@@ -38,27 +38,27 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 		{
 			if (TryFindKey(key, out int index))
 			{
-				array[index] = new KeyValuePair<TKey, TValue>(key, value);
+				values[index] = value;
 			}
 			
-			array.InsertSorted(new KeyValuePair<TKey, TValue>(key, value), pairComparer);
+			int newIndex = keys.InsertSorted(key, comparer);
+			values.InsertAt(value, newIndex);
 		}
 	}
 
 	private bool TryFindKey(TKey key, out int index)
 	{
-		var pair = new KeyValuePair<TKey, TValue>(key, default); 
-		index = array.FindInsertionIndex(pair, pairComparer);
+		index = keys.FindInsertionIndex(key, comparer);
 
-		if (index == array.Count)
+		if (index == keys.Count)
 		{
 			index = -1;
 			return false;
 		}
 
-		var insertionKey = array[index];
+		var insertionKey = keys[index];
 
-		if (comparer.Equal(insertionKey.Key, insertionKey.Key))
+		if (comparer.Equal(insertionKey, key))
 		{
 			return true;
 		}
@@ -71,7 +71,8 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 	{
 		if (TryFindKey(key, out int index))
 		{
-			array.DeleteAt(index);
+			keys.DeleteAt(index);
+			values.DeleteAt(index);
 		}
 		
 		ThrowHelper.ThrowKeyNotFound(key);
@@ -79,32 +80,30 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 
 	public bool ContainsKey(TKey key) => TryFindKey(key, out _);
 
-	public TKey MinKey() => array[0].Key;
+	public TKey MinKey() => keys[0];
 
-	public TKey MaxKey() => array[^1].Key;
+	public TKey MaxKey() => keys[^1];
 
 	public TKey LargestKeyLessThanOrEqualTo(TKey key)
 	{
 		//TODO: Handle edge casese
-		var pair = new KeyValuePair<TKey, TValue>(key, default);
-		int index = array.FindInsertionIndex(pair, pairComparer);
+		int index = keys.FindInsertionIndex(key, comparer);
 
-		return array[index].Key;
+		return keys[index];
 	}
 
 	
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
 		//TODO: Handle edge cases
-		var pair = new KeyValuePair<TKey, TValue>(key, default);
-		int index = array.FindInsertionIndex(pair, pairComparer);
+		int index = keys.FindInsertionIndex(key, comparer);
 
-		while (index < Count && comparer.Less(array[index].Key, key))
+		while (index < Count && comparer.Less(keys[index], key))
 		{
 			index++;
 		}
 		
-		return array[index].Key;
+		return keys[index];
 	}
 
 	public int RankOf(TKey key)
@@ -118,7 +117,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 	}
 
 	//TODO verify index
-	public TKey KeyWithRank(int rank) => array[rank].Key;
+	public TKey KeyWithRank(int rank) => keys[rank];
 
 	public int CountRange(TKey start, TKey end)
 	{
@@ -144,7 +143,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 				//TODO Add range for array / random access list
 				for (int i = startIndex; i < endIndex; i++)
 				{
-					yield return array[i].Key;
+					yield return keys[i];
 				}
 			}
 
@@ -153,6 +152,4 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 
 		throw ThrowHelper.KeyNotFoundException(start);
 	}
-
-	private static TKey PairToKey(KeyValuePair<TKey, TValue> pair) => pair.Key;
 }

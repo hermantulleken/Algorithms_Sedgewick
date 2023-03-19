@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using global::System.Collections.Generic;
 using Support;
 
 namespace Algorithms_Sedgewick.Stack;
