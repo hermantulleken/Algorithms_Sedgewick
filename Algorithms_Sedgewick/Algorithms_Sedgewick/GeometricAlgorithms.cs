@@ -59,7 +59,7 @@ public static class GeometricAlgorithms
 			.Select(ToPointAngle)
 			.ToResizableArray(points.Count());
 		
-		Sort.Sort.InsertionSort(pointAngles);
+		Sort.InsertionSort(pointAngles);
 
 		if (pointAngles.IsEmpty)
 		{

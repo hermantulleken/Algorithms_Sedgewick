@@ -24,7 +24,7 @@ public sealed class MedianDoubleHeap<T> where T : IComparable<T>
 
 	public void Push(T item)
 	{
-		if (Sort.Sort.Less(item, PeekMedian))
+		if (Sort.Less(item, PeekMedian))
 		{
 			smallestHalf.Push(item);
 		}

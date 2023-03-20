@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.Sort;
 using NUnit.Framework;
 using Support;
-using static Algorithms_Sedgewick.Sort.Sort;
+using static Algorithms_Sedgewick.Sort;
 
 namespace Algorithms_Sedgewick_Tests;
 

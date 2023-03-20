@@ -1,5 +1,5 @@
 ﻿using Algorithms_Sedgewick.List;
-using static Algorithms_Sedgewick.Sort.Sort;
+using static Algorithms_Sedgewick.Sort;
 using static Algorithms_Sedgewick.ThrowHelper;
 
 namespace Algorithms_Sedgewick.PriorityQueue;

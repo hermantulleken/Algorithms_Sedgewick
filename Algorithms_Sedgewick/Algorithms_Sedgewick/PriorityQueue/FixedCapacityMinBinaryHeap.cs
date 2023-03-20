@@ -146,11 +146,11 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 
 	private string AddBrackets(string str) => $"({str})";
 
-	private bool LessAt(int i, int j) => Sort.Sort.LessAt(items, i, j);
+	private bool LessAt(int i, int j) => Sort.LessAt(items, i, j);
 
-	private void SwapAt(int i, int j) => Sort.Sort.SwapAt(items, i, j);
+	private void SwapAt(int i, int j) => Sort.SwapAt(items, i, j);
 
-	private void MoveAt(int sourceIndex, int destinationIndex) => Sort.Sort.MoveAt(items, sourceIndex, destinationIndex);
+	private void MoveAt(int sourceIndex, int destinationIndex) => Sort.MoveAt(items, sourceIndex, destinationIndex);
 
 	private void Swim(int k)
 	{

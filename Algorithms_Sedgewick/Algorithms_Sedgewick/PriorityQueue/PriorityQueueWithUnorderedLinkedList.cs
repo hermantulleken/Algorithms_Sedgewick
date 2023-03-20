@@ -59,7 +59,7 @@ public sealed class PriorityQueueWithUnorderedLinkedList<T> : IPriorityQueue<T> 
 		
 		foreach (var node in items.Nodes)
 		{
-			if(node.NextNode != null && Sort.Sort.Less(node.NextNode.Item, minNode.Item))
+			if(node.NextNode != null && Sort.Less(node.NextNode.Item, minNode.Item))
 			{
 				nodeBeforeMinNode = node;
 				minNode = node.NextNode;

@@ -1,6 +1,6 @@
 ﻿using Algorithms_Sedgewick.Queue;
 using static System.Diagnostics.Debug;
-using static Algorithms_Sedgewick.Sort.Sort;
+using static Algorithms_Sedgewick.Sort;
 
 namespace Algorithms_Sedgewick.PriorityQueue;
 

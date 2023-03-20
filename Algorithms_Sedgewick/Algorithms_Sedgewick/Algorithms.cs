@@ -1,8 +1,10 @@
+using System.Diagnostics;
 using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Queue;
 using Algorithms_Sedgewick.Buffer;
+using Support;
 using static System.Diagnostics.Debug;
-using static Algorithms_Sedgewick.Sort.Sort;
+using static Algorithms_Sedgewick.Sort;
 
 namespace Algorithms_Sedgewick;
 
@@ -130,6 +132,59 @@ public static class Algorithms
 		}
 
 		return minIndex;
+	}
+
+	public static int InterpolationSearch(this IReadonlyRandomAccessList<int> list, int key)
+	{
+		if (list.IsEmpty)
+		{
+			return 0;
+		}
+
+		if (key < list[0])
+		{
+			return 0;
+		}
+
+		if (list[^1] <= key)
+		{
+			return list.Count;
+		}
+		
+		int start = 0;
+		int end = list.Count - 1;
+
+		while (true)
+		{
+			Console.WriteLine($"{start} - {end}: " + list.Skip(start).Take(end - start + 1).Pretty());
+			int length = end - start + 1;
+			float first = list[start];
+
+			if (key < start)
+			{
+				return start;
+			}
+			
+			if (length == 1)
+			{
+				return key < first ? start : start + 1;
+			}
+
+			float last = list[end];
+
+			float fraction = (key - first) / (last - first);
+			float approximateMid = (end - start) * fraction + start;
+			int mid = (int)MathF.Floor(approximateMid);
+			Console.WriteLine($"{mid}");
+			if (key < list[mid])
+			{
+				end = mid;
+			}
+			else
+			{
+				start = mid + 1; //TODO: is this + 1 correct?
+			}
+		}
 	}
 
 	/// <summary>

@@ -1,16 +1,14 @@
-﻿using System.Collections;
+﻿namespace Algorithms_Sedgewick;
+
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Algorithms_Sedgewick.Deque;
-using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.Queue;
-using global::System.Collections.Generic;
+using Deque;
+using List;
+using Queue;
 using Support;
-
 using static System.Diagnostics.Debug;
-
-namespace Algorithms_Sedgewick.Sort;
 
 public static class Sort
 {
