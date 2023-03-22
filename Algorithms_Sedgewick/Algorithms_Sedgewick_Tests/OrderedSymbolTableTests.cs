@@ -1,6 +1,120 @@
-﻿namespace Support;
+﻿namespace Algorithms_Sedgewick_Tests;
 
+using System;
+using System.Collections.Generic;
+using Algorithms_Sedgewick.SymbolTable;
+using NUnit.Framework;
+
+[TestFixture]
 public class OrderedSymbolTableTests
 {
+	private static readonly IComparer<string> StringComparer = Comparer<string>.Default;
 	
+	private static Func<IOrderedSymbolTable<string, int>>[] factories =
+	{
+		() => new OrderedSymbolTableWithOrderedArray<string, int>(StringComparer),
+		// () => new SymbolTableWithBinarySearchTree<string, int>(StringComparer),
+		// () => new OrderedSymbolTableWithOrderedKeyArray<string, int>(StringComparer),
+		// () => new OrderedSymbolTableWithOrderedLinkedList<string, int>(StringComparer),
+		// () => new OrderedSymbolTableWithUnorderedLinkedList<string, int>(StringComparer),
+		// () => new SymbolTableWithSortedKParallelArray<string, int>(StringComparer),
+	};
+	
+	
+
+	[Test]
+	[TestCaseSource(nameof(factories))]
+	public void TestIsEmpty(Func<IOrderedSymbolTable<string, int>> factory)
+	{
+		var symbolTable = factory();
+		Assert.That(symbolTable.IsEmpty, Is.True);
+		AddElements(symbolTable);
+		Assert.That(symbolTable.IsEmpty, Is.False);
+	}
+	
+	[Test]
+	[TestCaseSource(nameof(factories))]
+	public void TestMinKeyAndMaxKey(Func<IOrderedSymbolTable<string, int>> factory)
+	{
+		var symbolTable = factory();
+		AddElements(symbolTable);
+
+		Assert.That(symbolTable.MinKey(), Is.EqualTo("apple"));
+		Assert.That(symbolTable.MaxKey(), Is.EqualTo("cherry"));
+	}
+
+	[Test]
+	[TestCaseSource(nameof(factories))]
+	public void TestLargestKeyLessThanOrEqualTo(Func<IOrderedSymbolTable<string, int>> factory)
+	{
+		var symbolTable = factory();
+		AddElements(symbolTable);
+
+		Assert.That(symbolTable.LargestKeyLessThanOrEqualTo("banana"), Is.EqualTo("banana"));
+		Assert.That(symbolTable.LargestKeyLessThanOrEqualTo("blueberry"), Is.EqualTo("banana"));
+	}
+
+	[Test]
+	[TestCaseSource(nameof(factories))]
+	public void TestSmallestKeyGreaterThanOrEqualTo(Func<IOrderedSymbolTable<string, int>> factory)
+	{
+		var symbolTable = factory();
+		AddElements(symbolTable);
+
+		Assert.That(symbolTable.SmallestKeyGreaterThanOrEqualTo("banana"), Is.EqualTo("banana"));
+		Assert.That(symbolTable.SmallestKeyGreaterThanOrEqualTo("blueberry"), Is.EqualTo("cherry"));
+	}
+
+	[Test]
+	[TestCaseSource(nameof(factories))]
+	public void TestRankOf(Func<IOrderedSymbolTable<string, int>> factory)
+	{
+		var symbolTable = factory();
+		AddElements(symbolTable);
+
+		Assert.That(symbolTable.RankOf("banana"), Is.EqualTo(1));
+		Assert.That(symbolTable.RankOf("blueberry"), Is.EqualTo(2));
+	}
+
+	[Test]
+	[TestCaseSource(nameof(factories))]
+	public void TestKeyWithRank(Func<IOrderedSymbolTable<string, int>> factory)
+	{
+		var symbolTable = factory();
+		AddElements(symbolTable);
+
+		Assert.That(symbolTable.KeyWithRank(1), Is.EqualTo("banana"));
+	}
+
+	[Test]
+	[TestCaseSource(nameof(factories))]
+	public void TestCountRange(Func<IOrderedSymbolTable<string, int>> factory)
+	{
+		var symbolTable = factory();
+		AddElements(symbolTable);
+
+		Assert.That(symbolTable.CountRange("apple", "cherry"), Is.EqualTo(2));
+		Assert.That(symbolTable.CountRange("banana", "blueberry"), Is.EqualTo(1));
+	}
+
+	[Test]
+	[TestCaseSource(nameof(factories))]
+	public void TestKeysRange(Func<IOrderedSymbolTable<string, int>> factory)
+	{
+		var symbolTable = factory();
+		AddElements(symbolTable);
+
+		IEnumerable<string> keysInRange = symbolTable.KeysRange("apple", "cherry");
+		CollectionAssert.AreEqual(keysInRange, new List<string> { "apple", "banana" });
+
+		keysInRange = symbolTable.KeysRange("banana", "blueberry");
+		CollectionAssert.AreEqual(keysInRange, new List<string> { "banana" });
+	}
+
+	private void AddElements(IOrderedSymbolTable<string, int> symbolTable)
+	{
+		symbolTable["apple"] = 1;
+		symbolTable["banana"] = 2;
+		symbolTable["cherry"] = 3;
+	}
 }

@@ -263,6 +263,62 @@ public static class Algorithms
 		}
 	}
 	
+	public static int BinarySearch<T>(this IReadonlyRandomAccessList<T> list, T key, IComparer<T> comparer)
+	{
+		//__ClearWhiteBoxContainers();
+		list.ThrowIfNull();
+		
+		int start = 0;
+		int end = list.Count - 1;
+		
+		while (start <= end)
+		{
+			int mid = (start + end) / 2;
+
+			switch (comparer.Compare(key, list[mid]))
+			{
+				case < 0:
+					end = mid - 1;
+					break;
+				case > 0:
+					start = mid + 1;
+					break;
+				default:
+					return mid;
+			}
+		}
+		
+		return -1;
+	}
+	
+	public static int BinaryRank<T>(this IReadonlyRandomAccessList<T> list, T key, IComparer<T> comparer)
+	{
+		//__ClearWhiteBoxContainers();
+		list.ThrowIfNull();
+		
+		int start = 0;
+		int end = list.Count - 1;
+		
+		while (start <= end)
+		{
+			int mid = (start + end) / 2;
+
+			switch (comparer.Compare(key, list[mid]))
+			{
+				case < 0:
+					end = mid - 1;
+					break;
+				case > 0:
+					start = mid + 1;
+					break;
+				default:
+					return mid;
+			}
+		}
+		
+		return start;
+	}
+	
 	/// <summary>
 	/// Finds the index in a sorted list at which an item can be inserted so that all the
 	/// elements to the left are smaller or equal, and all the elements to the right are larger
@@ -289,7 +345,7 @@ public static class Algorithms
 		this IReadonlyRandomAccessList<T> sortedList, T item, IComparer<T> comparer)
 	{
 	    // Ensure that the input list is sorted.
-	    Assert(IsSorted(sortedList));
+	    Assert(IsSorted(sortedList, comparer));
 	    
 	    // Define a binary search algorithm to find the insertion point for the item.
 	    int Find(int start, int end)
@@ -340,16 +396,14 @@ public static class Algorithms
 
 		foreach (var node in sortedList.Nodes)
 		{
-			if (comparer.Less(node.Item, item))
+			
+			if (node.NextNode != null && comparer.Less(item, node.NextNode.Item))
 			{
 				return node;
 			}
-			//else item <= node.Item
 		}
-		
-		Assert(false, "Unexpected point reach. Item is less than or equal to all items in the sorted list.");
 
-		return null;
+		return sortedList.Last;
 	}
 	
 	public static T First<T>(this IReadonlyRandomAccessList<T> source)
@@ -369,7 +423,7 @@ public static class Algorithms
 	//TODO: Test the output
 	public static int InsertSorted<T>(this ResizeableArray<T> list, T item, IComparer<T> comparer)
 	{
-		Assert(IsSorted(list));
+		Assert(IsSorted(list, comparer));
 		
 		int insertionIndex = list.FindInsertionIndex(item, comparer);
 		list.InsertAt(item, insertionIndex);

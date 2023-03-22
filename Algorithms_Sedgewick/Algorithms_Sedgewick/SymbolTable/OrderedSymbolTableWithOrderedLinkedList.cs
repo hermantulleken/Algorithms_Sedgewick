@@ -1,14 +1,14 @@
-﻿using System.Diagnostics;
+﻿namespace Algorithms_Sedgewick.SymbolTable;
 
-namespace Algorithms_Sedgewick.SymbolTable;
+using System.Diagnostics;
 
-public class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue>: IOrderedSymbolTable<TKey, TValue>
+public class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
-	private readonly Comparer<TKey> comparer;
+	private readonly IComparer<TKey> comparer;
 	private readonly IComparer<KeyValuePair<TKey, TValue>> pairComparer;
 	private readonly List.LinkedList<KeyValuePair<TKey, TValue>> list;
 
-	public OrderedSymbolTableWithOrderedLinkedList(Comparer<TKey> comparer)
+	public OrderedSymbolTableWithOrderedLinkedList(IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
 		list = new List.LinkedList<KeyValuePair<TKey, TValue>>();
@@ -84,6 +84,7 @@ public class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue>: IOrderedSymb
 		{
 			ThrowHelper.ThrowException("All keys are larger than the given key.");
 		}
+		
 		var insertionNode = list.FindInsertionNode(new KeyValuePair<TKey, TValue>(key, default), pairComparer);
 				
 		Debug.Assert(comparer.LessOrEqual(insertionNode.Item.Key, key));
@@ -140,7 +141,7 @@ public class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue>: IOrderedSymb
 
 	//TODO Check for special cases.
 	public TKey KeyWithRank(int rank)
-		=> list.Take(rank + 1).First().Key;
+		=> list.ElementAt(rank).Key;
 
 	public int CountRange(TKey start, TKey end)
 	{

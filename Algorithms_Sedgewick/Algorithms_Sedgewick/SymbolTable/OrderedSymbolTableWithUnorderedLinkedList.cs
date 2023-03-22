@@ -6,7 +6,7 @@ using PriorityQueue;
 
 public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSymbolTable<TKey, TValue>
 {
-	private readonly Comparer<TKey> comparer;
+	private readonly IComparer<TKey> comparer;
 
 	private readonly List.LinkedList<KeyValuePair<TKey, TValue>> list;
 
@@ -30,6 +30,10 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 			{
 				node.Item = new KeyValuePair<TKey, TValue>(key, value);
 			}
+			else
+			{
+				list.InsertAtBack(new KeyValuePair<TKey, TValue>(key, value));
+			}
 		}
 	}
 
@@ -45,12 +49,15 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 
 			foreach (var node in list.Nodes)
 			{
-				yield return (node, node.NextNode);
+				if (node.NextNode != null)
+				{
+					yield return (node, node.NextNode);
+				}
 			}
 		}
 	}
 
-	public OrderedSymbolTableWithUnorderedLinkedList(Comparer<TKey> comparer)
+	public OrderedSymbolTableWithUnorderedLinkedList(IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
 		list = new List.LinkedList<KeyValuePair<TKey, TValue>>();

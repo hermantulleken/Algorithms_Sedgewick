@@ -87,9 +87,10 @@ public sealed class LinkedList<T> : IEnumerable<T>
 			
 			return InsertFirstItem(item);
 		}
-
-		back.NextNode = new Node{Item = item};
+		
+		back.NextNode = new Node { Item = item };
 		back = back.NextNode;
+
 
 		Count++;
 		version++;
@@ -192,13 +193,19 @@ public sealed class LinkedList<T> : IEnumerable<T>
 			throw new ArgumentNullException(nameof(node));
 		}
 
+		if (node == back)
+		{
+			InsertAtBack(item);
+		}
+		
 		var newNode = new Node
 		{
 			Item = item,
-			NextNode = node.NextNode
+			NextNode = node.NextNode,
 		};
 
 		node.NextNode = newNode;
+		
 		Count++;
 		version++;
 

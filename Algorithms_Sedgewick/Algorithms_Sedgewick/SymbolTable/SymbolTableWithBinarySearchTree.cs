@@ -13,8 +13,18 @@ public class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymbolTable
 
 	public TValue this[TKey key]
 	{
-		get => throw new NotImplementedException();
-		set => throw new NotImplementedException();
+		get
+		{
+			bool found = tree.TryFindNode(KeyToPair(key), out var node);
+			if (found)
+			{
+				return node.Item.Value;
+			}
+
+			throw ThrowHelper.KeyNotFoundException(key);
+		}
+		
+		set => tree.Add(new KeyValuePair<TKey, TValue>(key, value));
 	}
 
 	public SymbolTableWithBinarySearchTree(IComparer<TKey> comparer)
@@ -41,7 +51,7 @@ public class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymbolTable
 
 	public int RankOf(TKey key) => tree.CountNodesSmallerThan(KeyToPair(key));
 
-	public TKey KeyWithRank(int rank) => throw new NotImplementedException();
+	public TKey KeyWithRank(int rank) => tree.NodesInOrder.ElementAt(rank).Item.Key;
 
 	public int CountRange(TKey start, TKey end) => throw new NotImplementedException();
 

@@ -59,8 +59,8 @@ public class ParallelArrays<TKey, TValue>
 
 	public void InsertAt(int index, TKey key, TValue value)
 	{
-		keys.InsertAt(key);
-		values.InsertAt(value);
+		keys.InsertAt(key, index);
+		values.InsertAt(value, index);
 	}
 
 	public void DeleteAt(int index)
@@ -82,7 +82,7 @@ public class ParallelArrays<TKey, TValue>
 	}
 
 	public override string ToString()
-		=> keys.Zip(values).Pretty();
+		=> keys.Zip(values).Select(t => t.Pretty()).Pretty();
 
 	public void Clear()
 	{
