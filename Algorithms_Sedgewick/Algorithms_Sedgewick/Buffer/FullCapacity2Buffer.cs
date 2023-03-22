@@ -3,7 +3,7 @@ using global::System.Collections.Generic;
 
 namespace Algorithms_Sedgewick.Buffer;
 
-public sealed class FullCapacity2Buffer<T> : IBuffer<T>
+public sealed class FullCapacity2Buffer<T> : IBuffer<T>, IPair<T>
 {
 	private T item1;
 	private T item2;
@@ -43,6 +43,7 @@ public sealed class FullCapacity2Buffer<T> : IBuffer<T>
 		}
 		firstIsItem1 = !firstIsItem1;
 	}
+	
 	public void Clear()
 	{
 		Count = 0;

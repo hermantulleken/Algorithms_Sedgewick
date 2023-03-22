@@ -5,6 +5,7 @@ using Algorithms_Sedgewick.Buffer;
 using Support;
 using static System.Diagnostics.Debug;
 using static Algorithms_Sedgewick.Sort;
+using static Support.WhiteBoxTesting;
 
 namespace Algorithms_Sedgewick;
 
@@ -134,59 +135,134 @@ public static class Algorithms
 		return minIndex;
 	}
 
-	public static int InterpolationSearch(this IReadonlyRandomAccessList<int> list, int key)
+	public static int InterpolationSearch(this int[] list, int key)
 	{
-		if (list.IsEmpty)
+		//__ClearWhiteBoxContainers();
+		list.ThrowIfNull();
+		
+		Assert(IsSorted(list.ToRandomAccessList()), $"{nameof(list)} is not sorted.");
+		
+		if (list.Length == 0 || key < list[0] || list[^1] <= key)
 		{
-			return 0;
-		}
-
-		if (key < list[0])
-		{
-			return 0;
-		}
-
-		if (list[^1] <= key)
-		{
-			return list.Count;
+			return -1;
 		}
 		
-		int start = 0;
-		int end = list.Count - 1;
+		int startIndex = 0;
+		int endIndex = list.Length - 1;
 
 		while (true)
 		{
-			Console.WriteLine($"{start} - {end}: " + list.Skip(start).Take(end - start + 1).Pretty());
-			int length = end - start + 1;
-			float first = list[start];
-
-			if (key < start)
+			__AddPass();
+			
+			if (endIndex < startIndex || key < list[startIndex] || key > list[endIndex])
 			{
-				return start;
+				return -1;
 			}
 			
+			int length = endIndex - startIndex + 1;
+			float first = list[startIndex];
+
 			if (length == 1)
 			{
-				return key < first ? start : start + 1;
+				return key == list[startIndex] ? startIndex : -1;
 			}
 
-			float last = list[end];
-
+			float last = list[endIndex];
 			float fraction = (key - first) / (last - first);
-			float approximateMid = (end - start) * fraction + start;
-			int mid = (int)MathF.Floor(approximateMid);
-			Console.WriteLine($"{mid}");
-			if (key < list[mid])
+			float approximateMid = ((endIndex - startIndex) * fraction) + startIndex;
+			int mindIndex = (int)MathF.Floor(approximateMid);
+			
+			if (key == list[mindIndex])
 			{
-				end = mid;
+				return mindIndex;
+			}
+
+			int newStart = startIndex;
+			int newEnd = endIndex;
+			
+			if (key < list[mindIndex])
+			{
+				newEnd = mindIndex - 1;
 			}
 			else
 			{
-				start = mid + 1; //TODO: is this + 1 correct?
+				newStart = mindIndex + 1;
 			}
+			
+			//Assert(list[newStart] <= key);
+			//Assert(key <= list[newEnd]);
+
+			startIndex = newStart;
+			endIndex = newEnd;
 		}
 	}
 
+	public static int SequentialSearch(this int[] list, int key)
+	{
+		list.ThrowIfNull();
+		
+		for (int i = 0; i < list.Length; i++)
+		{
+			if (list[i] == key)
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	public static int BinarySearch(this int[] list, int key)
+	{
+		//__ClearWhiteBoxContainers();
+		list.ThrowIfNull();
+		
+		if (list.Length == 0 || key < list[0] || list[^1] <= key)
+		{
+			return -1;
+		}
+		
+		int start = 0;
+		int end = list.Length - 1;
+
+		while (true)
+		{
+			__AddPass();
+			
+			if (end < start || key < list[start] || key > list[end])
+			{
+				return -1;
+			}
+			
+			int length = end - start + 1;
+			float first = list[start];
+
+			if (length == 1)
+			{
+				return key == list[start] ? start : -1;
+			}
+			
+			int mid = (start + end) / 2;
+			
+			if (key == list[mid])
+			{
+				return mid;
+			}
+			
+			if (key < list[mid])
+			{
+				end = mid - 1;
+			}
+			else
+			{
+				start = mid + 1;
+			}
+			
+			//Assert(list[start] <= key);
+			//Assert(key <= list[end]);
+		}
+	}
+	
 	/// <summary>
 	/// Finds the index in a sorted list at which an item can be inserted so that all the
 	/// elements to the left are smaller or equal, and all the elements to the right are larger
@@ -518,8 +594,15 @@ public static class Algorithms
 	}
 
 
-	public static IEnumerable<FullCapacity2Buffer<T>> Buffer2<T>(this IEnumerable<T> list)
+	/// <summary>
+	/// Returns pairs of successive elements.
+	/// </summary>
+	/// <remarks>
+	/// Will not return any elements if the list has 1 or 0 elements. The buffer will always contain two elements. 
+	/// </remarks>
+	public static IEnumerable<IPair<T>> Buffer2<T>(this IEnumerable<T> list)
 	{
+		// Would be nice if we could eliminate this new operation
 		var buffer = new FullCapacity2Buffer<T>();
 		
 		foreach (var item in list)

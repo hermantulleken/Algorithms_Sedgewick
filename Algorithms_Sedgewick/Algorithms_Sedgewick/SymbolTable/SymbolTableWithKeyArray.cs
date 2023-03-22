@@ -6,9 +6,9 @@ using List;
 public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	// TODO: Consider a parallel array structure
-	private ResizeableArray<TKey> keys;
-	private ResizeableArray<TValue> values;
-	private IComparer<TKey> comparer;
+	private readonly ResizeableArray<TKey> keys;
+	private readonly ResizeableArray<TValue> values;
+	private readonly IComparer<TKey> comparer;
 	
 	public SymbolTableWithKeyArray(IComparer<TKey> comparer)
 	{
@@ -39,9 +39,11 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 			{
 				values[index] = value;
 			}
-			
-			keys.Add(key);
-			values.Add(value);
+			else
+			{
+				keys.Add(key);
+				values.Add(value);
+			}
 		}
 	}
 
@@ -64,7 +66,7 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 	{
 		for (int i = 0; i < keys.Count; i++)
 		{
-			if (comparer.Equals(key))
+			if (comparer.Equal(key, keys[i]))
 			{
 				index = i;
 				return true;

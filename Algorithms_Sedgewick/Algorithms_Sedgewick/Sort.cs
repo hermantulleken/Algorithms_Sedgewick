@@ -1,4 +1,6 @@
-﻿namespace Algorithms_Sedgewick;
+﻿using static Support.WhiteBoxTesting;
+
+namespace Algorithms_Sedgewick;
 
 using System.Collections;
 using System.Diagnostics;
@@ -220,14 +222,6 @@ public static class Sort
 		public T[] BottomN(int n) => ToReverseArray().TakeLast(n).ToArray();
 #endif
 	}
-
-#if WHITEBOXTESTING
-	/*
-		These can be used to examine the inner workings of algorithms.  
-	*/
-	public static readonly Counter<string> Counter = new();
-	public static readonly HashSet<string> Events = new();
-#endif
 	
 	private static readonly int[] CiuraGaps = { 1, 4, 10, 23, 57, 132, 301, 701 };
 
@@ -244,7 +238,7 @@ public static class Sort
 
 	public static bool AreElementsEqual<T>(IReadonlyRandomAccessList<T> array1, IReadonlyRandomAccessList<T> array2, int start, int end) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		
 		if (end > array1.Count)
 		{
@@ -263,7 +257,7 @@ public static class Sort
 
 		for (int i = start; i < end; i++)
 		{
-			AddCompareTo();
+			__AddCompareTo();
 			if (array1[i].CompareTo(array2[i]) != 0) 
 			{
 				return false;
@@ -277,7 +271,7 @@ public static class Sort
 	//This seems to be a  version of gnome sort
 	public static void DequeueSortWithDeque<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		
 		if (list.Count <= 1)
 		{
@@ -311,7 +305,7 @@ public static class Sort
 	// This seems to be a  version of gnome sort
 	public static void DequeueSortWithDeque<T>(IDeque<T> deque) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		
 		#if WHITEBOXTESTING
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
@@ -386,7 +380,7 @@ public static class Sort
 	//This seems to be a  version of gnome sort
 	public static void DequeueSortWithQueue<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		if (list.Count <= 1)
 		{
 			return;
@@ -413,7 +407,7 @@ public static class Sort
 	// From https://en.wikipedia.org/wiki/Gnome_sort
 	public static void GnomeSort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		int i = 0;
 		while (i < list.Count)
 		{
@@ -485,7 +479,7 @@ public static class Sort
 
 	public static void InsertionSort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		InsertionSort(list, 0, list.Count);
 	}
 
@@ -507,7 +501,6 @@ public static class Sort
 	/// <param name="list">A list of elements to check. Cannot be null.</param>
 	/// <param name="comparer">A comparer to use to compare elements. If not supplied
 	/// or null, <see cref="Comparer{T}.Default"/> is used.</param>
-	/// <typeparam name="T"></typeparam>
 	/// <returns><see langword="true"/> the list is sorted, <see langword="false"/> otherwise.</returns>
 	public static bool IsSorted<T>([NotNull] IReadonlyRandomAccessList<T> list, [AllowNull] IComparer<T> comparer = null)
 	{
@@ -612,7 +605,7 @@ public static class Sort
 	// Ex. 2.2.22
 	public static void Merge3Sort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		var helpList = new T[list.Count];
 		
 		void Sort(int start, int end)
@@ -688,7 +681,7 @@ public static class Sort
 	// Ex. 2.2.22
 	public static void MergeKSort<T>(IReadonlyRandomAccessList<T> list, int k = 3) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 
 		if (k <= 1)
 		{
@@ -730,7 +723,7 @@ public static class Sort
 
 	public static void MergeKSortBottomUp<T>(IReadonlyRandomAccessList<T> list, int k) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		
 		var helpList = new T[list.Count];
 		int[] startIndexes = new int[k + 1];
@@ -770,7 +763,7 @@ public static class Sort
 
 	public static void MergeSort<T>(IReadonlyRandomAccessList<T> list, MergeSortConfig config) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		var helpList = new T[list.Count];
 		
 		void Sort(int start, int end)
@@ -871,7 +864,7 @@ public static class Sort
 	// P. 278
 	public static void MergeSortBottomUp<T>(IReadonlyRandomAccessList<T> list, MergeSortConfig config) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		
 		var helpList = new T[list.Count];
 		
@@ -884,7 +877,7 @@ public static class Sort
 			
 			if (config.SmallArraySortAlgorithm == MergeSortConfig.SortAlgorithm.Insert)
 			{
-				AddPass();
+				__AddPass();
 				mergeStartSize = config.SmallArraySize;
 			
 				for (int leftListStart = 0; leftListStart < length; leftListStart += mergeStartSize)
@@ -897,7 +890,7 @@ public static class Sort
 			//mergedListSize2 is 1 if no algo is used instead of Merge for small lists
 			for (int leftListSize = mergeStartSize; leftListSize < length; leftListSize += leftListSize)
 			{
-				AddPass();
+				__AddPass();
 				
 				int mergedListSize = leftListSize + leftListSize;
 				
@@ -925,7 +918,7 @@ public static class Sort
 	// Ex. 2.2.16
 	public static void MergeSortNatural<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		
 		var helpList = new T[list.Count];
 		
@@ -943,8 +936,8 @@ public static class Sort
 			while (true)
 			{
 				int start = 0;
-				
-				AddPass();
+
+				__AddPass();
 
 				while (start < length)
 				{
@@ -1204,7 +1197,7 @@ public static class Sort
 
 	public static void SelectionSort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		int length = list.Count;
 		
 		for (int i = 0; i < length; i++)
@@ -1226,7 +1219,7 @@ public static class Sort
 
 	public static void ShellSort<T>(IReadonlyRandomAccessList<T> list, int[] stepSizes) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		int length = list.Count;
 
 		for (int stepSizeIndex = 0; stepSizeIndex <= stepSizes.Length; stepSizeIndex++)
@@ -1245,7 +1238,7 @@ public static class Sort
 
 	public static void ShellSortWithPrattSequence<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		int length = list.Count;
 		int stepSize = 1;
 		
@@ -1270,7 +1263,7 @@ public static class Sort
 
 	public static void SortSmall<T>(IReadonlyRandomAccessList<T> list)where T : IComparable<T>
 	{
-		ClearWhiteBoxContainers();
+		__ClearWhiteBoxContainers();
 		int length = list.Count;
 		
 		switch (length)
@@ -1308,7 +1301,7 @@ public static class Sort
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static bool Less<T>(T v, T w) where T : IComparable<T>
 	{
-		AddCompareTo();
+		__AddCompareTo();
 		return v.CompareTo(w) < 0;
 	}
 
@@ -1323,7 +1316,7 @@ public static class Sort
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static bool LessOrEqual<T>(T v, T w) where T : IComparable<T>
 	{
-		AddCompareTo();
+		__AddCompareTo();
 		return v.CompareTo(w) <= 0;
 	}
 
@@ -1334,14 +1327,14 @@ public static class Sort
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static void SwapAt<T>(IReadonlyRandomAccessList<T> list, int i, int j)
 	{
-		AddSwap();
+		__AddSwap();
 		(list[i], list[j]) = (list[j], list[i]);
 	}
 	
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static void SwapAt<T>(T[] list, int i, int j)
 	{
-		AddSwap();
+		__AddSwap();
 		(list[i], list[j]) = (list[j], list[i]);
 	}
 
@@ -1421,32 +1414,6 @@ public static class Sort
 		}
 		
 		return Less(b, c) ? c : b;
-	}
-
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-	private static void AddCompareTo() => Add("CompareTo");
-	
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-	private static void AddSwap() => Add("Swap");
-	
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-	private static void AddPass() => Add("Pass");
-	
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-	private static void Add(string name)
-	{
-#if WHITEBOXTESTING
-		Counter.Add(name);
-#endif
-	}
-
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-	private static void ClearWhiteBoxContainers()
-	{
-#if WHITEBOXTESTING
-		Counter.Clear();
-		Events.Clear();
-#endif
 	}
 
 	// Ex 2.2.10

@@ -1,6 +1,9 @@
 ﻿namespace Algorithms_Sedgewick;
 
 using List;
+using Support;
+
+using static Support.WhiteBoxTesting;
 using Timer = Support.Timer;
 
 //Note: The methods in this class are infinite. Use Take to get a finite amount of elements. 
@@ -34,16 +37,90 @@ public static class Extensions
 }
 internal static class Program
 {
-	public static void Main(string[] _)
+	public static void Main()
 	{
-
-		var array = new ResizeableArray<int>{ 0, 1, 2, 3, 3, 4, 6, 7, 9, 10, 13, 15, 17 };
-
-		int index = array.InterpolationSearch(6);
-		
-		Console.WriteLine(index);
-
+		TimeSearchers();
 		//TimeSorts();
+	}
+
+	public static void TimeSearchers()
+	{
+		Action<int[], int[]> AndPrintWhiteBoxInfo(Action<int[], int[]> action) =>
+			(list, keys) =>
+			{
+				action(list, keys);
+				Sort.WriteCounts();
+			};
+
+		void InterpolationSearch(int[] list, int[] keys)
+		{
+			__ClearWhiteBoxContainers();
+			foreach (int key in keys)
+			{
+				list.InterpolationSearch(key);
+			}
+		}
+		
+		void BinarySearch(int[] list, int[] keys)
+		{
+			__ClearWhiteBoxContainers();
+			foreach (int key in keys)
+			{
+				list.BinarySearch(key);
+			}
+		}
+		
+		void CSharpBinarySearch(int[] list, int[] keys)
+		{
+			__ClearWhiteBoxContainers();
+			foreach (int key in keys)
+			{
+				Array.BinarySearch(list, key);
+			}
+		}
+		
+		void SequentialSearch(int[] list, int[] keys)
+		{
+			__ClearWhiteBoxContainers();
+			foreach (int key in keys)
+			{
+				list.SequentialSearch(key);
+			}
+		}
+
+		const int size = 1000000;
+		const int range = 100000000;
+		const int keyCount = 100000;
+		
+		var list = Generator.UniformRandomInt(range).Take(size).ToResizableArray(size);
+		
+		Sort.QuickSort(list, Sort.QuickSortConfig.Vanilla);
+		int[] array = list.ToArray();
+		
+		int[] keys = Generator.UniformRandomInt(range)
+			.Take(keyCount)
+			.ToArray();
+
+		var searchers = new List<Action<int[], int[]>>()
+		{
+			SequentialSearch,
+			BinarySearch,
+			CSharpBinarySearch,
+			InterpolationSearch,
+			
+			SequentialSearch,
+			BinarySearch,
+			CSharpBinarySearch,
+			InterpolationSearch,
+			
+		}.Select(AndPrintWhiteBoxInfo);
+
+		var times = Timer.Time<int[], int[]>(searchers, () => array, () => keys);
+		
+		foreach (var time in times)
+		{
+			Console.WriteLine(time);
+		}
 	}
 
 	private static void TimeSorts()
