@@ -1,10 +1,8 @@
-﻿using System;
-using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.List;
+﻿namespace Algorithms_Sedgewick_Tests;
+
 using Algorithms_Sedgewick.PriorityQueue;
 using NUnit.Framework;
 using Support;
-namespace Algorithms_Sedgewick_Tests;
 
 [Parallelizable]
 public class HeapTests
@@ -12,6 +10,7 @@ public class HeapTests
 	public class Person : IComparable<Person>
 	{
 		public string Name { get; }
+		
 		public int Age { get; }
 		
 		public Person(string name, int age)
@@ -31,7 +30,7 @@ public class HeapTests
 		() => new PriorityQueueWithOrderedArray<int>(10),
 		() => new PriorityQueueWithUnorderedArray<int>(),
 		() => new PriorityQueueWithOrderedLinkedList<int>(),
-		() => new PriorityQueueWithUnorderedLinkedList<int>()
+		() => new PriorityQueueWithUnorderedLinkedList<int>(),
 	};
 	
 	private static Func<IPriorityQueue<Person>>[] personPriorityQueueFactories = 
@@ -42,9 +41,8 @@ public class HeapTests
 		() => new PriorityQueueWithOrderedArray<Person>(10),
 		() => new PriorityQueueWithUnorderedArray<Person>(),
 		() => new PriorityQueueWithOrderedLinkedList<Person>(),
-		() => new PriorityQueueWithUnorderedLinkedList<Person>()
+		() => new PriorityQueueWithUnorderedLinkedList<Person>(),
 	};
-
 
 	[TestCaseSource(nameof(intPriorityQueueFactories))]
 	public void TestPushPop(Func<IPriorityQueue<int>> queueFactory)
@@ -66,8 +64,6 @@ public class HeapTests
 		
 		queue.Push(2);
 		queue.Log();
-		
-		var s = queue.Pretty().Log();
 		
 		Assert.That(queue.PeekMin, Is.EqualTo(1));
 		Assert.That(queue.PopMin(), Is.EqualTo(1));
@@ -166,7 +162,7 @@ public class HeapTests
 	public void Push_NullElement_ThrowsException(Func<IPriorityQueue<Person>> queueFactory)
 	{
 		var queue = queueFactory();
-		Assert.Throws<ArgumentNullException>(() => queue.Push(null));
+		Assert.Throws<ArgumentNullException>(() => queue.Push(null!));
 	}
 	
 	[TestCaseSource(nameof(personPriorityQueueFactories))]

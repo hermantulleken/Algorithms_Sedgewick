@@ -1,11 +1,10 @@
-﻿using System;
+﻿namespace Algorithms_Sedgewick_Tests;
+
 using System.Linq;
 using System.Numerics;
 using Algorithms_Sedgewick;
 using NUnit.Framework;
 using Support;
-
-namespace Algorithms_Sedgewick_Tests;
 
 [Parallelizable]
 public class TestGeometricAlgorithms
@@ -17,7 +16,7 @@ public class TestGeometricAlgorithms
 		{
 			new Vector2(0, 0),
 			new Vector2(2, 2),
-			new Vector2(0, 2)
+			new Vector2(0, 2),
 		};
 
 		var hull = GeometricAlgorithms.GrahamsScan(points);
@@ -32,12 +31,12 @@ public class TestGeometricAlgorithms
 	{
 		var points = new[]
 		{
-			//Four points arranged in a square and fifth in center.
+			// Four points arranged in a square and fifth in center.
 			new Vector2(0, 0),
 			new Vector2(2, 0),
 			new Vector2(2, 2),
 			new Vector2(0, 2),
-			new Vector2(1, 1)
+			new Vector2(1, 1),
 		};
 
 		var expectedHull = points.Take(4);

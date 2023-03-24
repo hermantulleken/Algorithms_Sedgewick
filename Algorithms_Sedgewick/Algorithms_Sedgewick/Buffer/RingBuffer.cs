@@ -1,28 +1,24 @@
-﻿using System.Collections;
+﻿namespace Algorithms_Sedgewick.Buffer;
+
+using System.Collections;
 using System.Diagnostics;
-using global::System.Collections.Generic;
 
-namespace Algorithms_Sedgewick.Buffer;
-
-public sealed class RingBuffer<T> : IBuffer<T>
+public sealed class RingBuffer<T> : IBuffer<T?>
 {
-	private int front;
+	private readonly T?[] items;
 	private int back;
-	private readonly T[] items;
+	private int front;
+
+	public int Capacity { get; }
 
 	public int Count { get; private set; }
-	public int Capacity { get; }
-    
-	public T First 
+
+	public T? First 
 		=> Count > 0 
 			? this[0] 
 			: throw ThrowHelper.ContainerEmptyException;
-	public T Last 
-		=> Count > 0
-			? this[Count - 1]
-			: throw ThrowHelper.ContainerEmptyException;
-    
-	public T this[int index]
+
+	public T? this[int index]
 	{
 		get
 		{
@@ -30,12 +26,18 @@ public sealed class RingBuffer<T> : IBuffer<T>
             
 			return items[GetRealIndex(index)];
 		}
+		
 		set
 		{
 			ValidateIndex(index);
 			items[GetRealIndex(index)] = value;
 		}
 	}
+
+	public T? Last 
+		=> Count > 0
+			? this[Count - 1]
+			: throw ThrowHelper.ContainerEmptyException;
 
 	public RingBuffer(int capacity)
 	{
@@ -49,7 +51,36 @@ public sealed class RingBuffer<T> : IBuffer<T>
 		ResetPointers();
 	}
 
-	public void Insert(T item)
+	public void Clear()
+	{
+		ReInitialize();
+		ResetPointers();
+	}
+
+	public IEnumerator<T?> GetEnumerator()
+	{
+		if (front < back)
+		{
+			for (int i = front; i < back; i++)
+			{
+				yield return items[i];
+			}
+		}
+		else
+		{
+			for (int i = front; i < Capacity; i++)
+			{
+				yield return items[i];
+			}
+            
+			for (int i = 0; i < back; i++)
+			{
+				yield return items[i];
+			}
+		}
+	}
+
+	public void Insert(T? item)
 	{
 		items[back] = item;
 
@@ -77,36 +108,38 @@ public sealed class RingBuffer<T> : IBuffer<T>
 		AssertCountInvariants();
 	}
 
-	public void Clear()
+	public void ResetPointers()
 	{
-		ReInitialize();
-		ResetPointers();
+		front = 0;
+		back = 0;
+		Count = 0;
+        
+		AssertCountInvariants();
 	}
+	
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-	public IEnumerator<T> GetEnumerator()
+	private void AssertCountInvariants()
 	{
+		Debug.Assert(Count <= Capacity);
+        
 		if (front < back)
 		{
-			for (int i = front; i < back; i++)
-			{
-				yield return items[i];
-			}
+			Debug.Assert(Count == back - front);
 		}
 		else
 		{
-			for (int i = front; i < Capacity; i++)
-			{
-				yield return items[i];
-			}
-            
-			for (int i = 0; i < back; i++)
-			{
-				yield return items[i];
-			}
+			Debug.Assert(Count == Capacity - front + back);
 		}
 	}
 
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+	private int GetRealIndex(int index)
+	{
+		Debug.Assert(IndexInRange(index));
+		return (index + front) % Capacity;
+	}
+
+	private bool IndexInRange(int index) => index >= 0 && index < Count;
 
 	/*
         Not strictly necessary for value types. For reference types, 
@@ -136,36 +169,6 @@ public sealed class RingBuffer<T> : IBuffer<T>
 		}
 	}
 
-	public void ResetPointers()
-	{
-		front = 0;
-		back = 0;
-		Count = 0;
-        
-		AssertCountInvariants();
-	}
-
-	private void AssertCountInvariants()
-	{
-		Debug.Assert(Count <= Capacity);
-        
-		if (front < back)
-		{
-			Debug.Assert(Count == back - front);
-		}
-		else
-		{
-			Debug.Assert(Count == Capacity - front + back);
-		}
-	}
-    
-	private bool IndexInRange(int index) => 0 <= index && index < Count;
-	private int GetRealIndex(int index)
-	{
-		Debug.Assert(IndexInRange(index));
-		return (index + front) % Capacity;
-	}
-    
 	private void ValidateIndex(int index)
 	{
 		if (!IndexInRange(index))

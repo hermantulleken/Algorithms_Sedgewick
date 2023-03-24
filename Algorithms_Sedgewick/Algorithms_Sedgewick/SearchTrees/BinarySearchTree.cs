@@ -1,6 +1,7 @@
 ﻿namespace Algorithms_Sedgewick.SearchTrees;
 
 using System.Diagnostics.CodeAnalysis;
+using Queue;
 using Stack;
 using static System.Diagnostics.Debug;
 using static Support.Tools;
@@ -10,24 +11,20 @@ public class BinarySearchTree<T>
 	[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = DataTransferStruct)]
 	public class Node
 	{
-		public T Item;
-		public Node LeftChild = null;
-		public Node RightChild = null;
+		public T? Item;
+		public Node? LeftChild = null;
+		public Node? RightChild = null;
+
+		public bool IsLeaf => LeftChild == null && RightChild == null;
 	}
 
 	private readonly IComparer<T> comparer;
 
-	/*
-		This is a reusable stack that can be used by any method that needs one:
-			- Assert the stack is empty at the start of your method.
-			- Always clear it before returning on all paths. 
-			- If your code can throw exceptions, use a try-finally to clear the stack. 
-	*/
-	private readonly IStack<Node> stack;
+	private Node? root;
 
-	private Node root;
+	private int version = 0;
 
-	public int Count { get; private set; }
+	public int Count { get; private set; } = 0;
 
 	public bool IsEmpty => root == null;
 
@@ -38,10 +35,12 @@ public class BinarySearchTree<T>
 	{
 		get
 		{
+			IStack<Node> stack = new StackWithResizeableArray<Node>(Count);
 			Assert(stack.IsEmpty);
-			
-			var node = root;
 
+			int versionAtStartOfIteration = version;
+			var node = root;
+			
 			while (node != null || stack.Count > 0)
 			{
 				// Traverse left subtree until we reach the leftmost node
@@ -53,6 +52,8 @@ public class BinarySearchTree<T>
 
 				// Pop the next node from the stack and yield return it
 				node = stack.Pop();
+				ValidateVersion(versionAtStartOfIteration);
+				
 				yield return node;
 
 				// Traverse right subtree
@@ -63,82 +64,118 @@ public class BinarySearchTree<T>
 		}
 	}
 
-	public Node NextNodeInOrder(Node node)
+	public IEnumerable<Node> NodesLevelOrder
 	{
-		var nodeAndNext = NodesInOrder.SkipWhile(n => n != node).Take(2);
-
-		return nodeAndNext.Count() == 2 
-			? nodeAndNext.Last() 
-			: null; // The given node is last
-	}
-
-	public void Remove(T item)
-	{
-		root = RemoveNode(root, item);
-	}
-	
-	private Node RemoveNode(Node rootNode, T item)
-	{
-		// Base case: tree is empty or key is not found
-		if (rootNode == null)
+		get
 		{
-			return rootNode;
-		}
-
-		switch (comparer.Compare(item, rootNode.Item))
-		{
-			// Recur down the tree to find the node to delete
-			case < 0:
-				rootNode.LeftChild = RemoveNode(rootNode.LeftChild, item);
-				break;
-			
-			case > 0:
-				rootNode.RightChild = RemoveNode(rootNode.RightChild, item);
-				break;
-			
-			// key matches the key of the current node
-			default:
+			if (IsEmpty)
 			{
-				// Case 1: Node has no children or one child
-				if (rootNode.LeftChild == null)
+				yield break;
+			}
+
+			int versionAtStartOfIteration = version;
+			var queue = new QueueWithLinkedList<Node>();
+			
+			queue.Enqueue(root!);
+
+			while (!queue.IsEmpty)
+			{
+				var node = queue.Dequeue();
+				
+				if (node.LeftChild != null)
 				{
-					return rootNode.RightChild;
-				}
-				else if (rootNode.RightChild == null)
-				{
-					return rootNode.LeftChild;
+					queue.Enqueue(node.LeftChild);
 				}
 
-				// Case 2: Node has two children
-				var smallestNodeInRightSubtree = GetMinNode(rootNode.RightChild);
-				rootNode.Item = smallestNodeInRightSubtree.Item;
-				rootNode.RightChild = RemoveNode(rootNode.RightChild, smallestNodeInRightSubtree.Item);
-				break;
+				if (node.RightChild != null)
+				{
+					queue.Enqueue(node.RightChild);
+				}
+				
+				ValidateVersion(versionAtStartOfIteration);
+				yield return node;
 			}
 		}
-
-		return rootNode;
 	}
 
-	private Node FindSmallestNode(Node rootNode)
+	public IEnumerable<Node> NodesPostOrder
 	{
-		Node currentNode = rootNode;
-		while (currentNode.LeftChild != null)
+		get
 		{
-			currentNode = currentNode.LeftChild;
+			if (IsEmpty)
+			{
+				yield break;
+			}
+
+			int versionAtStartOfIteration = version;
+			var stack1 = new StackWithResizeableArray<Node>();
+			var stack2 = new StackWithResizeableArray<Node>();
+
+			stack1.Push(root!);
+
+			while (stack1.Count > 0)
+			{
+				Node currentNode = stack1.Pop();
+				stack2.Push(currentNode);
+
+				if (currentNode.LeftChild != null)
+				{
+					stack1.Push(currentNode.LeftChild);
+				}
+
+				if (currentNode.RightChild != null)
+				{
+					stack1.Push(currentNode.RightChild);
+				}
+			}
+
+			while (stack2.Count > 0)
+			{
+				ValidateVersion(versionAtStartOfIteration);
+				yield return stack2.Pop();
+			}
 		}
-		return currentNode;
 	}
 
+	public IEnumerable<Node> NodesPreOrder
+	{
+		get
+		{
+			if (IsEmpty)
+			{
+				yield break;
+			}
 
+			int versionAtStartOfIteration = version;
+
+			Stack<Node> stack = new Stack<Node>();
+			stack.Push(root!);
+
+			while (stack.Count > 0)
+			{
+				Node currentNode = stack.Pop();
+				ValidateVersion(versionAtStartOfIteration);
+				
+				yield return currentNode;
+
+				if (currentNode.RightChild != null)
+				{
+					stack.Push(currentNode.RightChild);
+				}
+
+				if (currentNode.LeftChild != null)
+				{
+					stack.Push(currentNode.LeftChild);
+				}
+			}
+		}
+	}
 	
-	public BinarySearchTree(IComparer<T> comparer, int initialCapacity = Collection.DefaultCapacity)
+	public BinarySearchTree(IComparer<T> comparer)
 	{
 		this.comparer = comparer;
-		Count = 0;
-		stack = new StackWithResizeableArray<Node>(initialCapacity);
 	}
-
+	
 	public void Add(T item)
 	{
 		if (IsEmpty)
@@ -147,17 +184,18 @@ public class BinarySearchTree<T>
 		}
 		else
 		{
-			AddToNode(root, item);
+			AddToNode(root!, item);
 		}
 
 		Count++;
+		version++;
 	}
 
 	public void AddToNode(Node node, T item)
 	{
 		while (true)
 		{
-			bool addToLeft = comparer.LessOrEqual(item, node.Item);
+			bool addToLeft = comparer!.LessOrEqual(item, node.Item);
 			var childNode = addToLeft ? node.LeftChild : node.RightChild;
 
 			if (childNode == null)
@@ -187,9 +225,6 @@ public class BinarySearchTree<T>
 			.TakeWhile(SmallerThanItem)
 			.Count();
 	}
-	
-	public bool TryFindNode(T item, out Node node)
-		=> TryFindAtNode(root, item, out node);
 
 	public Node GetMaxNode()
 	{
@@ -215,24 +250,109 @@ public class BinarySearchTree<T>
 		return GetMinNode(node);
 	}
 
-	// Can return null
-	public Node LargestKeyLessThanOrEqualTo(T item)
+	public Node RemoveMinNode()
 	{
 		if (IsEmpty)
 		{
-			return null;
+			ThrowHelper.ThrowContainerEmpty();
 		}
 		
-		if (IsSingleton)
+		Node parent = null;
+		var child = root;
+
+		while (child.LeftChild != null)
 		{
-			return comparer.Less(item, root.Item) ? null : root;
+			parent = child;
+			child = child.LeftChild;
 		}
-		
-		return NodesInOrder
-			.Buffer2()
-			.FirstOrDefault(pair => comparer.Less(pair.Last.Item, item))
-			?.First; // When all nodes are larger than item, will return null
+
+		Node removedNode = child;
+
+		if (parent == null)
+		{
+			// The root node was the smallest node
+			root = root.RightChild;
+		}
+		else
+		{
+			parent.LeftChild = child.RightChild;
+		}
+
+		return removedNode;
 	}
+
+	public Node RemoveMaxNode() => RemoveNode(root, GetMinNode().Item);
+
+	public int Height()
+	{
+		if (root == null)
+		{
+			return 0;
+		}
+
+		int height = 0;
+		var queue = new Queue<Node>();
+		queue.Enqueue(root);
+
+		while (queue.Count > 0)
+		{
+			int levelNodeCount = queue.Count;
+			height++;
+
+			while (levelNodeCount > 0)
+			{
+				var currentNode = queue.Dequeue();
+
+				if (currentNode.LeftChild != null)
+				{
+					queue.Enqueue(currentNode.LeftChild);
+				}
+
+				if (currentNode.RightChild != null)
+				{
+					queue.Enqueue(currentNode.RightChild);
+				}
+
+				levelNodeCount--;
+			}
+		}
+
+		return height;
+	}
+
+	public Node LargestKeyLessThanOrEqualTo(T key) 
+		=> NodesInOrder
+			.TakeWhile(node => comparer.LessOrEqual(node.Item, key))
+			.LastOrDefault();
+
+	public Node NextNodeInOrder(Node node)
+	{
+		var nodeAndNext = NodesInOrder.SkipWhile(n => n != node).Take(2);
+
+		return nodeAndNext.Count() == 2 
+			? nodeAndNext.Last() 
+			: null; // The given node is last
+	}
+
+	public IEnumerable<Node> Range(T start, T end) =>
+		NodesInOrder
+			.SkipWhile(node => comparer.Less(node.Item, start))
+			.TakeWhile(node => comparer.Less(node.Item, end));
+
+	public void Remove(T item)
+	{
+		root = RemoveNode(root, item);
+		Count--;
+		version++;
+	}
+
+	public Node SmallestKeyGreaterThanOrEqualTo(T key) 
+		=> NodesInOrder
+			.SkipWhile(node => comparer.Less(node.Item, key))
+			.FirstOrDefault();
+
+	public bool TryFindNode(T item, out Node node)
+		=> TryFindAtNode(root, item, out node);
 
 	private static Node GetMaxNode(Node node)
 	{
@@ -252,6 +372,48 @@ public class BinarySearchTree<T>
 		}
 
 		return node;
+	}
+
+	private Node RemoveNode(Node rootNode, T item)
+	{
+		// Base case: tree is empty or key is not found
+		if (rootNode == null)
+		{
+			return rootNode;
+		}
+
+		switch (comparer.Compare(item, rootNode.Item))
+		{
+			// Recur down the tree to find the node to delete
+			case < 0:
+				rootNode.LeftChild = RemoveNode(rootNode.LeftChild, item);
+				break;
+			
+			case > 0:
+				rootNode.RightChild = RemoveNode(rootNode.RightChild, item);
+				break;
+			
+			// key matches the key of the current node
+			default:
+				// Case 1: Node has no children or one child
+				if (rootNode.LeftChild == null)
+				{
+					return rootNode.RightChild;
+				}
+				
+				if (rootNode.RightChild == null)
+				{
+					return rootNode.LeftChild;
+				}
+
+				// Case 2: Node has two children
+				var smallestNodeInRightSubtree = GetMinNode(rootNode.RightChild);
+				rootNode.Item = smallestNodeInRightSubtree.Item;
+				rootNode.RightChild = RemoveNode(rootNode.RightChild, smallestNodeInRightSubtree.Item);
+				break;
+		}
+
+		return rootNode;
 	}
 	
 	private bool TryFindAtNode(Node node, T item, out Node result)
@@ -274,5 +436,13 @@ public class BinarySearchTree<T>
 		}
 		
 		return false;
+	}
+
+	private void ValidateVersion(int versionAtStartOfIteration)
+	{
+		if (version != versionAtStartOfIteration)
+		{
+			ThrowHelper.ThrowIteratingOverModifiedContainer();
+		}
 	}
 }

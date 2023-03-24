@@ -1,20 +1,29 @@
-﻿using System.Collections;
-using global::System.Collections.Generic;
+﻿namespace Algorithms_Sedgewick.Buffer;
 
-namespace Algorithms_Sedgewick.Buffer;
+using System.Collections;
 
-public class ResizeableBuffer<T> : IBuffer<T>
+public class ResizeableBuffer<T> : IBuffer<T?>
 {
-	private IBuffer<T> buffer;
+	private IBuffer<T?> buffer;
+	
 	public int Count => buffer.Count;
+	
 	public int Capacity => buffer.Capacity;
-	public T First => buffer.First;
-	public T Last => buffer.Last;
+	
+	public T? First => buffer.First;
+	
+	public T? Last => buffer.Last;
+	
 	public ResizeableBuffer(int capacity) 
+	
 		=> buffer = CreateBuffer(capacity);
-	public void Insert(T item) => buffer.Insert(item);
+	
+	public void Insert(T? item) => buffer.Insert(item);
+	
 	public void Clear() => buffer.Clear();
-	public IEnumerator<T> GetEnumerator() => buffer.GetEnumerator();
+	
+	public IEnumerator<T?> GetEnumerator() => buffer.GetEnumerator();
+	
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     
 	public void Resize(int newCapacity)
@@ -24,7 +33,7 @@ public class ResizeableBuffer<T> : IBuffer<T>
 			case < 0:
 				throw ThrowHelper.CapacityCannotBeNegativeException(newCapacity);
 			case 0:
-				buffer = new ZeroCapacityBuffer<T>();
+				buffer = new ZeroCapacityBuffer<T?>();
 				return;
 		}
 
@@ -38,5 +47,5 @@ public class ResizeableBuffer<T> : IBuffer<T>
 		buffer = newBuffer;
 	}
 
-	private static IBuffer<T> CreateBuffer(int capacity) => new RingBuffer<T>(capacity);
+	private static IBuffer<T?> CreateBuffer(int capacity) => new RingBuffer<T?>(capacity);
 }

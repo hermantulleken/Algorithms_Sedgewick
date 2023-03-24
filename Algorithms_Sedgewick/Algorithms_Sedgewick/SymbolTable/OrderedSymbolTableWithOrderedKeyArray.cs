@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using List;
-using List;
 
 // Ex. 3.1.12
 public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
@@ -71,36 +70,20 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 
 	public int CountRange(TKey start, TKey end)
 	{
-		if (TryFindKey(start, out int startIndex))
-		{
-			if (TryFindKey(end, out int endIndex))
-			{
-				return endIndex - startIndex + 1;
-			}
+		int startIndex = RankOf(start);
+		int endIndex = RankOf(end);
 
-			throw ThrowHelper.KeyNotFoundException(end);
-		}
-
-		throw ThrowHelper.KeyNotFoundException(start);
+		return endIndex - startIndex;
 	}
 
 	public IEnumerable<TKey> KeysRange(TKey start, TKey end)
 	{
-		if (TryFindKey(start, out int startIndex))
-		{
-			if (TryFindKey(end, out int endIndex))
-			{
-				//TODO Add range for array / random access list
-				for (int i = startIndex; i < endIndex; i++)
-				{
-					yield return keys[i];
-				}
-			}
+		int startIndex = RankOf(start);
+		int endIndex = RankOf(end);
 
-			throw ThrowHelper.KeyNotFoundException(end);
-		}
-
-		throw ThrowHelper.KeyNotFoundException(start);
+		return keys
+			.Skip(startIndex)
+			.Take(endIndex - startIndex);
 	}
 
 	//TODO verify index
@@ -109,24 +92,23 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 	public TKey LargestKeyLessThanOrEqualTo(TKey key)
 	{
 		//TODO: Handle edge casese
-		int index = keys.FindInsertionIndex(key, comparer);
+		int index = keys.BinaryRank(key, comparer);
 
-		return keys[index];
+		if (comparer.Equal(keys[index], key))
+		{
+			return keys[index];
+		}
+		else
+		{
+			return keys[index - 1];
+		}
 	}
 
 	public TKey MaxKey() => keys[^1];
 
 	public TKey MinKey() => keys[0];
 
-	public int RankOf(TKey key)
-	{
-		if (TryFindKey(key, out int index))
-		{
-			return index;
-		}
-		
-		throw ThrowHelper.KeyNotFoundException(key);
-	}
+	public int RankOf(TKey key) => keys.BinaryRank(key, comparer);
 
 	public void RemoveKey(TKey key)
 	{
@@ -142,7 +124,7 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
 		//TODO: Handle edge cases
-		int index = keys.FindInsertionIndex(key, comparer);
+		int index = keys.BinaryRank(key, comparer);
 
 		while (index < Count && comparer.Less(keys[index], key))
 		{

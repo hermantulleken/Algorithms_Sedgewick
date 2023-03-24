@@ -1,9 +1,8 @@
-﻿using static Support.Tools;
-
-namespace Support;
+﻿namespace Support;
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using static Tools;
 
 [SuppressMessage(
 	"StyleCop.CSharp.NamingRules", 

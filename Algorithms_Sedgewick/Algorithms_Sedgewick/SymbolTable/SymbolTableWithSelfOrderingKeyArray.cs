@@ -3,25 +3,17 @@
 using List;
 
 // Ex. 3.1.2
-public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
+public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue?>
 {
+	private readonly IComparer<TKey> comparer;
+
 	// TODO: Consider a parallel array structure
 	private readonly ResizeableArray<TKey> keys;
-	private readonly ResizeableArray<TValue> values;
-	private readonly IComparer<TKey> comparer;
-	
-	public SymbolTableWithSelfOrderingKeyArray(IComparer<TKey> comparer)
-	{
-		this.comparer = comparer;
-		keys = new ResizeableArray<TKey>();
-		values = new ResizeableArray<TValue>();
-	}
+	private readonly ResizeableArray<TValue?> values;
 
 	public int Count => keys.Count;
-	
-	public IEnumerable<TKey> Keys => keys;
 
-	public TValue this[TKey key]
+	public TValue? this[TKey key]
 	{
 		get
 		{
@@ -49,6 +41,17 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 		}
 	}
 
+	public IEnumerable<TKey> Keys => keys;
+
+	public SymbolTableWithSelfOrderingKeyArray(IComparer<TKey> comparer)
+	{
+		this.comparer = comparer;
+		keys = new ResizeableArray<TKey>();
+		values = new ResizeableArray<TValue?>();
+	}
+
+	public bool ContainsKey(TKey key) => TryFind(key, out _);
+
 	public void RemoveKey(TKey key)
 	{
 		if (TryFind(key, out int index))
@@ -62,7 +65,14 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 		}
 	}
 
-	public bool ContainsKey(TKey key) => TryFind(key, out _);
+	private void MoveToFrontAt(int index)
+	{
+		if (index != 0)
+		{
+			Sort.SwapAt(keys, 0, index);
+			Sort.SwapAt(values, 0, index);
+		}
+	}
 
 	private bool TryFind(TKey key, out int index)
 	{
@@ -77,14 +87,5 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 
 		index = -1;
 		return false;
-	}
-
-	private void MoveToFrontAt(int index)
-	{
-		if (index != 0)
-		{
-			Sort.SwapAt(keys, 0, index);
-			Sort.SwapAt(values, 0, index);
-		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Algorithms_Sedgewick;
+﻿namespace Algorithms_Sedgewick;
 
 public static class Comparable
 {
@@ -11,6 +9,7 @@ public static class Comparable
 public class Comparable<T> : IComparable<Comparable<T>>
 {
 	private readonly IComparer<T> comparer;
+	
 	public T Item { get; }
 
 	public Comparable(T item, IComparer<T> comparer)
@@ -19,6 +18,8 @@ public class Comparable<T> : IComparable<Comparable<T>>
 		this.comparer = comparer;
 	}
 
-	public int CompareTo(Comparable<T> other)
-		=> comparer.Compare(Item, other.Item);
+	public int CompareTo(Comparable<T>? other)
+		=> other == null 
+			? 1 
+			: comparer.Compare(Item, other.Item);
 }

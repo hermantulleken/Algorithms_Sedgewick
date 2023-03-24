@@ -2,21 +2,24 @@
 
 using System.Collections;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using static Support.Tools;
 
-public sealed class LinkedList<T> : IEnumerable<T>
+public sealed class LinkedList<T> : IEnumerable<T?>
 {
 	/*
 		Exposing the node class makes the linked list a more useful container to
 		use for implementing other algorithms.
 	*/ 
+	[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = DataTransferStruct)]
 	public sealed record Node
 	{
 		#if WHITEBOXTESTING
 		private const int RecursiveStringLimit = 100;
 		#endif
 		
-		public T Item;
-		public Node NextNode;
+		public T? Item;
+		public Node? NextNode;
 		
 		public IEnumerable<Node> Rest
 		{
@@ -33,25 +36,30 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		
 #if WHITEBOXTESTING
 		public override string ToString() => ToDebugString();
+
 		public string ToDebugString() => ToDebugString(RecursiveStringLimit);
 
 		private string ToDebugString(int depth) =>
 			NextNode == null 
-				? Item.ToString() 
+				? ItemString!
 				: depth == 0 
 					? "..." 
 					: $"{Item} [{NextNode.ToDebugString(depth - 1)}]";
+
+		private string? ItemString => Item == null ? "null" : Item.ToString();
 #else
-		public override string ToString() => $"Node:{{{Item}}}";
+		public override string ToString() => $"Node:{{{ItemString}}}";
 #endif
 	}
 
-	private Node front;
-	private Node back;
+	private Node? front;
+	private Node? back;
 	private int version = 0;
 
 	public bool IsEmpty => front == null;
+	
 	public bool IsSingleton => front == back;
+	
 	public int Count { get; private set; } = 0;
 
 	public Node First
@@ -76,8 +84,6 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		}
 	}
 
-	
-
 	public Node InsertAtBack(T item)
 	{
 		if (IsEmpty)
@@ -87,11 +93,11 @@ public sealed class LinkedList<T> : IEnumerable<T>
 			
 			return InsertFirstItem(item);
 		}
-		
+
+		Debug.Assert(back != null);
 		back.NextNode = new Node { Item = item };
 		back = back.NextNode;
-
-
+		
 		Count++;
 		version++;
 
@@ -111,7 +117,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		var newHead = new Node
 		{
 			Item = item,
-			NextNode = front
+			NextNode = front,
 		};
 			
 		front = newHead;
@@ -129,22 +135,23 @@ public sealed class LinkedList<T> : IEnumerable<T>
 			ThrowHelper.ThrowContainerEmpty();
 		}
 
-		var removedNode = front;
-		//Also works when front is the last node, since then NextNode is null.
-		front = front.NextNode;
+		var removedNode = front!;
+		
+		// Also works when front is the last node, since then NextNode is null.
+		front = front!.NextNode;
 		Count--;
 		version++;
 			
 		return removedNode;
 	}
 
-	public IEnumerator<T> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
+	public IEnumerator<T?> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
 
 	public IEnumerable<Node> Nodes
 	{
 		get
 		{
-			//Also work when empty, since front will be null
+			// Also work when empty, since front will be null
 			var current = front;
 			int versionAtStartOfIteration = version;
 			
@@ -166,17 +173,14 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	/// <exception cref="System.InvalidOperationException">Thrown when the input node does not have a successor to remove.</exception>
 	public Node RemoveAfter(Node node)
 	{
-		if (node == null)
-		{
-			throw new ArgumentNullException(nameof(node));
-		}
-
+		node.ThrowIfNull();
+		
 		if (node.NextNode == null)
 		{
 			throw new InvalidOperationException("There is no node after the given node that can be removed.");
 		}
 
-		//Also works if node.NextNode.NextNode is null
+		// Also works if node.NextNode.NextNode is null
 		var newNextNode = node.NextNode.NextNode;
 		var removedNode = node.NextNode;
 
@@ -195,7 +199,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 
 		if (node == back)
 		{
-			InsertAtBack(item);
+			return InsertAtBack(item);
 		}
 		
 		var newNode = new Node
@@ -216,12 +220,12 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty || IsSingleton)
 		{
-			return; //Nothing to do
+			return; // Nothing to do
 		}
 		
 		var first = front;
 		var oldFront = front;
-		Node reverse = null;
+		Node? reverse = null;
 		
 		while (first != null)
 		{
@@ -248,9 +252,17 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		var otherBack = other.back;
 		int otherCount = other.Count;
 		
-		other.Clear(); //Clear so there is no nodes part of both lists
+		other.Clear(); // Clear so there is no nodes part of both lists
+
+		if (back == null)
+		{
+			front = otherFront;
+		}
+		else
+		{
+			back.NextNode = otherFront;
+		}
 		
-		back.NextNode = otherFront;
 		back = otherBack;
 		Count += otherCount;
 		version++;

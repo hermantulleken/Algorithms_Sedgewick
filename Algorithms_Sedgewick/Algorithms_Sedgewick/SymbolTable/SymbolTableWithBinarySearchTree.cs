@@ -2,7 +2,7 @@
 
 using SearchTrees;
 
-public class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
+public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
 	private readonly BinarySearchTree<KeyValuePair<TKey, TValue>> tree;
 
@@ -45,17 +45,34 @@ public class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymbolTable
 
 	public TKey MaxKey() => NodeToKey(tree.GetMaxNode());
 
-	public TKey LargestKeyLessThanOrEqualTo(TKey key) => throw new NotImplementedException();
+	public TKey LargestKeyLessThanOrEqualTo(TKey key)
+	{
+		var largestNode = tree.LargestKeyLessThanOrEqualTo(KeyToPair(key));
+		
+		return largestNode != null 
+			? largestNode.Item.Key 
+			: throw new Exception("No keys less than given key.");
+	}
 
-	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key) => throw new NotImplementedException();
+	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
+	{
+		var smallestNode = tree.SmallestKeyGreaterThanOrEqualTo(KeyToPair(key));
+		
+		return smallestNode != null 
+			? smallestNode.Item.Key 
+			: throw new Exception("No keys greater than given key.");
+	}
 
 	public int RankOf(TKey key) => tree.CountNodesSmallerThan(KeyToPair(key));
 
 	public TKey KeyWithRank(int rank) => tree.NodesInOrder.ElementAt(rank).Item.Key;
 
-	public int CountRange(TKey start, TKey end) => throw new NotImplementedException();
+	public int CountRange(TKey start, TKey end) => KeysRange(start, end).Count();
 
-	public IEnumerable<TKey> KeysRange(TKey start, TKey end) => throw new NotImplementedException();
+	public IEnumerable<TKey> KeysRange(TKey start, TKey end)
+		=> tree
+			.Range(KeyToPair(start), KeyToPair(end))
+			.Select(NodeToKey);
 
 	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default);
 

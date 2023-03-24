@@ -1,8 +1,8 @@
-using System.Collections;
-using global::System.Collections.Generic;
-using Support;
-
 namespace Algorithms_Sedgewick.List;
+
+using System.Collections;
+using System.Collections.Generic;
+using Support;
 
 public static class ListExtensions
 {
@@ -16,6 +16,7 @@ public static class ListExtensions
 		}
 
 		public int Count => list.Count;
+		
 		public bool IsEmpty => list.Count == 0;
 
 		public T this[int index]
@@ -26,10 +27,12 @@ public static class ListExtensions
 
 		public IReadonlyRandomAccessList<T> Copy() => list.ToList().ToRandomAccessList();
 		
-		public static implicit operator  ListWrapper<T>(T[] list) => new(list);
-		public static implicit operator  ListWrapper<T>(List<T> list) => new(list);
+		public static implicit operator ListWrapper<T>(T[] list) => new(list);
+		
+		public static implicit operator ListWrapper<T>(List<T> list) => new(list);
 
 		public IEnumerator<T> GetEnumerator() => list.GetEnumerator();
+		
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		public override string ToString() => list.Pretty();

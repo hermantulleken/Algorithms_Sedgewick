@@ -1,4 +1,5 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/Highlighting/SweaWarningsMode/@EntryValue">ShowAndRun</s:String>
 	<s:String x:Key="/Default/CodeStyle/CSharpFileLayoutPatterns/Pattern/@EntryValue">&lt;Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns"&gt;
     &lt;TypePattern DisplayName="Non-reorderable types"&gt;
         &lt;TypePattern.Match&gt;
@@ -226,9 +227,10 @@
             &lt;/Entry.SortBy&gt;
         &lt;/Entry&gt;
 
-
-
-        &lt;Entry DisplayName="All other members"&gt;
+        &lt;Entry DisplayName="All other methods"&gt;
+            &lt;Entry.Match&gt;
+                &lt;Kind Is="Method" /&gt;
+            &lt;/Entry.Match&gt;
             &lt;Entry.SortBy&gt;
                 &lt;Access/&gt;
                 &lt;Static/&gt;
@@ -236,7 +238,20 @@
             &lt;/Entry.SortBy&gt;
         &lt;/Entry&gt;
 
-        &lt;Entry DisplayName="Interface Implementations" Priority="100"&gt;
+        &lt;Entry DisplayName="All other members (not methods)"&gt;
+            &lt;Entry.Match&gt;
+                &lt;Not&gt;
+                    &lt;Kind Is="Method" /&gt;
+                &lt;/Not&gt;
+            &lt;/Entry.Match&gt;
+            &lt;Entry.SortBy&gt;
+                &lt;Access/&gt;
+                &lt;Static/&gt;
+                &lt;Name/&gt;
+            &lt;/Entry.SortBy&gt;
+        &lt;/Entry&gt;
+
+        &lt;!--Entry DisplayName="Interface Implementations" Priority="100"&gt;
             &lt;Entry.Match&gt;
                 &lt;And&gt;
                     &lt;Kind Is="Method" /&gt;
@@ -248,7 +263,7 @@
                 &lt;Name /&gt;
                 &lt;ImplementsInterface Immediate="true" /&gt;
             &lt;/Entry.SortBy&gt;
-        &lt;/Entry&gt;
+        &lt;/Entry--&gt;
 
     &lt;/TypePattern&gt;
 &lt;/Patterns&gt;

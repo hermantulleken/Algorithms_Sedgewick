@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using List;
 
-public class SymbolTableWithSortedKParallelArray<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
+public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
 	private readonly ParallelArrays<TKey, TValue> arrays;
 
@@ -37,7 +37,7 @@ public class SymbolTableWithSortedKParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	public IEnumerable<TKey> Keys => arrays.Keys;
 
-	public SymbolTableWithSortedKParallelArray(IComparer<TKey> comparer)
+	public SymbolTableWithOrderedParallelArray(IComparer<TKey> comparer)
 	{
 		arrays = new ParallelArrays<TKey, TValue>(100);
 		this.comparer = comparer;
@@ -68,36 +68,21 @@ public class SymbolTableWithSortedKParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	public int CountRange(TKey start, TKey end)
 	{
-		if (TryFindKey(start, out int startIndex))
-		{
-			if (TryFindKey(end, out int endIndex))
-			{
-				return endIndex - startIndex + 1;
-			}
-
-			throw ThrowHelper.KeyNotFoundException(end);
-		}
-
-		throw ThrowHelper.KeyNotFoundException(start);
+		int startIndex = RankOf(start);
+		int endIndex = RankOf(end); 
+		
+		return endIndex - startIndex;
 	}
 
 	public IEnumerable<TKey> KeysRange(TKey start, TKey end)
 	{
-		if (TryFindKey(start, out int startIndex))
+		int startIndex = RankOf(start);
+		int endIndex = RankOf(end);
+		
+		for (int i = startIndex; i < endIndex; i++)
 		{
-			if (TryFindKey(end, out int endIndex))
-			{
-				//TODO Add range for array / random access list
-				for (int i = startIndex; i < endIndex; i++)
-				{
-					yield return arrays.Keys[i];
-				}
-			}
-
-			throw ThrowHelper.KeyNotFoundException(end);
+			yield return arrays.Keys[i];
 		}
-
-		throw ThrowHelper.KeyNotFoundException(start);
 	}
 
 	//TODO verify index
@@ -105,25 +90,28 @@ public class SymbolTableWithSortedKParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	public TKey LargestKeyLessThanOrEqualTo(TKey key)
 	{
-		//TODO: Handle edge casese
-		int index = arrays.Keys.FindInsertionIndex(key, comparer);
-
-		return arrays.Keys[index];
+		int rank = arrays.Keys.BinaryRank(key, comparer);
+		
+		if (rank >= 0 && (rank < arrays.Keys.Count && comparer.Compare(arrays.Keys[rank], key) == 0))
+		{
+			// The key is in the list
+			return arrays.Keys[rank];
+		}
+		
+		if (rank > 0)
+		{
+			// The key is not in the list, but there are elements less than it
+			return arrays.Keys[rank - 1];
+		}
+		
+		throw new Exception("No keys less than given key.");
 	}
 
 	public TKey MaxKey() => arrays.Keys[^1];
 
 	public TKey MinKey() => arrays.Keys[0];
 
-	public int RankOf(TKey key)
-	{
-		if (TryFindKey(key, out int index))
-		{
-			return index;
-		}
-		
-		throw ThrowHelper.KeyNotFoundException(key);
-	}
+	public int RankOf(TKey key) => arrays.Keys.BinaryRank(key, comparer);
 
 	public void RemoveKey(TKey key)
 	{
@@ -137,14 +125,20 @@ public class SymbolTableWithSortedKParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
-		//TODO: Handle edge cases
-		int index = arrays.Keys.FindInsertionIndex(key, comparer);
-
-		while (index < Count && comparer.Less(arrays.Keys[index], key))
+		int rank = arrays.Keys.BinaryRank(key, comparer);
+		
+		if (rank < arrays.Keys.Count && comparer.Compare(arrays.Keys[rank], key) >= 0)
 		{
-			index++;
+			// The key is in the list or there is an element greater than it
+			return arrays.Keys[rank];
 		}
 		
-		return arrays.Keys[index];
+		if (rank < arrays.Keys.Count - 1)
+		{
+			// The key is not in the list, but there are elements greater than it
+			return arrays.Keys[rank + 1];
+		}
+
+		throw new Exception("No keys greater than given key.");
 	}
 }

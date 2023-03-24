@@ -6,25 +6,32 @@ using System.Runtime.CompilerServices;
 using Support;
 using static System.Diagnostics.Debug;
 
-public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
+public static class ResizeableArray
 {
-	[NotNull]
-	private T[] items;
+	internal const int DefaultCapacity = 16;
+	internal const int HalfMaxCapacity = MaxCapacity >> 1;
+	internal const int MaxCapacity = int.MaxValue;
+}
+
+[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and Simple version goes together.")]
+public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
+{
+	private T?[] items;
+
 	private int version;
 
-    /// <inheritdoc/>
-	public bool IsEmpty => Count == 0;
-	
 	public int Capacity { get; private set; }
-	
+
 	/// <inheritdoc />
 	public int Count { get; private set; }
-	
-	
+
+	/// <inheritdoc/>
+	public bool IsEmpty => Count == 0;
+
 	public bool IsFull => Count == Capacity;
-	
+
 	/// <inheritdoc />
-	public T this[int index]
+	public T? this[int index]
 	{
 		get
 		{
@@ -41,9 +48,45 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 		}
 	}
 
-	public IReadonlyRandomAccessList<T> Copy()
+	public ResizeableArray(int capacity = ResizeableArray.DefaultCapacity)
 	{
-		var copy = new ResizeableArray<T>(Capacity)
+		items = capacity switch
+		{
+			< 0 => throw ThrowHelper.CapacityCannotBeNegativeException(capacity),
+			0 => Array.Empty<T>(),
+			_ => new T[capacity],
+		};
+
+		version = 0;
+		Capacity = capacity;
+	}
+
+	public void Add(T? item)
+	{
+		if (IsFull)
+		{
+			Grow();
+		}
+			
+		items[Count] = item;
+		Count++;
+		version++;
+	}
+
+	public void Clear()
+	{
+		if (IsEmpty)
+		{
+			return;
+		}
+
+		RemoveLastAlreadyChecked(Count);
+	}
+
+	/// <inheritdoc/>
+	public IReadonlyRandomAccessList<T?> Copy()
+	{
+		var copy = new ResizeableArray<T?>(Capacity)
 		{
 			Count = Count,
 		};
@@ -56,29 +99,34 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 		return copy;
 	}
 
-	public ResizeableArray(int capacity = ResizeableArray.DefaultCapacity)
+	public T? DeleteAt(int index = 0)
 	{
-		items = capacity switch
+		ValidateIndex(index);
+		
+		var firstItem = items[index];
+		version++;
+		Count--;
+		
+		for (int i = index; i < Count; i++)
 		{
-			< 0 => throw ThrowHelper.CapacityCannotBeNegativeException(capacity),
-			0 => Array.Empty<T>(),
-			_ => new T[capacity]
-		};
+			items[i] = items[i + 1];
+		}
 
-		version = 0;
-		Capacity = capacity;
+		items[Count] = default;
+		
+		return firstItem;
 	}
 
-	public void Add(T item)
+	public IEnumerator<T?> GetEnumerator()
 	{
-		if (IsFull)
-		{
-			Grow();
-		}
+		int versionAtStartOfIteration = version;
 			
-		items[Count] = item;
-		Count++;
-		version++;
+		for (int i = 0; i < Count; i++)
+		{
+			ValidateVersion(versionAtStartOfIteration);
+				
+			yield return items[i];
+		}
 	}
 
 	public void InsertAt(T item, int index = 0)
@@ -98,25 +146,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 		Count++;
 	}
 
-	public T DeleteAt(int index = 0)
-	{
-		ValidateIndex(index);
-		
-		var firstItem = items[index];
-		version++;
-		Count--;
-		
-		for (int i = index; i < Count; i++)
-		{
-			items[i] = items[i + 1];
-		}
-
-		items[Count] = default;
-		
-		return firstItem;
-	}
-
-	public T RemoveLast()
+	public T? RemoveLast()
 	{
 		if (IsEmpty)
 		{
@@ -125,14 +155,13 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 
 		Count--;
 		var result = items[Count];
-		items[Count] = default; //Don't hold on to references we don't need.
+		items[Count] = default; // Don't hold on to references we don't need.
 		version++;
 			
 		return result;
-			
 	}
 
-	//Ignores negative values
+	// Ignores negative values
 	public void RemoveLast(int n)
 	{
 		if (n <= 0)
@@ -146,39 +175,12 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 		}
 
 		RemoveLastAlreadyChecked(n > Count ? Count : n);
-		
-	}
-
-	private void RemoveLastAlreadyChecked(int n)
-	{
-		Assert(n > 0);
-		Assert(n <= Count);
-		
-		for(int i = Count - n; i < Count; i++)
-		{
-			items[i] = default; //Don't hold on to references we don't need.
-		}
-
-		Count -= n;
-		version++;
 	}
 
 	public override string ToString() => this.Pretty();
 
-	public IEnumerator<T> GetEnumerator()
-	{
-		int versionAtStartOfIteration = version;
-			
-		for (int i = 0; i < Count; i++)
-		{
-			ValidateVersion(versionAtStartOfIteration);
-				
-			yield return items[i];
-		}
-	}
-
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		
+
 	private void Grow()
 	{
 		switch (Capacity)
@@ -194,7 +196,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 				break;
 		}
 
-		var newItems = new T[Capacity];
+		var newItems = new T?[Capacity];
 
 		for (int i = 0; i < items.Length; i++)
 		{
@@ -203,8 +205,22 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 
 		items = newItems;
 	}
+
+	private void RemoveLastAlreadyChecked(int n)
+	{
+		Assert(n > 0);
+		Assert(n <= Count);
 		
-	private void ValidateIndex(int index, [CallerArgumentExpression("index")] string indexArgName=null)
+		for (int i = Count - n; i < Count; i++)
+		{
+			items[i] = default; // Don't hold on to references we don't need.
+		}
+
+		Count -= n;
+		version++;
+	}
+
+	private void ValidateIndex(int index, [CallerArgumentExpression("index")] string? indexArgName = null)
 	{
 		if (index < 0 || index >= Count)
 		{
@@ -219,21 +235,4 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 			ThrowHelper.ThrowIteratingOverModifiedContainer();
 		}
 	}
-	
-	public void Clear()
-	{
-		if (IsEmpty)
-		{
-			return;
-		}
-
-		RemoveLastAlreadyChecked(Count);
-	}
-}
-
-public static class ResizeableArray
-{
-	internal const int DefaultCapacity = 16;
-	internal const int MaxCapacity = int.MaxValue;
-	internal const int HalfMaxCapacity = MaxCapacity >> 1;
 }

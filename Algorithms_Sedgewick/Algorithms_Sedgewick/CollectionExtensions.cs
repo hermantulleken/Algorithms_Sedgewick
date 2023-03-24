@@ -1,11 +1,12 @@
-﻿using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.Stack;
+﻿namespace Algorithms_Sedgewick;
 
-namespace Algorithms_Sedgewick;
+using List;
+using Stack;
 
 public static class CollectionExtensions
 {
-	public static TStack Copy<TStack, T>(this TStack stack) where TStack : IStack<T>, new()
+	public static TStack Copy<TStack, T>(this TStack stack) 
+		where TStack : IStack<T>, new()
 	{
 		var copy = new TStack();
 
@@ -20,6 +21,7 @@ public static class CollectionExtensions
 	public static ResizeableArray<T> Copy<T>(this ResizeableArray<T> array)
 	{
 		var newArray = new ResizeableArray<T>(array.Capacity);
+		
 		foreach (var item in array)
 		{
 			newArray.Add(item);

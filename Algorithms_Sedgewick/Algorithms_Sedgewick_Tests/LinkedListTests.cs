@@ -1,7 +1,7 @@
-﻿using Algorithms_Sedgewick.List;
-using NUnit.Framework;
+﻿namespace Algorithms_Sedgewick_Tests;
 
-namespace Algorithms_Sedgewick_Tests;
+using Algorithms_Sedgewick.List;
+using NUnit.Framework;
 
 [Parallelizable]
 public class LinkedListTests
@@ -51,8 +51,7 @@ public class LinkedListTests
 		Assert.That(list.First.Item, Is.EqualTo(ArbitraryElement));
 		Assert.That(list.Last.Item, Is.EqualTo(ArbitraryElement));
 	}
-	
-	
+
 	[Test]
 	public void TestInsertAtBackTwice()
 	{
@@ -76,7 +75,7 @@ public class LinkedListTests
 		int front = list.RemoveFromFront().Item;
 		
 		Assert.That(list.Count, Is.EqualTo(1));
-		Assert.That(front , Is.EqualTo(200));
+		Assert.That(front, Is.EqualTo(200));
 		Assert.That(list.First.Item, Is.EqualTo(300));
 	}
 	
@@ -91,6 +90,6 @@ public class LinkedListTests
 		int front = list.RemoveFromFront().Item;
 		
 		Assert.That(list.Count, Is.EqualTo(0));
-		Assert.That(front , Is.EqualTo(300));
+		Assert.That(front, Is.EqualTo(300));
 	}
 }

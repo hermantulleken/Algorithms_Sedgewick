@@ -229,9 +229,13 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 		}
 	}
 
-	//This can throw an exception if the given key is smaller than all the keys
+	// This can throw an exception if the given key is smaller than all the keys
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
-		=> Keys
-			.Where(leftKey => Less(key, leftKey))
-			.Min(comparer);
+	{
+		var tmp = Keys
+			.Where(leftKey => LessOrEqual(key, leftKey))
+			.ToArray();
+
+		return tmp.Min(comparer);
+	}
 }

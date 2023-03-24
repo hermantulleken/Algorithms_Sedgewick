@@ -42,6 +42,20 @@ public class SymbolTableWithParallelArrays<TKey, TValue> : ISymbolTable<TKey, TV
 		arrays = new ParallelArrays<TKey, TValue>(100);
 	}
 
+	public bool ContainsKey(TKey key) => TryFind(key, out _);
+
+	public void RemoveKey(TKey key)
+	{
+		if (TryFind(key, out int index))
+		{
+			arrays.DeleteAt(index);
+		}
+		else
+		{
+			throw ThrowHelper.KeyNotFoundException(key);
+		}
+	}
+
 	private bool TryFind(TKey key, out int index)
 	{
 		for (int i = 0; i < arrays.Count; i++)
@@ -55,19 +69,5 @@ public class SymbolTableWithParallelArrays<TKey, TValue> : ISymbolTable<TKey, TV
 
 		index = -1;
 		return false;
-	}
-
-	public bool ContainsKey(TKey key) => TryFind(key, out _);
-
-	public void RemoveKey(TKey key)
-	{
-		if (TryFind(key, out int index))
-		{
-			arrays.DeleteAt(index);
-		}
-		else
-		{
-			throw ThrowHelper.KeyNotFoundException(key);
-		}
 	}
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Algorithms_Sedgewick.List;
 using NUnit.Framework;

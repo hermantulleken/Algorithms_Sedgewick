@@ -1,27 +1,27 @@
-﻿using System.Collections;
-using System.Diagnostics;
-using global::System.Collections.Generic;
+﻿namespace Algorithms_Sedgewick.List;
 
-namespace Algorithms_Sedgewick.List;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using static System.Diagnostics.Debug;
+using static Support.Tools;
 
-public sealed class CircularLinkedList<T> : IEnumerable<T>
+public sealed class CircularLinkedList<T> : IEnumerable<T?>
 {
 	/*
 		Exposing the node class makes the linked list a more useful container to
 		use for implementing other algorithms.
-	*/ 
+	*/
+	[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = DataTransferStruct)]
 	public sealed record Node
 	{
-		public T Item;
-		public Node NextNode;
+		public T? Item;
+		public Node NextNode = null!;
 	}
 
-	private Node front;
+	private Node? front;
 
 	private int version = 0;
 
-	public bool IsEmpty => front == null;
-	public bool IsSingleton => front.NextNode == front;
 	public int Count { get; private set; } = 0;
 
 	public Node First
@@ -29,64 +29,15 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 		get
 		{
 			ValidateNotEmpty();
-			Debug.Assert(front != null);
+			Assert(front != null);
 				
 			return front;
 		}
 	}
-	
 
-	public Node InsertAtFront(T item)
-	{
-		if (IsEmpty)
-		{
-			return InsertFirstItem(item);
-		}
+	public bool IsEmpty => front == null;
 
-		var newHead = new Node
-		{
-			Item = item,
-			NextNode = front
-		};
-			
-		front = newHead;
-
-		Count++;
-		version++;
-
-		return front;
-	}
-	
-	public void InsertAtBack(T item)
-	{
-		InsertAtFront(item);
-		front = front.NextNode; //Rotate so that new item is at the back
-	}
-
-	public Node RemoveFromFront()
-	{
-		if (IsEmpty)
-		{
-			ThrowHelper.ThrowContainerEmpty();
-		}
-		
-		var removedNode = front;
-		
-		if (IsSingleton)
-		{
-			front = null;
-			return removedNode;
-		}
-		
-		
-		front = front.NextNode;
-		Count--;
-		version++;
-			
-		return removedNode;
-	}
-
-	public IEnumerator<T> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
+	public bool IsSingleton => !IsEmpty && front!.NextNode == front;
 
 	public IEnumerable<Node> Nodes
 	{
@@ -97,6 +48,8 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 				yield break;
 			}
 			
+			Assert(front != null);
+			
 			var current = front;
 			int versionAtStartOfIteration = version;
 			
@@ -105,8 +58,66 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 				ValidateVersion(versionAtStartOfIteration);
 				yield return current;
 				current = current.NextNode;
-			} while (current != front);
+			}
+			while (current != front);
 		}
+	}
+
+	public void Clear()
+	{
+		front = null;
+		Count = 0;
+		version++;
+	}
+
+	public IEnumerator<T?> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
+
+	public Node InsertAfter(Node node, T item)
+	{
+		if (node == null)
+		{
+			throw new ArgumentNullException(nameof(node));
+		}
+
+		var newNode = new Node
+		{
+			Item = item,
+			NextNode = node.NextNode,
+		};
+
+		node.NextNode = newNode;
+
+		return newNode;
+	}
+
+	public void InsertAtBack(T item)
+	{
+		InsertAtFront(item);
+		Assert(front != null);
+		front = front.NextNode; // Rotate so that new item is at the back
+	}
+
+	public Node InsertAtFront(T item)
+	{
+		if (IsEmpty)
+		{
+			return InsertFirstItem(item);
+		}
+
+		Assert(front != null);
+		
+		var newHead = new Node
+		{
+			Item = item,
+			NextNode = front,
+		};
+			
+		front = newHead;
+
+		Count++;
+		version++;
+
+		return front;
 	}
 
 	public Node RemoveAfter(Node node)
@@ -120,8 +131,8 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 		{
 			return RemoveFromFront();
 		}
-		
-		Debug.Assert(!IsSingleton); //otherwise would have executed the block above
+
+		Assert(!IsSingleton); // otherwise would have executed the block above
 		
 		var newNextNode = node.NextNode.NextNode;
 		var removedNode = node.NextNode;
@@ -130,27 +141,32 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 		
 		return removedNode;
 	}
-	
-	public Node InsertAfter(Node node, T item)
+
+	public Node RemoveFromFront()
 	{
-		if (node == null)
+		if (IsEmpty)
 		{
-			throw new ArgumentNullException(nameof(node));
+			ThrowHelper.ThrowContainerEmpty();
+		}
+		
+		Assert(front != null);
+		var removedNode = front;
+		
+		if (IsSingleton)
+		{
+			front = null;
+			return removedNode;
 		}
 
-		var newNode = new Node
-		{
-			Item = item,
-			NextNode = node.NextNode
-		};
-
-		node.NextNode = newNode;
-
-		return newNode;
+		front = front.NextNode;
+		Count--;
+		version++;
+			
+		return removedNode;
 	}
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	
+
 	private Node InsertFirstItem(T item)
 	{
 		front = new Node { Item = item };
@@ -159,14 +175,6 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 		return front;
 	}
 
-	private void ValidateVersion(int versionAtStartOfIteration)
-	{
-		if (version != versionAtStartOfIteration)
-		{
-			ThrowHelper.ThrowIteratingOverModifiedContainer();
-		}
-	}
-		
 	private void ValidateNotEmpty()
 	{
 		if (IsEmpty)
@@ -175,10 +183,11 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 		}
 	}
 
-	public void Clear()
+	private void ValidateVersion(int versionAtStartOfIteration)
 	{
-		front = null;
-		Count = 0;
-		version++;
+		if (version != versionAtStartOfIteration)
+		{
+			ThrowHelper.ThrowIteratingOverModifiedContainer();
+		}
 	}
 }

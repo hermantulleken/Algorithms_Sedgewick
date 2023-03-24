@@ -1,6 +1,5 @@
 ﻿namespace Algorithms_Sedgewick_Tests;
 
-using System;
 using System.Collections.Generic;
 using Algorithms_Sedgewick.SymbolTable;
 using NUnit.Framework;
@@ -10,17 +9,22 @@ public class OrderedSymbolTableTests
 {
 	private static readonly IComparer<string> StringComparer = Comparer<string>.Default;
 	
-	private static Func<IOrderedSymbolTable<string, int>>[] factories =
+	private static TestCaseData[] factories =
 	{
-		() => new OrderedSymbolTableWithOrderedArray<string, int>(StringComparer),
-		// () => new SymbolTableWithBinarySearchTree<string, int>(StringComparer),
-		// () => new OrderedSymbolTableWithOrderedKeyArray<string, int>(StringComparer),
-		// () => new OrderedSymbolTableWithOrderedLinkedList<string, int>(StringComparer),
-		// () => new OrderedSymbolTableWithUnorderedLinkedList<string, int>(StringComparer),
-		// () => new SymbolTableWithSortedKParallelArray<string, int>(StringComparer),
+		new(() => new OrderedSymbolTableWithOrderedArray<string, int>(StringComparer))
+			{ TestName = "OST with Ordered Array" },
+		new(() => new SymbolTableWithBinarySearchTree<string, int>(StringComparer))
+			{ TestName = "OST with Binary Search Tree" },
+		new(() => new OrderedSymbolTableWithOrderedKeyArray<string, int>(StringComparer))
+			{ TestName = "OST with Ordered Key Array" },
+		
+		new(() => new OrderedSymbolTableWithOrderedLinkedList<string, int>(StringComparer))
+			{ TestName = "OST with Ordered LinkedList" },
+		new(() => new OrderedSymbolTableWithUnorderedLinkedList<string, int>(StringComparer))
+			{ TestName = "OST with Unordered linked list" },
+		new(() => new SymbolTableWithOrderedParallelArray<string, int>(StringComparer))
+			{ TestName = "OST with Ordered Parallel Array" },
 	};
-	
-	
 
 	[Test]
 	[TestCaseSource(nameof(factories))]

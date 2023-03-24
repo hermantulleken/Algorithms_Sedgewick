@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Algorithms_Sedgewick.List;
 using NUnit.Framework;
 using Support;
