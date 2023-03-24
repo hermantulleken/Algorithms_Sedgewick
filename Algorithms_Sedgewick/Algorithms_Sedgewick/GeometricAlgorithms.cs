@@ -1,10 +1,9 @@
-﻿using System.Diagnostics;
-using System.Numerics;
-using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.Stack;
-using global::System.Collections.Generic;
+﻿namespace Algorithms_Sedgewick;
 
-namespace Algorithms_Sedgewick;
+using System.Diagnostics;
+using System.Numerics;
+using List;
+using Stack;
 
 public static class GeometricAlgorithms
 {
@@ -21,6 +20,7 @@ public static class GeometricAlgorithms
 			AngleWithAnchor = Math.Atan2(offset.Y, offset.X);
 			distanceFromAnchor = offset.Length();
 		}
+		
 		public int CompareTo(PointRelativeToAnchor other)
 		{
 			double angleDifference = AngleWithAnchor - other.AngleWithAnchor;
@@ -29,7 +29,7 @@ public static class GeometricAlgorithms
 			{
 				< 0 => -1,
 				> 0 => 1,
-				_ => -distanceFromAnchor.CompareTo(other.distanceFromAnchor)//the minus sign is so we get the furthest points first.
+				_ => -distanceFromAnchor.CompareTo(other.distanceFromAnchor), // the minus sign is so we get the furthest points first.
 			};
 		}
 	}
@@ -38,17 +38,24 @@ public static class GeometricAlgorithms
 	{
 		Vector2 LeftMostBottomMost(Vector2 point1, Vector2 point2)
 		{
-			if (point1.Y < point2.Y) return point1;
-			if (point1.Y > point2.Y) return point2;
+			if (point1.Y < point2.Y)
+			{
+				return point1;
+			}
+
+			if (point1.Y > point2.Y)
+			{
+				return point2;
+			}
 			
 			return point1.X <= point2.X ? point1 : point2;
 		}
 
 		double Cross(Vector2 vec0, Vector2 vec1) 
-			=> vec0.Y * vec1.X - vec0.X * vec1.Y;
+			=> (vec0.Y * vec1.X) - (vec0.X * vec1.Y);
 
 		bool IsCounterClockwise(Vector2 point0, Vector2 point1, Vector2 point2) 
-			=> Cross(point1 - point0, point2 - point1) < 0; //Check this calculation
+			=> Cross(point1 - point0, point2 - point1) < 0; // Check this calculation
 
 		var anchor = points.Aggregate(LeftMostBottomMost);
 
@@ -78,7 +85,8 @@ public static class GeometricAlgorithms
 			}
 		}
 		
-		if (filteredList.Count <= 1) //total number of points, including angle, less than 3
+		// total number of points, including angle, less than 3
+		if (filteredList.Count <= 1) 
 		{
 			throw new InvalidOperationException("All points are collinear.");
 		}

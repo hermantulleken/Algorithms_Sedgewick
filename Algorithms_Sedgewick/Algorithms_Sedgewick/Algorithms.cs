@@ -10,7 +10,7 @@ using static Support.WhiteBoxTesting;
 
 public static class Algorithms
 {
-	private static readonly Random Random = new ();
+	private static readonly Random Random = new();
 	
 	/// <summary>
 	/// Returns the number of elements in a sorted list that are less than the given value. 
