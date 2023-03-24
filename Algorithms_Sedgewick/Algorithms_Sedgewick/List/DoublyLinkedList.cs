@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Diagnostics;
-using global::System.Collections.Generic;
 
 namespace Algorithms_Sedgewick.List;
 

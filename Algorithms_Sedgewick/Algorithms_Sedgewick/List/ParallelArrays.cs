@@ -54,8 +54,7 @@ public class ParallelArrays<TKey, TValue>
 		values[index] = value;
 	}
 	
-	public ParallelArrays<TKey, TValue> Copy()
-		=> new ParallelArrays<TKey, TValue>(this);
+	public ParallelArrays<TKey, TValue> Copy() => new(this);
 
 	public void InsertAt(int index, TKey key, TValue value)
 	{

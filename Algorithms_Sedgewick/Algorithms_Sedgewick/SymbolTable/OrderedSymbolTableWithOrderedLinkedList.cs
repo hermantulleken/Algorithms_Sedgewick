@@ -192,5 +192,5 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 		return insertionNode.Item.Key;
 	}
 
-	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new KeyValuePair<TKey, TValue>(key, default);
+	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default);
 }

@@ -180,9 +180,9 @@ public class AlgorithmTests
 	{
 		var array = new ResizeableArray<Point>
 		{
-			new Point { X = 1, Y = 2 },
-			new Point { X = 2, Y = 1 },
-			new Point { X = 1, Y = 2 }
+			new() { X = 1, Y = 2 },
+			new() { X = 2, Y = 1 },
+			new() { X = 1, Y = 2 }
 		};
 
 		array.SortAndRemoveDuplicates();

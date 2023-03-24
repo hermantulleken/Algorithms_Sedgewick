@@ -1,5 +1,4 @@
 using Algorithms_Sedgewick.Buffer;
-using global::System.Collections.Generic;
 
 namespace Algorithms_Sedgewick;
 

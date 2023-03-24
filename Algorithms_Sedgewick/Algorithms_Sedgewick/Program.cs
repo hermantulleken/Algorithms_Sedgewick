@@ -1,8 +1,6 @@
 ﻿namespace Algorithms_Sedgewick;
 
 using List;
-using Support;
-
 using static Support.WhiteBoxTesting;
 using Timer = Support.Timer;
 

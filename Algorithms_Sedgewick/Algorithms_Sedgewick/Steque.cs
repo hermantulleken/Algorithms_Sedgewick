@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Stack;
-using global::System.Collections.Generic;
 
 namespace Algorithms_Sedgewick;
 

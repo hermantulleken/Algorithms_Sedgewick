@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using global::System.Collections.Generic;
+﻿namespace Algorithms_Sedgewick.Stack;
 
-namespace Algorithms_Sedgewick.Stack;
+using System.Collections;
 
 public sealed class StackWithLinkedList<T> : IStack<T>
 {
-	private readonly List.LinkedList<T> items = new List.LinkedList<T>();
+	private readonly List.LinkedList<T> items = new();
 
 	public int Count => items.Count;
 

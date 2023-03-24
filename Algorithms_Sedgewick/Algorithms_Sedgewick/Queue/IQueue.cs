@@ -1,6 +1,4 @@
-﻿using global::System.Collections.Generic;
-
-namespace Algorithms_Sedgewick.Queue;
+﻿namespace Algorithms_Sedgewick.Queue;
 
 public interface IQueue<T> : IEnumerable<T>
 {

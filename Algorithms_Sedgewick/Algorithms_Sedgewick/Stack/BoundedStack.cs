@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using Algorithms_Sedgewick.Deque;
-using global::System.Collections.Generic;
 
 namespace Algorithms_Sedgewick.Stack;
 

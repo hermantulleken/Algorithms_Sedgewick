@@ -1,6 +1,4 @@
-﻿using global::System.Collections.Generic;
-
-namespace Algorithms_Sedgewick.Stack;
+﻿namespace Algorithms_Sedgewick.Stack;
 
 public interface IStack<T> : IEnumerable<T>
 {
