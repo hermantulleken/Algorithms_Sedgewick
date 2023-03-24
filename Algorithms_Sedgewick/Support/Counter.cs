@@ -8,12 +8,12 @@ public class Counter<T>
 {
 	private readonly IDictionary<T, int> counts = new Dictionary<T, int>();
 
+	public IEnumerable<KeyValuePair<T, int>> Counts => counts;
+
 	public int this[T key] => counts[key];
 
 	public IEnumerable<T> Keys => counts.Keys;
-	
-	public IEnumerable<KeyValuePair<T, int>> Counts => counts;
-	
+
 	public void Add(T key)
 	{
 		lock (counts)
@@ -26,6 +26,14 @@ public class Counter<T>
 			{
 				counts[key] = 1;
 			}
+		}
+	}
+
+	public void Clear()
+	{
+		lock (counts)
+		{
+			counts.Clear();
 		}
 	}
 
@@ -51,14 +59,6 @@ public class Counter<T>
 		}
 	}
 
-	public void Clear()
-	{
-		lock (counts)
-		{
-			counts.Clear();
-		}
-	}
-
-    /// <inheritdoc/>
+	/// <inheritdoc/>
 	public override string ToString() => counts.Pretty();
 }

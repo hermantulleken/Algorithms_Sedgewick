@@ -17,7 +17,7 @@ public static class Timer
 		}
 		return times;
 	}
-	
+
 	public static IList<long> Time<T>(
 		IEnumerable<Action<T>> actions,
 		Func<T> argFactory)
@@ -112,7 +112,7 @@ public static class Timer
 		Func<T9> argFactory9)
 		=> Time(actions.Select<Action<T1, T2, T3, T4, T5, T6, T7, T8, T9>, Action>(
 			a => () => a(argFactory1(), argFactory2(), argFactory3(), argFactory4(), argFactory5(), argFactory6(), argFactory7(), argFactory8(), argFactory9())));
-	
+
 	public static IList<long> Time<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
 		IEnumerable<Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> actions,
 		Func<T1> argFactory1,
@@ -127,5 +127,4 @@ public static class Timer
 		Func<T10> argFactory10
 	) => Time(actions.Select<Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, Action>(
 		a => () => a(argFactory1(), argFactory2(), argFactory3(), argFactory4(), argFactory5(), argFactory6(), argFactory7(), argFactory8(), argFactory9(), argFactory10())));
-
 }

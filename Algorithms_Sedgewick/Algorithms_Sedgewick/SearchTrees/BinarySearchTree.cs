@@ -170,12 +170,12 @@ public class BinarySearchTree<T>
 			}
 		}
 	}
-	
+
 	public BinarySearchTree(IComparer<T> comparer)
 	{
 		this.comparer = comparer;
 	}
-	
+
 	public void Add(T item)
 	{
 		if (IsEmpty)
@@ -250,39 +250,6 @@ public class BinarySearchTree<T>
 		return GetMinNode(node);
 	}
 
-	public Node RemoveMinNode()
-	{
-		if (IsEmpty)
-		{
-			ThrowHelper.ThrowContainerEmpty();
-		}
-		
-		Node parent = null;
-		var child = root;
-
-		while (child.LeftChild != null)
-		{
-			parent = child;
-			child = child.LeftChild;
-		}
-
-		Node removedNode = child;
-
-		if (parent == null)
-		{
-			// The root node was the smallest node
-			root = root.RightChild;
-		}
-		else
-		{
-			parent.LeftChild = child.RightChild;
-		}
-
-		return removedNode;
-	}
-
-	public Node RemoveMaxNode() => RemoveNode(root, GetMinNode().Item);
-
 	public int Height()
 	{
 		if (root == null)
@@ -344,6 +311,39 @@ public class BinarySearchTree<T>
 		root = RemoveNode(root, item);
 		Count--;
 		version++;
+	}
+
+	public Node RemoveMaxNode() => RemoveNode(root, GetMinNode().Item);
+
+	public Node RemoveMinNode()
+	{
+		if (IsEmpty)
+		{
+			ThrowHelper.ThrowContainerEmpty();
+		}
+		
+		Node parent = null;
+		var child = root;
+
+		while (child.LeftChild != null)
+		{
+			parent = child;
+			child = child.LeftChild;
+		}
+
+		Node removedNode = child;
+
+		if (parent == null)
+		{
+			// The root node was the smallest node
+			root = root.RightChild;
+		}
+		else
+		{
+			parent.LeftChild = child.RightChild;
+		}
+
+		return removedNode;
 	}
 
 	public Node SmallestKeyGreaterThanOrEqualTo(T key) 
@@ -415,7 +415,7 @@ public class BinarySearchTree<T>
 
 		return rootNode;
 	}
-	
+
 	private bool TryFindAtNode(Node node, T item, out Node result)
 	{
 		result = null;

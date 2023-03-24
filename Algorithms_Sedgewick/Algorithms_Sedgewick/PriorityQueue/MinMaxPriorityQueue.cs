@@ -5,12 +5,26 @@
 // Getting all operations to be O (log n) may be quite tricky. 
 public class MinMaxPriorityQueue<T> where T : IComparable<T>
 {
-	private readonly FixedCapacityMinBinaryHeap<T> smallestElements = new(1000);
 	private readonly FixedCapacityMaxBinaryHeap<T> largestElements = new(1000);
+	private readonly FixedCapacityMinBinaryHeap<T> smallestElements = new(1000);
+	public T PeekMax => largestElements.PeekMax;
 
 	public T PeekMin => smallestElements.PeekMin;
-	public T PeekMax => largestElements.PeekMax;
-	
+
+	public T PopMax()
+	{
+		var max = largestElements.PopMax();
+		Rebalance();
+		return max;
+	}
+
+	public T PopMin()
+	{
+		var min = smallestElements.PopMin();
+		Rebalance();
+		return min;
+	}
+
 	public void Push(T item)
 	{
 		smallestElements.Push(item);
@@ -24,7 +38,7 @@ public class MinMaxPriorityQueue<T> where T : IComparable<T>
 		One idea is to cache the last item transferred in this rebalancing - that
 		should be close to the median, and select the smallest or biggest items list 
 		depending on whether new items are smaller or larger than the media. 
-	*/ 
+	*/
 	private void Rebalance()
 	{
 		if (smallestElements.Count > largestElements.Count + 1)
@@ -36,19 +50,4 @@ public class MinMaxPriorityQueue<T> where T : IComparable<T>
 			smallestElements.Push(largestElements.PopMin());
 		}
 	}
-
-	public T PopMin()
-	{
-		var min = smallestElements.PopMin();
-		Rebalance();
-		return min;
-	}
-
-	public T PopMax()
-	{
-		var max = largestElements.PopMax();
-		Rebalance();
-		return max;
-	}
-	
 }

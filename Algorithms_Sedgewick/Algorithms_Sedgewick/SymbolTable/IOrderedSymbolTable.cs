@@ -3,19 +3,18 @@
 // P. 366
 public interface IOrderedSymbolTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
-	TKey MinKey();
+	int CountRange(TKey start, TKey end);
+
+	IEnumerable<TKey> KeysRange(TKey start, TKey end);
+
+	TKey KeyWithRank(int rank); // Select
+
+	TKey LargestKeyLessThanOrEqualTo(TKey key); // The book uses Floor
 
 	TKey MaxKey();
-	
-	TKey LargestKeyLessThanOrEqualTo(TKey key); // The book uses Floor
-	
-	TKey SmallestKeyGreaterThanOrEqualTo(TKey key); // The book uses Ceil
-	
+	TKey MinKey();
+
 	int RankOf(TKey key);
-	
-	TKey KeyWithRank(int rank); // Select
-	
-	int CountRange(TKey start, TKey end);
-	
-	IEnumerable<TKey> KeysRange(TKey start, TKey end);
+
+	TKey SmallestKeyGreaterThanOrEqualTo(TKey key); // The book uses Ceil
 }

@@ -9,7 +9,7 @@ public static class Comparable
 public class Comparable<T> : IComparable<Comparable<T>>
 {
 	private readonly IComparer<T> comparer;
-	
+
 	public T Item { get; }
 
 	public Comparable(T item, IComparer<T> comparer)

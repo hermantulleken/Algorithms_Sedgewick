@@ -7,37 +7,12 @@ using NUnit.Framework;
 public class LinkedListTests
 {
 	private const int ArbitraryElement = 100;
-	
+
 	[Test]
 	public void TestEmptyListCountIsZero()
 	{
 		var list = new LinkedList<int>();
 		Assert.That(list.Count, Is.EqualTo(0));
-	}
-	
-	[Test]
-	public void TestInsertAtFront()
-	{
-		var list = new LinkedList<int>();
-		list.InsertAtFront(ArbitraryElement);
-		
-		Assert.That(list.Count, Is.EqualTo(1));
-		
-		Assert.That(list.First.Item, Is.EqualTo(ArbitraryElement));
-		Assert.That(list.Last.Item, Is.EqualTo(ArbitraryElement));
-	}
-	
-	[Test]
-	public void TestInsertAtFrontTwice()
-	{
-		var list = new LinkedList<int>();
-		list.InsertAtFront(200);
-		list.InsertAtFront(300);
-		
-		Assert.That(list.Count, Is.EqualTo(2));
-		
-		Assert.That(list.First.Item, Is.EqualTo(300));
-		Assert.That(list.Last.Item, Is.EqualTo(200));
 	}
 
 	[Test]
@@ -66,6 +41,31 @@ public class LinkedListTests
 	}
 
 	[Test]
+	public void TestInsertAtFront()
+	{
+		var list = new LinkedList<int>();
+		list.InsertAtFront(ArbitraryElement);
+		
+		Assert.That(list.Count, Is.EqualTo(1));
+		
+		Assert.That(list.First.Item, Is.EqualTo(ArbitraryElement));
+		Assert.That(list.Last.Item, Is.EqualTo(ArbitraryElement));
+	}
+
+	[Test]
+	public void TestInsertAtFrontTwice()
+	{
+		var list = new LinkedList<int>();
+		list.InsertAtFront(200);
+		list.InsertAtFront(300);
+		
+		Assert.That(list.Count, Is.EqualTo(2));
+		
+		Assert.That(list.First.Item, Is.EqualTo(300));
+		Assert.That(list.Last.Item, Is.EqualTo(200));
+	}
+
+	[Test]
 	public void TestRemoveFromFront()
 	{
 		var list = new LinkedList<int>();
@@ -78,7 +78,7 @@ public class LinkedListTests
 		Assert.That(front, Is.EqualTo(200));
 		Assert.That(list.First.Item, Is.EqualTo(300));
 	}
-	
+
 	[Test]
 	public void TestRemoveFromFrontTwice()
 	{

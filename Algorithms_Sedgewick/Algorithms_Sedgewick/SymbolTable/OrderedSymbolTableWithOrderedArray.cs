@@ -119,7 +119,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 
 		throw new Exception("No keys greater than given key.");
 	}
-	
+
 	internal static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default);
 
 	// TODO: Move somewhere more central

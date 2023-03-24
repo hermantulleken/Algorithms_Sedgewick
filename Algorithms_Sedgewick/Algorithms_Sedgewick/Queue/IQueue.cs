@@ -8,8 +8,8 @@ public interface IQueue<T> : IEnumerable<T>
 	public bool IsSingleton => Count == 1;
 	public T Peek { get; }
 
-	public void Enqueue(T item);
+	public void Clear();
 	public T Dequeue();
 
-	public void Clear();
+	public void Enqueue(T item);
 }

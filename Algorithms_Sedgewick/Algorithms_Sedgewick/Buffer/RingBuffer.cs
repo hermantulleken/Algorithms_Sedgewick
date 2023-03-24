@@ -116,8 +116,6 @@ public sealed class RingBuffer<T> : IBuffer<T?>
         
 		AssertCountInvariants();
 	}
-	
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 	private void AssertCountInvariants()
 	{
@@ -132,6 +130,8 @@ public sealed class RingBuffer<T> : IBuffer<T?>
 			Debug.Assert(Count == Capacity - front + back);
 		}
 	}
+
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 	private int GetRealIndex(int index)
 	{

@@ -9,9 +9,9 @@ public sealed class StackWithResizeableArray<T> : IStack<T>
 
 	public int Capacity => items.Capacity;
 	public int Count => items.Count;
-	public bool IsFull => items.IsFull;
 	public bool IsEmpty => items.IsEmpty;
-		
+	public bool IsFull => items.IsFull;
+
 	public T Peek
 	{
 		get
@@ -26,15 +26,16 @@ public sealed class StackWithResizeableArray<T> : IStack<T>
 		items = new ResizeableArray<T>(capacity);
 	}
 
-	public void Push(T item) => items.Add(item);
-
-	public T Pop() => items.RemoveLast();
 	public void Clear() => items.Clear();
 
 	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
 
+	public T Pop() => items.RemoveLast();
+
+	public void Push(T item) => items.Add(item);
+
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		
+
 	private void ValidateNotEmpty()
 	{
 		if (IsEmpty)

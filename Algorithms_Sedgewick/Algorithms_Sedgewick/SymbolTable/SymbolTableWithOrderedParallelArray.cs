@@ -43,27 +43,6 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 		this.comparer = comparer;
 	}
 
-	private bool TryFindKey(TKey key, out int index)
-	{
-		index = arrays.Keys.FindInsertionIndex(key, comparer);
-
-		if (index == Count)
-		{
-			index = -1;
-			return false;
-		}
-
-		var insertionKey = arrays.Keys[index];
-
-		if (comparer.Equal(insertionKey, key))
-		{
-			return true;
-		}
-
-		index = -1;
-		return false;
-	}
-
 	public bool ContainsKey(TKey key) => TryFindKey(key, out _);
 
 	public int CountRange(TKey start, TKey end)
@@ -140,5 +119,26 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 		}
 
 		throw new Exception("No keys greater than given key.");
+	}
+
+	private bool TryFindKey(TKey key, out int index)
+	{
+		index = arrays.Keys.FindInsertionIndex(key, comparer);
+
+		if (index == Count)
+		{
+			index = -1;
+			return false;
+		}
+
+		var insertionKey = arrays.Keys[index];
+
+		if (comparer.Equal(insertionKey, key))
+		{
+			return true;
+		}
+
+		index = -1;
+		return false;
 	}
 }

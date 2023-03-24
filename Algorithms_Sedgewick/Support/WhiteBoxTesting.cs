@@ -10,14 +10,6 @@ using static Tools;
 	Justification = ShouldBeVisuallyDifferentInCode)]
 public static class WhiteBoxTesting
 {
-#if WHITEBOXTESTING
-	/*
-		These can be used to examine the inner workings of algorithms.  
-	*/
-	public static readonly Counter<string> Counter = new();
-	public static readonly HashSet<string> Events = new();
-#endif
-	
 	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 	public static void __AddCompareTo() => __Add("CompareTo");
 
@@ -43,4 +35,11 @@ public static class WhiteBoxTesting
 		Counter.Add(name);
 #endif
 	}
+#if WHITEBOXTESTING
+	/*
+		These can be used to examine the inner workings of algorithms.  
+	*/
+	public static readonly Counter<string> Counter = new();
+	public static readonly HashSet<string> Events = new();
+#endif
 }

@@ -9,7 +9,7 @@ using System.Collections;
 public sealed class BagWithLinkedList<T> : IBag<T?>
 {
 	private readonly List.LinkedList<T?> items = new();
-	
+
 	/// <inheritdoc />
 	public int Count => items.Count;
 

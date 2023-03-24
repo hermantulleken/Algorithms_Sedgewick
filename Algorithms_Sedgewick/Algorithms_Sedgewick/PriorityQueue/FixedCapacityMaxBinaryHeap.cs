@@ -18,22 +18,23 @@ public sealed class FixedCapacityMaxBinaryHeap<T> where T : IComparable<T>
 
 		public override int GetHashCode() => Item.GetHashCode();
 	}
-	
+
 	private readonly FixedCapacityMinBinaryHeap<InvertedComparable> minHeap;
 
 	public int Count => minHeap.Count;
+	public T PeekMax => minHeap.PeekMin.Item;
 
 	public FixedCapacityMaxBinaryHeap(int capacity)
 	{
 		minHeap = new FixedCapacityMinBinaryHeap<InvertedComparable>(capacity);
 	}
 
-	public void Push(T item) => minHeap.Push(new InvertedComparable(item));
 	public T PopMax() => minHeap.PopMin().Item;
-	public T PeekMax => minHeap.PeekMin.Item;
-
-	public override string ToString() => minHeap.ToString();
 
 	//This op is O(n) 
 	public T PopMin() => minHeap.PopMax().Item;
+
+	public void Push(T item) => minHeap.Push(new InvertedComparable(item));
+
+	public override string ToString() => minHeap.ToString();
 }

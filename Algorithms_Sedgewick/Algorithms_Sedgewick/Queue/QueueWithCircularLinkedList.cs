@@ -10,7 +10,7 @@ public sealed class QueueWithCircularLinkedList<T> : IQueue<T>
 	public int Count => items.Count;
 
 	public bool IsEmpty => items.IsEmpty;
-		
+
 	public T Peek
 	{
 		get
@@ -20,16 +20,16 @@ public sealed class QueueWithCircularLinkedList<T> : IQueue<T>
 		}
 	}
 
-	public void Enqueue(T item) => items.InsertAtBack(item);
+	public void Clear() => items.Clear();
 
 	public T Dequeue() => items.RemoveFromFront().Item;
-	
-	public void Clear() => items.Clear();
+
+	public void Enqueue(T item) => items.InsertAtBack(item);
 
 	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		
+
 	private void ValidateNotEmpty()
 	{
 		if (IsEmpty)

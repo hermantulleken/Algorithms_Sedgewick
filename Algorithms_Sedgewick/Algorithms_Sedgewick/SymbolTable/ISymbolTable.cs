@@ -6,10 +6,10 @@ namespace Algorithms_Sedgewick.SymbolTable;
 */
 public interface ISymbolTable<TKey, TValue>
 {
-	public bool IsEmpty => Count == 0;
 	int Count { get; }
-	IEnumerable<TKey> Keys { get; }
+	public bool IsEmpty => Count == 0;
 	TValue this[TKey key] { get; set; }
-	void RemoveKey(TKey key);
+	IEnumerable<TKey> Keys { get; }
 	bool ContainsKey(TKey key);
+	void RemoveKey(TKey key);
 }

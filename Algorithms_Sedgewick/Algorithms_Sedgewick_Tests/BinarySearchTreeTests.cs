@@ -8,8 +8,6 @@ using NUnit.Framework;
 [TestFixture]
 public class BinarySearchTreeTests
 {
-	private BinarySearchTree<int> tree = null!;
-
 	[SetUp]
 	public void SetUp()
 	{
@@ -24,6 +22,8 @@ public class BinarySearchTreeTests
 		tree.Add(5);
 		tree.Add(7);
 	}
+
+	private BinarySearchTree<int> tree = null!;
 
 	[Test]
 	public void TestPreOrderTraversal()
@@ -60,7 +60,7 @@ public class BinarySearchTreeTests
 
 		Assert.That(actualTraversal, Is.EqualTo(expectedTraversal));
 	}
-	
+
 	[Test]
 	public void AddTest()
 	{

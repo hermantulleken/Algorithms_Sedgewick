@@ -7,26 +7,23 @@ public interface IDeque<T> : IEnumerable<T>
 	int Count { get; }
 	T PeekLeft { get; }
 	T PeekRight { get; }
-	void PushLeft(T item);
-	void PushRight(T item);
+	void Clear();
 	T PopLeft();
 	T PopRight();
-	void Clear();
+	void PushLeft(T item);
+	void PushRight(T item);
 }
 
 public class DequeWithArray<T> : IDeque<T>
 {
-    private T[] items;
-    private int leftIndex;
-    private int rightIndex;
+	private const bool Shrink = false;
+	private T[] items;
+	private int leftIndex;
+	private int rightIndex;
 
-    private const bool Shrink = false;
+	public int Count { get; private set; }
 
-    public DequeWithArray() => Clear();
-
-    public int Count { get; private set; }
-
-    public T PeekLeft
+	public T PeekLeft
     {
         get
         {
@@ -39,7 +36,7 @@ public class DequeWithArray<T> : IDeque<T>
         }
     }
 
-    public T PeekRight
+	public T PeekRight
     {
         get
         {
@@ -52,31 +49,25 @@ public class DequeWithArray<T> : IDeque<T>
         }
     }
 
-    public void PushLeft(T item)
-    {
-        if (Count == items.Length)
-        {
-            Resize(items.Length * 2);
-        }
+	public DequeWithArray() => Clear();
 
-        leftIndex--;
-        items[leftIndex] = item;
-        Count++;
+	public void Clear()
+    {
+        items = new T[4];
+        leftIndex = items.Length / 2;
+        rightIndex = items.Length / 2 - 1;
+        Count = 0;
     }
 
-    public void PushRight(T item)
+	public IEnumerator<T> GetEnumerator()
     {
-        if (Count == items.Length)
+        for (int i = leftIndex; i <= rightIndex; i++)
         {
-            Resize(items.Length * 2);
+            yield return items[i];
         }
-
-        rightIndex++;
-        items[rightIndex] = item;
-        Count++;
     }
 
-    public T PopLeft()
+	public T PopLeft()
     {
         if (Count == 0)
         {
@@ -96,7 +87,7 @@ public class DequeWithArray<T> : IDeque<T>
         return item;
     }
 
-    public T PopRight()
+	public T PopRight()
     {
         if (Count == 0)
         {
@@ -116,25 +107,33 @@ public class DequeWithArray<T> : IDeque<T>
         return item;
     }
 
-    public void Clear()
+	public void PushLeft(T item)
     {
-        items = new T[4];
-        leftIndex = items.Length / 2;
-        rightIndex = items.Length / 2 - 1;
-        Count = 0;
-    }
-
-    public IEnumerator<T> GetEnumerator()
-    {
-        for (int i = leftIndex; i <= rightIndex; i++)
+        if (Count == items.Length)
         {
-            yield return items[i];
+            Resize(items.Length * 2);
         }
+
+        leftIndex--;
+        items[leftIndex] = item;
+        Count++;
     }
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+	public void PushRight(T item)
+    {
+        if (Count == items.Length)
+        {
+            Resize(items.Length * 2);
+        }
 
-    private void Resize(int capacity)
+        rightIndex++;
+        items[rightIndex] = item;
+        Count++;
+    }
+
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+	private void Resize(int capacity)
     {
         var resized = new T[capacity];
         int newLeftIndex = (capacity - Count) / 2;

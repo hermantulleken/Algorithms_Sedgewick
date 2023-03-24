@@ -45,27 +45,6 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 		this.comparer = comparer;
 	}
 
-	private bool TryFindKey(TKey key, out int index)
-	{
-		index = keys.FindInsertionIndex(key, comparer);
-
-		if (index == keys.Count)
-		{
-			index = -1;
-			return false;
-		}
-
-		var insertionKey = keys[index];
-
-		if (comparer.Equal(insertionKey, key))
-		{
-			return true;
-		}
-
-		index = -1;
-		return false;
-	}
-
 	public bool ContainsKey(TKey key) => TryFindKey(key, out _);
 
 	public int CountRange(TKey start, TKey end)
@@ -120,7 +99,7 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 		
 		ThrowHelper.ThrowKeyNotFound(key);
 	}
-	
+
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
 		//TODO: Handle edge cases
@@ -132,5 +111,26 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 		}
 		
 		return keys[index];
+	}
+
+	private bool TryFindKey(TKey key, out int index)
+	{
+		index = keys.FindInsertionIndex(key, comparer);
+
+		if (index == keys.Count)
+		{
+			index = -1;
+			return false;
+		}
+
+		var insertionKey = keys[index];
+
+		if (comparer.Equal(insertionKey, key))
+		{
+			return true;
+		}
+
+		index = -1;
+		return false;
 	}
 }

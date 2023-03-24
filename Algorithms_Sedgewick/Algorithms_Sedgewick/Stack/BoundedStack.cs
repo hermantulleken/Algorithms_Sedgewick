@@ -6,19 +6,35 @@ namespace Algorithms_Sedgewick.Stack;
 //With deck
 public class BoundedStack<T> : IStack<T>
 {
+	private readonly DequeWithDoublyLinkedList<T> deque = new();
 	public int Count => deque.Count;
+	public bool IsEmpty => Count == 0;
+
+	public bool IsFull => Count == MaxSize;
+	public int MaxSize { get; }
 
 	public T Peek => deque.PeekRight;
-	public int MaxSize { get; }
-	public bool IsEmpty => Count == 0;
-	
-	public bool IsFull => Count == MaxSize;
 
-	private readonly DequeWithDoublyLinkedList<T> deque = new();
-	
 	public BoundedStack(int maxSize)
 	{
 		MaxSize = maxSize;
+	}
+
+	public void Clear()
+	{
+		deque.Clear();
+	}
+
+	public IEnumerator<T> GetEnumerator() => throw new NotImplementedException();
+
+	public T Pop()
+	{
+		if (IsEmpty)
+		{
+			ThrowHelper.ThrowContainerEmpty();
+		}
+
+		return deque.PopRight();
 	}
 
 	public void Push(T item)
@@ -35,23 +51,6 @@ public class BoundedStack<T> : IStack<T>
 		
 		deque.PushRight(item);
 	}
-
-	public T Pop()
-	{
-		if (IsEmpty)
-		{
-			ThrowHelper.ThrowContainerEmpty();
-		}
-
-		return deque.PopRight();
-	}
-
-	public void Clear()
-	{
-		deque.Clear();
-	}
-	
-	public IEnumerator<T> GetEnumerator() => throw new NotImplementedException();
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

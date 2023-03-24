@@ -8,20 +8,18 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 	/*
 		Exposing the node class makes the linked list a more useful container to
 		use for implementing other algorithms.
-	*/ 
+	*/
 	public sealed record Node
 	{
 		public T Item;
-		public Node PreviousNode;
 		public Node NextNode;
+		public Node PreviousNode;
 	}
 
-	private Node front;
 	private Node back;
-	private int version = 0;
 
-	public bool IsEmpty => front == null;
-	public bool IsSingleton => front == back;
+	private Node front;
+	private int version = 0;
 
 	public int Count
 	{
@@ -39,7 +37,10 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 			return front;
 		}
 	}
-		
+
+	public bool IsEmpty => front == null;
+	public bool IsSingleton => front == back;
+
 	public Node Last
 	{
 		get
@@ -49,6 +50,57 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 				
 			return back;
 		}
+	}
+
+	public IEnumerable<Node> Nodes
+	{
+		get
+		{
+			//Also work when empty, since front will be null
+			var current = front;
+			int versionAtStartOfIteration = version;
+			
+			while (current != null)
+			{
+				ValidateVersion(versionAtStartOfIteration);
+				yield return current;
+				current = current.NextNode;
+			}
+		}
+	}
+
+	public void Clear()
+	{
+		front = back = null;
+		Count = 0;
+		version++;
+	}
+
+	public void Concat(DoublyLinkedList<T> other)
+	{
+		var otherFront = other.front;
+		var otherBack = other.back;
+		int otherCount = other.Count;
+		
+		other.Clear(); //Clear so there is no nodes part of both lists
+		
+		back.NextNode = otherFront;
+		otherFront.PreviousNode = back;
+		back = otherBack;
+		Count += otherCount;
+		version++;
+	}
+
+	public IEnumerator<T> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
+
+	public Node InsertAfter(Node node, T item)
+	{
+		if (node == null)
+		{
+			throw new ArgumentNullException(nameof(node));
+		}
+
+		return InsertNode(node, node.NextNode, item);
 	}
 
 	public Node InsertAtBack(T item)
@@ -93,30 +145,34 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		return front;
 	}
 
-	public Node RemoveFromFront()
+	public Node InsertBefore(Node node, T item)
 	{
-		if (IsEmpty)
+		if (node == null)
 		{
-			ThrowHelper.ThrowContainerEmpty();
+			throw new ArgumentNullException(nameof(node));
 		}
 
-		var removedNode = front;
+		return InsertNode(node.PreviousNode, node, item);
+	}
 
-		if (IsSingleton)
+	public Node RemoveAfter(Node node)
+	{
+		if (node == null)
 		{
-			front = back = null;
-			Count--;
-			version++;
-			return removedNode;
+			throw new ArgumentNullException(nameof(node));
 		}
 
-		
-		front = front.NextNode;
-		front.PreviousNode = null;
-		Count--;
-		version++;
+		return RemoveNode(node.NextNode);
+	}
 
-		return removedNode;
+	public Node RemoveBefore(Node node)
+	{
+		if (node == null)
+		{
+			throw new ArgumentNullException(nameof(node));
+		}
+
+		return RemoveNode(node.PreviousNode);
 	}
 
 	public Node RemoveFromBack()
@@ -145,88 +201,30 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		return removedNode;
 	}
 
-	public IEnumerator<T> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
-
-	public IEnumerable<Node> Nodes
+	public Node RemoveFromFront()
 	{
-		get
+		if (IsEmpty)
 		{
-			//Also work when empty, since front will be null
-			var current = front;
-			int versionAtStartOfIteration = version;
-			
-			while (current != null)
-			{
-				ValidateVersion(versionAtStartOfIteration);
-				yield return current;
-				current = current.NextNode;
-			}
-		}
-	}
-
-	public Node InsertAfter(Node node, T item)
-	{
-		if (node == null)
-		{
-			throw new ArgumentNullException(nameof(node));
+			ThrowHelper.ThrowContainerEmpty();
 		}
 
-		return InsertNode(node, node.NextNode, item);
-	}
-	
-	public Node InsertBefore(Node node, T item)
-	{
-		if (node == null)
+		var removedNode = front;
+
+		if (IsSingleton)
 		{
-			throw new ArgumentNullException(nameof(node));
+			front = back = null;
+			Count--;
+			version++;
+			return removedNode;
 		}
 
-		return InsertNode(node.PreviousNode, node, item);
-	}
-
-	private Node InsertNode(Node nodeBeforeInsertion, Node nodeAfterInsertion, T item)
-	{
-		if (nodeBeforeInsertion == null)
-		{
-			return InsertAtFront(item);
-		}
-
-		if (nodeAfterInsertion == null)
-		{
-			return InsertAtBack(item);
-		}
-
-		var newNode = new Node
-		{
-			Item = item,
-			PreviousNode = nodeBeforeInsertion,
-			NextNode = nodeAfterInsertion,
-		};
-
-		nodeBeforeInsertion.NextNode = newNode;
-		nodeAfterInsertion.PreviousNode = newNode;
 		
-		return newNode;
-	}
+		front = front.NextNode;
+		front.PreviousNode = null;
+		Count--;
+		version++;
 
-	public Node RemoveBefore(Node node)
-	{
-		if (node == null)
-		{
-			throw new ArgumentNullException(nameof(node));
-		}
-
-		return RemoveNode(node.PreviousNode);
-	}
-	
-	public Node RemoveAfter(Node node)
-	{
-		if (node == null)
-		{
-			throw new ArgumentNullException(nameof(node));
-		}
-
-		return RemoveNode(node.NextNode);
+		return removedNode;
 	}
 
 	public Node RemoveNode(Node nodeToRemove)
@@ -276,45 +274,48 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		back = oldFront;
 	}
 
-	public void Clear()
-	{
-		front = back = null;
-		Count = 0;
-		version++;
-	}
-	
-	public void Concat(DoublyLinkedList<T> other)
-	{
-		var otherFront = other.front;
-		var otherBack = other.back;
-		int otherCount = other.Count;
-		
-		other.Clear(); //Clear so there is no nodes part of both lists
-		
-		back.NextNode = otherFront;
-		otherFront.PreviousNode = back;
-		back = otherBack;
-		Count += otherCount;
-		version++;
-	}
-	
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	
+
 	private Node InsertFirstItem(T item) => front = back = new Node { Item = item};
-		
-	private void ValidateVersion(int versionAtStartOfIteration)
+
+	private Node InsertNode(Node nodeBeforeInsertion, Node nodeAfterInsertion, T item)
 	{
-		if (version != versionAtStartOfIteration)
+		if (nodeBeforeInsertion == null)
 		{
-			ThrowHelper.ThrowIteratingOverModifiedContainer();
+			return InsertAtFront(item);
 		}
-	}
+
+		if (nodeAfterInsertion == null)
+		{
+			return InsertAtBack(item);
+		}
+
+		var newNode = new Node
+		{
+			Item = item,
+			PreviousNode = nodeBeforeInsertion,
+			NextNode = nodeAfterInsertion,
+		};
+
+		nodeBeforeInsertion.NextNode = newNode;
+		nodeAfterInsertion.PreviousNode = newNode;
 		
+		return newNode;
+	}
+
 	private void ValidateNotEmpty()
 	{
 		if (IsEmpty)
 		{
 			ThrowHelper.ThrowContainerEmpty();
+		}
+	}
+
+	private void ValidateVersion(int versionAtStartOfIteration)
+	{
+		if (version != versionAtStartOfIteration)
+		{
+			ThrowHelper.ThrowIteratingOverModifiedContainer();
 		}
 	}
 }

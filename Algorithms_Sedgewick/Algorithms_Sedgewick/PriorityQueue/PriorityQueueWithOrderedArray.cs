@@ -6,15 +6,7 @@ namespace Algorithms_Sedgewick.PriorityQueue;
 //Ex. 2.4.3
 public sealed class PriorityQueueWithOrderedArray<T> : IPriorityQueue<T> where T : IComparable<T>
 {
-	private int Capacity { get; }
-	private bool IsFull => Count == Capacity;
 	private readonly ResizeableArray<T> items;
-
-	public PriorityQueueWithOrderedArray(int capacity)
-	{
-		Capacity = capacity;
-		items = new ResizeableArray<T>();
-	}
 
 	public int Count => items.Count;
 
@@ -29,6 +21,15 @@ public sealed class PriorityQueueWithOrderedArray<T> : IPriorityQueue<T> where T
 
 			return items[0];
 		}
+	}
+
+	private int Capacity { get; }
+	private bool IsFull => Count == Capacity;
+
+	public PriorityQueueWithOrderedArray(int capacity)
+	{
+		Capacity = capacity;
+		items = new ResizeableArray<T>();
 	}
 
 	public T PopMin()

@@ -5,13 +5,20 @@ using System.Collections.Generic;
 
 public sealed class ZeroCapacityBuffer<T> : IBuffer<T>
 {
-	public int Count => 0;
-	
 	public int Capacity => 0;
-	
+	public int Count => 0;
+
 	public T First => throw ThrowHelper.ContainerEmptyException;
-	
+
 	public T Last => throw ThrowHelper.ContainerEmptyException;
+
+	public void Clear()
+	{
+		// Nothing to do since there are no elements.
+	}
+
+	public IEnumerator<T> GetEnumerator() 
+		=> throw new NotImplementedException();
 
 	/// <summary>
 	/// This method has no effect, since the capacity is 0.
@@ -26,13 +33,5 @@ public sealed class ZeroCapacityBuffer<T> : IBuffer<T>
 		*/
 	}
 
-	public void Clear()
-	{
-		// Nothing to do since there are no elements.
-	}
-    
-	public IEnumerator<T> GetEnumerator() 
-		=> throw new NotImplementedException();
-	
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

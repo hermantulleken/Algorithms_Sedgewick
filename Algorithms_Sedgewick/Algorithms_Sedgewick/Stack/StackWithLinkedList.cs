@@ -9,7 +9,7 @@ public sealed class StackWithLinkedList<T> : IStack<T>
 	public int Count => items.Count;
 
 	public bool IsEmpty => items.IsEmpty;
-		
+
 	public T Peek
 	{
 		get
@@ -19,16 +19,16 @@ public sealed class StackWithLinkedList<T> : IStack<T>
 		}
 	}
 
-	public void Push(T item) => items.InsertAtFront(item);
-
-	public T Pop() => items.RemoveFromFront().Item;
-	
 	public void Clear() => items.Clear();
 
 	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
 
+	public T Pop() => items.RemoveFromFront().Item;
+
+	public void Push(T item) => items.InsertAtFront(item);
+
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		
+
 	private void ValidateNotEmpty()
 	{
 		if (IsEmpty)

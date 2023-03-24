@@ -115,7 +115,7 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 				child.Parent = this;
 			}
 		}
-		
+
 		public void SwapWithParent()
 		{
 			var parent = Parent;
@@ -278,17 +278,9 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 		}
 	}
 
-	private bool IsEmpty => root == null;
-
-	private bool IsSingleton => !IsEmpty && root.LeftChild == null && root.RightChild == null;
 	private readonly QueueWithLinkedList<Node> searchQueue;
 
 	private Node root;
-
-	public PriorityTree()
-	{
-		searchQueue = new QueueWithLinkedList<Node>();
-	}
 
 	public int Count { get; private set; }
 
@@ -303,6 +295,15 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 
 			return root.Item;
 		}
+	}
+
+	private bool IsEmpty => root == null;
+
+	private bool IsSingleton => !IsEmpty && root.LeftChild == null && root.RightChild == null;
+
+	public PriorityTree()
+	{
+		searchQueue = new QueueWithLinkedList<Node>();
 	}
 
 	//GetLAstNode is O(n), therefor so is this method

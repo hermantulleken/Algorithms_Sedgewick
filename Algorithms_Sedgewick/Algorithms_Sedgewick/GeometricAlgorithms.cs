@@ -33,7 +33,7 @@ public static class GeometricAlgorithms
 			};
 		}
 	}
-	
+
 	public static IEnumerable<Vector2> GrahamsScan(IEnumerable<Vector2> points)
 	{
 		Vector2 LeftMostBottomMost(Vector2 point1, Vector2 point2)

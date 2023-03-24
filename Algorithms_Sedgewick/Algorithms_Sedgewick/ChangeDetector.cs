@@ -7,8 +7,8 @@ public class ChangeDetector<T>
 	private readonly IBuffer<T> buffer;
 	private readonly IEqualityComparer<T> comparer;
 
-	public event Action<T, T> OnValueChanged;
-    
+	public T PreviousValue => buffer.First;
+
 	public T Value
 	{
 		get => buffer.Last;
@@ -23,8 +23,6 @@ public class ChangeDetector<T>
 			}
 		}
 	}
-    
-	public T PreviousValue => buffer.First;
 
 	public ChangeDetector(IEqualityComparer<T> comparer = null)
 	{
@@ -33,4 +31,6 @@ public class ChangeDetector<T>
 	}
 
 	public void Clear() => buffer.Clear();
+
+	public event Action<T, T> OnValueChanged;
 }

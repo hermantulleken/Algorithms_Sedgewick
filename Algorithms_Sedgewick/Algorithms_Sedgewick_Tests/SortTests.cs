@@ -9,7 +9,10 @@ namespace Algorithms_Sedgewick_Tests;
 [Parallelizable]
 public class SortTests
 {
-	private static readonly IReadonlyRandomAccessList<int> TestArray = new []{5, 9, 1, 23, 6, 2, 6, 18, 2, 3, 7, 6, 11, 71, 8, 4,  19}.ToRandomAccessList();
+	private static readonly Action<IReadonlyRandomAccessList<int>, int, int>[] PartialSortFunctions =
+	{
+		InsertionSort,
+	};
 
 	[DatapointSource]
 	private static readonly Action<IReadonlyRandomAccessList<int>>[]SortFunctions = 
@@ -40,10 +43,7 @@ public class SortTests
 		list => QuickSort(list, QuickSortConfig.Vanilla with {PivotSelection = QuickSortConfig.PivotSelectionAlgorithm.MedianOfThreeFirst}),
 	};
 
-	private static readonly Action<IReadonlyRandomAccessList<int>, int, int>[] PartialSortFunctions =
-	{
-		InsertionSort,
-	};
+	private static readonly IReadonlyRandomAccessList<int> TestArray = new []{5, 9, 1, 23, 6, 2, 6, 18, 2, 3, 7, 6, 11, 71, 8, 4,  19}.ToRandomAccessList();
 
 	[DatapointSource] 
 	private IReadonlyRandomAccessList<int>[] lists = 
@@ -52,15 +52,6 @@ public class SortTests
 		new [] {9, 8, 7, 6, 5, 4, 3, 2, 1 }.ToRandomAccessList(),
 		TestArray
 	};
-	
-	[TestCaseSource(nameof(SortFunctions))]
-	public void SortTest(Action<IReadonlyRandomAccessList<int>> sortFunction)
-	{
-		var list = TestArray.Copy();
-		sortFunction(list);
-		int[] expected = TestArray.OrderBy(x => x).ToArray();
-		Assert.That(list, Is.EqualTo(expected));
-	}
 
 	[TestCaseSource(nameof(SortFunctions))]
 	public void SortCornerCasesTest(Action<IReadonlyRandomAccessList<int>> sortFunction)
@@ -74,7 +65,7 @@ public class SortTests
 		Assert.That(list2.Count, Is.EqualTo(1));
 		Assert.That(list2[0], Is.EqualTo(1));
 	}
-	
+
 	[Theory]
 	public void SortFunctionTest(IReadonlyRandomAccessList<int> input, Action<IReadonlyRandomAccessList<int>> sortFunction)
 	{
@@ -83,6 +74,15 @@ public class SortTests
 		sortFunction(input);
 		Assert.That(input, Is.EqualTo(expectedOutput));
 		Console.WriteLine(input.Pretty());
+	}
+
+	[TestCaseSource(nameof(SortFunctions))]
+	public void SortTest(Action<IReadonlyRandomAccessList<int>> sortFunction)
+	{
+		var list = TestArray.Copy();
+		sortFunction(list);
+		int[] expected = TestArray.OrderBy(x => x).ToArray();
+		Assert.That(list, Is.EqualTo(expected));
 	}
 
 	[TestCaseSource(nameof(PartialSortFunctions))]

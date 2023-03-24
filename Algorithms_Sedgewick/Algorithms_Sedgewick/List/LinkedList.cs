@@ -10,7 +10,7 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 	/*
 		Exposing the node class makes the linked list a more useful container to
 		use for implementing other algorithms.
-	*/ 
+	*/
 	[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = DataTransferStruct)]
 	public sealed record Node
 	{
@@ -52,14 +52,11 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 #endif
 	}
 
-	private Node? front;
 	private Node? back;
+
+	private Node? front;
 	private int version = 0;
 
-	public bool IsEmpty => front == null;
-	
-	public bool IsSingleton => front == back;
-	
 	public int Count { get; private set; } = 0;
 
 	public Node First
@@ -72,7 +69,11 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 			return front;
 		}
 	}
-		
+
+	public bool IsEmpty => front == null;
+
+	public bool IsSingleton => front == back;
+
 	public Node Last
 	{
 		get
@@ -82,6 +83,80 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 				
 			return back;
 		}
+	}
+
+	public IEnumerable<Node> Nodes
+	{
+		get
+		{
+			// Also work when empty, since front will be null
+			var current = front;
+			int versionAtStartOfIteration = version;
+			
+			while (current != null)
+			{
+				ValidateVersion(versionAtStartOfIteration);
+				yield return current;
+				current = current.NextNode;
+			}
+		}
+	}
+
+	public void Clear()
+	{
+		front = back = null;
+		Count = 0;
+		version++;
+	}
+
+	public void Concat(LinkedList<T> other)
+	{
+		var otherFront = other.front;
+		var otherBack = other.back;
+		int otherCount = other.Count;
+		
+		other.Clear(); // Clear so there is no nodes part of both lists
+
+		if (back == null)
+		{
+			front = otherFront;
+		}
+		else
+		{
+			back.NextNode = otherFront;
+		}
+		
+		back = otherBack;
+		Count += otherCount;
+		version++;
+	}
+
+	public IEnumerator<T?> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
+
+	public Node InsertAfter(Node node, T item)
+	{
+		if (node == null)
+		{
+			throw new ArgumentNullException(nameof(node));
+		}
+
+		if (node == back)
+		{
+			return InsertAtBack(item);
+		}
+		
+		var newNode = new Node
+		{
+			Item = item,
+			NextNode = node.NextNode,
+		};
+
+		node.NextNode = newNode;
+		
+		Count++;
+		version++;
+
+		return newNode;
 	}
 
 	public Node InsertAtBack(T item)
@@ -128,42 +203,6 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 		return front;
 	}
 
-	public Node RemoveFromFront()
-	{
-		if (IsEmpty)
-		{
-			ThrowHelper.ThrowContainerEmpty();
-		}
-
-		var removedNode = front!;
-		
-		// Also works when front is the last node, since then NextNode is null.
-		front = front!.NextNode;
-		Count--;
-		version++;
-			
-		return removedNode;
-	}
-
-	public IEnumerator<T?> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
-
-	public IEnumerable<Node> Nodes
-	{
-		get
-		{
-			// Also work when empty, since front will be null
-			var current = front;
-			int versionAtStartOfIteration = version;
-			
-			while (current != null)
-			{
-				ValidateVersion(versionAtStartOfIteration);
-				yield return current;
-				current = current.NextNode;
-			}
-		}
-	}
-
 	/// <summary>
 	/// Removes the node after the specified node.
 	/// </summary>
@@ -189,33 +228,24 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 		version++;
 		return removedNode;
 	}
-	
-	public Node InsertAfter(Node node, T item)
+
+	public Node RemoveFromFront()
 	{
-		if (node == null)
+		if (IsEmpty)
 		{
-			throw new ArgumentNullException(nameof(node));
+			ThrowHelper.ThrowContainerEmpty();
 		}
 
-		if (node == back)
-		{
-			return InsertAtBack(item);
-		}
+		var removedNode = front!;
 		
-		var newNode = new Node
-		{
-			Item = item,
-			NextNode = node.NextNode,
-		};
-
-		node.NextNode = newNode;
-		
-		Count++;
+		// Also works when front is the last node, since then NextNode is null.
+		front = front!.NextNode;
+		Count--;
 		version++;
-
-		return newNode;
+			
+		return removedNode;
 	}
-	
+
 	public void Reverse()
 	{
 		if (IsEmpty || IsSingleton)
@@ -238,55 +268,26 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 		front = reverse;
 		back = oldFront;
 	}
-	
-	public void Clear()
-	{
-		front = back = null;
-		Count = 0;
-		version++;
-	}
-
-	public void Concat(LinkedList<T> other)
-	{
-		var otherFront = other.front;
-		var otherBack = other.back;
-		int otherCount = other.Count;
-		
-		other.Clear(); // Clear so there is no nodes part of both lists
-
-		if (back == null)
-		{
-			front = otherFront;
-		}
-		else
-		{
-			back.NextNode = otherFront;
-		}
-		
-		back = otherBack;
-		Count += otherCount;
-		version++;
-	}
 
 	public override string ToString() => First.ToString();
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	
+
 	private Node InsertFirstItem(T item) => front = back = new Node { Item = item };
-		
-	private void ValidateVersion(int versionAtStartOfIteration)
-	{
-		if (version != versionAtStartOfIteration)
-		{
-			ThrowHelper.ThrowIteratingOverModifiedContainer();
-		}
-	}
-		
+
 	private void ValidateNotEmpty()
 	{
 		if (IsEmpty)
 		{
 			ThrowHelper.ThrowContainerEmpty();
+		}
+	}
+
+	private void ValidateVersion(int versionAtStartOfIteration)
+	{
+		if (version != versionAtStartOfIteration)
+		{
+			ThrowHelper.ThrowIteratingOverModifiedContainer();
 		}
 	}
 }

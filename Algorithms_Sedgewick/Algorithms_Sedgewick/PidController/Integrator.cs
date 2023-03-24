@@ -6,12 +6,6 @@ public sealed class Integrator
 {
 	private readonly IBuffer<float> buffer;
 
-	public float Value
-	{
-		get => buffer.Last;
-		set => buffer.Insert(value);
-	}
-    
 	public float PreviousValue => buffer.First;
 
 	/*
@@ -20,6 +14,12 @@ public sealed class Integrator
         be absorbed by the factor in the PID controller.  
     */
 	public float Sum => buffer.Sum();
+
+	public float Value
+	{
+		get => buffer.Last;
+		set => buffer.Insert(value);
+	}
 
 	public Integrator(int sumWindow) => 
 		buffer = new RingBuffer<float>(sumWindow);

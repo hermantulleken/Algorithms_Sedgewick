@@ -11,12 +11,12 @@ public interface IBag<T> : IEnumerable<T>
 	/// Gets the number of elements in the bag.
 	/// </summary>
 	public int Count { get; }
-	
+
 	/// <summary>
 	/// Gets whether the bag is empty.
 	/// </summary>
 	public bool IsEmpty => Count == 0;
-	
+
 	/// <summary>
 	/// Adds an item to the bag. 
 	/// </summary>

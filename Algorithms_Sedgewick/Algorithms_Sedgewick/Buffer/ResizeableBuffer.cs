@@ -5,27 +5,25 @@ using System.Collections;
 public class ResizeableBuffer<T> : IBuffer<T?>
 {
 	private IBuffer<T?> buffer;
-	
-	public int Count => buffer.Count;
-	
+
 	public int Capacity => buffer.Capacity;
-	
+
+	public int Count => buffer.Count;
+
 	public T? First => buffer.First;
-	
+
 	public T? Last => buffer.Last;
-	
+
 	public ResizeableBuffer(int capacity) 
 	
 		=> buffer = CreateBuffer(capacity);
-	
-	public void Insert(T? item) => buffer.Insert(item);
-	
+
 	public void Clear() => buffer.Clear();
-	
+
 	public IEnumerator<T?> GetEnumerator() => buffer.GetEnumerator();
-	
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    
+
+	public void Insert(T? item) => buffer.Insert(item);
+
 	public void Resize(int newCapacity)
 	{
 		switch (newCapacity)
@@ -48,4 +46,6 @@ public class ResizeableBuffer<T> : IBuffer<T?>
 	}
 
 	private static IBuffer<T?> CreateBuffer(int capacity) => new RingBuffer<T?>(capacity);
+
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

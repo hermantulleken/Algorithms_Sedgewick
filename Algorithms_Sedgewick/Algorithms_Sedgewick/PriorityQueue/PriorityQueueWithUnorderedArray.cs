@@ -8,12 +8,10 @@ namespace Algorithms_Sedgewick.PriorityQueue;
 //Note: We maintain the minimum object in the last position, as it is the cheapest to delete from.
 public sealed class PriorityQueueWithUnorderedArray<T> : IPriorityQueue<T> where T : IComparable<T>
 {
-	public bool IsFull => items.IsFull;
-
-	private int LastIndex => items.Count - 1;
 	private readonly ResizeableArray<T> items = new();
 
 	public int Count => items.Count;
+	public bool IsFull => items.IsFull;
 
 	public T PeekMin
 	{
@@ -27,6 +25,8 @@ public sealed class PriorityQueueWithUnorderedArray<T> : IPriorityQueue<T> where
 			return items[LastIndex];
 		}
 	}
+
+	private int LastIndex => items.Count - 1;
 
 	public T PopMin()
 	{

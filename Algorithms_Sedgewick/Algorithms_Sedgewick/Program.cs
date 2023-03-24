@@ -8,7 +8,7 @@ using Timer = Support.Timer;
 public static class Generator
 {
 	private static readonly Random Random = new();
-	
+
 	public static IEnumerable<int> UniformRandomInt(int maxValue)
 	{
 		while (true)

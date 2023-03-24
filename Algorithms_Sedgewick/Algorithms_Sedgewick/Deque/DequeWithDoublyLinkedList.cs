@@ -11,15 +11,15 @@ public class DequeWithDoublyLinkedList<T> : IDeque<T>
 	public T PeekLeft => items.First.Item;
 	public T PeekRight => items.Last.Item;
 
-	public void PushLeft(T item) => items.InsertAtFront(item);
-	public void PushRight(T item) => items.InsertAtBack(item);
+	public void Clear() => items.Clear();
+
+	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
 	public T PopLeft() => items.RemoveFromFront().Item;
 	public T PopRight() => items.RemoveFromBack().Item;
 
-	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-	public void Clear() => items.Clear();
+	public void PushLeft(T item) => items.InsertAtFront(item);
+	public void PushRight(T item) => items.InsertAtBack(item);
 
 	public override string ToString() => Formatter.Pretty(this);
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

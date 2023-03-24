@@ -11,7 +11,7 @@ using static Support.WhiteBoxTesting;
 public static class Algorithms
 {
 	private static readonly Random Random = new();
-	
+
 	/// <summary>
 	/// Returns the number of elements in a sorted list that are less than the given value. 
 	/// </summary>
@@ -37,46 +37,6 @@ public static class Algorithms
 		}
 
 		return left;
-	}
-	
-	/// <summary>
-	/// Returns the number of elements in a sorted list that are less than the given value. 
-	/// </summary>
-	public static int SequentialRank<T>(this IReadonlyRandomAccessList<T> list, T item, IComparer<T> comparer)
-	{
-		Assert(IsSorted(list, comparer));
-		
-		for (int i = 0; i < list.Count; i++)
-		{
-			if (comparer.LessOrEqual(item, list[i]))
-			{
-				return i;
-			}
-		}
-		
-		return list.Count;
-	}
-	
-	/// <summary>
-	/// Returns the number of elements in a sorted list that are less than the given value. 
-	/// </summary>
-	public static int SequentialRank<T>(this LinkedList<T> list, T item, IComparer<T> comparer)
-	{
-		Assert(IsSorted(list.ToResizableArray(list.Count), comparer));
-
-		int i = 0;
-		
-		foreach (var listItem in list)
-		{
-			if (comparer.LessOrEqual(item, listItem))
-			{
-				return i;
-			}
-
-			i++;
-		}
-
-		return i;
 	}
 
 	[Obsolete, PossiblyIncorrect]
@@ -657,6 +617,46 @@ public static class Algorithms
 
 		var previous = list.Nth(n - 1);
 		return list.RemoveAfter(previous);
+	}
+
+	/// <summary>
+	/// Returns the number of elements in a sorted list that are less than the given value. 
+	/// </summary>
+	public static int SequentialRank<T>(this IReadonlyRandomAccessList<T> list, T item, IComparer<T> comparer)
+	{
+		Assert(IsSorted(list, comparer));
+		
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (comparer.LessOrEqual(item, list[i]))
+			{
+				return i;
+			}
+		}
+		
+		return list.Count;
+	}
+
+	/// <summary>
+	/// Returns the number of elements in a sorted list that are less than the given value. 
+	/// </summary>
+	public static int SequentialRank<T>(this LinkedList<T> list, T item, IComparer<T> comparer)
+	{
+		Assert(IsSorted(list.ToResizableArray(list.Count), comparer));
+
+		int i = 0;
+		
+		foreach (var listItem in list)
+		{
+			if (comparer.LessOrEqual(item, listItem))
+			{
+				return i;
+			}
+
+			i++;
+		}
+
+		return i;
 	}
 
 	[Obsolete, PossiblyIncorrect]

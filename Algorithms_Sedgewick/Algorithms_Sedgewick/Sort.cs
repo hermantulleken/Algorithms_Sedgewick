@@ -76,6 +76,8 @@ public static class Sort
 	/// </summary>
 	private sealed class DequeSortHelperWithQueue<T> : IEnumerable<T> where T : IComparable<T>
 	{
+		private readonly IQueue<T> queue;
+
 		public IEnumerable<T> Items
 		{
 			get
@@ -94,7 +96,6 @@ public static class Sort
 		private T Peek1 { get; set; }
 
 		private T Peek2 => queue.Peek;
-		private readonly IQueue<T> queue;
 
 		public DequeSortHelperWithQueue(IQueue<T> queue)
 		{
@@ -118,8 +119,6 @@ public static class Sort
 			}
 		}
 
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
 		public void Sort()
 		{
 			for (int i = 0; i < Count; i++)
@@ -135,6 +134,8 @@ public static class Sort
 		private void DequeueToRight() => Peek1 = queue.Dequeue();
 
 		private void Enqueue(T item) => queue.Enqueue(item);
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		private void Rotate()
 		{
@@ -177,16 +178,13 @@ public static class Sort
 	/// </summary>
 	private sealed class DequeueSortHelperWithDeque<T> : IEnumerable<T>
 	{
-		public T Top => deque.PeekRight;
 		private readonly IDeque<T> deque;
+		public T Top => deque.PeekRight;
 
 		public DequeueSortHelperWithDeque(IDeque<T> deque)
 		{
 			this.deque = deque;
 		}
-
-		public IEnumerator<T> GetEnumerator() => deque.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		public void ExchangeTop()
 		{
@@ -196,6 +194,8 @@ public static class Sort
 			deque.PushRight(card1);
 			deque.PushRight(card2);
 		}
+
+		public IEnumerator<T> GetEnumerator() => deque.GetEnumerator();
 
 		public (T card1, T card2) PeekTop2()
 		{
@@ -214,6 +214,7 @@ public static class Sort
 		}
 
 		public override string ToString() => deque.ToString();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 #if WHITEBOXTESTING
 		public T[] ToArray() => deque.ToArray();
@@ -222,7 +223,20 @@ public static class Sort
 		public T[] BottomN(int n) => ToReverseArray().TakeLast(n).ToArray();
 #endif
 	}
-	
+
+	private struct LabeledItem<T> : IComparable<LabeledItem<T>> where T : IComparable<T>
+	{
+		public T Item;
+		public int Label;
+
+		public int CompareTo(LabeledItem<T> other)
+		{
+			int res = Item.CompareTo(other.Item);
+
+			return res == 0 ? Label - other.Label : res;
+		}
+	}
+
 	private static readonly int[] CiuraGaps = { 1, 4, 10, 23, 57, 132, 301, 701 };
 
 	//From: https://stackoverflow.com/a/50470237/335144
@@ -572,6 +586,43 @@ public static class Sort
 		return true;
 	}
 
+	public static T MedianOf5<T>(T a, T b, T c, T d, T e) where T : IComparable<T>
+	{
+		if (Less(b, a))
+		{
+			(a, b) = (b, a);
+		}
+
+		if (Less(d, c))
+		{
+			(c, d) = (d, c);
+		}
+		
+		if (Less(c, a))
+		{
+			(a, c) = (c, a);
+			(b, d) = (d, b);
+		}
+
+		if (Less(e, b))
+		{
+			(b, e) = (e, b);
+		}
+		
+		if (Less(b, a))
+		{
+			b = a;// (a, b) = (b, a);
+			c = d;//(c, d) = (d, c);
+		}
+
+		if (Less(e, c))
+		{
+			c = e;//(c, e) = (e, c);
+		}
+		
+		return Less(b, c) ? c : b;
+	}
+
 	/// <summary>
 	/// Merge two sorted queues into a result queue.
 	/// </summary>
@@ -677,7 +728,7 @@ public static class Sort
 			indexes[smallestElementIndex]++;
 		}
 	}
-	
+
 	// Ex. 2.2.22
 	public static void MergeKSort<T>(IReadonlyRandomAccessList<T> list, int k = 3) where T : IComparable<T>
 	{
@@ -799,7 +850,7 @@ public static class Sort
 		
 		Sort(0, list.Count);
 	}
-	
+
 	// Ex. 2.2.15
 	public static void MergeSortBottomsUpWithQueues<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
@@ -978,6 +1029,38 @@ public static class Sort
 		}
 	}
 
+	//Note: This changes the order of the elements in the array.
+	public static void MoveNLowestToLeft<T>(IReadonlyRandomAccessList<T> list, int n, QuickSortConfig config) where T : IComparable<T>
+	{
+		list.ThrowIfNull();
+		n.ThrowIfOutOfRange(list.Count);
+		
+		list.Shuffle();
+		
+		int start = 0;
+		int end = list.Count - 1;
+		
+		while (end > start)
+		{
+			int j = Partition(list, start, end, config);
+			
+			if (j == n)
+			{
+				return;
+			}
+
+			if (j > n)
+			{
+				end = j - 1;
+			}
+			else
+			{
+				Assert(j < n);
+				start = j + 1;
+			}
+		}
+	}
+
 	public static int Partition<T>(IReadonlyRandomAccessList<T> list, int start, int end, QuickSortConfig config) where T : IComparable<T>
 	{
 		int i = start;
@@ -1026,7 +1109,7 @@ public static class Sort
 		SwapAt(list, start, j);
 		return j;
 	}
-	
+
 	public static void QuickSort<T>(IReadonlyRandomAccessList<T> list, QuickSortConfig config) where T : IComparable<T>
 	{
 		if (list.Count <= 1)
@@ -1126,74 +1209,6 @@ public static class Sort
 
 		Case3(start, end);
 	}
-	
-	
-	//Note: This changes the order of the elements in the array.
-	public static IComparable<T> SelectNthLowest<T>(IReadonlyRandomAccessList<T> list, int n, QuickSortConfig config) where T : IComparable<T>
-	{
-		MoveNLowestToLeft(list, n, config);
-		return list[n];
-	}
-	
-	//Note: This changes the order of the elements in the array.
-	public static void MoveNLowestToLeft<T>(IReadonlyRandomAccessList<T> list, int n, QuickSortConfig config) where T : IComparable<T>
-	{
-		list.ThrowIfNull();
-		n.ThrowIfOutOfRange(list.Count);
-		
-		list.Shuffle();
-		
-		int start = 0;
-		int end = list.Count - 1;
-		
-		while (end > start)
-		{
-			int j = Partition(list, start, end, config);
-			
-			if (j == n)
-			{
-				return;
-			}
-
-			if (j > n)
-			{
-				end = j - 1;
-			}
-			else
-			{
-				Assert(j < n);
-				start = j + 1;
-			}
-		}
-	}
-
-	private struct LabeledItem<T> : IComparable<LabeledItem<T>> where T : IComparable<T>
-	{
-		public T Item;
-		public int Label;
-
-		public int CompareTo(LabeledItem<T> other)
-		{
-			int res = Item.CompareTo(other.Item);
-
-			return res == 0 ? Label - other.Label : res;
-		}
-	}
-	
-	//Cannot do this without using custom comparator
-	public static void SortStable<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
-	{
-		var labelledList = list
-			.Select((item, i) => new LabeledItem<T>(){Item = item, Label = i})
-			.ToResizableArray(list.Count);
-		
-		QuickSort(labelledList, QuickSortConfig.Vanilla);
-		
-		for (int i = 0; i < list.Count; i++)
-		{
-			list[i] = labelledList[i].Item;
-		}
-	}
 
 	public static void SelectionSort<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
 	{
@@ -1215,6 +1230,14 @@ public static class Sort
 			
 			SwapAt(list, i, minIndex);
 		}
+	}
+
+
+	//Note: This changes the order of the elements in the array.
+	public static IComparable<T> SelectNthLowest<T>(IReadonlyRandomAccessList<T> list, int n, QuickSortConfig config) where T : IComparable<T>
+	{
+		MoveNLowestToLeft(list, n, config);
+		return list[n];
 	}
 
 	public static void ShellSort<T>(IReadonlyRandomAccessList<T> list, int[] stepSizes) where T : IComparable<T>
@@ -1282,6 +1305,21 @@ public static class Sort
 		}
 	}
 
+	//Cannot do this without using custom comparator
+	public static void SortStable<T>(IReadonlyRandomAccessList<T> list) where T : IComparable<T>
+	{
+		var labelledList = list
+			.Select((item, i) => new LabeledItem<T>(){Item = item, Label = i})
+			.ToResizableArray(list.Count);
+		
+		QuickSort(labelledList, QuickSortConfig.Vanilla);
+		
+		for (int i = 0; i < list.Count; i++)
+		{
+			list[i] = labelledList[i].Item;
+		}
+	}
+
 	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 	public static void WriteCounts()
 	{
@@ -1289,7 +1327,7 @@ public static class Sort
 		Console.WriteLine(Counter.Counts.Pretty());
 #endif
 	}
-	
+
 	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 	public static void WriteEvents()
 	{
@@ -1323,20 +1361,6 @@ public static class Sort
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static bool LessOrEqualAt<T>(IReadonlyRandomAccessList<T> list, int i, int j) where T : IComparable<T> 
 		=> LessOrEqual(list[i], list[j]);
-	
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void SwapAt<T>(IReadonlyRandomAccessList<T> list, int i, int j)
-	{
-		__AddSwap();
-		(list[i], list[j]) = (list[j], list[i]);
-	}
-	
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void SwapAt<T>(T[] list, int i, int j)
-	{
-		__AddSwap();
-		(list[i], list[j]) = (list[j], list[i]);
-	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static void MoveAt<T>(IReadonlyRandomAccessList<T> list, int sourceIndex, int destinationIndex)
@@ -1344,7 +1368,7 @@ public static class Sort
 		list[destinationIndex] = list[sourceIndex];
 		list[sourceIndex] = default;
 	}
-	
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static void MoveAt<T>(T[] list, int sourceIndex, int destinationIndex)
 	{
@@ -1352,68 +1376,18 @@ public static class Sort
 		list[sourceIndex] = default;
 	}
 
-	/*
-	 public static T MedianOfThree<T>(T a, T b, T c) where T : IComparable<T> =>
-		a.CompareTo(b) switch
-		{
-			< 0 when b.CompareTo(c) < 0 => b,
-			< 0 => a.CompareTo(c) < 0 ? c : a,
-			_ => a.CompareTo(c) < 0 ? a : b.CompareTo(c) < 0 ? c : b
-		};
-	*/
-	
-	/*
-		Note: We use this algorithm instead of the shorter one above so that we can count the number of comparrisons.
-			Should we use if statements instead?
-	 */
-	private static int MedianOfThree<T>(IReadonlyRandomAccessList<T> list, int a, int b, int c) where T : IComparable<T> 
-		=> LessAt(list, a, b)
-			? LessAt(list, b, c)
-				? b
-				: LessAt(list, a, c)
-					? c
-					: a
-			: LessAt(list, c, b)
-				? b
-				: LessAt(list, c, a)
-					? c
-					: a;
-	
-	public static T MedianOf5<T>(T a, T b, T c, T d, T e) where T : IComparable<T>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static void SwapAt<T>(IReadonlyRandomAccessList<T> list, int i, int j)
 	{
-		if (Less(b, a))
-		{
-			(a, b) = (b, a);
-		}
+		__AddSwap();
+		(list[i], list[j]) = (list[j], list[i]);
+	}
 
-		if (Less(d, c))
-		{
-			(c, d) = (d, c);
-		}
-		
-		if (Less(c, a))
-		{
-			(a, c) = (c, a);
-			(b, d) = (d, b);
-		}
-
-		if (Less(e, b))
-		{
-			(b, e) = (e, b);
-		}
-		
-		if (Less(b, a))
-		{
-			b = a;// (a, b) = (b, a);
-			c = d;//(c, d) = (d, c);
-		}
-
-		if (Less(e, c))
-		{
-			c = e;//(c, e) = (e, c);
-		}
-		
-		return Less(b, c) ? c : b;
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static void SwapAt<T>(T[] list, int i, int j)
+	{
+		__AddSwap();
+		(list[i], list[j]) = (list[j], list[i]);
 	}
 
 	// Ex 2.2.10
@@ -1454,6 +1428,33 @@ public static class Sort
 			}
 		}
 	}
+
+	/*
+	 public static T MedianOfThree<T>(T a, T b, T c) where T : IComparable<T> =>
+		a.CompareTo(b) switch
+		{
+			< 0 when b.CompareTo(c) < 0 => b,
+			< 0 => a.CompareTo(c) < 0 ? c : a,
+			_ => a.CompareTo(c) < 0 ? a : b.CompareTo(c) < 0 ? c : b
+		};
+	*/
+
+	/*
+		Note: We use this algorithm instead of the shorter one above so that we can count the number of comparrisons.
+			Should we use if statements instead?
+	 */
+	private static int MedianOfThree<T>(IReadonlyRandomAccessList<T> list, int a, int b, int c) where T : IComparable<T> 
+		=> LessAt(list, a, b)
+			? LessAt(list, b, c)
+				? b
+				: LessAt(list, a, c)
+					? c
+					: a
+			: LessAt(list, c, b)
+				? b
+				: LessAt(list, c, a)
+					? c
+					: a;
 
 	// p.271
 	// I made changes to the end and mid points, so that this is roughly equivalent to their (list, start, middle, end + 1)

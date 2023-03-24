@@ -6,14 +6,6 @@ public sealed class Differentiator
 {
 	private readonly IBuffer<float> buffer;
 
-	public float Value
-	{
-		get => buffer.Last;
-		set => buffer.Insert(value);
-	}
-    
-	public float PreviousValue => buffer.First;
-
 	/*
         Technically to be a derivative we need to divide by the time.
         If we assume a constant sample rate, this is a constant, that 
@@ -23,6 +15,14 @@ public sealed class Differentiator
 		buffer.Count == 2
 			? Value - PreviousValue
 			: throw new InvalidOperationException("Not enough values set to calculate a derivative");
+
+	public float PreviousValue => buffer.First;
+
+	public float Value
+	{
+		get => buffer.Last;
+		set => buffer.Insert(value);
+	}
 
 	public Differentiator() => buffer = new RingBuffer<float>(2);
 }

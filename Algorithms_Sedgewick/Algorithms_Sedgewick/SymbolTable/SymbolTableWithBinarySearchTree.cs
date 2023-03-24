@@ -8,9 +8,6 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 
 	public int Count => tree.Count;
 
-	public IEnumerable<TKey> Keys 
-		=> tree.NodesInOrder.Select(NodeToKey);
-
 	public TValue this[TKey key]
 	{
 		get
@@ -27,23 +24,26 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 		set => tree.Add(new KeyValuePair<TKey, TValue>(key, value));
 	}
 
+	public IEnumerable<TKey> Keys 
+		=> tree.NodesInOrder.Select(NodeToKey);
+
 	public SymbolTableWithBinarySearchTree(IComparer<TKey> comparer)
 	{
 		var pairComparer = comparer.Convert<TKey, KeyValuePair<TKey, TValue>>(PairToKey);
 		
 		tree = new BinarySearchTree<KeyValuePair<TKey, TValue>>(pairComparer);
 	}
-	
-	public void RemoveKey(TKey key)
-	{
-		throw new NotImplementedException();
-	}
 
 	public bool ContainsKey(TKey key) => tree.TryFindNode(KeyToPair(key), out _);
 
-	public TKey MinKey() => NodeToKey(tree.GetMinNode());
+	public int CountRange(TKey start, TKey end) => KeysRange(start, end).Count();
 
-	public TKey MaxKey() => NodeToKey(tree.GetMaxNode());
+	public IEnumerable<TKey> KeysRange(TKey start, TKey end)
+		=> tree
+			.Range(KeyToPair(start), KeyToPair(end))
+			.Select(NodeToKey);
+
+	public TKey KeyWithRank(int rank) => tree.NodesInOrder.ElementAt(rank).Item.Key;
 
 	public TKey LargestKeyLessThanOrEqualTo(TKey key)
 	{
@@ -52,6 +52,17 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 		return largestNode != null 
 			? largestNode.Item.Key 
 			: throw new Exception("No keys less than given key.");
+	}
+
+	public TKey MaxKey() => NodeToKey(tree.GetMaxNode());
+
+	public TKey MinKey() => NodeToKey(tree.GetMinNode());
+
+	public int RankOf(TKey key) => tree.CountNodesSmallerThan(KeyToPair(key));
+
+	public void RemoveKey(TKey key)
+	{
+		throw new NotImplementedException();
 	}
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
@@ -63,20 +74,9 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 			: throw new Exception("No keys greater than given key.");
 	}
 
-	public int RankOf(TKey key) => tree.CountNodesSmallerThan(KeyToPair(key));
-
-	public TKey KeyWithRank(int rank) => tree.NodesInOrder.ElementAt(rank).Item.Key;
-
-	public int CountRange(TKey start, TKey end) => KeysRange(start, end).Count();
-
-	public IEnumerable<TKey> KeysRange(TKey start, TKey end)
-		=> tree
-			.Range(KeyToPair(start), KeyToPair(end))
-			.Select(NodeToKey);
-
 	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default);
 
-	private static TKey PairToKey(KeyValuePair<TKey, TValue> pair) => pair.Key;
-
 	private static TKey NodeToKey(BinarySearchTree<KeyValuePair<TKey, TValue>>.Node node) => node.Item.Key;
+
+	private static TKey PairToKey(KeyValuePair<TKey, TValue> pair) => pair.Key;
 }

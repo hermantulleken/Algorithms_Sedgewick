@@ -62,36 +62,6 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 		pairComparer = comparer.Convert<TKey, KeyValuePair<TKey, TValue>>(OrderedSymbolTableWithOrderedArray<TKey, TValue>.PairToKey);
 	}
 
-	private bool TryFirst(TKey key, out KeyValuePair<TKey, TValue> pair)
-	{
-		foreach (var listPair in list)
-		{
-			if (comparer.Equal(key, listPair.Key))
-			{
-				pair = listPair;
-				return true;
-			}
-		}
-
-		pair = default;
-		return false;
-	}
-
-	private bool TryFirstNode(TKey key, out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
-	{
-		foreach (var listNode in list.Nodes)
-		{
-			if (comparer.Equal(key, listNode.Item.Key))
-			{
-				node = listNode;
-				return true;
-			}
-		}
-
-		node = default;
-		return false;
-	}
-
 	public bool ContainsKey(TKey key) => TryFirst(key, out _);
 
 	public int CountRange(TKey start, TKey end)
@@ -193,4 +163,34 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 	}
 
 	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default);
+
+	private bool TryFirst(TKey key, out KeyValuePair<TKey, TValue> pair)
+	{
+		foreach (var listPair in list)
+		{
+			if (comparer.Equal(key, listPair.Key))
+			{
+				pair = listPair;
+				return true;
+			}
+		}
+
+		pair = default;
+		return false;
+	}
+
+	private bool TryFirstNode(TKey key, out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
+	{
+		foreach (var listNode in list.Nodes)
+		{
+			if (comparer.Equal(key, listNode.Item.Key))
+			{
+				node = listNode;
+				return true;
+			}
+		}
+
+		node = default;
+		return false;
+	}
 }

@@ -17,7 +17,7 @@ internal static class ThrowHelper
 	// {0} - minimum needed
 	internal const string NotEnoughElements = "The container does not have enough elements. It needs at least {0}.";
 	internal const string TheContainerIsAtMaximumCapacity = "The container is at maximum capacity.";
-	
+
 	internal static readonly InvalidOperationException ContainerEmptyException = new(ContainerEmpty);
 	internal static readonly InvalidOperationException ContainerFullException = new(ContainerFull);
 	internal static readonly InvalidOperationException ContainerIsAtMaximumCapacityException = new(TheContainerIsAtMaximumCapacity);

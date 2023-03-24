@@ -10,23 +10,6 @@ using Support;
 public class TestGeometricAlgorithms
 {
 	[Test]
-	public void TestTriangle()
-	{
-		var points = new[]
-		{
-			new Vector2(0, 0),
-			new Vector2(2, 2),
-			new Vector2(0, 2),
-		};
-
-		var hull = GeometricAlgorithms.GrahamsScan(points);
-		
-		Assert.That(hull, Is.EqualTo(points));
-		
-		Console.WriteLine(hull.Pretty());
-	}
-	
-	[Test]
 	public void TestSquareAndCenter()
 	{
 		var points = new[]
@@ -44,6 +27,23 @@ public class TestGeometricAlgorithms
 		var hull = GeometricAlgorithms.GrahamsScan(points);
 		
 		Assert.That(hull, Is.EqualTo(expectedHull));
+		
+		Console.WriteLine(hull.Pretty());
+	}
+
+	[Test]
+	public void TestTriangle()
+	{
+		var points = new[]
+		{
+			new Vector2(0, 0),
+			new Vector2(2, 2),
+			new Vector2(0, 2),
+		};
+
+		var hull = GeometricAlgorithms.GrahamsScan(points);
+		
+		Assert.That(hull, Is.EqualTo(points));
 		
 		Console.WriteLine(hull.Pretty());
 	}

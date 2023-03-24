@@ -8,12 +8,10 @@ using NUnit.Framework;
 [Parallelizable]
 public class AlgorithmTests
 {
-	private static readonly IComparer<int> IncComparer = Comparer<int>.Default;
-	
 	public class Person : IComparable<Person>
 	{
-		public string Name { get; set; }
 		public int Age { get; set; }
+		public string Name { get; set; }
 
 		public int CompareTo(Person other)
 		{
@@ -31,7 +29,7 @@ public class AlgorithmTests
 			return Age.CompareTo(other.Age);
 		}
 	}
-	
+
 	public class Point : IComparable<Point>
 	{
 		public int X { get; set; }
@@ -53,11 +51,12 @@ public class AlgorithmTests
 			return Y.CompareTo(other.Y);
 		}
 	}
-	
+
 	private static readonly ResizeableArray<int> Empty = new();
-	private static readonly ResizeableArray<int> List135 = new(){ 1, 3, 5 };
+
 	private static readonly ResizeableArray<int> List13335 = new(){ 1, 3, 3, 3, 5 };
-	
+	private static readonly ResizeableArray<int> List135 = new(){ 1, 3, 5 };
+
 	private static readonly IEnumerable<TestCaseData> FindTestCases = new List<TestCaseData>
 	{
 		new(Empty, 0) {ExpectedResult = 0, TestName = "Empty"},
@@ -73,6 +72,9 @@ public class AlgorithmTests
 		new(List13335, 3) {ExpectedResult = 4, TestName = "Item at second to fourth"},
 	};
 
+	private static readonly IComparer<int> IncComparer = Comparer<int>.Default;
+
+
 	[TestCaseSource(nameof(FindTestCases))]
 	public int TestEqualsSecond(IReadonlyRandomAccessList<int> list, int itemToPlace)
 		=> list.FindInsertionIndex(itemToPlace, Comparer<int>.Default);
@@ -87,7 +89,6 @@ public class AlgorithmTests
 		Assert.That(() => array.SortAndRemoveDuplicates(), Throws.ArgumentNullException);
 	}
 
-	
 
 	[Test]
 	public void SortAndRemoveDuplicates_SmallArray_SortsElements()
@@ -133,8 +134,8 @@ public class AlgorithmTests
 		Assert.That(array[2], Is.EqualTo(3));
 		Assert.That(array[3], Is.EqualTo(4));
 	}
-	
-[Test]
+
+	[Test]
 	public void SortAndRemoveDuplicates_ArrayWithNoDuplicates_PreservesElements()
 	{
 		var array = new ResizeableArray<int> { 1, 2, 3, 4, 5 };
@@ -212,9 +213,11 @@ public class AlgorithmTests
 		Assert.That(array.Count, Is.EqualTo(1));
 		Assert.That(array[0], Is.EqualTo(42));
 	}
+
 	#endregion
-	
+
 	#region BinaryRankTests
+
 	private static IEnumerable<TestCaseData> BinaryRankTestCases()
 	{
 		var emptyList = new ResizeableArray<int>();
@@ -250,11 +253,12 @@ public class AlgorithmTests
 	{
 		Assert.That(list.BinaryRank(value, IncComparer), Is.EqualTo(expectedRank));
 	}
-	
+
 	[Test, TestCaseSource(nameof(BinaryRankTestCases))]
 	public void TestSequentialRank(ResizeableArray<int> list, int value, int expectedRank)
 	{
 		Assert.That(list.SequentialRank(value, IncComparer), Is.EqualTo(expectedRank));
 	}
+
 	#endregion
 }

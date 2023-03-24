@@ -12,10 +12,6 @@ public static class Formatter
 	public const BindingFlags AllInstances = PublicInstances | BindingFlags.NonPublic;
 
 	public const string DottedLine = ".....";
-	
-	private const string Brackets = "[{0}]";
-	private const string Parentheses = "({0})";
-	private const string Braces = "{{{0}}}";
 
 	/// <summary>
 	/// <see cref="BindingFlags"/> that represent public instance fields and get-properties.
@@ -26,11 +22,15 @@ public static class Formatter
 	                                            BindingFlags.Instance;
 
 	public const string StripedLine = "-----";
+	private const string Braces = "{{{0}}}";
+
+	private const string Brackets = "[{0}]";
 	private const string CommaSpace = ", ";
 	private const string IndentString = "\t";
 	private const string NameMissing = "???";
 
 	private const string NullString = "null";
+	private const string Parentheses = "({0})";
 
 	// An empty dictionary of functions used to write types.
 	private static readonly IReadOnlyDictionary<Type, Func<object, string>> EmptyTypeWriters = new Dictionary<Type, Func<object, string>>();
@@ -39,6 +39,12 @@ public static class Formatter
 	{
 		string printName = string.IsNullOrEmpty(name) ? NameMissing : name;
 		return FormatKeyValue(printName, Pretty(list));
+	}
+
+	public static T Log<T>(this T obj)
+	{
+		Console.WriteLine(obj);
+		return obj;
 	}
 
 	public static string ObjectDetail<T>(
@@ -129,13 +135,6 @@ public static class Formatter
 			.Select((item, i) => ToString(item, specialIndexes.Contains(i)));
 
 		return string.Join(CommaSpace, stringList.ToArray());
-	}
-
-	private static string ToString<T>(T item, bool isSpecial)
-	{
-		string str = item == null ? NullString : item.ToString();
-			
-		return isSpecial ? str.Wrap(Parentheses) : str;
 	}
 
 	internal static string KeyValueToString<TKey, TValue>(TKey key, TValue value) 
@@ -241,12 +240,13 @@ public static class Formatter
 		return typeWriters[propertyInfo.PropertyType](value);
 	}
 
+	private static string ToString<T>(T item, bool isSpecial)
+	{
+		string str = item == null ? NullString : item.ToString();
+			
+		return isSpecial ? str.Wrap(Parentheses) : str;
+	}
+
 	private static string Wrap(this string str, string bracketsFormatString)
 		=> string.Format(bracketsFormatString, str);
-
-	public static T Log<T>(this T obj)
-	{
-		Console.WriteLine(obj);
-		return obj;
-	}
 }

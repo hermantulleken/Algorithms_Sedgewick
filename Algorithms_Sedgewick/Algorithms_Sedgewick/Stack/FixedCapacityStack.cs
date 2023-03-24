@@ -15,8 +15,8 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 
 	public int Capacity { get; }
 	public int Count { get; private set; }
-	public bool IsFull => Count == Capacity;
 	public bool IsEmpty => Count == 0;
+	public bool IsFull => Count == Capacity;
 
 	public T Peek
 	{
@@ -39,16 +39,26 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 		Capacity = capacity;
 	}
 
-	public void Push(T item)
+	public void Clear()
 	{
-		if (IsFull)
+		for (int i = 0; i < Count; i++)
 		{
-			ThrowHelper.ThrowContainerFull();
+			items[i] = default;
 		}
 
-		items[Count] = item;
-		Count++;
-		version++;
+		Count = 0;
+	}
+
+	public IEnumerator<T> GetEnumerator()
+	{
+		int versionAtStartOfIteration = version;
+			
+		for (int i = 0; i < Count; i++)
+		{
+			ValidateVersion(versionAtStartOfIteration);
+				
+			yield return items[i];
+		}
 	}
 
 	public T Pop()
@@ -63,45 +73,35 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 		return result;
 	}
 
-	public void Clear()
+	public void Push(T item)
 	{
-		for (int i = 0; i < Count; i++)
+		if (IsFull)
 		{
-			items[i] = default;
+			ThrowHelper.ThrowContainerFull();
 		}
 
-		Count = 0;
+		items[Count] = item;
+		Count++;
+		version++;
 	}
 
 	public override string ToString() => this.Pretty();
 
-	public IEnumerator<T> GetEnumerator()
-	{
-		int versionAtStartOfIteration = version;
-			
-		for (int i = 0; i < Count; i++)
-		{
-			ValidateVersion(versionAtStartOfIteration);
-				
-			yield return items[i];
-		}
-	}
-
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		
-	private void ValidateVersion(int versionAtStartOfIteration)
-	{
-		if (version != versionAtStartOfIteration)
-		{
-			ThrowHelper.ThrowIteratingOverModifiedContainer();
-		}
-	}
 
 	private void ValidateNotEmpty()
 	{
 		if (IsEmpty)
 		{
 			ThrowHelper.ThrowContainerEmpty();
+		}
+	}
+
+	private void ValidateVersion(int versionAtStartOfIteration)
+	{
+		if (version != versionAtStartOfIteration)
+		{
+			ThrowHelper.ThrowIteratingOverModifiedContainer();
 		}
 	}
 }

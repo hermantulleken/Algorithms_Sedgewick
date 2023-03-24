@@ -5,21 +5,13 @@ using List;
 // Ex. 3.1.2
 public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
+	private readonly IComparer<TKey> comparer;
+
 	// TODO: Consider a parallel array structure
 	private readonly ResizeableArray<TKey> keys;
 	private readonly ResizeableArray<TValue> values;
-	private readonly IComparer<TKey> comparer;
-	
-	public SymbolTableWithKeyArray(IComparer<TKey> comparer)
-	{
-		this.comparer = comparer;
-		keys = new ResizeableArray<TKey>();
-		values = new ResizeableArray<TValue>();
-	}
 
 	public int Count => keys.Count;
-	
-	public IEnumerable<TKey> Keys => keys;
 
 	public TValue this[TKey key]
 	{
@@ -47,6 +39,17 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 		}
 	}
 
+	public IEnumerable<TKey> Keys => keys;
+
+	public SymbolTableWithKeyArray(IComparer<TKey> comparer)
+	{
+		this.comparer = comparer;
+		keys = new ResizeableArray<TKey>();
+		values = new ResizeableArray<TValue>();
+	}
+
+	public bool ContainsKey(TKey key) => TryFind(key, out _);
+
 	public void RemoveKey(TKey key)
 	{
 		if (TryFind(key, out int index))
@@ -59,8 +62,6 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 			throw ThrowHelper.KeyNotFoundException(key);
 		}
 	}
-
-	public bool ContainsKey(TKey key) => TryFind(key, out _);
 
 	private bool TryFind(TKey key, out int index)
 	{

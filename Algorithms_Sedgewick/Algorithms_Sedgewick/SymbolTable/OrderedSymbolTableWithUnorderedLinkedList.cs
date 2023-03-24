@@ -63,85 +63,6 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 		list = new List.LinkedList<KeyValuePair<TKey, TValue>>();
 	}
 
-	public KeyValuePair<TKey, TValue> RemoveMaxKey()
-	{
-		var (previous, node) = MaxNodeAndPrevious();
-		if (previous == null)
-		{
-			list.RemoveFromFront();
-		}
-		else
-		{
-			list.RemoveAfter(previous);
-		}
-
-		return node.Item;
-	}
-
-	public KeyValuePair<TKey, TValue> RemoveMinKey()
-	{
-		var (previous, node) = MinNodeAndPrevious();
-		if (previous == null)
-		{
-			list.RemoveFromFront();
-		}
-		else
-		{
-			list.RemoveAfter(previous);
-		}
-
-		return node.Item;
-	}
-
-	public override string ToString() => list.ToString();
-
-	private bool Equals(TKey left, TKey right) 
-		=> comparer.Compare(left, right) == 0;
-
-	private bool Less(TKey left, TKey right)
-		=> comparer.Compare(left, right) < 0;
-
-	private bool LessOrEqual(TKey left, TKey right)
-		=> comparer.Compare(left, right) <= 0;
-
-	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
-		MaxNodeAndPrevious() 
-		=> NodeAndPrevious.MaxBy(pair => pair.node.Item.Key, comparer);
-
-	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
-		MinNodeAndPrevious() 
-		=> NodeAndPrevious.MinBy(pair => pair.node.Item.Key, comparer);
-
-	private bool TryFindNodeWithKey(TKey key, out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
-	{
-		foreach (var listNode in list.Nodes)
-		{
-			if (Equals(listNode.Item.Key, key))
-			{
-				node = listNode;
-				return true;
-			}
-		}
-
-		node = null;
-		return false;
-	}
-
-	private bool TryFindPredecessor(TKey key, out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
-	{
-		foreach (var listNode in list.Nodes)
-		{
-			if (listNode.NextNode != null && Equals(key, listNode.NextNode.Item.Key))
-			{
-				node = listNode;
-				return true;
-			}
-		}
-
-		node = null;
-		return false;
-	}
-
 	public bool ContainsKey(TKey key) => TryFindNodeWithKey(key, out _);
 
 
@@ -229,6 +150,36 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 		}
 	}
 
+	public KeyValuePair<TKey, TValue> RemoveMaxKey()
+	{
+		var (previous, node) = MaxNodeAndPrevious();
+		if (previous == null)
+		{
+			list.RemoveFromFront();
+		}
+		else
+		{
+			list.RemoveAfter(previous);
+		}
+
+		return node.Item;
+	}
+
+	public KeyValuePair<TKey, TValue> RemoveMinKey()
+	{
+		var (previous, node) = MinNodeAndPrevious();
+		if (previous == null)
+		{
+			list.RemoveFromFront();
+		}
+		else
+		{
+			list.RemoveAfter(previous);
+		}
+
+		return node.Item;
+	}
+
 	// This can throw an exception if the given key is smaller than all the keys
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
@@ -237,5 +188,54 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 			.ToArray();
 
 		return tmp.Min(comparer);
+	}
+
+	public override string ToString() => list.ToString();
+
+	private bool Equals(TKey left, TKey right) 
+		=> comparer.Compare(left, right) == 0;
+
+	private bool Less(TKey left, TKey right)
+		=> comparer.Compare(left, right) < 0;
+
+	private bool LessOrEqual(TKey left, TKey right)
+		=> comparer.Compare(left, right) <= 0;
+
+	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
+		MaxNodeAndPrevious() 
+		=> NodeAndPrevious.MaxBy(pair => pair.node.Item.Key, comparer);
+
+	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
+		MinNodeAndPrevious() 
+		=> NodeAndPrevious.MinBy(pair => pair.node.Item.Key, comparer);
+
+	private bool TryFindNodeWithKey(TKey key, out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
+	{
+		foreach (var listNode in list.Nodes)
+		{
+			if (Equals(listNode.Item.Key, key))
+			{
+				node = listNode;
+				return true;
+			}
+		}
+
+		node = null;
+		return false;
+	}
+
+	private bool TryFindPredecessor(TKey key, out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
+	{
+		foreach (var listNode in list.Nodes)
+		{
+			if (listNode.NextNode != null && Equals(key, listNode.NextNode.Item.Key))
+			{
+				node = listNode;
+				return true;
+			}
+		}
+
+		node = null;
+		return false;
 	}
 }

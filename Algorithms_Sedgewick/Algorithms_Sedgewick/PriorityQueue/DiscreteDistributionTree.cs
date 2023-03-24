@@ -4,10 +4,10 @@ namespace Algorithms_Sedgewick.PriorityQueue;
 
 public class DiscreteDistributionTree
 {
-	private float[] weights;
 	private int Count;
 	private int offset;
-	
+	private float[] weights;
+
 	public DiscreteDistributionTree(float[] relativeProbabilities)
 	{
 		relativeProbabilities

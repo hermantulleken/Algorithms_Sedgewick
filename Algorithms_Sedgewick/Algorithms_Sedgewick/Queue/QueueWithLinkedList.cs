@@ -9,7 +9,7 @@ public sealed class QueueWithLinkedList<T> : IQueue<T>
 	public int Count => items.Count;
 
 	public bool IsEmpty => items.IsEmpty;
-		
+
 	public T Peek
 	{
 		get
@@ -19,17 +19,18 @@ public sealed class QueueWithLinkedList<T> : IQueue<T>
 		}
 	}
 
-	public void Enqueue(T item) => items.InsertAtBack(item);
-
-	public T Dequeue() => items.RemoveFromFront().Item;
 	public void Clear() => items.Clear();
 
-	public override string ToString() => items.ToString();
+	public T Dequeue() => items.RemoveFromFront().Item;
+
+	public void Enqueue(T item) => items.InsertAtBack(item);
 
 	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
 
+	public override string ToString() => items.ToString();
+
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		
+
 	private void ValidateNotEmpty()
 	{
 		if (IsEmpty)

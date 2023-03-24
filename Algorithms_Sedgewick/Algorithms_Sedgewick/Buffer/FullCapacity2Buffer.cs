@@ -6,10 +6,10 @@ public sealed class FullCapacity2Buffer<T> : IBuffer<T?>, IPair<T?>
 {
 	private bool firstIsItem1;
 	private T? item1;
-    	private T? item2;
+	private T? item2;
 
 	public int Capacity => 2;
-	
+
 	public int Count { get; private set; }
 
 	public T? First 
@@ -19,7 +19,7 @@ public sealed class FullCapacity2Buffer<T> : IBuffer<T?>, IPair<T?>
 		=> (Count == 0) ? throw ThrowHelper.ContainerEmptyException : LastUnsafe;
 
 	private T?FirstUnsafe => firstIsItem1 ? item1 : item2;
-	
+
 	private T? LastUnsafe => firstIsItem1 ? item2 : item1;
 
 	public FullCapacity2Buffer() => Clear();

@@ -7,12 +7,12 @@ public sealed class BufferWithQueue<T> : IBuffer<T>
 {
 	private readonly IQueue<T> queue;
 
-	public int Count => queue.Count;
-	
 	public int Capacity { get; }
-	
+
+	public int Count => queue.Count;
+
 	public T First => queue.First();
-	
+
 	public T Last => queue.Peek;
 
 	public BufferWithQueue(int capacity)
@@ -20,6 +20,10 @@ public sealed class BufferWithQueue<T> : IBuffer<T>
 		Capacity = capacity;
 		queue = new QueueWithLinkedList<T>();
 	}
+
+	public void Clear() => queue.Clear();
+
+	public IEnumerator<T> GetEnumerator() => queue.GetEnumerator();
 
 	public void Insert(T item)
 	{
@@ -31,9 +35,5 @@ public sealed class BufferWithQueue<T> : IBuffer<T>
 		queue.Enqueue(item);
 	}
 
-	public void Clear() => queue.Clear();
-	
-	public IEnumerator<T> GetEnumerator() => queue.GetEnumerator();
-	
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

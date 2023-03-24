@@ -8,7 +8,7 @@ using NUnit.Framework;
 public class OrderedSymbolTableTests
 {
 	private static readonly IComparer<string> StringComparer = Comparer<string>.Default;
-	
+
 	private static TestCaseData[] factories =
 	{
 		new(() => new OrderedSymbolTableWithOrderedArray<string, int>(StringComparer))
@@ -35,7 +35,7 @@ public class OrderedSymbolTableTests
 		AddElements(symbolTable);
 		Assert.That(symbolTable.IsEmpty, Is.False);
 	}
-	
+
 	[Test]
 	[TestCaseSource(nameof(factories))]
 	public void TestMinKeyAndMaxKey(Func<IOrderedSymbolTable<string, int>> factory)

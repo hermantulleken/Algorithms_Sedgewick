@@ -10,15 +10,14 @@ public class Steque<T> : IStack<T>
 
 	public int Count => items.Count;
 	public T Peek => items.First.Item;
-	public void Push(T item) => items.InsertAtFront(item);
 
-	public T Pop() => items.RemoveFromFront().Item;
+	public void Clear() => items.Clear();
 
 	public void Enqueue(T item) => items.InsertAtBack(item);
 
-	public void Clear() => items.Clear();
-	
 	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
+
+	public T Pop() => items.RemoveFromFront().Item;
+	public void Push(T item) => items.InsertAtFront(item);
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	
 }
