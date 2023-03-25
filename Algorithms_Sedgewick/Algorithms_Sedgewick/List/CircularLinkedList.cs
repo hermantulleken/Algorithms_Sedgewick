@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using static System.Diagnostics.Debug;
 using static Support.Tools;
 
-public sealed class CircularLinkedList<T> : IEnumerable<T?>
+public sealed class CircularLinkedList<T> : IEnumerable<T>
 {
 	/*
 		Exposing the node class makes the linked list a more useful container to
@@ -14,8 +14,17 @@ public sealed class CircularLinkedList<T> : IEnumerable<T?>
 	[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = DataTransferStruct)]
 	public sealed record Node
 	{
-		public T? Item;
+		public readonly T Item;
 		public Node NextNode = null!;
+		
+		// To have the list be circular, we cannot always construct this field in the constructor.
+		// See: InsertFirstItem
+		
+		public Node(T item, Node nextNode = null!)
+		{
+			Item = item;
+			NextNode = nextNode;
+		}
 	}
 
 	private Node? front;
@@ -35,6 +44,7 @@ public sealed class CircularLinkedList<T> : IEnumerable<T?>
 		}
 	}
 
+	[MemberNotNullWhen(false, nameof(front))]
 	public bool IsEmpty => front == null;
 
 	public bool IsSingleton => !IsEmpty && front!.NextNode == front;
@@ -70,7 +80,7 @@ public sealed class CircularLinkedList<T> : IEnumerable<T?>
 		version++;
 	}
 
-	public IEnumerator<T?> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
+	public IEnumerator<T> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
 
 	public Node InsertAfter(Node node, T item)
 	{
@@ -79,11 +89,7 @@ public sealed class CircularLinkedList<T> : IEnumerable<T?>
 			throw new ArgumentNullException(nameof(node));
 		}
 
-		var newNode = new Node
-		{
-			Item = item,
-			NextNode = node.NextNode,
-		};
+		var newNode = new Node(item, node.NextNode);
 
 		node.NextNode = newNode;
 
@@ -105,15 +111,9 @@ public sealed class CircularLinkedList<T> : IEnumerable<T?>
 		}
 
 		Assert(front != null);
-		
-		var newHead = new Node
-		{
-			Item = item,
-			NextNode = front,
-		};
-			
-		front = newHead;
 
+		var newHead = new Node(item, front);
+		front = newHead;
 		Count++;
 		version++;
 
@@ -169,7 +169,7 @@ public sealed class CircularLinkedList<T> : IEnumerable<T?>
 
 	private Node InsertFirstItem(T item)
 	{
-		front = new Node { Item = item };
+		front = new Node(item);
 		front.NextNode = front;
 		
 		return front;

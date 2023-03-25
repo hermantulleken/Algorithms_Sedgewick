@@ -4,12 +4,12 @@ namespace Algorithms_Sedgewick;
 
 public class ChangeDetector<T>
 {
-	private readonly IBuffer<T> buffer;
+	private readonly IBuffer<T?> buffer;
 	private readonly IEqualityComparer<T> comparer;
 
-	public T PreviousValue => buffer.First;
+	public T? PreviousValue => buffer.First;
 
-	public T Value
+	public T? Value
 	{
 		get => buffer.Last;
 
@@ -23,14 +23,14 @@ public class ChangeDetector<T>
 			}
 		}
 	}
+	
+	public event Action<T?, T?>? OnValueChanged;
 
-	public ChangeDetector(IEqualityComparer<T> comparer = null)
+	public ChangeDetector(IEqualityComparer<T>? comparer = null)
 	{
 		this.comparer = comparer ?? EqualityComparer<T>.Default;
 		buffer = new FullCapacity2Buffer<T>();
 	}
 
 	public void Clear() => buffer.Clear();
-
-	public event Action<T, T> OnValueChanged;
 }

@@ -3,9 +3,12 @@
 public interface IBuffer<T> : IEnumerable<T>
 {
 	public int Capacity { get; }
+
 	public int Count { get; }
 
 	public T First { get; }
+
+	public bool IsFull => Capacity == Count;
 
 	public T Last { get; }
 

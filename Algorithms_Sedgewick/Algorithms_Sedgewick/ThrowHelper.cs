@@ -1,4 +1,6 @@
-﻿namespace Algorithms_Sedgewick;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Algorithms_Sedgewick;
 
 using System.Runtime.CompilerServices;
 using List;
@@ -72,7 +74,8 @@ internal static class ThrowHelper
 		return list;
 	}
 
-	internal static T ThrowIfNull<T>(this T obj, [CallerArgumentExpression("obj")] string? objArgName = null)
+	[JetBrains.Annotations.ContractAnnotation("obj:null => halt")]
+	internal static T ThrowIfNull<T>([NotNull] this T? obj, [CallerArgumentExpression("obj")] string? objArgName = null)
 	{
 		if (obj == null)
 		{

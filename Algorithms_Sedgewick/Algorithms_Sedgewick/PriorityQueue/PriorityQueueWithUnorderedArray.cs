@@ -1,16 +1,18 @@
 ﻿using Algorithms_Sedgewick.List;
-using static Algorithms_Sedgewick.Sort;
+using static Algorithms_Sedgewick.List.ListExtensions;
 using static Algorithms_Sedgewick.ThrowHelper;
 
 namespace Algorithms_Sedgewick.PriorityQueue;
 
-//Ex. 2.4.3
-//Note: We maintain the minimum object in the last position, as it is the cheapest to delete from.
-public sealed class PriorityQueueWithUnorderedArray<T> : IPriorityQueue<T> where T : IComparable<T>
+// Ex. 2.4.3
+// Note: We maintain the minimum object in the last position, as it is the cheapest to delete from.
+public sealed class PriorityQueueWithUnorderedArray<T> : IPriorityQueue<T> 
+	where T : IComparable<T>
 {
 	private readonly ResizeableArray<T> items = new();
 
 	public int Count => items.Count;
+	
 	public bool IsFull => items.IsFull;
 
 	public T PeekMin
@@ -63,5 +65,5 @@ public sealed class PriorityQueueWithUnorderedArray<T> : IPriorityQueue<T> where
 		}
 	}
 
-	private void MoveMinToLast() => SwapAt(items,LastIndex, items.FindIndexOfMin());
+	private void MoveMinToLast() => SwapAt(items, LastIndex, items.FindIndexOfMin());
 }

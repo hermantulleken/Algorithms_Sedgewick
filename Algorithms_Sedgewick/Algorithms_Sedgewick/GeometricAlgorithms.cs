@@ -57,14 +57,15 @@ public static class GeometricAlgorithms
 		bool IsCounterClockwise(Vector2 point0, Vector2 point1, Vector2 point2) 
 			=> Cross(point1 - point0, point2 - point1) < 0; // Check this calculation
 
-		var anchor = points.Aggregate(LeftMostBottomMost);
+		var pointsArray = points as Vector2[] ?? points.ToArray();
+		var anchor = pointsArray.Aggregate(LeftMostBottomMost);
 
 		PointRelativeToAnchor ToPointAngle(Vector2 point) => new(point, anchor);
 
-		var pointAngles = points
+		var pointAngles = pointsArray
 			.Where(p => p != anchor)
 			.Select(ToPointAngle)
-			.ToResizableArray(points.Count());
+			.ToResizableArray(pointsArray.Length);
 		
 		Sort.InsertionSort(pointAngles);
 

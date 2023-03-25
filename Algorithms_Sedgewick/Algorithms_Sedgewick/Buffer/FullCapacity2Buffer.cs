@@ -2,7 +2,7 @@ namespace Algorithms_Sedgewick.Buffer;
 
 using System.Collections;
 
-public sealed class FullCapacity2Buffer<T> : IBuffer<T?>, IPair<T?>
+public sealed class FullCapacity2Buffer<T> : IBuffer<T?>, IPair<T>
 {
 	private bool firstIsItem1;
 	private T? item1;

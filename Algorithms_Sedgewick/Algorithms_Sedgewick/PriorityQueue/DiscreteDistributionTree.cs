@@ -24,7 +24,7 @@ public class DiscreteDistributionTree
 		if (relativeProbabilities.Length == 1)
 		{
 			Count = 1;
-			return; //No need to assigne other variables; their values won't be used. 
+			return; // No need to assigne other variables; their values won't be used. 
 		}
 		
 		int layerCount = (int) MathF.Ceiling(MathF.Log2(relativeProbabilities.Length));
@@ -44,19 +44,19 @@ public class DiscreteDistributionTree
 		
 		if (Count == 1)
 		{
-			return 0;//Only one index!
+			return 0; // Only one index!
 		}
 		
 		float r = (float) Random.Shared.NextDouble();
 		int i = 0;
 
-		while(true)
+		while (true)
 		{
 			int leftChildIndex = 2 * i;
 
 			if (leftChildIndex > Count)
 			{
-				//i is a leaf node, so we return the index  (minus offset)
+				// i is a leaf node, so we return the index  (minus offset)
 				return i - offset;
 			}
 
@@ -64,7 +64,7 @@ public class DiscreteDistributionTree
 
 			if (rightIndex > Count)
 			{
-				//leftChildIndex is a leaf node, so we return that index (minus offset)
+				// leftChildIndex is a leaf node, so we return that index (minus offset)
 				return leftChildIndex - offset;
 			}
 

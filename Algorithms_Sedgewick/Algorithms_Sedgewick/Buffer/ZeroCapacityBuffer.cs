@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public sealed class ZeroCapacityBuffer<T> : IBuffer<T>
 {
 	public int Capacity => 0;
+	
 	public int Count => 0;
 
 	public T First => throw ThrowHelper.ContainerEmptyException;

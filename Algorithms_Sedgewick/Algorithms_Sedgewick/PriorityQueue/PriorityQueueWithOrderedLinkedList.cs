@@ -2,8 +2,9 @@
 
 namespace Algorithms_Sedgewick.PriorityQueue;
 
-//Ex. 2.4.3
-public sealed class PriorityQueueWithOrderedLinkedList<T> : IPriorityQueue<T> where T : IComparable<T>
+// Ex. 2.4.3
+public sealed class PriorityQueueWithOrderedLinkedList<T> : IPriorityQueue<T> 
+	where T : IComparable<T>
 {
 	private readonly List.LinkedList<T> items = new();
 

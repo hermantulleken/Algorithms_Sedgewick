@@ -1,6 +1,7 @@
 ﻿namespace Algorithms_Sedgewick.PriorityQueue;
 
-public sealed class FixedCapacityMaxBinaryHeap<T> where T : IComparable<T>
+public sealed class FixedCapacityMaxBinaryHeap<T> 
+	where T : IComparable<T>
 {
 	private readonly struct InvertedComparable : IComparable<InvertedComparable>
 	{
@@ -13,7 +14,7 @@ public sealed class FixedCapacityMaxBinaryHeap<T> where T : IComparable<T>
 
 		public int CompareTo(InvertedComparable other) => other.Item.CompareTo(Item);
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 			=> obj is InvertedComparable comparable && CompareTo(comparable) == 0;
 
 		public override int GetHashCode() => Item.GetHashCode();
@@ -22,6 +23,7 @@ public sealed class FixedCapacityMaxBinaryHeap<T> where T : IComparable<T>
 	private readonly FixedCapacityMinBinaryHeap<InvertedComparable> minHeap;
 
 	public int Count => minHeap.Count;
+	
 	public T PeekMax => minHeap.PeekMin.Item;
 
 	public FixedCapacityMaxBinaryHeap(int capacity)
@@ -31,7 +33,7 @@ public sealed class FixedCapacityMaxBinaryHeap<T> where T : IComparable<T>
 
 	public T PopMax() => minHeap.PopMin().Item;
 
-	//This op is O(n) 
+	// This op is O(n) 
 	public T PopMin() => minHeap.PopMax().Item;
 
 	public void Push(T item) => minHeap.Push(new InvertedComparable(item));

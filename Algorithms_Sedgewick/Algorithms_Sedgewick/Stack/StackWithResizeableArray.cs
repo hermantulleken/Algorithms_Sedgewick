@@ -8,8 +8,11 @@ public sealed class StackWithResizeableArray<T> : IStack<T>
 	private readonly ResizeableArray<T> items;
 
 	public int Capacity => items.Capacity;
+	
 	public int Count => items.Count;
+	
 	public bool IsEmpty => items.IsEmpty;
+	
 	public bool IsFull => items.IsFull;
 
 	public T Peek

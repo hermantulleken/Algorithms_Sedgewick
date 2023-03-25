@@ -44,8 +44,8 @@ public class ResizeableBuffer<T> : IBuffer<T?>
 		
 		buffer = newBuffer;
 	}
+	
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 	private static IBuffer<T?> CreateBuffer(int capacity) => new RingBuffer<T?>(capacity);
-
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

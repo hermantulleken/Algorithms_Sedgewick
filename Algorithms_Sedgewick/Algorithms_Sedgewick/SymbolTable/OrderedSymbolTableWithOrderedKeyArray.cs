@@ -65,12 +65,12 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 			.Take(endIndex - startIndex);
 	}
 
-	//TODO verify index
+	// TODO verify index
 	public TKey KeyWithRank(int rank) => keys[rank];
 
 	public TKey LargestKeyLessThanOrEqualTo(TKey key)
 	{
-		//TODO: Handle edge casese
+		// TODO: Handle edge casese
 		int index = keys.BinaryRank(key, comparer);
 
 		if (comparer.Equal(keys[index], key))
@@ -102,7 +102,7 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
-		//TODO: Handle edge cases
+		// TODO: Handle edge cases
 		int index = keys.BinaryRank(key, comparer);
 
 		while (index < Count && comparer.Less(keys[index], key))

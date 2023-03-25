@@ -39,6 +39,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 	}
 
 	public bool IsEmpty => front == null;
+	
 	public bool IsSingleton => front == back;
 
 	public Node Last
@@ -56,7 +57,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 	{
 		get
 		{
-			//Also work when empty, since front will be null
+			// Also work when empty, since front will be null
 			var current = front;
 			int versionAtStartOfIteration = version;
 			
@@ -82,7 +83,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		var otherBack = other.back;
 		int otherCount = other.Count;
 		
-		other.Clear(); //Clear so there is no nodes part of both lists
+		other.Clear(); // Clear so there is no nodes part of both lists
 		
 		back.NextNode = otherFront;
 		otherFront.PreviousNode = back;
@@ -177,7 +178,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 
 	public Node RemoveFromBack()
 	{
-		if(IsEmpty)
+		if (IsEmpty)
 		{
 			ThrowHelper.ThrowContainerEmpty();
 		}
@@ -257,7 +258,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty || IsSingleton)
 		{
-			return; //Nothing to do
+			return; // Nothing to do
 		}
 		
 		var current = front;
@@ -267,7 +268,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		while (current != null)
 		{
 			(current.PreviousNode, current.NextNode) = (current.NextNode, current.PreviousNode);
-			current = current.PreviousNode; //This is the next node in the original order
+			current = current.PreviousNode; // This is the next node in the original order
 		}
 		
 		front = oldBack;

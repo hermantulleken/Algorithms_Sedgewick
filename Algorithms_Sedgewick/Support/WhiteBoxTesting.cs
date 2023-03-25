@@ -1,45 +1,21 @@
-﻿namespace Support;
+﻿using System.Diagnostics.CodeAnalysis;
 
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using static Tools;
+namespace Support;
 
-[SuppressMessage(
-	"StyleCop.CSharp.NamingRules", 
-	"SA1300:Element should begin with upper-case letter", 
-	Justification = ShouldBeVisuallyDifferentInCode)]
-public static class WhiteBoxTesting
+[SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:Element should begin with upper-case letter", Justification = Tools.ShouldBeVisuallyDifferentInCode)]
+public static partial class WhiteBoxTesting
 {
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-	public static void __AddCompareTo() => __Add("CompareTo");
+	public static partial void __AddCompareTo();
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-	public static void __AddPass() => __Add("Pass");
+	public static partial void __AddPass();
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-	public static void __AddSwap() => __Add("Swap");
+	public static partial void __AddSwap();
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-	public static void __ClearWhiteBoxContainers()
-	{
-#if WHITEBOXTESTING
-		Counter.Clear();
-		Events.Clear();
-#endif
-	}
+	public static partial void __ClearWhiteBoxContainers();
+	
+	public static partial void __WriteCounts();
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
-	internal static void __Add(string name)
-	{
-#if WHITEBOXTESTING
-		Counter.Add(name);
-#endif
-	}
-#if WHITEBOXTESTING
-	/*
-		These can be used to examine the inner workings of algorithms.  
-	*/
-	public static readonly Counter<string> Counter = new();
-	public static readonly HashSet<string> Events = new();
-#endif
+	public static partial void __WriteEvents();
+
+	internal static partial void __Add(string name);
 }

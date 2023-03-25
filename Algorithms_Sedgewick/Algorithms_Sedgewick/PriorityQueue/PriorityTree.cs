@@ -1,10 +1,11 @@
-﻿using Algorithms_Sedgewick.Queue;
+﻿using Algorithms_Sedgewick.List;
+using Algorithms_Sedgewick.Queue;
 using static System.Diagnostics.Debug;
-using static Algorithms_Sedgewick.Sort;
 
 namespace Algorithms_Sedgewick.PriorityQueue;
 
-public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
+public class PriorityTree<T> : IPriorityQueue<T> 
+	where T : IComparable<T>
 {
 	private sealed class Node
 	{
@@ -185,14 +186,14 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 
 			if (a != null)
 			{
-				bIsLeftChild =  a.LeftChild == b;
+				bIsLeftChild = a.LeftChild == b;
 			}
 			
 			bool cIsLeftChild = b.LeftChild == c;
 
 			var cP = cIsLeftChild ? b.RightChild : b.LeftChild;
 			
-			if(a != null)
+			if (a != null)
 			{
 				if (bIsLeftChild)
 				{
@@ -209,7 +210,7 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 			c.CutLeftChild();
 			c.CutRightChild();
 			
-			if(a != null)
+			if (a != null)
 			{
 				if (bIsLeftChild)
 				{
@@ -240,7 +241,7 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 		{
 			Assert(Parent != null);
 			
-			if (Less(Item, Parent.Item))
+			if (ListExtensions.Less(Item, Parent.Item))
 			{
 				SwapWithParent();
 				return true;
@@ -306,7 +307,7 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 		searchQueue = new QueueWithLinkedList<Node>();
 	}
 
-	//GetLAstNode is O(n), therefor so is this method
+	// GetLAstNode is O(n), therefor so is this method
 	public T PopMin()
 	{
 		if (IsEmpty)
@@ -323,14 +324,14 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 		var lastNode = GetLastNode();
 
 		MoveNodeToRoot(lastNode);
-
-        Sink(root);
-        Count--;
+		
+		Sink(root);
+		Count--;
 		
 		return min;
 	}
 
-	//GetFirstNodeWithEmptyChild is O(n), therefor so is this method :-/
+	// GetFirstNodeWithEmptyChild is O(n), therefor so is this method :-/
 	public void Push(T item)
 	{
 		item.ThrowIfNull();
@@ -388,7 +389,7 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 			}
 		}
 		
-		//Not reachable
+		// Not reachable
 		Assert(false);
 		return null;
 	}
@@ -420,7 +421,7 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 			}
 		}
 		
-		//Not reachable
+		// Not reachable
 		Assert(false);
 		return null;
 	}
@@ -463,8 +464,8 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 		}
 		else
 		{
-			//If node is a child of the root, we already cut off the children so without the first part the assertion will fail 
-			//Assert(d.RightChild == node);
+			// If node is a child of the root, we already cut off the children so without the first part the assertion will fail 
+			// Assert(d.RightChild == node);
 			
 			d.CutRightChild();
 		}
@@ -477,9 +478,9 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 
 	private void Sink(Node node)
 	{
-		while (node.LeftChild != null) //if left child is null so is right child
+		while (node.LeftChild != null) // if left child is null so is right child
 		{
-			if (node.RightChild != null && Less(node.RightChild.Item, node.LeftChild.Item))
+			if (node.RightChild != null && ListExtensions.Less(node.RightChild.Item, node.LeftChild.Item))
 			{
 				var rightChild = node.RightChild;
 				if (!rightChild.SwapWithParentIfPossible())
@@ -490,7 +491,8 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 				{
 					root = rightChild;
 				}
-				//After the swap node has a new children
+				
+				// After the swap node has a new children
 			}
 			else
 			{
@@ -506,14 +508,15 @@ public class PriorityTree<T> : IPriorityQueue<T> where T : IComparable<T>
 				{
 					root = leftChild;
 				}
-				//After the swap node has a new children
+				
+				// After the swap node has a new children
 			}
 		}
 	}
 
 	private void Swim(Node node)
 	{
-		while (node.Parent != null && Less(node.Item, node.Parent.Item))
+		while (node.Parent != null && ListExtensions.Less(node.Item, node.Parent.Item))
 		{
 			node.SwapWithParent();
 		}

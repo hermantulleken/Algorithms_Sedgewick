@@ -10,6 +10,7 @@ public class HeapTests
 	public class Person : IComparable<Person>
 	{
 		public int Age { get; }
+		
 		public string Name { get; }
 
 		public Person(string name, int age)

@@ -1,4 +1,6 @@
-﻿namespace Algorithms_Sedgewick.SymbolTable;
+﻿using static Algorithms_Sedgewick.List.ListExtensions;
+
+namespace Algorithms_Sedgewick.SymbolTable;
 
 using List;
 
@@ -67,11 +69,13 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 
 	private void MoveToFrontAt(int index)
 	{
-		if (index != 0)
+		if (index == 0)
 		{
-			Sort.SwapAt(keys, 0, index);
-			Sort.SwapAt(values, 0, index);
+			return;
 		}
+		
+		SwapAt(keys, 0, index);
+		SwapAt(values, 0, index);
 	}
 
 	private bool TryFind(TKey key, out int index)

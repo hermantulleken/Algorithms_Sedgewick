@@ -3,8 +3,9 @@ using static Algorithms_Sedgewick.ThrowHelper;
 
 namespace Algorithms_Sedgewick.PriorityQueue;
 
-//Ex. 2.4.3
-public sealed class PriorityQueueWithOrderedArray<T> : IPriorityQueue<T> where T : IComparable<T>
+// Ex. 2.4.3
+public sealed class PriorityQueueWithOrderedArray<T> : IPriorityQueue<T> 
+	where T : IComparable<T>
 {
 	private readonly ResizeableArray<T> items;
 
@@ -24,6 +25,7 @@ public sealed class PriorityQueueWithOrderedArray<T> : IPriorityQueue<T> where T
 	}
 
 	private int Capacity { get; }
+	
 	private bool IsFull => Count == Capacity;
 
 	public PriorityQueueWithOrderedArray(int capacity)

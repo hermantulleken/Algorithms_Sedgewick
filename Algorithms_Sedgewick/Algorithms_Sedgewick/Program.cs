@@ -1,23 +1,10 @@
-﻿namespace Algorithms_Sedgewick;
+﻿using Support;
+
+namespace Algorithms_Sedgewick;
 
 using List;
-using static Support.WhiteBoxTesting;
+using static WhiteBoxTesting;
 using Timer = Support.Timer;
-
-//Note: The methods in this class are infinite. Use Take to get a finite amount of elements. 
-public static class Generator
-{
-	private static readonly Random Random = new();
-
-	public static IEnumerable<int> UniformRandomInt(int maxValue)
-	{
-		while (true)
-		{
-			yield return Random.Next(maxValue);
-		}
-		// ReSharper disable once IteratorNeverReturns
-	}
-}
 
 public static class Extensions
 {
@@ -38,7 +25,8 @@ internal static class Program
 	public static void Main()
 	{
 		TimeSearchers();
-		//TimeSorts();
+		
+		// TimeSorts();
 	}
 
 	public static void TimeSearchers()
@@ -47,12 +35,12 @@ internal static class Program
 			(list, keys) =>
 			{
 				action(list, keys);
-				Sort.WriteCounts();
+				__WriteCounts();
+				__ClearWhiteBoxContainers();
 			};
 
 		void InterpolationSearch(int[] list, int[] keys)
 		{
-			__ClearWhiteBoxContainers();
 			foreach (int key in keys)
 			{
 				list.InterpolationSearch(key);
@@ -61,7 +49,6 @@ internal static class Program
 		
 		void BinarySearch(int[] list, int[] keys)
 		{
-			__ClearWhiteBoxContainers();
 			foreach (int key in keys)
 			{
 				list.BinarySearch(key);
@@ -70,7 +57,6 @@ internal static class Program
 		
 		void CSharpBinarySearch(int[] list, int[] keys)
 		{
-			__ClearWhiteBoxContainers();
 			foreach (int key in keys)
 			{
 				Array.BinarySearch(list, key);
@@ -79,7 +65,6 @@ internal static class Program
 		
 		void SequentialSearch(int[] list, int[] keys)
 		{
-			__ClearWhiteBoxContainers();
 			foreach (int key in keys)
 			{
 				list.SequentialSearch(key);
@@ -130,11 +115,12 @@ internal static class Program
 			list =>
 			{
 				action(list);
-				Sort.WriteCounts();
-				Sort.WriteEvents();
+				__WriteCounts();
+				__WriteEvents();
+				__ClearWhiteBoxContainers();
 			};
 		
-		for(int i = 1; i <= testCount; i++)
+		for (int i = 1; i <= testCount; i++)
 		{
 			int count = itemCountBase*i;
 			var items = Generator.UniformRandomInt(int.MaxValue)
@@ -162,7 +148,7 @@ internal static class Program
 				list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = Sort.MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 12}),
 				list => Sort.MergeSortBottomUp(list, Sort.MergeSortConfig.Optimized),*/
 				
-					//Sort.MergeSortBottomsUpWithQueues,
+					// Sort.MergeSortBottomsUpWithQueues,
 					Sort.Merge3Sort,
 					list => Sort.MergeKSort(list, 3),
 					list => Sort.MergeKSort(list, 4),
@@ -176,7 +162,7 @@ internal static class Program
 					list => Sort.MergeKSortBottomUp(list, 6),
 					list => Sort.MergeKSortBottomUp(list, 7),
 				
-					//Sort.MergeSortNatural,
+					// Sort.MergeSortNatural,
 					list => Sort.QuickSort(list, Sort.QuickSortConfig.Vanilla),
 					list => Sort.QuickSort(list, Sort.QuickSortConfig.Vanilla with{ PivotSelection = Sort.QuickSortConfig.PivotSelectionAlgorithm.MedianOfThreeFirst}),
 				}
@@ -203,7 +189,7 @@ internal static class Program
 				nameof(Sort.MergeSortBottomUp) + "4",
 				nameof(Sort.MergeSortBottomUp) + "5",*/
 				
-				//nameof(Sort.MergeSortBottomsUpWithQueues),
+				// nameof(Sort.MergeSortBottomsUpWithQueues),
 				nameof(Sort.Merge3Sort),
 				nameof(Sort.MergeKSort) + "3",
 				nameof(Sort.MergeKSort) + "4",
@@ -217,7 +203,7 @@ internal static class Program
 				nameof(Sort.MergeKSortBottomUp) + "6",
 				nameof(Sort.MergeKSortBottomUp) + "7",
 				
-				//nameof(Sort.MergeSortNatural),
+				// nameof(Sort.MergeSortNatural),
 				nameof(Sort.QuickSort),
 				nameof(Sort.QuickSort),
 			};

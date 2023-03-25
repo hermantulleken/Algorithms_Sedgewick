@@ -14,9 +14,16 @@ public static class ResizeableArray
 }
 
 [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and Simple version goes together.")]
-public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
+public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 {
-	private T?[] items;
+	/*
+		This array may have null elements when
+			1. this class is below capacity and T is a reference type, 
+				so the last values are all null. These nulls are never 
+				exposed to the caller.
+			2. T is nullable, and so null values could have been inserted.  
+	 */
+	private T[] items;
 
 	private int version;
 
@@ -31,13 +38,13 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
 	public bool IsFull => Count == Capacity;
 
 	/// <inheritdoc />
-	public T? this[int index]
+	public T this[int index]
 	{
 		get
 		{
 			ValidateIndex(index);
 
-			return items[index];
+			return items[index]!;
 		}
 
 		set
@@ -61,7 +68,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
 		Capacity = capacity;
 	}
 
-	public void Add(T? item)
+	public void Add(T item)
 	{
 		if (IsFull)
 		{
@@ -84,9 +91,9 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
 	}
 
 	/// <inheritdoc/>
-	public IReadonlyRandomAccessList<T?> Copy()
+	public IReadonlyRandomAccessList<T> Copy()
 	{
-		var copy = new ResizeableArray<T?>(Capacity)
+		var copy = new ResizeableArray<T>(Capacity)
 		{
 			Count = Count,
 		};
@@ -99,7 +106,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
 		return copy;
 	}
 
-	public T? DeleteAt(int index = 0)
+	public T DeleteAt(int index = 0)
 	{
 		ValidateIndex(index);
 		
@@ -112,12 +119,12 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
 			items[i] = items[i + 1];
 		}
 
-		items[Count] = default;
+		items[Count] = default!;
 		
 		return firstItem;
 	}
 
-	public IEnumerator<T?> GetEnumerator()
+	public IEnumerator<T> GetEnumerator()
 	{
 		int versionAtStartOfIteration = version;
 			
@@ -146,7 +153,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
 		Count++;
 	}
 
-	public T? RemoveLast()
+	public T RemoveLast()
 	{
 		if (IsEmpty)
 		{
@@ -155,7 +162,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
 
 		Count--;
 		var result = items[Count];
-		items[Count] = default; // Don't hold on to references we don't need.
+		items[Count] = default!; // Don't hold on to references we don't need.
 		version++;
 			
 		return result;
@@ -196,7 +203,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
 				break;
 		}
 
-		var newItems = new T?[Capacity];
+		var newItems = new T[Capacity];
 
 		for (int i = 0; i < items.Length; i++)
 		{
@@ -213,7 +220,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T?>
 		
 		for (int i = Count - n; i < Count; i++)
 		{
-			items[i] = default; // Don't hold on to references we don't need.
+			items[i] = default!; // Don't hold on to references we don't need.
 		}
 
 		Count -= n;

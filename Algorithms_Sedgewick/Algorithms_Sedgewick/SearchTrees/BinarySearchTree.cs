@@ -11,11 +11,18 @@ public class BinarySearchTree<T>
 	[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = DataTransferStruct)]
 	public class Node
 	{
-		public T? Item;
+		public T Item;
 		public Node? LeftChild = null;
 		public Node? RightChild = null;
 
 		public bool IsLeaf => LeftChild == null && RightChild == null;
+
+		public Node(T item, Node? leftChild = null, Node? rightRight = null)
+		{
+			Item = item;
+			LeftChild = leftChild;
+			RightChild = rightRight;
+		}
 	}
 
 	private readonly IComparer<T> comparer;
@@ -26,6 +33,7 @@ public class BinarySearchTree<T>
 
 	public int Count { get; private set; } = 0;
 
+	[MemberNotNullWhen(false, nameof(root))]
 	public bool IsEmpty => root == null;
 
 	public bool IsSingleton => Count == 1;
@@ -180,7 +188,7 @@ public class BinarySearchTree<T>
 	{
 		if (IsEmpty)
 		{
-			root = new Node { Item = item };
+			root = new Node(item);
 		}
 		else
 		{
@@ -195,18 +203,18 @@ public class BinarySearchTree<T>
 	{
 		while (true)
 		{
-			bool addToLeft = comparer!.LessOrEqual(item, node.Item);
+			bool addToLeft = comparer.LessOrEqual(item, node.Item);
 			var childNode = addToLeft ? node.LeftChild : node.RightChild;
 
 			if (childNode == null)
 			{
 				if (addToLeft)
 				{
-					node.LeftChild = new Node { Item = item };
+					node.LeftChild = new Node(item);
 				}
 				else
 				{
-					node.RightChild = new Node { Item = item };
+					node.RightChild = new Node(item);
 				}
 				
 				return;
@@ -233,7 +241,7 @@ public class BinarySearchTree<T>
 			ThrowHelper.ThrowContainerEmpty();
 		}
 		
-		var node = root;
+		var node = root!;
 
 		return GetMaxNode(node);
 	}
@@ -245,7 +253,7 @@ public class BinarySearchTree<T>
 			ThrowHelper.ThrowContainerEmpty();
 		}
 		
-		var node = root;
+		var node = root!;
 
 		return GetMinNode(node);
 	}
@@ -287,18 +295,21 @@ public class BinarySearchTree<T>
 		return height;
 	}
 
-	public Node LargestKeyLessThanOrEqualTo(T key) 
+	public Node? LargestKeyLessThanOrEqualTo(T key) 
 		=> NodesInOrder
 			.TakeWhile(node => comparer.LessOrEqual(node.Item, key))
 			.LastOrDefault();
 
-	public Node NextNodeInOrder(Node node)
+	public Node? NextNodeInOrder(Node node)
 	{
 		var nodeAndNext = NodesInOrder.SkipWhile(n => n != node).Take(2);
 
-		return nodeAndNext.Count() == 2 
+		// ReSharper disable PossibleMultipleEnumeration
+		return nodeAndNext.Count() == 2
 			? nodeAndNext.Last() 
 			: null; // The given node is last
+		
+		// ReSharper restore PossibleMultipleEnumeration
 	}
 
 	public IEnumerable<Node> Range(T start, T end) =>
@@ -313,7 +324,7 @@ public class BinarySearchTree<T>
 		version++;
 	}
 
-	public Node RemoveMaxNode() => RemoveNode(root, GetMinNode().Item);
+	public Node? RemoveMaxNode() => RemoveNode(root, GetMaxNode().Item);
 
 	public Node RemoveMinNode()
 	{
@@ -322,8 +333,8 @@ public class BinarySearchTree<T>
 			ThrowHelper.ThrowContainerEmpty();
 		}
 		
-		Node parent = null;
-		var child = root;
+		Node? parent = null;
+		Node child = root!;
 
 		while (child.LeftChild != null)
 		{
@@ -336,7 +347,7 @@ public class BinarySearchTree<T>
 		if (parent == null)
 		{
 			// The root node was the smallest node
-			root = root.RightChild;
+			root = root!.RightChild;
 		}
 		else
 		{
@@ -346,12 +357,12 @@ public class BinarySearchTree<T>
 		return removedNode;
 	}
 
-	public Node SmallestKeyGreaterThanOrEqualTo(T key) 
+	public Node? SmallestKeyGreaterThanOrEqualTo(T key) 
 		=> NodesInOrder
 			.SkipWhile(node => comparer.Less(node.Item, key))
 			.FirstOrDefault();
 
-	public bool TryFindNode(T item, out Node node)
+	public bool TryFindNode(T item, out Node? node)
 		=> TryFindAtNode(root, item, out node);
 
 	private static Node GetMaxNode(Node node)
@@ -374,7 +385,7 @@ public class BinarySearchTree<T>
 		return node;
 	}
 
-	private Node RemoveNode(Node rootNode, T item)
+	private Node? RemoveNode(Node? rootNode, T item)
 	{
 		// Base case: tree is empty or key is not found
 		if (rootNode == null)
@@ -416,7 +427,7 @@ public class BinarySearchTree<T>
 		return rootNode;
 	}
 
-	private bool TryFindAtNode(Node node, T item, out Node result)
+	private bool TryFindAtNode(Node? node, T item, out Node? result)
 	{
 		result = null;
 		while (node != null)

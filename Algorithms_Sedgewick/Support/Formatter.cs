@@ -73,7 +73,7 @@ public static class Formatter
 		typeWriters ??= EmptyTypeWriters;
 
 		string printName = string.IsNullOrEmpty(name) ? NameMissing : name;
-		string objText = (IsNull(obj) ? NullString : Pretty(obj));
+		string objText = IsNull(obj) ? NullString : Pretty(obj);
 		var type = IsNull(obj) ? typeof(T) : obj.GetType();
 
 		var builder = new StringBuilder()
@@ -98,13 +98,15 @@ public static class Formatter
 		{
 			case string:
 				return (string)(object)obj;
-			//also works for dictionaries
+
+			// also works for dictionaries
 			case IEnumerable list:
 			{
 				string values = Pretty(list, specialIndexes);
 
-				return values.Wrap((obj is IDictionary) ?  Braces : Brackets);
+				return values.Wrap((obj is IDictionary) ? Braces : Brackets);
 			}
+			
 			default:
 				try
 				{
@@ -118,7 +120,8 @@ public static class Formatter
 		}
 	}
 
-	public static string Pretty<T>(IEnumerable<T> list, int[] specialIndexes) where T : class
+	public static string Pretty<T>(IEnumerable<T> list, int[] specialIndexes) 
+		where T : class
 	{
 		var stringList = list.Select((item, i) => ToString(item, specialIndexes.Contains(i)));
 
@@ -140,8 +143,8 @@ public static class Formatter
 	internal static string KeyValueToString<TKey, TValue>(TKey key, TValue value) 
 		=> FormatKeyValue(Pretty(key), Pretty(value));
 
-	//We may use this return type if the calling implementation changes or more
-	//methods that use it is added. This also makes it consistent with other StringBuilder extension methods.
+	// We may use this return type if the calling implementation changes or more
+	// methods that use it is added. This also makes it consistent with other StringBuilder extension methods.
 	// ReSharper disable once UnusedMethodReturnValue.Local
 	private static StringBuilder AppendKeyValueLine<T>(this StringBuilder builder, string key, T value)
 		=> builder.AppendLine(KeyValueToString(key, value));
@@ -158,11 +161,12 @@ public static class Formatter
 					.AppendKeyValueLine(fieldInfo.Name, value);
 			}
 
-			foreach (var propertyInfo in type.GetProperties(bindingFlags).Where(p => p.CanRead)) //CanRead means has a getter (can be public or non-public)
+			// CanRead means has a getter (can be public or non-public)
+			foreach (var propertyInfo in type.GetProperties(bindingFlags).Where(p => p.CanRead)) 
 			{
 				string value;
 
-				//Accessing properties, unlike fields, can raise exceptions. Catch and include in string.
+				// Accessing properties, unlike fields, can raise exceptions. Catch and include in string.
 				try
 				{
 					value = PropertyToString(propertyInfo, obj, typeWriters);
@@ -229,7 +233,7 @@ public static class Formatter
 
 		if (!typeWriters.ContainsKey(propertyInfo.PropertyType))
 		{
-			return Pretty(value); //null because it is not an index property
+			return Pretty(value); // null because it is not an index property
 		}
 
 		if (value == null)

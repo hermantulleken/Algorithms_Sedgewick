@@ -1,4 +1,7 @@
-﻿namespace Algorithms_Sedgewick_Tests;
+﻿using System.Diagnostics.CodeAnalysis;
+using static Support.Tools;
+
+namespace Algorithms_Sedgewick_Tests;
 
 using System.Linq;
 using System.Numerics;
@@ -7,6 +10,7 @@ using NUnit.Framework;
 using Support;
 
 [Parallelizable]
+[SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = PerformanceOkForTesting)]
 public class TestGeometricAlgorithms
 {
 	[Test]

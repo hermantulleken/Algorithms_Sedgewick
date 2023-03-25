@@ -28,13 +28,13 @@ public class StackWithPriorityQueue<T>
 	public T Pop()
 	{
 		var min = queue.PopMin().Item;
-		counter++;//For queue, use --
+		counter++; // For queue, use --
 		return min;
 	}
 
 	public void Push(T item)
 	{
 		queue.Push(new PriorityNode(item, counter));
-		counter--;//For queue, use ++, for random queue use a random value instead of counter
+		counter--; // For queue, use ++, for random queue use a random value instead of counter
 	}
 }

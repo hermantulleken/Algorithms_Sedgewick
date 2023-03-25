@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics;
+using Algorithms_Sedgewick.List;
 using static Algorithms_Sedgewick.ThrowHelper;
 
 namespace Algorithms_Sedgewick.PriorityQueue;
 
-//Ex. 2.4.3
-public sealed class PriorityQueueWithUnorderedLinkedList<T> : IPriorityQueue<T> where T : IComparable<T>
+// Ex. 2.4.3
+public sealed class PriorityQueueWithUnorderedLinkedList<T> : IPriorityQueue<T> 
+	where T : IComparable<T>
 {
 	private readonly List.LinkedList<T> items = new();
 
@@ -50,22 +52,23 @@ public sealed class PriorityQueueWithUnorderedLinkedList<T> : IPriorityQueue<T> 
 		}
 	}
 
-	private List.LinkedList<T>.Node GetNodeBeforeMinNode()
+	// Null when min node is at front
+	private List.LinkedList<T>.Node? GetNodeBeforeMinNode()
 	{
 		Debug.Assert(Count > 1);
 
-		List.LinkedList<T>.Node nodeBeforeMinNode = null;
+		List.LinkedList<T>.Node? nodeBeforeMinNode = null;
 		var minNode = items.First;
 		
 		foreach (var node in items.Nodes)
 		{
-			if(node.NextNode != null && Sort.Less(node.NextNode.Item, minNode.Item))
+			if (node.NextNode != null && ListExtensions.Less(node.NextNode.Item, minNode.Item))
 			{
 				nodeBeforeMinNode = node;
 				minNode = node.NextNode;
 			}
 		}
-
+		
 		return nodeBeforeMinNode;
 	}
 
@@ -79,6 +82,7 @@ public sealed class PriorityQueueWithUnorderedLinkedList<T> : IPriorityQueue<T> 
 			var minNode = items.RemoveAfter(nodeBeforeMinNode);
 			items.InsertAtFront(minNode.Item);
 		}
-		//else minNode is at the front already. 
+		
+		// else minNode is at the front already. 
 	}
 }

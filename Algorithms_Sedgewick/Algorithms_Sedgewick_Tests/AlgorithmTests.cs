@@ -11,6 +11,7 @@ public class AlgorithmTests
 	public class Person : IComparable<Person>
 	{
 		public int Age { get; set; }
+		
 		public string Name { get; set; }
 
 		public int CompareTo(Person other)
@@ -33,6 +34,7 @@ public class AlgorithmTests
 	public class Point : IComparable<Point>
 	{
 		public int X { get; set; }
+		
 		public int Y { get; set; }
 
 		public int CompareTo(Point other)
@@ -54,14 +56,14 @@ public class AlgorithmTests
 
 	private static readonly ResizeableArray<int> Empty = new();
 
-	private static readonly ResizeableArray<int> List13335 = new(){ 1, 3, 3, 3, 5 };
-	private static readonly ResizeableArray<int> List135 = new(){ 1, 3, 5 };
+	private static readonly ResizeableArray<int> List13335 = new() { 1, 3, 3, 3, 5 };
+	private static readonly ResizeableArray<int> List135 = new() { 1, 3, 5 };
 
 	private static readonly IEnumerable<TestCaseData> FindTestCases = new List<TestCaseData>
 	{
-		new(Empty, 0) {ExpectedResult = 0, TestName = "Empty"},
-		new(List135, 0) {ExpectedResult = 0, TestName = "Item before first"},
-		new(List135, 6) {ExpectedResult = 3, TestName = "Item after last"},
+		new(Empty, 0) { ExpectedResult = 0, TestName = "Empty" },
+		new(List135, 0) { ExpectedResult = 0, TestName = "Item before first"},
+		new(List135, 6) { ExpectedResult = 3, TestName = "Item after last"},
 		
 		new(List135, 2) {ExpectedResult = 1, TestName = "Item after first"},
 		new(List135, 4) {ExpectedResult = 2, TestName = "Item before last"},

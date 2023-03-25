@@ -15,7 +15,7 @@ public static class TestAlgorithms
 				'[' => ']',
 				'{' => '}',
 				'<' => '>',
-				_ => throw new ArgumentOutOfRangeException(nameof(openBracket), openBracket, null)
+				_ => throw new ArgumentOutOfRangeException(nameof(openBracket), openBracket, null),
 			};
 		}	
 		
@@ -54,10 +54,11 @@ public static class TestAlgorithms
 	{
 		int windowSize = 2;
 		var buffer = new RingBuffer<TIn>(windowSize);
+		
 		foreach (var item in list)
 		{
 			buffer.Insert(item);
-			if (buffer.Count >= windowSize)
+			if (buffer.IsFull)
 			{
 				yield return filter(buffer[0], buffer[1]);
 			}
@@ -71,7 +72,7 @@ public static class TestAlgorithms
 		foreach (var item in list)
 		{
 			buffer.Insert(item);
-			if (buffer.Count >= windowSize)
+			if (buffer.IsFull)
 			{
 				yield return filter(buffer[0], buffer[1], buffer[2]);
 			}
@@ -84,7 +85,7 @@ public static class TestAlgorithms
 		foreach (var item in list)
 		{
 			buffer.Insert(item);
-			if (buffer.Count >= windowSize)
+			if (buffer.IsFull)
 			{
 				yield return filter(buffer);
 			}
@@ -93,7 +94,7 @@ public static class TestAlgorithms
 
 	public static int GetFibonacci(int n) => GetGeneralizedFibonacci(n, 0, 1);
 
-	public static int GetGeneralizedFibonacci(int n,  params int[]  initialTerms)
+	public static int GetGeneralizedFibonacci(int n,  params int[] initialTerms)
 	{
 		if (n < 0)
 		{

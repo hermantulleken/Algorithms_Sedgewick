@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using static Algorithms_Sedgewick.List.ListExtensions;
+
 namespace Algorithms_Sedgewick;
 
 using Buffer;
@@ -17,6 +20,9 @@ public static class Algorithms
 	/// </summary>
 	public static int BinaryRank<T>(this IReadonlyRandomAccessList<T> list, T item, IComparer<T> comparer)
 	{
+		list.ThrowIfNull();
+		comparer.ThrowIfNull();
+		
 		Assert(IsSorted(list, comparer));
 		
 		int left = 0;
@@ -26,7 +32,7 @@ public static class Algorithms
 		{
 			int mid = left + (right - left) / 2;
 
-			if (comparer.Less( list[mid], item))
+			if (comparer.Less(list[mid], item))
 			{
 				left = mid + 1;
 			}
@@ -42,7 +48,6 @@ public static class Algorithms
 	[Obsolete, PossiblyIncorrect]
 	public static int BinaryRank__<T>(this IReadonlyRandomAccessList<T> list, T key, IComparer<T> comparer)
 	{
-		//__ClearWhiteBoxContainers();
 		list.ThrowIfNull();
 		
 		int start = 0;
@@ -71,41 +76,25 @@ public static class Algorithms
 	[Obsolete, PossiblyIncorrect]
 	public static int BinarySearch(this int[] list, int key)
 	{
-		//__ClearWhiteBoxContainers();
 		list.ThrowIfNull();
-		
-		if (list.Length == 0 || key < list[0] || list[^1] <= key)
+
+		if (list.Length == 0)
 		{
 			return -1;
 		}
-		
+
 		int start = 0;
 		int end = list.Length - 1;
 
-		while (true)
+		while (start <= end)
 		{
-			__AddPass();
-			
-			if (end < start || key < list[start] || key > list[end])
-			{
-				return -1;
-			}
-			
-			int length = end - start + 1;
-			float first = list[start];
-
-			if (length == 1)
-			{
-				return key == list[start] ? start : -1;
-			}
-			
 			int mid = (start + end) / 2;
-			
+
 			if (key == list[mid])
 			{
 				return mid;
 			}
-			
+
 			if (key < list[mid])
 			{
 				end = mid - 1;
@@ -114,16 +103,14 @@ public static class Algorithms
 			{
 				start = mid + 1;
 			}
-			
-			//Assert(list[start] <= key);
-			//Assert(key <= list[end]);
 		}
+
+		return -1;
 	}
 
 	[Obsolete, PossiblyIncorrect]
 	public static int BinarySearch<T>(this IReadonlyRandomAccessList<T> list, T key, IComparer<T> comparer)
 	{
-		//__ClearWhiteBoxContainers();
 		list.ThrowIfNull();
 		
 		int start = 0;
@@ -149,7 +136,6 @@ public static class Algorithms
 		return -1;
 	}
 
-
 	/// <summary>
 	/// Returns pairs of successive elements.
 	/// </summary>
@@ -172,10 +158,12 @@ public static class Algorithms
 		}
 	}
 
-	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list) where T : IComparable<T>
+	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list) 
+		where T : IComparable<T>
 		=> list.FindIndexOfMax(0, list.Count);
 
-	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list, int start, int end) where T : IComparable<T>
+	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list, int start, int end) 
+		where T : IComparable<T>
 	{
 		int length = end - start;
 		switch (length)
@@ -202,10 +190,12 @@ public static class Algorithms
 		return maxIndex;
 	}
 
-	public static int FindIndexOfMax<T>(this T[] list) where T : IComparable<T>
+	public static int FindIndexOfMax<T>(this T[] list) 
+		where T : IComparable<T>
 		=> list.FindIndexOfMax(0, list.Length);
 
-	public static int FindIndexOfMax<T>(this T[] list, int start, int end) where T : IComparable<T>
+	public static int FindIndexOfMax<T>(this T[] list, int start, int end)
+		where T : IComparable<T>
 	{
 		int length = end - start;
 		switch (length)
@@ -232,10 +222,12 @@ public static class Algorithms
 		return maxIndex;
 	}
 
-	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list) where T : IComparable<T>
+	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list) 
+		where T : IComparable<T>
 		=> list.FindIndexOfMin(0, list.Count);
 
-	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list, int start, int end) where T : IComparable<T>
+	public static int FindIndexOfMin<T>(this IReadonlyRandomAccessList<T> list, int start, int end) 
+		where T : IComparable<T>
 	{
 		int length = end - start;
 		
@@ -263,10 +255,12 @@ public static class Algorithms
 		return minIndex;
 	}
 
-	public static int FindIndexOfMin<T>(this T[] list) where T : IComparable<T>
+	public static int FindIndexOfMin<T>(this T[] list) 
+		where T : IComparable<T>
 		=> list.FindIndexOfMin(0, list.Length);
 
-	public static int FindIndexOfMin<T>(this T[] list, int start, int end) where T : IComparable<T>
+	public static int FindIndexOfMin<T>(this T[] list, int start, int end) 
+		where T : IComparable<T>
 	{
 		int length = end - start;
 		
@@ -320,54 +314,56 @@ public static class Algorithms
 	public static int FindInsertionIndex<T>(
 		this IReadonlyRandomAccessList<T> sortedList, T item, IComparer<T> comparer)
 	{
-	    // Ensure that the input list is sorted.
-	    Assert(IsSorted(sortedList, comparer));
-	    
-	    // Define a binary search algorithm to find the insertion point for the item.
-	    int Find(int start, int end)
-	    {
-	        while (end > start + 1)
-	        {
-	            int mid = (start + end) / 2;
-	    
-	            Assert(start != mid); //because end > start + 1
-	            Assert(mid != end);
+		sortedList.ThrowIfNull();
+		comparer.ThrowIfNull();
+		
+		Assert(IsSorted(sortedList, comparer));
+		
+		// Define a binary search algorithm to find the insertion point for the item.
+		int Find(int start, int end)
+		{
+			while (end > start + 1)
+			{
+				int mid = (start + end) / 2;
+		
+				Assert(start != mid); // because end > start + 1
+				Assert(mid != end);
 
-	            // If the item is less than the midpoint, search the left half of the list.
-	            if (comparer.Less(item, sortedList[mid]))
-	            {
-	                end = mid;
-	            }
-	            // Otherwise, search the right half of the list.
-	            else
-	            {
-	                start = mid;
-	            }
-	        }
-	        
-	        // When there are only two elements left, return the index of the correct element.
-	        Assert(end == start + 1);
-	        return comparer.Less(item, sortedList[start]) ? start : end;
-	    }
+				if (comparer.Less(item, sortedList[mid]))
+				{
+					end = mid;
+				}
+				else 
+				{
+					start = mid;
+				}
+			}
+			
+			// When there are only two elements left, return the index of the correct element.
+			Assert(end == start + 1);
+			
+			return comparer.Less(item, sortedList[start]) ? start : end;
+		}
 
-	    // Handle special cases where the list is empty or the item is outside the bounds of the list.
-	    return sortedList.IsEmpty 
-	        ? 0 
-	        : comparer.Less(item, sortedList[0]) 
-	            ? 0 
-	            : comparer.Less(sortedList[^1], item) 
-	                ? sortedList.Count 
-	                : Find(0, sortedList.Count);
-	    
+		// Handle special cases where the list is empty or the item is outside the bounds of the list.
+		return sortedList.IsEmpty 
+			? 0 
+			: comparer.Less(item, sortedList[0]) 
+				? 0 
+				: comparer.Less(sortedList[^1], item) 
+					? sortedList.Count 
+					: Find(0, sortedList.Count);
 	}
 
 	[Obsolete, PossiblyIncorrect]
 	public static LinkedList<T>.Node FindInsertionNode<T>(this LinkedList<T> sortedList, T item, IComparer<T> comparer)
 	{
-		//TODO: Should these be exceptions?
+		sortedList.ThrowIfNull();
+		comparer.ThrowIfNull();
+		
 		Assert(!sortedList.IsEmpty);
 		
-		//Note: if item < firstItem we need to add it at the front
+		// Note: if item < firstItem we need to add it at the front
 		// item >= firstItem
 		Assert(comparer.LessOrEqual(sortedList.First.Item, item));
 
@@ -397,14 +393,23 @@ public static class Algorithms
 		return source[0];
 	}
 
-	public static void InsertSorted<T>(this ResizeableArray<T> list, T item) where T : IComparable<T>
+	public static void InsertSorted<T>(this ResizeableArray<T> list, T item) 
+		where T : IComparable<T>
 	{
 		InsertSorted(list, item, Comparer<T>.Default);
 	}
 
-	//TODO: Test the output
+	// TODO: Test the output
 	public static int InsertSorted<T>(this ResizeableArray<T> list, T item, IComparer<T> comparer)
 	{
+		list.ThrowIfNull();
+		item.ThrowIfNull();
+		comparer.ThrowIfNull();
+		
+		ArgumentNullException.ThrowIfNull(list);
+		ArgumentNullException.ThrowIfNull(item);
+		ArgumentNullException.ThrowIfNull(comparer);
+		
 		Assert(IsSorted(list, comparer));
 		
 		int insertionIndex = list.FindInsertionIndex(item, comparer);
@@ -412,8 +417,10 @@ public static class Algorithms
 		return insertionIndex;
 	}
 
-	public static void InsertSorted<T>(this List.LinkedList<T> list, T item) where T : IComparable<T>
+	public static void InsertSorted<T>(this LinkedList<T> list, T item) 
+		where T : IComparable<T>
 	{
+		list.ThrowIfNull();
 		if (list.Count == 0)
 		{
 			list.InsertAtFront(item);
@@ -446,7 +453,6 @@ public static class Algorithms
 	[Obsolete, PossiblyIncorrect]
 	public static int InterpolationSearch(this int[] list, int key)
 	{
-		//__ClearWhiteBoxContainers();
 		list.ThrowIfNull();
 		
 		Assert(IsSorted(list.ToRandomAccessList()), $"{nameof(list)} is not sorted.");
@@ -498,8 +504,8 @@ public static class Algorithms
 				newStart = mindIndex + 1;
 			}
 			
-			//Assert(list[newStart] <= key);
-			//Assert(key <= list[newEnd]);
+			// Assert(list[newStart] <= key);
+			// Assert(key <= list[newEnd]);
 
 			startIndex = newStart;
 			endIndex = newEnd;
@@ -556,21 +562,21 @@ public static class Algorithms
 		return source[^1];
 	}
 
-	public static IEnumerable<List.LinkedList<T>.Node> NodesBeforeThat<T>(this List.LinkedList<T> list, Func<List.LinkedList<T>.Node, bool> predicate)
+	public static IEnumerable<LinkedList<T>.Node> NodesBeforeThat<T>(this LinkedList<T> list, Func<LinkedList<T>.Node, bool> predicate)
 	{
 		if (list.IsEmpty || list.Count == 1)
 		{
-			return Array.Empty<List.LinkedList<T>.Node>();
+			return Array.Empty<LinkedList<T>.Node>();
 		}
 		
 		return list.Nodes
 			.SkipLast(1)
-			.Where(node => predicate(node.NextNode));
+			.Where(node => predicate(node.NextNode!));
 	}
 
-	public static List.LinkedList<T>.Node Nth<T>(this List.LinkedList<T> list, int n) => list.Nodes.Skip(n).First();
+	public static LinkedList<T>.Node Nth<T>(this LinkedList<T> list, int n) => list.Nodes.Skip(n).First();
 
-	public static void RemoveIf<T>(this List.LinkedList<T> list, Func<List.LinkedList<T>.Node, bool> predicate)
+	public static void RemoveIf<T>(this LinkedList<T> list, Func<LinkedList<T>.Node, bool> predicate)
 	{
 		if (list.IsEmpty)
 		{
@@ -579,7 +585,7 @@ public static class Algorithms
 
 		var current = list.First;
 
-		while (current != null && predicate(current))
+		while (predicate(current))
 		{
 			list.RemoveFromFront();
 			current = list.First;
@@ -603,7 +609,7 @@ public static class Algorithms
 		}
 	}
 
-	public static List.LinkedList<T>.Node RemoveNth<T>(this List.LinkedList<T> list, int n)
+	public static LinkedList<T>.Node RemoveNth<T>(this LinkedList<T> list, int n)
 	{
 		if (n < 0 || n >= list.Count)
 		{
@@ -640,8 +646,12 @@ public static class Algorithms
 	/// <summary>
 	/// Returns the number of elements in a sorted list that are less than the given value. 
 	/// </summary>
-	public static int SequentialRank<T>(this LinkedList<T> list, T item, IComparer<T> comparer)
+	public static int SequentialRank<T>(this LinkedList<T> list, [DisallowNull] T item, IComparer<T> comparer)
 	{
+		list.ThrowIfNull();
+		item.ThrowIfNull();
+		comparer.ThrowIfNull();
+		
 		Assert(IsSorted(list.ToResizableArray(list.Count), comparer));
 
 		int i = 0;
@@ -676,22 +686,26 @@ public static class Algorithms
 	}
 
 	/// <summary>
-	/// Shuffles a list so that each permutation is equally likely
+	/// Shuffles a list so that each permutation is equally likely.
 	/// </summary>
 	// Fisher-Yates shuffle from https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 	public static void Shuffle<T>(this IReadonlyRandomAccessList<T> list)
 	{
+		list.ThrowIfNull();
+		
 		for (int i = list.Count - 1; i > 0; i--)
 		{
-			int j = Random.Next(i + 1); //Common mistake: to use i or list.Count here instead of i + 1
+			int j = Random.Next(i + 1); // Common mistake: to use i or list.Count here instead of i + 1
 			SwapAt(list, i, j);
 		}
 	}
 
 	// Ex. 2.5.4
-	public static void SortAndRemoveDuplicates<T>(this ResizeableArray<T> list) where T : IComparable<T>
+	public static void SortAndRemoveDuplicates<T>(this ResizeableArray<T> list) 
+		where T : IComparable<T>
 	{
 		bool EqualAt(int i, int j) => list[i].CompareTo(list[j]) == 0;
+		
 		list.ThrowIfNull();
 		
 		if (list.Count <= 1)
@@ -721,7 +735,8 @@ public static class Algorithms
 		list.RemoveLast(list.Count - i - 1);
 	}
 
-	public static void SortAndRemoveDuplicatesWithBuffer<T>(this ResizeableArray<T> list) where T : IComparable<T>
+	public static void SortAndRemoveDuplicatesWithBuffer<T>(this ResizeableArray<T> list) 
+		where T : IComparable<T>
 	{
 		bool Equal(T left, T right) => left.CompareTo(right) == 0;
 		list.ThrowIfNull();
@@ -733,13 +748,13 @@ public static class Algorithms
 		
 		ShellSortWithPrattSequence(list);
 		
-		var sorted =  list
+		var sorted = list
 			.Buffer2()
-			.Where(buffer => !Equal(buffer.First, buffer.Last))
-			.Select(buffer => buffer.First)
+			.Where(buffer => !Equal(buffer.First!, buffer.Last!)) // Buffer only returns when both elements are not null
+			.Select(buffer => buffer.First!)
 			.ToArray();
 
-		//TODO: Add Copy method for arrays
+		// TODO: Add Copy method for arrays
 		for (int i = 0; i < sorted.Length; i++)
 		{
 			list[i] = sorted[i];

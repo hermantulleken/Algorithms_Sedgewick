@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using static Support.Tools;
 
-public sealed class LinkedList<T> : IEnumerable<T?>
+public sealed class LinkedList<T> : IEnumerable<T>
 {
 	/*
 		Exposing the node class makes the linked list a more useful container to
@@ -18,9 +18,14 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 		private const int RecursiveStringLimit = 100;
 		#endif
 		
-		public T? Item;
+		public T Item;
 		public Node? NextNode;
-		
+
+		public Node(T item)
+		{
+			Item = item;
+		}
+
 		public IEnumerable<Node> Rest
 		{
 			get
@@ -131,7 +136,7 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 		version++;
 	}
 
-	public IEnumerator<T?> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
+	public IEnumerator<T> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
 
 	public Node InsertAfter(Node node, T item)
 	{
@@ -145,9 +150,8 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 			return InsertAtBack(item);
 		}
 		
-		var newNode = new Node
+		var newNode = new Node(item)
 		{
-			Item = item,
 			NextNode = node.NextNode,
 		};
 
@@ -170,7 +174,7 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 		}
 
 		Debug.Assert(back != null);
-		back.NextNode = new Node { Item = item };
+		back.NextNode = new Node(item);
 		back = back.NextNode;
 		
 		Count++;
@@ -189,9 +193,8 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 			return InsertFirstItem(item);
 		}
 
-		var newHead = new Node
+		var newHead = new Node(item)
 		{
-			Item = item,
 			NextNode = front,
 		};
 			
@@ -273,7 +276,7 @@ public sealed class LinkedList<T> : IEnumerable<T?>
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-	private Node InsertFirstItem(T item) => front = back = new Node { Item = item };
+	private Node InsertFirstItem(T item) => front = back = new Node(item);
 
 	private void ValidateNotEmpty()
 	{

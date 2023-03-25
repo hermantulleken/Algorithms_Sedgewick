@@ -4,18 +4,21 @@ using Support;
 namespace Algorithms_Sedgewick.Stack;
 
 /// <summary>
-/// A stack with a fixed capacity;
+/// A stack with a fixed capacity.
 /// </summary>
 /// <typeparam name="T">The type of the stack's items.</typeparam>
 /// <remarks>From p. 132.</remarks>
 public sealed class FixedCapacityStack<T> : IStack<T>
 {
-	private readonly T[] items;
+	private readonly T?[] items;
 	private int version = 0;
 
 	public int Capacity { get; }
+	
 	public int Count { get; private set; }
+	
 	public bool IsEmpty => Count == 0;
+	
 	public bool IsFull => Count == Capacity;
 
 	public T Peek
@@ -23,7 +26,7 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 		get
 		{
 			ValidateNotEmpty();
-			return items[^1];
+			return items[^1]!;
 		}
 	}
 
@@ -33,7 +36,7 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 		{
 			< 0 => throw ThrowHelper.CapacityCannotBeNegativeException(capacity),
 			0 => Array.Empty<T>(),
-			_ => new T[capacity]
+			_ => new T[capacity],
 		};
 
 		Capacity = capacity;
@@ -57,7 +60,7 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 		{
 			ValidateVersion(versionAtStartOfIteration);
 				
-			yield return items[i];
+			yield return items[i]!;
 		}
 	}
 
@@ -67,10 +70,10 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 
 		Count--;
 		var result = items[Count];
-		items[Count] = default; //Don't hold on to references we don't need, i.e. don't let items loiter.
+		items[Count] = default; // Don't hold on to references we don't need, i.e. don't let items loiter.
 		version++;
 			
-		return result;
+		return result!;
 	}
 
 	public void Push(T item)

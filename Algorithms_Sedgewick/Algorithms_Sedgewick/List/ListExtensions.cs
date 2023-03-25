@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using static Support.WhiteBoxTesting;
+
 namespace Algorithms_Sedgewick.List;
 
 using System.Collections;
@@ -39,4 +42,67 @@ public static class ListExtensions
 	}
 
 	public static IReadonlyRandomAccessList<T> ToRandomAccessList<T>(this IList<T> list) => new ListWrapper<T>(list);
+
+	// TODO Do we really need this null check here? 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static bool Less<T>(T v, T w) 
+		where T : IComparable<T>
+	{
+		__AddCompareTo();
+		return v.CompareTo(w) < 0;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static bool LessAt<T>(T[] list, int i, int j) 
+		where T : IComparable<T>
+		=>
+			Less(list[i], list[j]);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static bool LessAt<T>(IReadonlyRandomAccessList<T> list, int i, int j) 
+		where T : IComparable<T>
+		=>
+			Less(list[i], list[j]);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static bool LessOrEqual<T>(T v, T w) 
+		where T : IComparable<T>
+	{
+		__AddCompareTo();
+		
+		return v.CompareTo(w) <= 0;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static bool LessOrEqualAt<T>(IReadonlyRandomAccessList<T> list, int i, int j) 
+		where T : IComparable<T> 
+		=> LessOrEqual(list[i], list[j]);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static void MoveAt<T>(IReadonlyRandomAccessList<T?> list, int sourceIndex, int destinationIndex)
+	{
+		list[destinationIndex] = list[sourceIndex];
+		list[sourceIndex] = default;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static void MoveAt<T>(T?[] list, int sourceIndex, int destinationIndex)
+	{
+		list[destinationIndex] = list[sourceIndex];
+		list[sourceIndex] = default;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static void SwapAt<T>(IReadonlyRandomAccessList<T> list, int i, int j)
+	{
+		__AddSwap();
+		(list[i], list[j]) = (list[j], list[i]);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static void SwapAt<T>(T[] list, int i, int j)
+	{
+		__AddSwap();
+		(list[i], list[j]) = (list[j], list[i]);
+	}
 }

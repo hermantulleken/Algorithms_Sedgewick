@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Algorithms_Sedgewick.List;
 
 namespace Algorithms_Sedgewick.PriorityQueue;
 
@@ -6,12 +7,11 @@ namespace Algorithms_Sedgewick.PriorityQueue;
 /// Container that supports efficient insertions and retrieval and removal of the median element in the container.  
 /// </summary>
 // Ex. 2.4.30
-//This implementation uses a wrapper max heap that may npt be so performant. 
-public sealed class MedianDoubleHeap<T> where T : IComparable<T>
+// This implementation uses a wrapper max heap that may npt be so performant. 
+public sealed class MedianDoubleHeap<T> 
+	where T : IComparable<T>
 {
 	private readonly FixedCapacityMinBinaryHeap<T> biggestHalf;
-
-
 	private readonly FixedCapacityMaxBinaryHeap<T> smallestHalf;
 
 	public T PeekMedian => smallestHalf.PeekMax;
@@ -43,7 +43,7 @@ public sealed class MedianDoubleHeap<T> where T : IComparable<T>
 
 	public void Push(T item)
 	{
-		if (Sort.Less(item, PeekMedian))
+		if (ListExtensions.Less(item, PeekMedian))
 		{
 			smallestHalf.Push(item);
 		}

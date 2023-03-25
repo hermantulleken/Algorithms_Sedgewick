@@ -12,6 +12,7 @@ public interface IOrderedSymbolTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	TKey LargestKeyLessThanOrEqualTo(TKey key); // The book uses Floor
 
 	TKey MaxKey();
+	
 	TKey MinKey();
 
 	int RankOf(TKey key);

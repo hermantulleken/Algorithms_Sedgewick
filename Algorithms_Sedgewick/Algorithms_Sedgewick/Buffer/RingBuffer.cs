@@ -3,22 +3,24 @@
 using System.Collections;
 using System.Diagnostics;
 
-public sealed class RingBuffer<T> : IBuffer<T?>
+public sealed class RingBuffer<T> : IBuffer<T>
 {
-	private readonly T?[] items;
+	private readonly T[] items;
 	private int back;
 	private int front;
-
+	
+	public bool IsFull => AsIBuffer.IsFull;
+	
 	public int Capacity { get; }
 
 	public int Count { get; private set; }
 
-	public T? First 
+	public T First 
 		=> Count > 0 
-			? this[0] 
+			? this[0]
 			: throw ThrowHelper.ContainerEmptyException;
 
-	public T? this[int index]
+	public T this[int index]
 	{
 		get
 		{
@@ -34,11 +36,13 @@ public sealed class RingBuffer<T> : IBuffer<T?>
 		}
 	}
 
-	public T? Last 
+	public T Last 
 		=> Count > 0
 			? this[Count - 1]
 			: throw ThrowHelper.ContainerEmptyException;
-
+	
+	private IBuffer<T> AsIBuffer => this;
+	
 	public RingBuffer(int capacity)
 	{
 		if (capacity <= 0)
@@ -57,7 +61,7 @@ public sealed class RingBuffer<T> : IBuffer<T?>
 		ResetPointers();
 	}
 
-	public IEnumerator<T?> GetEnumerator()
+	public IEnumerator<T> GetEnumerator()
 	{
 		if (front < back)
 		{
@@ -80,7 +84,7 @@ public sealed class RingBuffer<T> : IBuffer<T?>
 		}
 	}
 
-	public void Insert(T? item)
+	public void Insert(T item)
 	{
 		items[back] = item;
 
@@ -116,6 +120,8 @@ public sealed class RingBuffer<T> : IBuffer<T?>
         
 		AssertCountInvariants();
 	}
+	
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 	private void AssertCountInvariants()
 	{
@@ -130,8 +136,6 @@ public sealed class RingBuffer<T> : IBuffer<T?>
 			Debug.Assert(Count == Capacity - front + back);
 		}
 	}
-
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 	private int GetRealIndex(int index)
 	{
@@ -152,19 +156,19 @@ public sealed class RingBuffer<T> : IBuffer<T?>
 		{
 			for (int i = front; i < back; i++)
 			{
-				items[i] = default;
+				items[i] = default!;
 			}
 		}
 		else
 		{
 			for (int i = front; i < Capacity; i++)
 			{
-				items[i] = default;
+				items[i] = default!;
 			}
             
 			for (int i = 0; i < back; i++)
 			{
-				items[i] = default;
+				items[i] = default!;
 			}
 		}
 	}

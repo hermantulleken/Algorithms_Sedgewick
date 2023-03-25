@@ -3,14 +3,17 @@ using Algorithms_Sedgewick.Deque;
 
 namespace Algorithms_Sedgewick.Stack;
 
-//With deck
+// With deck
 public class BoundedStack<T> : IStack<T>
 {
 	private readonly DequeWithDoublyLinkedList<T> deque = new();
+	
 	public int Count => deque.Count;
+	
 	public bool IsEmpty => Count == 0;
 
 	public bool IsFull => Count == MaxSize;
+	
 	public int MaxSize { get; }
 
 	public T Peek => deque.PeekRight;

@@ -15,6 +15,7 @@ public static class Timer
 			stopwatch.Stop();
 			times.Add(stopwatch.ElapsedMilliseconds);
 		}
+		
 		return times;
 	}
 
@@ -24,14 +25,12 @@ public static class Timer
 		=> Time(actions.Select<Action<T>, Action>(
 			a => () => a(argFactory())));
 
-
 	public static IList<long> Time<T1, T2>(
 		IEnumerable<Action<T1, T2>> actions,
 		Func<T1> argFactory1,
 		Func<T2> argFactory2)
 		=> Time(actions.Select<Action<T1, T2>, Action>(
 			a => () => a(argFactory1(), argFactory2())));
-
 
 	public static IList<long> Time<T1, T2, T3>(
 		IEnumerable<Action<T1, T2, T3>> actions,
@@ -40,7 +39,6 @@ public static class Timer
 		Func<T3> argFactory3)
 		=> Time(actions.Select<Action<T1, T2, T3>, Action>(
 			a => () => a(argFactory1(), argFactory2(), argFactory3())));
-
 
 	public static IList<long> Time<T1, T2, T3, T4>(
 		IEnumerable<Action<T1, T2, T3, T4>> actions,
@@ -51,7 +49,6 @@ public static class Timer
 		=> Time(actions.Select<Action<T1, T2, T3, T4>, Action>(
 			a => () => a(argFactory1(), argFactory2(), argFactory3(), argFactory4())));
 
-
 	public static IList<long> Time<T1, T2, T3, T4, T5>(
 		IEnumerable<Action<T1, T2, T3, T4, T5>> actions,
 		Func<T1> argFactory1,
@@ -61,7 +58,6 @@ public static class Timer
 		Func<T5> argFactory5)
 		=> Time(actions.Select<Action<T1, T2, T3, T4, T5>, Action>(
 			a => () => a(argFactory1(), argFactory2(), argFactory3(), argFactory4(), argFactory5())));
-
 
 	public static IList<long> Time<T1, T2, T3, T4, T5, T6>(
 		IEnumerable<Action<T1, T2, T3, T4, T5, T6>> actions,
@@ -124,7 +120,7 @@ public static class Timer
 		Func<T7> argFactory7,
 		Func<T8> argFactory8,
 		Func<T9> argFactory9,
-		Func<T10> argFactory10
-	) => Time(actions.Select<Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, Action>(
+		Func<T10> argFactory10) 
+		=> Time(actions.Select<Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, Action>(
 		a => () => a(argFactory1(), argFactory2(), argFactory3(), argFactory4(), argFactory5(), argFactory6(), argFactory7(), argFactory8(), argFactory9(), argFactory10())));
 }

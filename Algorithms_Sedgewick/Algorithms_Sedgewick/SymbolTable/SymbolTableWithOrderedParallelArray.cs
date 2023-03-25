@@ -64,7 +64,7 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 		}
 	}
 
-	//TODO verify index
+	// TODO verify index
 	public TKey KeyWithRank(int rank) => arrays.Keys[rank];
 
 	public TKey LargestKeyLessThanOrEqualTo(TKey key)

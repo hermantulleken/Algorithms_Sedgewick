@@ -3,10 +3,12 @@
 // 2.4.29
 // Note: This version does not quit have the performance characteristics desired. 
 // Getting all operations to be O (log n) may be quite tricky. 
-public class MinMaxPriorityQueue<T> where T : IComparable<T>
+public class MinMaxPriorityQueue<T> 
+	where T : IComparable<T>
 {
 	private readonly FixedCapacityMaxBinaryHeap<T> largestElements = new(1000);
-	private readonly FixedCapacityMinBinaryHeap<T> smallestElements = new(1000);
+	private readonly FixedCapacityMinBinaryHeap<T> smallestElements = new(1000); 
+	
 	public T PeekMax => largestElements.PeekMax;
 
 	public T PeekMin => smallestElements.PeekMin;
@@ -45,8 +47,8 @@ public class MinMaxPriorityQueue<T> where T : IComparable<T>
 		{
 			largestElements.Push(smallestElements.PopMax());
 		}
-		else if(largestElements.Count > smallestElements.Count + 1)
-		{ //Can happen because of pop too many from largestElements
+		else if (largestElements.Count > smallestElements.Count + 1)
+		{ // Can happen because of pop too many from largestElements
 			smallestElements.Push(largestElements.PopMin());
 		}
 	}

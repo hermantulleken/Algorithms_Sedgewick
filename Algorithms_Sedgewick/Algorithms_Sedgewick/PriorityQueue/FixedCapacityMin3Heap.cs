@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics;
+using Algorithms_Sedgewick.List;
 using Support;
 using static System.Diagnostics.Debug;
 
 namespace Algorithms_Sedgewick.PriorityQueue;
 
-public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<T>
+public class FixedCapacityMin3Heap<T> : IPriorityQueue<T>
+	where T : IComparable<T>
 {
 	private const int Base = 3;
 	private const string EmptyHeapPresentation = "()";
@@ -20,9 +22,13 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 #endif
 
 	public int Count { get; private set; }
+	
 	public int Capacity { get; private set; }
+	
 	public bool IsEmpty => Count == 0;
+	
 	public bool IsSingleton => Count == 1;
+	
 	public bool IsFull => Count == Capacity;
 
 	public T PeekMin
@@ -46,7 +52,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 	{
 		Capacity = capacity;
 		
-		//We have one extra space that is not used to make the calculations simpler
+		// We have one extra space that is not used to make the calculations simpler
 		items = new T[capacity];
 		Count = 0;
 		
@@ -58,9 +64,8 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 	/// <summary>
 	/// Pushes a new element onto the heap.
 	/// </summary>
-	/// <param name="item"></param>
 	/// <exception cref="InvalidOperationException">the heap is full.</exception>
-	//Question: should we allow null? Yes, no reason not to.
+	// Question: should we allow null? Yes, no reason not to.
 	public void Push(T item)
 	{
 		item.ThrowIfNull();
@@ -74,9 +79,9 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 		
 		items[Count] = item;
 
-		if(Count > 0)
+		if (Count > 0)
 		{
-			Swim(Count); //Assumes that swim does not depend on the value of count.
+			Swim(Count); // Assumes that swim does not depend on the value of count.
 		}
 		
 		Count++;
@@ -89,7 +94,6 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 	/// <summary>
 	/// Retrieves and removes the minimum element in the heap.
 	/// </summary>
-	/// <returns></returns>
 	/// <exception cref="InvalidOperationException">the heap is empty.</exception>
 	public T PopMin()
 	{
@@ -125,8 +129,11 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 
 #if WHITEBOXTESTING
 	public bool SatisfyHeapProperty() => SatisfyHeapProperty(0);
+	
 	public string ToDebugString() => isStateValid ? ToPrettyString() : InvalidStateMarker + ToPrettyString();
+	
 	public override string ToString() => ToDebugString();
+	
 #else
 	public override string ToString() => ToPrettyString();
 #endif
@@ -140,11 +147,11 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 
 	private string AddBrackets(string str) => $"({str})";
 
-	private bool LessAt(int i, int j) => Sort.LessAt(items, i, j);
+	private bool LessAt(int i, int j) => ListExtensions.LessAt(items, i, j);
 
-	private void SwapAt(int i, int j) => Sort.SwapAt(items, i, j);
+	private void SwapAt(int i, int j) => ListExtensions.SwapAt(items, i, j);
 
-	private void MoveAt(int sourceIndex, int destinationIndex) => Sort.MoveAt(items, sourceIndex, destinationIndex);
+	private void MoveAt(int sourceIndex, int destinationIndex) => ListExtensions.MoveAt(items, sourceIndex, destinationIndex);
 
 	private void Swim(int k)
 	{
@@ -248,7 +255,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 			return true;
 		}
 		
-		Assert(isStateValid); //Otherwise the heap property is not supposed to hold
+		Assert(isStateValid); // Otherwise the heap property is not supposed to hold
 		
 		int child0 = GetChildIndex(k);
 		int child1 = child0 + 1;
@@ -328,7 +335,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 #endif
 	}
 
-	//This op is O(n) 
+	// This op is O(n) 
 	public T PopMax()
 	{
 		if (IsEmpty)
@@ -363,6 +370,6 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T> where T : IComparable<
 
 	private static int GetChildIndex(int index) => Base * index + 1;
 
-	//1 -> 0, 2-> 0, 3 -> 0
+	// 1 -> 0, 2-> 0, 3 -> 0
 	private static int GetParentIndex(int index) => (index - 1) / Base;
 }

@@ -24,6 +24,7 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 			ThrowHelper.ThrowKeyNotFound(key);
 			return default;
 		}
+		
 		set
 		{
 			if (TryFindNodeWithKey(key, out var node))
@@ -89,9 +90,9 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 			return MaxKey();
 		}
 
-		//This can be made into a field, initialized lazily, and resized as needed.
-		//Also, this is a wrapper class that is slower then the minimum version
-		//We could use two, depending on whether the rank is smaller than Count / 2
+		// This can be made into a field, initialized lazily, and resized as needed.
+		// Also, this is a wrapper class that is slower then the minimum version
+		// We could use two, depending on whether the rank is smaller than Count / 2
 		var queue = new FixedCapacityMaxBinaryHeap<Comparable<TKey>>(rank + 1);
 
 		void PushToQueue(TKey key1)
@@ -117,7 +118,7 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 		return queue.PeekMax.Item;
 	}
 
-	//This can throw an exception if the given key is larger than all the keys
+	// This can throw an exception if the given key is larger than all the keys
 	public TKey LargestKeyLessThanOrEqualTo(TKey key) 
 		=> Keys
 			.Where(leftKey => LessOrEqual(leftKey, key))

@@ -13,7 +13,7 @@ public interface IBag<T> : IEnumerable<T>
 	public int Count { get; }
 
 	/// <summary>
-	/// Gets whether the bag is empty.
+	/// Gets a value indicating whether the bag is empty.
 	/// </summary>
 	public bool IsEmpty => Count == 0;
 

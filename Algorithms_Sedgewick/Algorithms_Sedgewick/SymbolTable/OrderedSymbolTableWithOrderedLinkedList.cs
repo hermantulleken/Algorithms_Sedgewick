@@ -84,7 +84,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 		}
 	}
 
-	//TODO Check for special cases.
+	// TODO Check for special cases.
 	public TKey KeyWithRank(int rank)
 		=> list.ElementAt(rank).Key;
 

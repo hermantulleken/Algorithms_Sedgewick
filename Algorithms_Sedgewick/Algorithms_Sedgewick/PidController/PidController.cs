@@ -16,7 +16,7 @@ public sealed class PidController
 
 	public float Value
 	{
-		get => differentiator.Value; //Could also use integrator
+		get => differentiator.Value; // Could also use integrator
         
 		set
 		{

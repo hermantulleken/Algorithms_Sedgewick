@@ -7,9 +7,14 @@ namespace Algorithms_Sedgewick.SymbolTable;
 public interface ISymbolTable<TKey, TValue>
 {
 	int Count { get; }
+	
 	public bool IsEmpty => Count == 0;
+	
 	TValue this[TKey key] { get; set; }
+	
 	IEnumerable<TKey> Keys { get; }
+	
 	bool ContainsKey(TKey key);
+	
 	void RemoveKey(TKey key);
 }

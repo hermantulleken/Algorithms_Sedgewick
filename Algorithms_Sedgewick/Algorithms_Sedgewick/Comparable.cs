@@ -6,7 +6,9 @@ public static class Comparable
 		=> new(item, comparer);
 }
 
+#pragma warning disable SA1402
 public class Comparable<T> : IComparable<Comparable<T>>
+#pragma warning restore SA1402
 {
 	private readonly IComparer<T> comparer;
 

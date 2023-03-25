@@ -1,15 +1,18 @@
-﻿using System.Diagnostics;
+﻿namespace Algorithms_Sedgewick.PriorityQueue;
+
+using System.Diagnostics;
+using List;
 using Support;
 using static System.Diagnostics.Debug;
 
-namespace Algorithms_Sedgewick.PriorityQueue;
 /// <summary>
 /// A container that allows efficient insertions and
 /// retrieval of the minimum element. 
 /// </summary>
-//Note: This is a min binary heap, so comparisons in sink and swim are inverted compared to text book
-//Note: The first element in the array is not used
-public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : IComparable<T>
+// Note: This is a min binary heap, so comparisons in sink and swim are inverted compared to text book
+// Note: The first element in the array is not used
+public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> 
+	where T : IComparable<T>
 {
 	private const string EmptyHeapPresentation = "()";
 
@@ -26,9 +29,13 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 #endif
 
 	public int Count { get; private set; }
+	
 	public int Capacity { get; private set; }
+	
 	public bool IsEmpty => Count == 0;
+	
 	public bool IsSingleton => Count == 1;
+	
 	public bool IsFull => Count == Capacity;
 
 	public T PeekMin
@@ -52,7 +59,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 	{
 		Capacity = capacity;
 		
-		//We have one extra space that is not used to make the calculations simpler
+		// We have one extra space that is not used to make the calculations simpler
 		items = new T[StartIndex + capacity];
 		Count = 0;
 		
@@ -64,10 +71,9 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 	/// <summary>
 	/// Pushes a new element onto the heap.
 	/// </summary>
-	/// <param name="item"></param>
 	/// <exception cref="InvalidOperationException">the heap is full.</exception>
-	/// <exception cref="ArgumentNullException"><paramref name="item"/> is null</exception>
-	//Question: should we allow null? Yes, no reason not to.
+	/// <exception cref="ArgumentNullException"><paramref name="item"/> is null.</exception>
+	// Question: should we allow null? Yes, no reason not to.
 	public void Push(T item)
 	{
 		item.ThrowIfNull();
@@ -82,9 +88,9 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 		Count++;
 		items[Count] = item;
 		
-		if(Count > 1)
+		if (Count > 1)
 		{
-			Swim(Count); //Assumes that swim does not depend on the value of count.
+			Swim(Count); // Assumes that swim does not depend on the value of count.
 		}
 		
 		SetStateValid();
@@ -95,7 +101,6 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 	/// <summary>
 	/// Retrieves and removes the minimum element in the heap.
 	/// </summary>
-	/// <returns></returns>
 	/// <exception cref="InvalidOperationException">the heap is empty.</exception>
 	public T PopMin()
 	{
@@ -131,8 +136,11 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 
 #if WHITEBOXTESTING
 	public bool SatisfyHeapProperty() => SatisfyHeapProperty(StartIndex);
+	
 	public string ToDebugString() => isStateValid ? ToPrettyString() : InvalidStateMarker + ToPrettyString();
+	
 	public override string ToString() => ToDebugString();
+	
 #else
 	public override string ToString() => ToPrettyString();
 #endif
@@ -146,11 +154,11 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 
 	private string AddBrackets(string str) => $"({str})";
 
-	private bool LessAt(int i, int j) => Sort.LessAt(items, i, j);
+	private bool LessAt(int i, int j) => ListExtensions.LessAt(items, i, j);
 
-	private void SwapAt(int i, int j) => Sort.SwapAt(items, i, j);
+	private void SwapAt(int i, int j) => ListExtensions.SwapAt(items, i, j);
 
-	private void MoveAt(int sourceIndex, int destinationIndex) => Sort.MoveAt(items, sourceIndex, destinationIndex);
+	private void MoveAt(int sourceIndex, int destinationIndex) => ListExtensions.MoveAt(items, sourceIndex, destinationIndex);
 
 	private void Swim(int k)
 	{
@@ -217,14 +225,14 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 			return true;
 		}
 		
-		Assert(isStateValid); //Otherwise the heap property is not supposed to hold
+		Assert(isStateValid); // Otherwise the heap property is not supposed to hold
 		
 		int leftChild = 2 * k;
 		int rightChild = leftChild + 1;
 		
 		if (leftChild > Count)
 		{
-			//Does not have a left child, and therefore also not a right child
+			// Does not have a left child, and therefore also not a right child
 			Assert(rightChild >= Count);
 			
 			return true;
@@ -237,7 +245,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 		
 		if (rightChild > Count)
 		{
-			//does not have a right child
+			// does not have a right child
 			return true;
 		}
 
@@ -292,7 +300,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 #endif
 	}
 
-	//This op is O(n) 
+	// This op is O(n) 
 	public T PopMax()
 	{
 		if (IsEmpty)
@@ -322,10 +330,10 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> where T : 
 		Assert(!IsEmpty);
 		int lastIndex = Count;
 
-		//1 -> 1
-		//2 -> 2
-		//3 -> 2
-		//4 -> 3
+		// 1 -> 1
+		// 2 -> 2
+		// 3 -> 2
+		// 4 -> 3
 
 		return IsSingleton ? StartIndex : lastIndex / 2 + 1;
 	}
