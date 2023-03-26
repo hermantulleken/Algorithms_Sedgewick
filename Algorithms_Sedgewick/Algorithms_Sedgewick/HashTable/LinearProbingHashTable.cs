@@ -45,6 +45,7 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	private int tableSize;
 	private int log2TableSize;
 	private TValue[] values;
+	private bool[] keyPresent; // Necessary if TKey is a value type
 
 	public int Count { get; private set; }
 
@@ -52,7 +53,7 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	{
 		get
 		{
-			for (int i = GetHash(key); keys[i] != null; i = (i + 1) % tableSize)
+			for (int i = GetHash(key); keyPresent[i]; i = (i + 1) % tableSize)
 			{
 				if (comparer.Equal(keys[i], key))
 				{
@@ -71,17 +72,21 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 			}
 
 			int i;
-			for (i = GetHash(key); keys[i] != null; i = (i + 1) % tableSize)
+			for (i = GetHash(key); keyPresent[i]; i = (i + 1) % tableSize)
 			{
 				if (comparer.Equal(keys[i], key))
 				{
 					values[i] = value;
+					keyPresent[i] = true;
+					
 					return;
 				}
 			}
 
 			keys[i] = key;
 			values[i] = value;
+			keyPresent[i] = true;
+			
 			Count++;
 		}
 	}
@@ -100,11 +105,12 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		this.comparer = comparer;
 		keys = new TKey[tableSize];
 		values = new TValue[tableSize];
+		keyPresent = new bool[tableSize];
 	}
 
 	public bool ContainsKey(TKey key)
 	{
-		for (int i = GetHash(key); keys[i] != null; i = (i + 1) % tableSize)
+		for (int i = GetHash(key); keyPresent[i]; i = (i + 1) % tableSize)
 		{
 			if (comparer.Equal(keys[i], key))
 			{
@@ -131,14 +137,19 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		
 		keys[i] = default!;
 		values[i] = default!;
+		keyPresent[i] = false;
+		
 		i = (i + 1) % tableSize;
 		
-		while (keys[i] != null)
+		while (keyPresent[i])
 		{
 			var keyToRedo = keys[i];
 			var valToRedo = values[i];
+			
 			keys[i] = default!;
 			values[i] = default!;
+			keyPresent[i] = false;
+			
 			Count--;
 			this[keyToRedo] = valToRedo;
 			i = (i + 1) % tableSize;
@@ -168,20 +179,20 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 
 	private void Resize(int newLog2TableSize) // See page 474.
 	{
-		LinearProbingHashTable<TKey, TValue> t;
-		t = new LinearProbingHashTable<TKey, TValue>(newLog2TableSize, comparer);
+		var newTable = new LinearProbingHashTable<TKey, TValue>(newLog2TableSize, comparer);
 		
 		for (int i = 0; i < tableSize; i++)
 		{
-			if (keys[i] != null)
+			if (keyPresent[i])
 			{
-				t[keys[i]] = values[i];
+				newTable[keys[i]] = values[i];
 			}
 		}
 		
-		keys = t.keys;
-		values = t.values;
+		keys = newTable.keys;
+		values = newTable.values;
+		keyPresent = newTable.keyPresent;
 		log2TableSize = newLog2TableSize;
-		tableSize = t.tableSize;
+		tableSize = newTable.tableSize;
 	}
 }

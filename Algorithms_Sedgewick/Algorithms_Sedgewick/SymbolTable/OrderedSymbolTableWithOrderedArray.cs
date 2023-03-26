@@ -96,6 +96,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 		if (TryFindKey(key, out int index))
 		{
 			array.DeleteAt(index);
+			return;
 		}
 		
 		ThrowHelper.ThrowKeyNotFound(key);
@@ -120,14 +121,14 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 		throw new Exception("No keys greater than given key.");
 	}
 
-	internal static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default);
+	internal static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default!);
 
 	// TODO: Move somewhere more central
 	internal static TKey PairToKey(KeyValuePair<TKey, TValue> pair) => pair.Key;
 
 	private bool TryFindKey(TKey key, out int index)
 	{
-		var pair = new KeyValuePair<TKey, TValue>(key, default); 
+		var pair = new KeyValuePair<TKey, TValue>(key, default!); 
 		index = array.BinarySearch(pair, pairComparer);
 
 		return index != -1;

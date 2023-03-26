@@ -48,6 +48,7 @@ internal static class ThrowHelper
 	internal static void ThrowCapacityCannotBeNegativeOrZero(int argument, [CallerArgumentExpression("argument")] string? argumentName = null)
 		=> throw new ArgumentException(CapacityCannotBeNegativeOrZero, argumentName);
 
+	[JetBrains.Annotations.ContractAnnotation("=>halt")]
 	internal static void ThrowContainerEmpty() 
 		=> throw ContainerEmptyException;
 

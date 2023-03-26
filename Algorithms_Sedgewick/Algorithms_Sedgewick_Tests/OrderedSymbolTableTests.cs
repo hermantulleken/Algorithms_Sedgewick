@@ -7,22 +7,20 @@ using NUnit.Framework;
 [TestFixture]
 public class OrderedSymbolTableTests
 {
-	private static readonly IComparer<string> StringComparer = Comparer<string>.Default;
-
 	private static TestCaseData[] factories =
 	{
-		new(() => new OrderedSymbolTableWithOrderedArray<string, int>(StringComparer))
+		new(() => new OrderedSymbolTableWithOrderedArray<string, int>(SharedData.StringComparer))
 			{ TestName = "OST with Ordered Array" },
-		new(() => new SymbolTableWithBinarySearchTree<string, int>(StringComparer))
+		new(() => new SymbolTableWithBinarySearchTree<string, int>(SharedData.StringComparer))
 			{ TestName = "OST with Binary Search Tree" },
-		new(() => new OrderedSymbolTableWithOrderedKeyArray<string, int>(StringComparer))
+		new(() => new OrderedSymbolTableWithOrderedKeyArray<string, int>(SharedData.StringComparer))
 			{ TestName = "OST with Ordered Key Array" },
 		
-		new(() => new OrderedSymbolTableWithOrderedLinkedList<string, int>(StringComparer))
+		new(() => new OrderedSymbolTableWithOrderedLinkedList<string, int>(SharedData.StringComparer))
 			{ TestName = "OST with Ordered LinkedList" },
-		new(() => new OrderedSymbolTableWithUnorderedLinkedList<string, int>(StringComparer))
+		new(() => new OrderedSymbolTableWithUnorderedLinkedList<string, int>(SharedData.StringComparer))
 			{ TestName = "OST with Unordered linked list" },
-		new(() => new SymbolTableWithOrderedParallelArray<string, int>(StringComparer))
+		new(() => new SymbolTableWithOrderedParallelArray<string, int>(SharedData.StringComparer))
 			{ TestName = "OST with Ordered Parallel Array" },
 	};
 
