@@ -14,6 +14,11 @@ public class BinarySearchTree<T>
 		public T Item;
 		public Node? LeftChild = null;
 		public Node? RightChild = null;
+		
+		// ReSharper disable once StaticMemberInGenericType
+		private static int idCounter = 0;
+		
+		public int ID { get; }
 
 		public bool IsLeaf => LeftChild == null && RightChild == null;
 
@@ -22,6 +27,8 @@ public class BinarySearchTree<T>
 			Item = item;
 			LeftChild = leftChild;
 			RightChild = rightRight;
+			ID = idCounter;
+			idCounter++;
 		}
 	}
 
@@ -178,6 +185,8 @@ public class BinarySearchTree<T>
 			}
 		}
 	}
+
+	public Node? Root => root;
 
 	public BinarySearchTree(IComparer<T> comparer)
 	{

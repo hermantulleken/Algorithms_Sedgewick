@@ -5,6 +5,7 @@ using List;
 // Ex. 3.1.2
 public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
+	// TODO: Should this rather be an equality comparer? 
 	private readonly IComparer<TKey> comparer;
 
 	// TODO: Consider a parallel array structure
