@@ -14,6 +14,23 @@ using static Support.WhiteBoxTesting;
 public static class Algorithms
 {
 	private static readonly Random Random = new();
+	
+	public static T Identity<T>(T value) => value;
+
+	public static IEnumerable<int> IndexWhere<T>(this IEnumerable<T> list, Func<T, bool> predicate)
+	{
+		int index = 0;
+
+		foreach (var item in list)
+		{
+			if (predicate(item))
+			{
+				yield return index;
+			}
+
+			index++;
+		}
+	}
 
 	/// <summary>
 	/// Returns the number of elements in a sorted list that are less than the given value. 

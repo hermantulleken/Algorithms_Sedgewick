@@ -23,13 +23,13 @@ public class Graphs
 
 		if (node.LeftChild != null)
 		{
-			builder.AppendLine($"{node.ID} -> {node.LeftChild.ID};");
+			builder.AppendLine($"{node.Id} -> {node.LeftChild.Id};");
 			GenerateDotFileHelper(builder, node.LeftChild);
 		}
 
 		if (node.RightChild != null)
 		{
-			builder.AppendLine($"{node.ID} -> {node.RightChild.ID};");
+			builder.AppendLine($"{node.Id} -> {node.RightChild.Id};");
 			GenerateDotFileHelper(builder, node.RightChild);
 		}
 	}

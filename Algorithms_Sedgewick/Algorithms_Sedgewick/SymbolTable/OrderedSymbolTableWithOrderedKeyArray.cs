@@ -29,6 +29,7 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 			if (TryFindKey(key, out int index))
 			{
 				values[index] = value;
+				return;
 			}
 			
 			int newIndex = keys.InsertSorted(key, comparer);
@@ -45,7 +46,8 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 		this.comparer = comparer;
 	}
 
-	public bool ContainsKey(TKey key) => TryFindKey(key, out _);
+	public bool ContainsKey(TKey key) 
+		=> TryFindKey(key, out _);
 
 	public int CountRange(TKey start, TKey end)
 	{
@@ -96,8 +98,10 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 			keys.DeleteAt(index);
 			values.DeleteAt(index);
 		}
-		
-		ThrowHelper.ThrowKeyNotFound(key);
+		else
+		{
+			ThrowHelper.ThrowKeyNotFound(key);
+		}
 	}
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
@@ -115,22 +119,8 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 
 	private bool TryFindKey(TKey key, out int index)
 	{
-		index = keys.FindInsertionIndex(key, comparer);
+		index = keys.BinarySearch(key, comparer);
 
-		if (index == keys.Count)
-		{
-			index = -1;
-			return false;
-		}
-
-		var insertionKey = keys[index];
-
-		if (comparer.Equal(insertionKey, key))
-		{
-			return true;
-		}
-
-		index = -1;
-		return false;
+		return index != -1;
 	}
 }

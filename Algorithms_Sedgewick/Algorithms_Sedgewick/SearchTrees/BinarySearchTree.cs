@@ -18,7 +18,7 @@ public class BinarySearchTree<T>
 		// ReSharper disable once StaticMemberInGenericType
 		private static int idCounter = 0;
 		
-		public int ID { get; }
+		public int Id { get; }
 
 		public bool IsLeaf => LeftChild == null && RightChild == null;
 
@@ -27,7 +27,7 @@ public class BinarySearchTree<T>
 			Item = item;
 			LeftChild = leftChild;
 			RightChild = rightRight;
-			ID = idCounter;
+			Id = idCounter;
 			idCounter++;
 		}
 	}
@@ -371,7 +371,7 @@ public class BinarySearchTree<T>
 			.SkipWhile(node => comparer.Less(node.Item, key))
 			.FirstOrDefault();
 
-	public bool TryFindNode(T item, out Node? node)
+	public bool TryFindNode(T item, [NotNullWhen(true)] out Node? node)
 		=> TryFindAtNode(root, item, out node);
 
 	private static Node GetMaxNode(Node node)

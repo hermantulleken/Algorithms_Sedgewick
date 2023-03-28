@@ -93,13 +93,12 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 
 	public void RemoveKey(TKey key)
 	{
-		if (TryFindKey(key, out int index))
+		if (!TryFindKey(key, out int index))
 		{
-			array.DeleteAt(index);
-			return;
+			throw ThrowHelper.KeyNotFoundException(key);
 		}
-		
-		ThrowHelper.ThrowKeyNotFound(key);
+
+		array.DeleteAt(index);
 	}
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)

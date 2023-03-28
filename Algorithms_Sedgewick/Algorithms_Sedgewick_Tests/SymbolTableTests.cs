@@ -6,29 +6,37 @@ namespace Algorithms_Sedgewick_Tests;
 using Algorithms_Sedgewick.SymbolTable;
 using NUnit.Framework;
 
+[Parallelizable]
 public class SymbolTableTests
 {
 	private static TestCaseData[] factories =
 	{
 		new(() => new OrderedSymbolTableWithOrderedArray<int, string>(SharedData.IntComparer))
 			{ TestName = "OST with Ordered Array" },
-		// new(() => new SymbolTableWithBinarySearchTree<int, string>(SharedData.IntComparer))
-		// 	{ TestName = "OST with Binary Search Tree" },
-		// new(() => new OrderedSymbolTableWithOrderedKeyArray<int, string>(SharedData.IntComparer))
-		// 	{ TestName = "OST with Ordered Key Array" },
-		//
-		// new(() => new OrderedSymbolTableWithOrderedLinkedList<int, string>(SharedData.IntComparer))
-		// 	{ TestName = "OST with Ordered LinkedList" },
-		// new(() => new OrderedSymbolTableWithUnorderedLinkedList<int, string>(SharedData.IntComparer))
-		// 	{ TestName = "OST with Unordered linked list" },
-		// new(() => new SymbolTableWithOrderedParallelArray<int, string>(SharedData.IntComparer))
-		// 	{ TestName = "OST with Ordered Parallel Array" },
-		//
-		// new(() => new LinearProbingHashTable<int, string>(SharedData.IntComparer))
-		// 	{ TestName = "HT with Linear Probing" },
-		//
-		// new(() => new LinearProbingHashTable<int, string>(SharedData.IntComparer))
-		// 	{ TestName = "HT with Separate chaining" },
+		
+		new(() => new SymbolTableWithBinarySearchTree<int, string>(SharedData.IntComparer))
+			{ TestName = "OST with Binary Search Tree" },
+		
+		new(() => new OrderedSymbolTableWithOrderedKeyArray<int, string>(SharedData.IntComparer))
+			{ TestName = "OST with Ordered Key Array" },
+		
+		new(() => new OrderedSymbolTableWithOrderedLinkedList<int, string>(SharedData.IntComparer))
+			{ TestName = "OST with Ordered LinkedList" },
+		
+		new(() => new OrderedSymbolTableWithUnorderedLinkedList<int, string>(SharedData.IntComparer))
+			{ TestName = "OST with Unordered linked list" },
+		
+		new(() => new SymbolTableWithOrderedParallelArray<int, string>(SharedData.IntComparer))
+			{ TestName = "OST with Ordered Parallel Array" },
+		
+		new(() => new LinearProbingHashTable<int, string>(SharedData.IntComparer))
+			{ TestName = "HT with Linear Probing" },
+		
+		new(() => new LinearProbingHashTableWithLazyDelete<int, string>(SharedData.IntComparer))
+			{ TestName = "HT with Linear Probing and Lazy Deletion" },
+		
+		new(() => new LinearProbingHashTable<int, string>(SharedData.IntComparer))
+			{ TestName = "HT with Separate chaining" },
 	};
 
 	[TestCaseSource(nameof(factories))]

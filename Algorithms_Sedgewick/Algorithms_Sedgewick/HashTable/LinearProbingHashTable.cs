@@ -37,15 +37,20 @@ public static class LinearProbingHashTable
 	};
 }
 
+/*
+	This class represents a hash table that uses linear probing to resolve collisions.
+	Linear probing is an open-addressing strategy where we look for the next available slot
+	in the array when a collision occurs.
+*/
 [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and non-generic versions.")]
 public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	private readonly IComparer<TKey> comparer;
-	private TKey[] keys;
-	private int tableSize;
-	private int log2TableSize;
-	private TValue[] values;
 	private bool[] keyPresent; // Necessary if TKey is a value type
+	private TKey[] keys;
+	private int log2TableSize;
+	private int tableSize;
+	private TValue[] values;
 
 	public int Count { get; private set; }
 
@@ -53,45 +58,41 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	{
 		get
 		{
-			for (int i = GetHash(key); keyPresent[i]; i = (i + 1) % tableSize)
+			int index = IndexOf(key);
+			
+			if (index < 0)
 			{
-				if (comparer.Equal(keys[i], key))
-				{
-					return values[i];
-				}
+				throw ThrowHelper.KeyNotFoundException(key);
 			}
 
-			throw ThrowHelper.KeyNotFoundException(key);
+			return values[index];
 		}
 
 		set
 		{
 			if (Count >= tableSize / 2)
 			{
-				Resize(log2TableSize = 1); // double M (see text)
+				Resize(log2TableSize + 1); // Doubles the size
 			}
 
-			int i;
-			for (i = GetHash(key); keyPresent[i]; i = (i + 1) % tableSize)
+			int index = IndexOf(key);
+
+			if (index < 0)
 			{
-				if (comparer.Equal(keys[i], key))
-				{
-					values[i] = value;
-					keyPresent[i] = true;
-					
-					return;
-				}
+				SetAt(~index, key, value, true);
+				Count++;
 			}
-
-			keys[i] = key;
-			values[i] = value;
-			keyPresent[i] = true;
-			
-			Count++;
+			else
+			{
+				values[index] = value;
+			}
 		}
 	}
 
-	public IEnumerable<TKey> Keys => throw new NotImplementedException();
+	public IEnumerable<TKey> Keys 
+		=> keyPresent
+			.IndexWhere(Algorithms.Identity)
+			.Select(index => keys[index]);
 
 	public LinearProbingHashTable(IComparer<TKey> comparer)
 		: this(4, comparer)
@@ -108,54 +109,35 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		keyPresent = new bool[tableSize];
 	}
 
-	public bool ContainsKey(TKey key)
-	{
-		for (int i = GetHash(key); keyPresent[i]; i = (i + 1) % tableSize)
-		{
-			if (comparer.Equal(keys[i], key))
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
+	public bool ContainsKey(TKey key) => IndexOf(key) >= 0;
 
 	public void RemoveKey(TKey key)
 	{
-		if (!ContainsKey(key)) 
+		void ReinsertAt(int index)
 		{
-			return; // TODO: Throw
+			var keyToRedo = keys[index];
+			var valueToRedo = values[index];
+			RemoveKeyAt(index);
+			this[keyToRedo] = valueToRedo;
 		}
-		
-		int i = GetHash(key);
-		
-		while (!comparer.Equal(key, keys[i]))
+
+		int index = IndexOf(key);
+
+		if (index < 0)
 		{
-			i = (i + 1) % tableSize;
+			throw ThrowHelper.KeyNotFoundException(key);
 		}
-		
-		keys[i] = default!;
-		values[i] = default!;
-		keyPresent[i] = false;
-		
-		i = (i + 1) % tableSize;
-		
-		while (keyPresent[i])
+
+		RemoveKeyAt(index);
+
+		/*
+		    Reinsert all the keys in the same cluster as the removed key.
+		    This is necessary because their positions might have been affected by the removal of the key.
+		*/
+		for (GetNextIndex(ref index); keyPresent[index]; GetNextIndex(ref index))
 		{
-			var keyToRedo = keys[i];
-			var valToRedo = values[i];
-			
-			keys[i] = default!;
-			values[i] = default!;
-			keyPresent[i] = false;
-			
-			Count--;
-			this[keyToRedo] = valToRedo;
-			i = (i + 1) % tableSize;
+			ReinsertAt(index);
 		}
-		
-		Count--;
 		
 		if (Count > 0 && Count == tableSize / 8)
 		{
@@ -166,7 +148,6 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	private int GetHash(TKey key)
 	{
 		key.ThrowIfNull();
-
 		int t = key.GetHashCode();
 		
 		if (log2TableSize < 26)
@@ -175,6 +156,35 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		}
 		
 		return t % tableSize;
+	}
+
+	private void GetNextIndex(ref int index) => index = (index + 1) % tableSize;
+
+	/*
+		Iterate through the table, starting from the hash value of the key and moving linearly.
+		The loop continues until an empty slot is found (meaning the key is not present in the table).
+		
+		Returns a negative value if the index is not found. The complement of this value (i.e. ~IndexOf(key)) is where a new 
+		element can be inserted.
+	*/
+	private int IndexOf(TKey key)
+	{
+		int i;
+		for (i = GetHash(key); keyPresent[i]; GetNextIndex(ref i))
+		{
+			if (comparer.Equal(keys[i], key))
+			{
+				return i;
+			}
+		}
+
+		return ~i;
+	}
+
+	private void RemoveKeyAt(int index)
+	{
+		SetAt(index, default!, default!, false);
+		Count--;
 	}
 
 	private void Resize(int newLog2TableSize) // See page 474.
@@ -194,5 +204,12 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		keyPresent = newTable.keyPresent;
 		log2TableSize = newLog2TableSize;
 		tableSize = newTable.tableSize;
+	}
+
+	private void SetAt(int index, TKey key, TValue value, bool present)
+	{
+		keys[index] = key;
+		values[index] = value;
+		keyPresent[index] = present;
 	}
 }

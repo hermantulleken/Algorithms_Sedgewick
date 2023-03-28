@@ -1,4 +1,6 @@
-﻿namespace Algorithms_Sedgewick.SymbolTable;
+﻿using System.Runtime.CompilerServices;
+
+namespace Algorithms_Sedgewick.SymbolTable;
 
 using static System.Diagnostics.Debug;
 
@@ -139,9 +141,32 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 	public void RemoveKey(TKey key)
 	{
-		throw new NotImplementedException();
-	}
+		if (comparer.Equal(key, list.First.Item.Key))
+		{
+			list.RemoveFromFront();
+			return;
+		}
+		
+		foreach (var node in list.Nodes)
+		{
+			var nextNode = node.NextNode;
 
+			if (nextNode != null)
+			{
+				switch (comparer.Compare(key, nextNode.Item.Key))
+				{
+					case 0:
+						list.RemoveAfter(node);
+						return; // We need not iterate further. If we did we would trigger the version validation in the next iteration.
+					case < 0:
+						// All the reaming items are bigger.
+						throw ThrowHelper.KeyNotFoundException(key);
+				}
+			} // else we reached the end
+		}
+		
+		throw ThrowHelper.KeyNotFoundException(key);
+	}
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{

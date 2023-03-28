@@ -98,8 +98,10 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 		{
 			arrays.DeleteAt(index);
 		}
-		
-		ThrowHelper.ThrowKeyNotFound(key);
+		else
+		{
+			ThrowHelper.ThrowKeyNotFound(key);
+		}
 	}
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
@@ -123,22 +125,8 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	private bool TryFindKey(TKey key, out int index)
 	{
-		index = arrays.Keys.FindInsertionIndex(key, comparer);
+		index = arrays.Keys.BinarySearch(key, comparer);
 
-		if (index == Count)
-		{
-			index = -1;
-			return false;
-		}
-
-		var insertionKey = arrays.Keys[index];
-
-		if (comparer.Equal(insertionKey, key))
-		{
-			return true;
-		}
-
-		index = -1;
-		return false;
+		return index != -1;
 	}
 }
