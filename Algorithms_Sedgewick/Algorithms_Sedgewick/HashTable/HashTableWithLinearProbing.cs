@@ -4,7 +4,7 @@ namespace Algorithms_Sedgewick.HashTable;
 
 using SymbolTable;
 
-public static class LinearProbingHashTable
+public static class HashTableWithLinearProbing
 {
 	internal static readonly int[] Primes =
 	{
@@ -43,7 +43,7 @@ public static class LinearProbingHashTable
 	in the array when a collision occurs.
 */
 [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and non-generic versions.")]
-public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
+public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	private readonly IComparer<TKey> comparer;
 	private bool[] keyPresent; // Necessary if TKey is a value type
@@ -94,12 +94,12 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 			.IndexWhere(Algorithms.Identity)
 			.Select(index => keys[index]);
 
-	public LinearProbingHashTable(IComparer<TKey> comparer)
+	public HashTableWithLinearProbing(IComparer<TKey> comparer)
 		: this(4, comparer)
 	{
 	}
 
-	public LinearProbingHashTable(int log2TableSize, IComparer<TKey> comparer)
+	public HashTableWithLinearProbing(int log2TableSize, IComparer<TKey> comparer)
 	{
 		tableSize = 1 << log2TableSize;
 		this.log2TableSize = log2TableSize;
@@ -148,14 +148,14 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	private int GetHash(TKey key)
 	{
 		key.ThrowIfNull();
-		int t = key.GetHashCode();
+		int hashCode = key.GetHashCode();
 		
 		if (log2TableSize < 26)
 		{
-			t = t % LinearProbingHashTable.Primes[log2TableSize + 5];
+			hashCode %= HashTableWithLinearProbing.Primes[log2TableSize + 5];
 		}
 		
-		return t % tableSize;
+		return hashCode % tableSize;
 	}
 
 	private void GetNextIndex(ref int index) => index = (index + 1) % tableSize;
@@ -189,7 +189,7 @@ public class LinearProbingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 
 	private void Resize(int newLog2TableSize) // See page 474.
 	{
-		var newTable = new LinearProbingHashTable<TKey, TValue>(newLog2TableSize, comparer);
+		var newTable = new HashTableWithLinearProbing<TKey, TValue>(newLog2TableSize, comparer);
 		
 		for (int i = 0; i < tableSize; i++)
 		{

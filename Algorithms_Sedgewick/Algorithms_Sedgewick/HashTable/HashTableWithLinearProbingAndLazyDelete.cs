@@ -14,9 +14,11 @@ using SymbolTable;
 	However, this approach may lead to increased memory usage, as the marked entries still consume space in the table.
 	To address this issue, the table is resized and rehashed when the number of marked entries reaches a certain threshold,
 	clearing all marked entries in the process.
+	
+	Ex. 3.4.26
 */
 [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and non-generic versions.")]
-public class LinearProbingHashTableWithLazyDelete<TKey, TValue> : ISymbolTable<TKey, TValue>
+public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	private enum Presence
 	{
@@ -81,12 +83,12 @@ public class LinearProbingHashTableWithLazyDelete<TKey, TValue> : ISymbolTable<T
 			.IndexWhere(presence => presence == Presence.Present)
 			.Select(index => keys[index]);
 
-	public LinearProbingHashTableWithLazyDelete(IComparer<TKey> comparer)
+	public HashTableWithLinearProbingAndLazyDelete(IComparer<TKey> comparer)
 		: this(4, comparer)
 	{
 	}
 
-	public LinearProbingHashTableWithLazyDelete(int log2TableSize, IComparer<TKey> comparer)
+	public HashTableWithLinearProbingAndLazyDelete(int log2TableSize, IComparer<TKey> comparer)
 	{
 		tableSize = 1 << log2TableSize;
 		this.log2TableSize = log2TableSize;
@@ -121,14 +123,14 @@ public class LinearProbingHashTableWithLazyDelete<TKey, TValue> : ISymbolTable<T
 	private int GetHash(TKey key)
 	{
 		key.ThrowIfNull();
-		int t = key.GetHashCode();
+		int hashCode = key.GetHashCode();
 		
 		if (log2TableSize < 26)
 		{
-			t = t % LinearProbingHashTable.Primes[log2TableSize + 5];
+			hashCode %= HashTableWithLinearProbing.Primes[log2TableSize + 5];
 		}
 		
-		return t % tableSize;
+		return hashCode % tableSize;
 	}
 
 	private void RemoveKeyAt(int index)
@@ -140,7 +142,7 @@ public class LinearProbingHashTableWithLazyDelete<TKey, TValue> : ISymbolTable<T
 
 	private void Resize(int newLog2TableSize) // See page 474.
 	{
-		var newTable = new LinearProbingHashTableWithLazyDelete<TKey, TValue>(newLog2TableSize, comparer);
+		var newTable = new HashTableWithLinearProbingAndLazyDelete<TKey, TValue>(newLog2TableSize, comparer);
 		
 		for (int i = 0; i < tableSize; i++)
 		{

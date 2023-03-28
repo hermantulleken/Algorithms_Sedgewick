@@ -29,13 +29,13 @@ public class SymbolTableTests
 		new(() => new SymbolTableWithOrderedParallelArray<int, string>(SharedData.IntComparer))
 			{ TestName = "OST with Ordered Parallel Array" },
 		
-		new(() => new LinearProbingHashTable<int, string>(SharedData.IntComparer))
+		new(() => new HashTableWithLinearProbing<int, string>(SharedData.IntComparer))
 			{ TestName = "HT with Linear Probing" },
 		
-		new(() => new LinearProbingHashTableWithLazyDelete<int, string>(SharedData.IntComparer))
+		new(() => new HashTableWithLinearProbingAndLazyDelete<int, string>(SharedData.IntComparer))
 			{ TestName = "HT with Linear Probing and Lazy Deletion" },
 		
-		new(() => new LinearProbingHashTable<int, string>(SharedData.IntComparer))
+		new(() => new HashTableWithLinearProbing<int, string>(SharedData.IntComparer))
 			{ TestName = "HT with Separate chaining" },
 	};
 

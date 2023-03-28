@@ -14,23 +14,12 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 	{
 		get
 		{
-			if (TryFindKey(key, out int index))
-			{
-				return array[index].Value;
-			}
-
-			throw ThrowHelper.KeyNotFoundException(key);
-		}
-
-		set
-		{
-			if (TryFindKey(key, out int index))
-			{
-				array[index] = new KeyValuePair<TKey, TValue>(key, value);
-			}
+			((ISymbolTable<TKey, TValue>)this).TryGetValue(key, out var value);
 			
-			array.InsertSorted(new KeyValuePair<TKey, TValue>(key, value), pairComparer);
+			return value;
 		}
+
+		set => Add(key, value);
 	}
 
 	public IEnumerable<TKey> Keys => array.Select(pair => pair.Key);
@@ -40,6 +29,16 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 		array = new ResizeableArray<KeyValuePair<TKey, TValue>>();
 		this.comparer = comparer;
 		pairComparer = comparer.Convert<TKey, KeyValuePair<TKey, TValue>>(PairToKey);
+	}
+
+	public void Add(TKey key, TValue value)
+	{
+		if (TryFindKey(key, out int index))
+		{
+			array[index] = new KeyValuePair<TKey, TValue>(key, value);
+		}
+			
+		array.InsertSorted(new KeyValuePair<TKey, TValue>(key, value), pairComparer);
 	}
 
 	public bool ContainsKey(TKey key) => TryFindKey(key, out _);
@@ -99,6 +98,22 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 		}
 
 		array.DeleteAt(index);
+	}
+
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		bool found = TryFindKey(key, out int index);
+		
+		if (found)
+		{
+			value = array[index].Value;
+		}
+		else
+		{
+			value = default!;
+		}
+
+		return found;
 	}
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)

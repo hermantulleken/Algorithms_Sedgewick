@@ -46,6 +46,11 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 		this.comparer = comparer;
 	}
 
+	public void Add(TKey key, TValue value)
+	{
+		throw new NotImplementedException();
+	}
+
 	public bool ContainsKey(TKey key) 
 		=> TryFindKey(key, out _);
 
@@ -75,14 +80,7 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 		// TODO: Handle edge casese
 		int index = keys.BinaryRank(key, comparer);
 
-		if (comparer.Equal(keys[index], key))
-		{
-			return keys[index];
-		}
-		else
-		{
-			return keys[index - 1];
-		}
+		return comparer.Equal(keys[index], key) ? keys[index] : keys[index - 1];
 	}
 
 	public TKey MaxKey() => keys[^1];
@@ -103,6 +101,8 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 			ThrowHelper.ThrowKeyNotFound(key);
 		}
 	}
+
+	public bool TryGetValue(TKey key, out TValue value) => throw new NotImplementedException();
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
