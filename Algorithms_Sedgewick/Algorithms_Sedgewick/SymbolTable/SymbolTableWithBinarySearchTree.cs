@@ -10,36 +10,31 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 
 	public TValue this[TKey key]
 	{
-		get
-		{
-			if (tree.TryFindNode(KeyToPair(key), out var node))
-			{
-				return node.Item.Value;
-			}
-
-			throw ThrowHelper.KeyNotFoundException(key);
-		}
-
-		set
-		{
-			var newPair = new KeyValuePair<TKey, TValue>(key, value);
-			if (tree.TryFindNode(KeyToPair(key), out var node))
-			{
-				node.Item = newPair;
-			}
-			
-			tree.Add(newPair);
-		}
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys 
 		=> tree.NodesInOrder.Select(NodeToKey);
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public SymbolTableWithBinarySearchTree(IComparer<TKey> comparer)
 	{
 		var pairComparer = comparer.Convert<TKey, KeyValuePair<TKey, TValue>>(PairToKey);
 		
 		tree = new BinarySearchTree<KeyValuePair<TKey, TValue>>(pairComparer);
+	}
+
+	public void Add(TKey key, TValue value)
+	{
+		var newPair = new KeyValuePair<TKey, TValue>(key, value);
+		if (tree.TryFindNode(KeyToPair(key), out var node))
+		{
+			node.Item = newPair;
+		}
+			
+		tree.Add(newPair);
 	}
 
 	public bool ContainsKey(TKey key) => tree.TryFindNode(KeyToPair(key), out _);
@@ -77,7 +72,7 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 			throw ThrowHelper.KeyNotFoundException(key);
 		}
 
-		tree.Remove(pair);
+		tree.Remove(node.Item);
 	}
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
@@ -87,6 +82,14 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 		return smallestNode != null 
 			? smallestNode.Item.Key 
 			: throw new Exception("No keys greater than given key.");
+	}
+
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		bool found = tree.TryFindNode(KeyToPair(key), out var node);
+		value = found ? node.Item.Value : default!;
+		
+		return found;
 	}
 
 	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default!);

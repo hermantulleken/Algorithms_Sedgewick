@@ -5,51 +5,45 @@ namespace Algorithms_Sedgewick.SymbolTable;
 using List;
 
 // Ex. 3.1.2
-public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue?>
+public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	private readonly IComparer<TKey> comparer;
 
 	// TODO: Consider a parallel array structure
 	private readonly ResizeableArray<TKey> keys;
-	private readonly ResizeableArray<TValue?> values;
+	private readonly ResizeableArray<TValue> values;
 
 	public int Count => keys.Count;
 
-	public TValue? this[TKey key]
+	public TValue this[TKey key]
 	{
-		get
-		{
-			if (TryFind(key, out int index))
-			{
-				MoveToFrontAt(index);
-				return values[0];
-			}
-			
-			throw ThrowHelper.KeyNotFoundException(key);
-		}
-
-		set
-		{
-			if (TryFind(key, out int index))
-			{
-				values[index] = value;
-				MoveToFrontAt(index);
-				
-				return;
-			}
-			
-			keys.Add(key);
-			values.Add(value);
-		}
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys => keys;
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public SymbolTableWithSelfOrderingKeyArray(IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
 		keys = new ResizeableArray<TKey>();
-		values = new ResizeableArray<TValue?>();
+		values = new ResizeableArray<TValue>();
+	}
+
+	public void Add(TKey key, TValue value)
+	{
+		if (TryFind(key, out int index))
+		{
+			values[index] = value;
+			MoveToFrontAt(index);
+				
+			return;
+		}
+			
+		keys.Add(key);
+		values.Add(value);
 	}
 
 	public bool ContainsKey(TKey key) => TryFind(key, out _);
@@ -65,6 +59,19 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 		{
 			throw ThrowHelper.KeyNotFoundException(key);
 		}
+	}
+
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		bool found = TryFind(key, out int index);
+		value = found ? values[index]! : default!;
+		
+		if (found)
+		{
+			MoveToFrontAt(index);
+		}
+		
+		return found;
 	}
 
 	private void MoveToFrontAt(int index)

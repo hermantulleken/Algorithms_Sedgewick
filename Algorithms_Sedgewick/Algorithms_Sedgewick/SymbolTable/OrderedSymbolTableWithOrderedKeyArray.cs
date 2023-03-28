@@ -14,30 +14,13 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 
 	public TValue this[TKey key]
 	{
-		get
-		{
-			if (TryFindKey(key, out int index))
-			{
-				return values[index];
-			}
-
-			throw ThrowHelper.KeyNotFoundException(key);
-		}
-
-		set
-		{
-			if (TryFindKey(key, out int index))
-			{
-				values[index] = value;
-				return;
-			}
-			
-			int newIndex = keys.InsertSorted(key, comparer);
-			values.InsertAt(value, newIndex);
-		}
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys => keys;
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public OrderedSymbolTableWithOrderedKeyArray(IComparer<TKey> comparer)
 	{
@@ -102,8 +85,6 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 		}
 	}
 
-	public bool TryGetValue(TKey key, out TValue value) => throw new NotImplementedException();
-
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
 		// TODO: Handle edge cases
@@ -116,6 +97,8 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 		
 		return keys[index];
 	}
+
+	public bool TryGetValue(TKey key, out TValue value) => throw new NotImplementedException();
 
 	private bool TryFindKey(TKey key, out int index)
 	{

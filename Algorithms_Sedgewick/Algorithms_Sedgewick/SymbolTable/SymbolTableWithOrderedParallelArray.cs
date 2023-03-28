@@ -13,34 +13,29 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	public TValue this[TKey key]
 	{
-		get
-		{
-			if (TryFindKey(key, out int index))
-			{
-				return arrays.Values[index];
-			}
-
-			throw ThrowHelper.KeyNotFoundException(key);
-		}
-
-		set
-		{
-			if (TryFindKey(key, out int index))
-			{
-				arrays.Set(index, key, value);
-			}
-			
-			int insertionIndex = arrays.Keys.FindInsertionIndex(key, comparer);
-			arrays.InsertAt(insertionIndex, key, value);
-		}
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys => arrays.Keys;
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public SymbolTableWithOrderedParallelArray(IComparer<TKey> comparer)
 	{
 		arrays = new ParallelArrays<TKey, TValue>(100);
 		this.comparer = comparer;
+	}
+
+	public void Add(TKey key, TValue value)
+	{
+		if (TryFindKey(key, out int index))
+		{
+			arrays.Set(index, key, value);
+		}
+			
+		int insertionIndex = arrays.Keys.FindInsertionIndex(key, comparer);
+		arrays.InsertAt(insertionIndex, key, value);
 	}
 
 	public bool ContainsKey(TKey key) => TryFindKey(key, out _);
@@ -121,6 +116,13 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 		}
 
 		throw new Exception("No keys greater than given key.");
+	}
+
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		bool found = TryFindKey(key, out int index);
+		value = found ? arrays.Values[index] : default!;
+		return found;
 	}
 
 	private bool TryFindKey(TKey key, out int index)

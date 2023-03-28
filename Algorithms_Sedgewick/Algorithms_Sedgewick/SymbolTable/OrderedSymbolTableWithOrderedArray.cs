@@ -12,17 +12,13 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 
 	public TValue this[TKey key]
 	{
-		get
-		{
-			((ISymbolTable<TKey, TValue>)this).TryGetValue(key, out var value);
-			
-			return value;
-		}
-
-		set => Add(key, value);
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys => array.Select(pair => pair.Key);
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public OrderedSymbolTableWithOrderedArray(IComparer<TKey> comparer)
 	{
@@ -100,22 +96,6 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 		array.DeleteAt(index);
 	}
 
-	public bool TryGetValue(TKey key, out TValue value)
-	{
-		bool found = TryFindKey(key, out int index);
-		
-		if (found)
-		{
-			value = array[index].Value;
-		}
-		else
-		{
-			value = default!;
-		}
-
-		return found;
-	}
-
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
 		int rank = array.BinaryRank(KeyToPair(key), pairComparer);
@@ -133,6 +113,22 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 		}
 
 		throw new Exception("No keys greater than given key.");
+	}
+
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		bool found = TryFindKey(key, out int index);
+		
+		if (found)
+		{
+			value = array[index].Value;
+		}
+		else
+		{
+			value = default!;
+		}
+
+		return found;
 	}
 
 	internal static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default!);

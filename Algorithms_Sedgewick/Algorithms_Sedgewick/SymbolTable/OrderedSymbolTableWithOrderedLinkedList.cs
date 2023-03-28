@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Algorithms_Sedgewick.SymbolTable;
+﻿namespace Algorithms_Sedgewick.SymbolTable;
 
 using static System.Diagnostics.Debug;
 
@@ -14,54 +12,49 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 	public TValue this[TKey key]
 	{
-		get
-		{
-			if (TryFirst(key, out var pair))
-			{
-				return pair.Value;
-			}
-
-			throw ThrowHelper.KeyNotFoundException(key);
-		}
-
-		set
-		{
-			if (list.IsEmpty || comparer.Less(key, list.First.Item.Key))
-			{
-				list.InsertAtFront(new KeyValuePair<TKey, TValue>(key, value));
-			}
-			else
-			{
-				var insertionNode = list.FindInsertionNode(new KeyValuePair<TKey, TValue>(key, default), pairComparer);
-				
-				Assert(comparer.LessOrEqual(insertionNode.Item.Key, key));
-				
-				if (insertionNode.NextNode != null)
-				{
-					Assert(comparer.Less(key, insertionNode.NextNode.Item.Key));
-				}
-
-				var newItem = new KeyValuePair<TKey, TValue>(key, value);
-				
-				if (comparer.Equal(key, insertionNode.Item.Key))
-				{
-					insertionNode.Item = newItem;
-				}
-				else
-				{
-					list.InsertAfter(insertionNode, newItem);
-				}
-			}
-		}
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys => list.Select(pair => pair.Key);
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public OrderedSymbolTableWithOrderedLinkedList(IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
 		list = new List.LinkedList<KeyValuePair<TKey, TValue>>();
 		pairComparer = comparer.Convert<TKey, KeyValuePair<TKey, TValue>>(OrderedSymbolTableWithOrderedArray<TKey, TValue>.PairToKey);
+	}
+
+	public void Add(TKey key, TValue value)
+	{
+		if (list.IsEmpty || comparer.Less(key, list.First.Item.Key))
+		{
+			list.InsertAtFront(new KeyValuePair<TKey, TValue>(key, value));
+		}
+		else
+		{
+			var insertionNode = list.FindInsertionNode(new KeyValuePair<TKey, TValue>(key, default), pairComparer);
+				
+			Assert(comparer.LessOrEqual(insertionNode.Item.Key, key));
+				
+			if (insertionNode.NextNode != null)
+			{
+				Assert(comparer.Less(key, insertionNode.NextNode.Item.Key));
+			}
+
+			var newItem = new KeyValuePair<TKey, TValue>(key, value);
+				
+			if (comparer.Equal(key, insertionNode.Item.Key))
+			{
+				insertionNode.Item = newItem;
+			}
+			else
+			{
+				list.InsertAfter(insertionNode, newItem);
+			}
+		}
 	}
 
 	public bool ContainsKey(TKey key) => TryFirst(key, out _);
@@ -185,6 +178,14 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 		}
 
 		return insertionNode.Item.Key;
+	}
+
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		bool result = TryFirst(key, out var pair);
+		value = result ? pair.Value : default!;
+
+		return result;
 	}
 
 	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default);

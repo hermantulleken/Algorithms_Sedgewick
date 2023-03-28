@@ -11,35 +11,30 @@ public class SymbolTableWithParallelArrays<TKey, TValue> : ISymbolTable<TKey, TV
 
 	public TValue this[TKey key]
 	{
-		get
-		{
-			if (TryFind(key, out int index))
-			{
-				return arrays.Values[index];
-			}
-			
-			throw ThrowHelper.KeyNotFoundException(key);
-		}
-
-		set
-		{
-			if (TryFind(key, out int index))
-			{
-				arrays.Set(index, key, value);
-			}
-			else
-			{
-				arrays.Add(key, value);
-			}
-		}
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys => arrays.Keys;
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public SymbolTableWithParallelArrays(IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
 		arrays = new ParallelArrays<TKey, TValue>(100);
+	}
+
+	public void Add(TKey key, TValue value)
+	{
+		if (TryFind(key, out int index))
+		{
+			arrays.Set(index, key, value);
+		}
+		else
+		{
+			arrays.Add(key, value);
+		}
 	}
 
 	public bool ContainsKey(TKey key) => TryFind(key, out _);
@@ -54,6 +49,13 @@ public class SymbolTableWithParallelArrays<TKey, TValue> : ISymbolTable<TKey, TV
 		{
 			throw ThrowHelper.KeyNotFoundException(key);
 		}
+	}
+
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		bool found = TryFind(key, out int index);
+		value = found ? arrays.Values[index] : default!;
+		return found;
 	}
 
 	private bool TryFind(TKey key, out int index)

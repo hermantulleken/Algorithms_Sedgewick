@@ -16,37 +16,32 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 
 	public TValue this[TKey key]
 	{
-		get
-		{
-			if (TryFind(key, out int index))
-			{
-				return values[index];
-			}
-			
-			throw ThrowHelper.KeyNotFoundException(key);
-		}
-
-		set
-		{
-			if (TryFind(key, out int index))
-			{
-				values[index] = value;
-			}
-			else
-			{
-				keys.Add(key);
-				values.Add(value);
-			}
-		}
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys => keys;
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public SymbolTableWithKeyArray(IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
 		keys = new ResizeableArray<TKey>();
 		values = new ResizeableArray<TValue>();
+	}
+
+	public void Add(TKey key, TValue value)
+	{
+		if (TryFind(key, out int index))
+		{
+			values[index] = value;
+		}
+		else
+		{
+			keys.Add(key);
+			values.Add(value);
+		}
 	}
 
 	public bool ContainsKey(TKey key) => TryFind(key, out _);
@@ -62,6 +57,14 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 		{
 			throw ThrowHelper.KeyNotFoundException(key);
 		}
+	}
+
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		bool found = TryFind(key, out int index);
+		value = found ? values[index] : default!;
+
+		return found;
 	}
 
 	private bool TryFind(TKey key, out int index)

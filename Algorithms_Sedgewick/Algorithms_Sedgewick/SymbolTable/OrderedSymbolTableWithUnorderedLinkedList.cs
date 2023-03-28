@@ -14,31 +14,13 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 
 	public TValue this[TKey key]
 	{
-		get
-		{
-			if (TryFindNodeWithKey(key, out var node))
-			{
-				return node.Item.Value;
-			}
-
-			ThrowHelper.ThrowKeyNotFound(key);
-			return default;
-		}
-		
-		set
-		{
-			if (TryFindNodeWithKey(key, out var node))
-			{
-				node.Item = new KeyValuePair<TKey, TValue>(key, value);
-			}
-			else
-			{
-				list.InsertAtBack(new KeyValuePair<TKey, TValue>(key, value));
-			}
-		}
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys => list.Select(pair => pair.Key);
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	private IEnumerable<
 			(List.LinkedList<KeyValuePair<TKey, TValue>>.Node previousNode, 
@@ -62,6 +44,18 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 	{
 		this.comparer = comparer;
 		list = new List.LinkedList<KeyValuePair<TKey, TValue>>();
+	}
+
+	public void Add(TKey key, TValue value)
+	{
+		if (TryFindNodeWithKey(key, out var node))
+		{
+			node.Item = new KeyValuePair<TKey, TValue>(key, value);
+		}
+		else
+		{
+			list.InsertAtBack(new KeyValuePair<TKey, TValue>(key, value));
+		}	
 	}
 
 	public bool ContainsKey(TKey key) => TryFindNodeWithKey(key, out _);
@@ -192,6 +186,14 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 	}
 
 	public override string ToString() => list.ToString();
+
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		bool found = TryFindNodeWithKey(key, out var node);
+		value = found ? node.Item.Value : default!;
+
+		return found;
+	}
 
 	private bool Equals(TKey left, TKey right) 
 		=> comparer.Compare(left, right) == 0;

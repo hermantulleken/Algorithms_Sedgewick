@@ -26,62 +26,29 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 		Present,
 		MarkedForRemoval,
 	}
-	
+
 	private readonly IComparer<TKey> comparer;
 	private Presence[] keyPresent; // Necessary if TKey is a value type
 	private TKey[] keys;
+	private int keysMarkedForRemovalCount;
 	private int log2TableSize;
 	private int tableSize;
 	private TValue[] values;
-	private int keysMarkedForRemovalCount;
 
 	public int Count { get; private set; }
 
 	public TValue this[TKey key]
 	{
-		get
-		{
-			int index = IndexOf(key);
-
-			if (index < 0)
-			{
-				throw ThrowHelper.KeyNotFoundException(key);
-			}
-
-			return values[index];
-		}
-
-		set
-		{
-			if (Count >= tableSize / 2)
-			{
-				// The number of present entries is too much, so make the table bigger 
-				Resize(log2TableSize + 1); // Doubles the size
-			}
-			else if (Count + keysMarkedForRemovalCount >= tableSize / 2)
-			{
-				// The number of marked entries is too much, so keep the size but re-hash and set removed keys to non-present
-				Resize(log2TableSize);
-			}
-
-			int index = IndexOf(key);
-
-			if (index >= 0)
-			{
-				values[index] = value;
-			}
-			else
-			{
-				SetAt(~index, key, value, Presence.Present);
-				Count++;
-			}
-		}
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys 
 		=> keyPresent
 			.IndexWhere(presence => presence == Presence.Present)
 			.Select(index => keys[index]);
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public HashTableWithLinearProbingAndLazyDelete(IComparer<TKey> comparer)
 		: this(4, comparer)
@@ -99,6 +66,32 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 		Array.Fill(keyPresent, Presence.NotPresent);
 
 		keysMarkedForRemovalCount = 0;
+	}
+
+	public void Add(TKey key, TValue value)
+	{
+		if (Count >= tableSize / 2)
+		{
+			// The number of present entries is too much, so make the table bigger 
+			Resize(log2TableSize + 1); // Doubles the size
+		}
+		else if (Count + keysMarkedForRemovalCount >= tableSize / 2)
+		{
+			// The number of marked entries is too much, so keep the size but re-hash and set removed keys to non-present
+			Resize(log2TableSize);
+		}
+
+		int index = IndexOf(key);
+
+		if (index >= 0)
+		{
+			values[index] = value;
+		}
+		else
+		{
+			SetAt(~index, key, value, Presence.Present);
+			Count++;
+		}
 	}
 
 	public bool ContainsKey(TKey key) => IndexOf(key) >= 0;
@@ -120,6 +113,15 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 		}
 	}
 
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		int index = IndexOf(key);
+		bool found = index >= 0;
+		value = found ? values[index] : default!;
+
+		return found;
+	}
+
 	private int GetHash(TKey key)
 	{
 		key.ThrowIfNull();
@@ -131,6 +133,35 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 		}
 		
 		return hashCode % tableSize;
+	}
+
+	private void GetNextIndex(ref int index) => index = (index + 1) % tableSize;
+
+	/*
+		Iterate through the table, starting from the hash value of the key and moving linearly.
+		The loop continues until an empty slot is found (meaning the key is not present in the table).
+		
+		Returns a negative value if the index is not found. The complement of this value (i.e. ~IndexOf(key)) is where a new 
+		element can be inserted. This can be inside a cluster if an element in the cluster has bene marked for removal. 
+	*/
+	private int IndexOf(TKey key)
+	{
+		int indexToAdd = -1;
+		int index;
+		
+		for (index = GetHash(key); keyPresent[index] != Presence.NotPresent; GetNextIndex(ref index))
+		{
+			if (indexToAdd < 0 && keyPresent[index] == Presence.MarkedForRemoval)
+			{
+				indexToAdd = index;
+			}
+			else if (comparer.Equal(keys[index], key))
+			{
+				return index;
+			}
+		}
+
+		return (indexToAdd < 0) ? ~index : ~indexToAdd;
 	}
 
 	private void RemoveKeyAt(int index)
@@ -165,34 +196,5 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 		keys[index] = key;
 		values[index] = value;
 		keyPresent[index] = presence;
-	}
-	
-	private void GetNextIndex(ref int index) => index = (index + 1) % tableSize;
-
-	/*
-		Iterate through the table, starting from the hash value of the key and moving linearly.
-		The loop continues until an empty slot is found (meaning the key is not present in the table).
-		
-		Returns a negative value if the index is not found. The complement of this value (i.e. ~IndexOf(key)) is where a new 
-		element can be inserted. This can be inside a cluster if an element in the cluster has bene marked for removal. 
-	*/
-	private int IndexOf(TKey key)
-	{
-		int indexToAdd = -1;
-		int index;
-		
-		for (index = GetHash(key); keyPresent[index] != Presence.NotPresent; GetNextIndex(ref index))
-		{
-			if (indexToAdd < 0 && keyPresent[index] == Presence.MarkedForRemoval)
-			{
-				indexToAdd = index;
-			}
-			else if (comparer.Equal(keys[index], key))
-			{
-				return index;
-			}
-		}
-
-		return (indexToAdd < 0) ? ~index : ~indexToAdd;
 	}
 }

@@ -56,43 +56,16 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 
 	public TValue this[TKey key]
 	{
-		get
-		{
-			int index = IndexOf(key);
-			
-			if (index < 0)
-			{
-				throw ThrowHelper.KeyNotFoundException(key);
-			}
-
-			return values[index];
-		}
-
-		set
-		{
-			if (Count >= tableSize / 2)
-			{
-				Resize(log2TableSize + 1); // Doubles the size
-			}
-
-			int index = IndexOf(key);
-
-			if (index < 0)
-			{
-				SetAt(~index, key, value, true);
-				Count++;
-			}
-			else
-			{
-				values[index] = value;
-			}
-		}
+		get => AsSymbolTable[key];
+		set => AsSymbolTable[key] = value;
 	}
 
 	public IEnumerable<TKey> Keys 
 		=> keyPresent
 			.IndexWhere(Algorithms.Identity)
 			.Select(index => keys[index]);
+
+	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public HashTableWithLinearProbing(IComparer<TKey> comparer)
 		: this(4, comparer)
@@ -107,6 +80,26 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 		keys = new TKey[tableSize];
 		values = new TValue[tableSize];
 		keyPresent = new bool[tableSize];
+	}
+
+	public void Add(TKey key, TValue value)
+	{
+		if (Count >= tableSize / 2)
+		{
+			Resize(log2TableSize + 1); // Doubles the size
+		}
+
+		int index = IndexOf(key);
+
+		if (index < 0)
+		{
+			SetAt(~index, key, value, true);
+			Count++;
+		}
+		else
+		{
+			values[index] = value;
+		}
 	}
 
 	public bool ContainsKey(TKey key) => IndexOf(key) >= 0;
@@ -143,6 +136,15 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 		{
 			Resize(log2TableSize - 1);
 		}
+	}
+
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		int index = IndexOf(key);
+		bool found = index >= 0;
+		value = found ? values[index] : default!;
+
+		return found;
 	}
 
 	private int GetHash(TKey key)

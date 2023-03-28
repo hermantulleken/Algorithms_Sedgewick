@@ -11,6 +11,7 @@ $EXPR$.ThrowIfNull()</s:String>
 $EXPR$.ThrowIfNull();</s:String>
 	<s:Int64 x:Key="/Default/CodeInspection/CognitiveComplexityAnalysis/MiddleComplexityThreshold/@EntryValue">100</s:Int64>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/SweaWarningsMode/@EntryValue">ShowAndRun</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeCleanup/RecentlyUsedProfile/@EntryValue">Apply file Layout</s:String>
 	<s:String x:Key="/Default/CodeStyle/CSharpFileLayoutPatterns/Pattern/@EntryValue">&lt;Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns"&gt;
     &lt;TypePattern DisplayName="Non-reorderable types"&gt;
         &lt;TypePattern.Match&gt;
