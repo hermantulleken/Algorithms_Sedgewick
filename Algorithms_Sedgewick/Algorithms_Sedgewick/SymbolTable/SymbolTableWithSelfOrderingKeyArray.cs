@@ -15,15 +15,7 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 
 	public int Count => keys.Count;
 
-	public TValue this[TKey key]
-	{
-		get => AsSymbolTable[key];
-		set => AsSymbolTable[key] = value;
-	}
-
 	public IEnumerable<TKey> Keys => keys;
-
-	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public SymbolTableWithSelfOrderingKeyArray(IComparer<TKey> comparer)
 	{
@@ -89,7 +81,7 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 	{
 		for (int i = 0; i < keys.Count; i++)
 		{
-			if (comparer.Equals(key))
+			if (comparer.Equal(keys[i], key))
 			{
 				index = i;
 				return true;

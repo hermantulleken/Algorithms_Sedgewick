@@ -1,10 +1,12 @@
-﻿namespace Algorithms_Sedgewick.SymbolTable;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Algorithms_Sedgewick.SymbolTable;
 
 using System.Collections.Generic;
 using System.Diagnostics;
 using PriorityQueue;
 
-public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSymbolTable<TKey, TValue>
+public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
 	private readonly IComparer<TKey> comparer;
 
@@ -12,18 +14,10 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 
 	public int Count => list.Count;
 
-	public TValue this[TKey key]
-	{
-		get => AsSymbolTable[key];
-		set => AsSymbolTable[key] = value;
-	}
-
 	public IEnumerable<TKey> Keys => list.Select(pair => pair.Key);
 
-	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
-
 	private IEnumerable<
-			(List.LinkedList<KeyValuePair<TKey, TValue>>.Node previousNode, 
+			(List.LinkedList<KeyValuePair<TKey, TValue>>.Node? previousNode, 
 			List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)> NodeAndPrevious
 	{
 		get
@@ -59,8 +53,7 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 	}
 
 	public bool ContainsKey(TKey key) => TryFindNodeWithKey(key, out _);
-
-
+	
 	public int CountRange(TKey start, TKey end) 
 		=> Keys.Count(key => LessOrEqual(start, key) && Less(key, end));
 
@@ -204,15 +197,15 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 	private bool LessOrEqual(TKey left, TKey right)
 		=> comparer.Compare(left, right) <= 0;
 
-	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
+	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node? previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
 		MaxNodeAndPrevious() 
 		=> NodeAndPrevious.MaxBy(pair => pair.node.Item.Key, comparer);
 
-	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
+	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node? previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
 		MinNodeAndPrevious() 
 		=> NodeAndPrevious.MinBy(pair => pair.node.Item.Key, comparer);
 
-	private bool TryFindNodeWithKey(TKey key, out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
+	private bool TryFindNodeWithKey(TKey key, [MaybeNullWhen(false)] out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
 	{
 		foreach (var listNode in list.Nodes)
 		{
@@ -227,7 +220,7 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue>: IOrderedSy
 		return false;
 	}
 
-	private bool TryFindPredecessor(TKey key, out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
+	private bool TryFindPredecessor(TKey key, [MaybeNullWhen(false)] out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
 	{
 		foreach (var listNode in list.Nodes)
 		{

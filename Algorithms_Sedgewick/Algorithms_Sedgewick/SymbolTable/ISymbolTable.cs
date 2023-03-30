@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Algorithms_Sedgewick.SymbolTable;
 
 /*
@@ -33,5 +35,5 @@ public interface ISymbolTable<TKey, TValue>
 
 	void RemoveKey(TKey key);
 
-	bool TryGetValue(TKey key, out TValue value);
+	bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value);
 }

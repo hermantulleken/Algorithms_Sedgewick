@@ -37,12 +37,6 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 
 	public int Count { get; private set; }
 
-	public TValue this[TKey key]
-	{
-		get => AsSymbolTable[key];
-		set => AsSymbolTable[key] = value;
-	}
-
 	public IEnumerable<TKey> Keys 
 		=> keyPresent
 			.IndexWhere(presence => presence == Presence.Present)
@@ -179,7 +173,7 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 		{
 			if (keyPresent[i] == Presence.Present)
 			{
-				newTable[keys[i]] = values[i];
+				newTable.AsSymbolTable[keys[i]] = values[i];
 			}
 		}
 		

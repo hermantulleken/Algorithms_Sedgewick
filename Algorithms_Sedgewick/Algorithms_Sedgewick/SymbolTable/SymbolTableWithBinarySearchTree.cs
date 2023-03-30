@@ -1,4 +1,6 @@
-﻿namespace Algorithms_Sedgewick.SymbolTable;
+﻿using Support;
+
+namespace Algorithms_Sedgewick.SymbolTable;
 
 using SearchTrees;
 
@@ -8,16 +10,10 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 
 	public int Count => tree.Count;
 
-	public TValue this[TKey key]
-	{
-		get => AsSymbolTable[key];
-		set => AsSymbolTable[key] = value;
-	}
+	public string DisplayString => tree.Pretty();
 
 	public IEnumerable<TKey> Keys 
 		=> tree.NodesInOrder.Select(NodeToKey);
-
-	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public SymbolTableWithBinarySearchTree(IComparer<TKey> comparer)
 	{
@@ -87,7 +83,7 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 	public bool TryGetValue(TKey key, out TValue value)
 	{
 		bool found = tree.TryFindNode(KeyToPair(key), out var node);
-		value = found ? node.Item.Value : default!;
+		value = found ? node!.Item.Value : default!;
 		
 		return found;
 	}

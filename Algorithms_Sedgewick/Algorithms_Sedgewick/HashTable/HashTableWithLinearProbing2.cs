@@ -1,49 +1,21 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using static System.Diagnostics.Debug;
 
 namespace Algorithms_Sedgewick.HashTable;
 
 using SymbolTable;
 
-public static class HashTableWithLinearProbing
-{
-	internal static readonly int[] Primes =
-	{
-		31,
-		61,
-		127,
-		251,
-		509,
-		1021,
-		2039,
-		4093,
-		8191,
-		16381,
-		65521,
-		131071,
-		262139,
-		524287,
-		1048573,
-		2097143,
-		4194301,
-		8388593,
-		16777213,
-		33554393,
-		67108859,
-		134217689,
-		268435399,
-		536870909,
-		1073741789,
-		2147483647,
-	};
-}
-
+// Ex. 3.4.28
 /*
 	This class represents a hash table that uses linear probing to resolve collisions.
 	Linear probing is an open-addressing strategy where we look for the next available slot
 	in the array when a collision occurs.
+	
+	This version always have a prime table size, so the table hashing mechanism can work as expected. 
 */
 [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and non-generic versions.")]
-public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValue>
+public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	private readonly IComparer<TKey> comparer;
 	private bool[] keyPresent; // Necessary if TKey is a value type
@@ -51,7 +23,7 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 	private int log2TableSize;
 	private int tableSize;
 	private TValue[] values;
-
+	
 	public int Count { get; private set; }
 
 	public IEnumerable<TKey> Keys 
@@ -61,14 +33,14 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 
 	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
-	public HashTableWithLinearProbing(IComparer<TKey> comparer)
-		: this(4, comparer)
+	public HashTableWithLinearProbing2(IComparer<TKey> comparer)
+		: this(0, comparer)
 	{
 	}
 
-	public HashTableWithLinearProbing(int log2TableSize, IComparer<TKey> comparer)
+	public HashTableWithLinearProbing2(int log2TableSize, IComparer<TKey> comparer)
 	{
-		tableSize = 1 << log2TableSize;
+		tableSize = HashTableWithLinearProbing.Primes[log2TableSize];
 		this.log2TableSize = log2TableSize;
 		this.comparer = comparer;
 		keys = new TKey[tableSize];
@@ -78,6 +50,8 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 
 	public void Add(TKey key, TValue value)
 	{
+		key.ThrowIfNull();
+		
 		if (Count >= tableSize / 2)
 		{
 			Resize(log2TableSize + 1); // Doubles the size
@@ -96,10 +70,12 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 		}
 	}
 
-	public bool ContainsKey(TKey key) => IndexOf(key) >= 0;
+	public bool ContainsKey(TKey key) => TryGetValue(key, out _);
 
 	public void RemoveKey(TKey key)
 	{
+		key.ThrowIfNull();
+		
 		void ReinsertAt(int index)
 		{
 			var keyToRedo = keys[index];
@@ -121,7 +97,7 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 		    Reinsert all the keys in the same cluster as the removed key.
 		    This is necessary because their positions might have been affected by the removal of the key.
 		*/
-		for (GetNextIndex(ref index); keyPresent[index]; GetNextIndex(ref index))
+		for (GetNextIndex(key, ref index); keyPresent[index]; GetNextIndex(key, ref index))
 		{
 			ReinsertAt(index);
 		}
@@ -134,6 +110,8 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 
 	public bool TryGetValue(TKey key, out TValue value)
 	{
+		key.ThrowIfNull();
+		
 		int index = IndexOf(key);
 		bool found = index >= 0;
 		value = found ? values[index] : default!;
@@ -141,20 +119,27 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 		return found;
 	}
 
-	private int GetHash(TKey key)
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private int GetHash([DisallowNull] TKey key)
 	{
-		key.ThrowIfNull();
 		int hashCode = key.GetHashCode();
-		
-		if (log2TableSize + 5 < 26)
-		{
-			hashCode %= HashTableWithLinearProbing.Primes[log2TableSize + 5];
-		}
-		
+
 		return hashCode % tableSize;
 	}
 
-	private void GetNextIndex(ref int index) => index = (index + 1) % tableSize;
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void GetNextIndex([DisallowNull] TKey key, ref int index)
+	{
+		int offset = GetOffset(key);
+		int result = (index + offset) % tableSize;
+		
+		Assert(result != index);
+		
+		index = result;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private int GetOffset([DisallowNull] TKey key) => key.GetHashCode() % (tableSize - 1) + 1;
 
 	/*
 		Iterate through the table, starting from the hash value of the key and moving linearly.
@@ -163,10 +148,10 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 		Returns a negative value if the index is not found. The complement of this value (i.e. ~IndexOf(key)) is where a new 
 		element can be inserted.
 	*/
-	private int IndexOf(TKey key)
+	private int IndexOf([DisallowNull] TKey key)
 	{
 		int i;
-		for (i = GetHash(key); keyPresent[i]; GetNextIndex(ref i))
+		for (i = GetHash(key); keyPresent[i]; GetNextIndex(key, ref i))
 		{
 			if (comparer.Equal(keys[i], key))
 			{
@@ -185,7 +170,7 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 
 	private void Resize(int newLog2TableSize) // See page 474.
 	{
-		var newTable = new HashTableWithLinearProbing<TKey, TValue>(newLog2TableSize, comparer);
+		var newTable = new HashTableWithLinearProbing2<TKey, TValue>(newLog2TableSize, comparer);
 		
 		for (int i = 0; i < tableSize; i++)
 		{

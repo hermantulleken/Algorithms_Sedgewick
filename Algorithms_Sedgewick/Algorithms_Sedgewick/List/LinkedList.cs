@@ -39,6 +39,8 @@ public sealed class LinkedList<T> : IEnumerable<T>
 			}
 		}
 		
+		private string? ItemString => Item == null ? "null" : Item.ToString();
+		
 #if WHITEBOXTESTING
 		public override string ToString() => ToDebugString();
 
@@ -50,8 +52,6 @@ public sealed class LinkedList<T> : IEnumerable<T>
 				: depth == 0 
 					? "..." 
 					: $"{Item} [{NextNode.ToDebugString(depth - 1)}]";
-
-		private string? ItemString => Item == null ? "null" : Item.ToString();
 #else
 		public override string ToString() => $"Node:{{{ItemString}}}";
 #endif

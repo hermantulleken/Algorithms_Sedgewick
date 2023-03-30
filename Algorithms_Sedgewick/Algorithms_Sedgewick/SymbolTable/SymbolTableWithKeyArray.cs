@@ -14,15 +14,7 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 
 	public int Count => keys.Count;
 
-	public TValue this[TKey key]
-	{
-		get => AsSymbolTable[key];
-		set => AsSymbolTable[key] = value;
-	}
-
 	public IEnumerable<TKey> Keys => keys;
-
-	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public SymbolTableWithKeyArray(IComparer<TKey> comparer)
 	{

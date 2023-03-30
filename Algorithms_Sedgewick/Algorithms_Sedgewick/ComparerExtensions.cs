@@ -15,11 +15,6 @@ public static class ComparerExtensions
 
 		public int Compare(TTarget? x, TTarget? y)
 		{
-			// TODO: Not exactly sure what is the correct behaviour - we need ? for inheritance...
-			// but we do not want ?
-			x.ThrowIfNull();
-			y.ThrowIfNull();
-			
 			return comparer.Compare(converter(x), converter(y));
 		}
 	}

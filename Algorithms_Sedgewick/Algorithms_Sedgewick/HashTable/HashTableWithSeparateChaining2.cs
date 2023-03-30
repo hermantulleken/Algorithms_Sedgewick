@@ -10,16 +10,8 @@ public class HashTableWithSeparateChaining2<TKey, TValue> : ISymbolTable<TKey, T
 
 	public int Count => table.Select(t => t.Count).Sum();
 
-	public TValue this[TKey key]
-	{
-		get => AsSymbolTable[key];
-		set => AsSymbolTable[key] = value;
-	}
-
 	public IEnumerable<TKey> Keys 
 		=> table.SelectMany(st => st.Keys);
-
-	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public HashTableWithSeparateChaining2(IComparer<TKey> comparer)
 		: this(997, comparer)
@@ -40,43 +32,49 @@ public class HashTableWithSeparateChaining2<TKey, TValue> : ISymbolTable<TKey, T
 	public void Add(TKey key, TValue value)
 	{
 		key.ThrowIfNull();
-		table[GetHash(key)][key] = value;
-	}
-
-	public bool ContainsKey(TKey key)
-	{
-		key.ThrowIfNull();
 		
-		return table[GetHash(key)].ContainsKey(key);
+		var table1 = GetTable1(key);
+		var table2 = GetTable2(key);
+
+		var tableToAddTo = table1.Count < table2.Count ? table2 : table1;
+		
+		tableToAddTo[key] = value;
 	}
 
 	public void RemoveKey(TKey key)
 	{
 		key.ThrowIfNull();
-		table[GetHash(key)].RemoveKey(key);
-	}
-
-	public bool TryGetValue(TKey key, out TValue value)
-	{
-		key.ThrowIfNull();
-
-		int hash1 = GetHash(key);
-		int hash2 = GetHash2(key);
-			
-		return table[GetHash(key)].TryGetValue(key, out value);
-	}
-
-	private int GetHash([DisallowNull]TKey key)
-	{
-		key.ThrowIfNull();
 		
-		return (11 * key.GetHashCode()) % tableSize;
+		var table1 = GetTable1(key);
+		var table2 = GetTable2(key);
+
+		if (table1.ContainsKey(key))
+		{
+			table1.RemoveKey(key);
+		}
+		else
+		{
+			table2.RemoveKey(key);
+		}
 	}
 
-	private int GetHash2([DisallowNull]TKey key)
+	public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
 	{
 		key.ThrowIfNull();
-		
-		return (13 * key.GetHashCode()) % tableSize;
+
+		var table1 = GetTable1(key);
+		var table2 = GetTable2(key);
+
+		return table1.TryGetValue(key, out value) || table2.TryGetValue(key, out value);
 	}
+
+	private int GetHash([DisallowNull]TKey key, int keyMultiplayer) => keyMultiplayer * key.GetHashCode() % tableSize;
+
+	private int GetHash1([DisallowNull]TKey key) => GetHash(key, 11);
+
+	private int GetHash2([DisallowNull] TKey key) => GetHash(key, 13);
+
+	private ISymbolTable<TKey, TValue> GetTable1([DisallowNull] TKey key) => table[GetHash1(key)];
+
+	private ISymbolTable<TKey, TValue> GetTable2([DisallowNull] TKey key) => table[GetHash2(key)];
 }

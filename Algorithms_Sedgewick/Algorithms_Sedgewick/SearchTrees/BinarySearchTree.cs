@@ -371,7 +371,7 @@ public class BinarySearchTree<T>
 			.SkipWhile(node => comparer.Less(node.Item, key))
 			.FirstOrDefault();
 
-	public bool TryFindNode(T item, [NotNullWhen(true)] out Node? node)
+	public bool TryFindNode(T item, [MaybeNullWhen(false)] out Node node)
 		=> TryFindAtNode(root, item, out node);
 
 	private static Node GetMaxNode(Node node)
@@ -441,7 +441,7 @@ public class BinarySearchTree<T>
 		result = null;
 		while (node != null)
 		{
-			switch (comparer.Compare(node.Item, item))
+			switch (comparer.Compare(item, node.Item))
 			{
 				case < 0:
 					node = node.LeftChild;

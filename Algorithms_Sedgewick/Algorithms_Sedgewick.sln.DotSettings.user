@@ -280,5 +280,11 @@ $EXPR$.ThrowIfNull();</s:String>
     &lt;/TypePattern&gt;
 &lt;/Patterns&gt;
 </s:String>
+	<s:String x:Key="/Default/Environment/ExternalSources/IlViewer/CodeType/@EntryValue">IL</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8df2c6e3_002Da0d8_002D4309_002Da21f_002D3b95183232f5/@EntryIndexedValue"></s:String>
+	<s:Boolean x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8df2c6e3_002Da0d8_002D4309_002Da21f_002D3b95183232f5/@EntryIndexRemoved">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=9f113ce2_002D5230_002D439d_002Da873_002D55fd95e373c4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="OrderedSymbolTableTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	
-	<s:String x:Key="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue">CSharpOtherPage</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue">RiderNuGetOptionsPage</s:String></wpf:ResourceDictionary>

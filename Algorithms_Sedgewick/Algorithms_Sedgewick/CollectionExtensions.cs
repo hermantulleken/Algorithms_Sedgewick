@@ -29,4 +29,16 @@ public static class CollectionExtensions
 
 		return newArray;
 	}
+	
+	public static ResizeableArray<T> ToResizableArray<T>(this IEnumerable<T> items, int capacity)
+	{
+		var array = new ResizeableArray<T>(capacity);
+			
+		foreach (var item in items)
+		{
+			array.Add(item);
+		}
+
+		return array;
+	}
 }

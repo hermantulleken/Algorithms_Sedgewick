@@ -372,33 +372,43 @@ public static class Algorithms
 					: Find(0, sortedList.Count);
 	}
 
-	[Obsolete, PossiblyIncorrect]
-	public static LinkedList<T>.Node FindInsertionNode<T>(this LinkedList<T> sortedList, T item, IComparer<T> comparer)
+	public static LinkedList<T>.Node FindInsertionNodeUnsafe<T>(this LinkedList<T> sortedList, T item, IComparer<T> comparer)
 	{
-		sortedList.ThrowIfNull();
-		comparer.ThrowIfNull();
-		
 		Assert(!sortedList.IsEmpty);
 		
 		// Note: if item < firstItem we need to add it at the front
 		// item >= firstItem
 		Assert(comparer.LessOrEqual(sortedList.First.Item, item));
 
-		foreach (var node in sortedList.Nodes)
+		var node = sortedList.First;
+		
+		while (true)
 		{
-			if (node.NextNode == null)
+			var next = node.NextNode;
+
+			if (next == null)
 			{
 				return node;
 			}
-			
-			if (comparer.Less(item, node.NextNode.Item))
+
+			if (comparer.Less(item, next.Item))
 			{
 				return node;
 			}
+
+			node = next;
 		}
 
 		Assert(false); // Unreachable
 		return sortedList.Last;
+	}
+	
+	public static LinkedList<T>.Node FindInsertionNode<T>(this LinkedList<T> sortedList, T item, IComparer<T> comparer)
+	{
+		sortedList.ThrowIfNull();
+		comparer.ThrowIfNull();
+
+		return FindInsertionNodeUnsafe(sortedList, item, comparer);
 	}
 
 	public static T First<T>(this IReadonlyRandomAccessList<T> source)

@@ -8,17 +8,9 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 	private readonly IComparer<TKey> comparer;
 	private readonly IComparer<KeyValuePair<TKey, TValue>> pairComparer;
 
-	public int Count => array.Count;
-
-	public TValue this[TKey key]
-	{
-		get => AsSymbolTable[key];
-		set => AsSymbolTable[key] = value;
-	}
+	public int Count => array.Count;	
 
 	public IEnumerable<TKey> Keys => array.Select(pair => pair.Key);
-
-	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public OrderedSymbolTableWithOrderedArray(IComparer<TKey> comparer)
 	{

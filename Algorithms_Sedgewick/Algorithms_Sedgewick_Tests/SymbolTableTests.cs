@@ -32,11 +32,17 @@ public class SymbolTableTests
 		new(() => new HashTableWithLinearProbing<int, string>(SharedData.IntComparer))
 			{ TestName = "HT with Linear Probing" },
 		
+		new(() => new HashTableWithLinearProbing2<int, string>(SharedData.IntComparer))
+			{ TestName = "HT with Linear Probing 2" },
+		
 		new(() => new HashTableWithLinearProbingAndLazyDelete<int, string>(SharedData.IntComparer))
 			{ TestName = "HT with Linear Probing and Lazy Deletion" },
 		
-		new(() => new HashTableWithLinearProbing<int, string>(SharedData.IntComparer))
+		new(() => new HashTableWithSeparateChaining<int, string>(SharedData.IntComparer))
 			{ TestName = "HT with Separate chaining" },
+		
+		new(() => new HashTableWithSeparateChaining2<int, string>(SharedData.IntComparer))
+			{ TestName = "HT with Separate chaining 2" },
 	};
 
 	[TestCaseSource(nameof(factories))]

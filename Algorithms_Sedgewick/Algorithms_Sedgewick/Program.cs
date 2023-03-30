@@ -1,4 +1,6 @@
-﻿using Support;
+﻿using Algorithms_Sedgewick.HashTable;
+using Algorithms_Sedgewick.SymbolTable;
+using Support;
 
 namespace Algorithms_Sedgewick;
 
@@ -6,26 +8,14 @@ using List;
 using static WhiteBoxTesting;
 using Timer = Support.Timer;
 
-public static class Extensions
-{
-	public static ResizeableArray<T> ToResizableArray<T>(this IEnumerable<T> items, int capacity)
-	{
-		var array = new ResizeableArray<T>(capacity);
-			
-		foreach (var item in items)
-		{
-			array.Add(item);
-		}
-
-		return array;
-	}
-}
 internal static class Program
 {
 	public static void Main()
 	{
-		TimeSearchers();
-		
+		TimeSymbolTables();
+
+		// imeSearchers();
+
 		// TimeSorts();
 	}
 
@@ -73,7 +63,7 @@ internal static class Program
 
 		const int size = 1000000;
 		const int range = 100000000;
-		const int keyCount = 100000;
+		const int keyCount = 800000;
 		
 		var list = Generator.UniformRandomInt(range).Take(size).ToResizableArray(size);
 		
@@ -103,6 +93,125 @@ internal static class Program
 		foreach (var time in times)
 		{
 			Console.WriteLine(time);
+		}
+	}
+	
+	public static void TimeSymbolTables()
+	{
+		var comparer = Comparer<int>.Default;
+		
+		void Experiment(ISymbolTable<int, int> table, int[] keysToAdd, int[] keysToFind)
+		{
+			int count = keysToFind.Count(table.ContainsKey);
+			Console.WriteLine($"count = {count}");
+		}
+
+		const int keysToFindCount = 1000000;
+		const int range = int.MaxValue/100;
+		const int keysToAddCount = 160000;
+		const float x = 0.5f;
+
+		const int sharedKeysCount = (int)(keysToFindCount * x);
+		const int extraKeysToAddCount = keysToAddCount - sharedKeysCount;
+		const int extraKeysToFindCount = keysToFindCount - sharedKeysCount;
+		const int longEnough = 3*(keysToFindCount + keysToAddCount);
+		
+		var sharedKeys = Generator
+			.UniformRandomInt(range)
+			.Take(longEnough)
+			.ToArray();
+		
+		var extraKeysToFind = Generator
+			.UniformRandomInt(range)
+			.Select(x => x + range)
+			.Take(longEnough)
+			.ToArray();
+
+		var extraKeysToAdd = Generator
+			.UniformRandomInt(range)
+			.Select(x => x + 2 * range)
+			.Take(longEnough)
+			.ToArray();
+
+		int[] keysToFind = sharedKeys
+			.Take(sharedKeysCount)
+			.Concat(extraKeysToFind.Take(extraKeysToFindCount))
+			.ToArray();
+		
+		int[] keysToAdd = sharedKeys
+			.Take(sharedKeysCount)
+			.Concat(extraKeysToAdd.Take(extraKeysToAddCount))
+			.ToArray();
+
+		Func<ISymbolTable<int, int>> AddKeys(Func<ISymbolTable<int, int>> factory)
+		{
+			var table = factory();
+
+			foreach (int key in keysToAdd)
+			{
+				table.Add(key, key);
+			}
+
+			return () => table;
+		}
+
+		Action<int[], int[]> FactoryToExperiment(Func<ISymbolTable<int, int>> factory)
+		{
+			return (keysToAdd, keysToFind) => Experiment(factory(), keysToAdd, keysToFind);
+		}
+		
+		var factories = new Func<ISymbolTable<int, int>>[]
+		{
+			// () => new SymbolTableWithKeyArray<int, int>(comparer),
+			// () => new SymbolTableWithSelfOrderingKeyArray<int, int>(comparer),
+			//
+			// () => new SymbolTableWithParallelArrays<int, int>(comparer),
+			// () => new OrderedSymbolTableWithUnorderedLinkedList<int, int>(comparer),
+			//
+			// () => new OrderedSymbolTableWithOrderedArray<int, int>(comparer),
+			// () => new SymbolTableWithOrderedParallelArray<int, int>(comparer),
+			//
+			// () => new OrderedSymbolTableWithOrderedKeyArray<int, int>(comparer),
+			// () => new OrderedSymbolTableWithOrderedLinkedList<int, int>(comparer),
+			//
+			// () => new SymbolTableWithBinarySearchTree<int, int>(comparer),
+			
+			() => new HashTableWithLinearProbing<int, int>(comparer),
+			() => new HashTableWithLinearProbing2<int, int>(comparer),
+			() => new HashTableWithSeparateChaining<int, int>(320000, comparer),
+			() => new HashTableWithSeparateChaining2<int, int>(320000, comparer),
+			() => new SystemDictionary<int, int>(comparer),
+		}.Select(AddKeys);
+		
+		var factoryTypeNames = new[]
+		{
+			// nameof(SymbolTableWithKeyArray<int, int>),
+			// nameof(SymbolTableWithSelfOrderingKeyArray<int, int>),
+			// nameof(SymbolTableWithParallelArrays<int, int>),
+			// nameof(OrderedSymbolTableWithUnorderedLinkedList<int, int>),
+			// nameof(OrderedSymbolTableWithOrderedArray<int, int>),
+			// nameof(SymbolTableWithOrderedParallelArray<int, int>),
+			//
+			// nameof(OrderedSymbolTableWithOrderedKeyArray<int, int>),
+			// nameof(OrderedSymbolTableWithOrderedLinkedList<int, int>),
+			//
+			// nameof(SymbolTableWithBinarySearchTree<int, int>),
+			
+			nameof(HashTableWithLinearProbing<int, int>),
+			nameof(HashTableWithLinearProbing2<int, int>),
+			nameof(HashTableWithSeparateChaining<int, int>),
+			nameof(HashTableWithSeparateChaining2<int, int>),
+			nameof(SystemDictionary<int, int>),
+		};
+
+		var experiments 
+			= factories.Select(FactoryToExperiment);
+
+		var times = Timer.Time(experiments, () => keysToAdd, () => keysToFind);
+		
+		foreach (var time in times.Zip(factoryTypeNames))
+		{
+			Console.WriteLine(time.Second + "\t" + time.First);
 		}
 	}
 

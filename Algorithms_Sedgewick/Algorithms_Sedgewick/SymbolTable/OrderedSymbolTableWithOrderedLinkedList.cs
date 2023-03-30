@@ -4,27 +4,30 @@ using static System.Diagnostics.Debug;
 
 public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
+	private sealed class PairComparer : IComparer<KeyValuePair<TKey, TValue>>
+	{
+		private readonly IComparer<TKey> comparer;
+
+		public PairComparer(IComparer<TKey> comparer) => this.comparer = comparer;
+
+		public int Compare(KeyValuePair<TKey, TValue> x, KeyValuePair<TKey, TValue> y) 
+			=> comparer.Compare(x.Key, y.Key);
+	}
+	
 	private readonly IComparer<TKey> comparer;
 	private readonly List.LinkedList<KeyValuePair<TKey, TValue>> list;
 	private readonly IComparer<KeyValuePair<TKey, TValue>> pairComparer;
 
 	public int Count => list.Count;
 
-	public TValue this[TKey key]
-	{
-		get => AsSymbolTable[key];
-		set => AsSymbolTable[key] = value;
-	}
-
 	public IEnumerable<TKey> Keys => list.Select(pair => pair.Key);
 
-	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public OrderedSymbolTableWithOrderedLinkedList(IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
 		list = new List.LinkedList<KeyValuePair<TKey, TValue>>();
-		pairComparer = comparer.Convert<TKey, KeyValuePair<TKey, TValue>>(OrderedSymbolTableWithOrderedArray<TKey, TValue>.PairToKey);
+		pairComparer = new PairComparer(comparer);
 	}
 
 	public void Add(TKey key, TValue value)
@@ -35,7 +38,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 		}
 		else
 		{
-			var insertionNode = list.FindInsertionNode(new KeyValuePair<TKey, TValue>(key, default), pairComparer);
+			var insertionNode = list.FindInsertionNodeUnsafe(new KeyValuePair<TKey, TValue>(key, default), pairComparer);
 				
 			Assert(comparer.LessOrEqual(insertionNode.Item.Key, key));
 				
@@ -57,7 +60,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 		}
 	}
 
-	public bool ContainsKey(TKey key) => TryFirst(key, out _);
+	public bool ContainsKey(TKey key) => TryGetValue(key, out _);
 
 	public int CountRange(TKey start, TKey end)
 		=> KeysRange(start, end).Count();
@@ -69,7 +72,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 			yield break;
 		}
 
-		var startNode = list.FindInsertionNode(KeyToPair(start), pairComparer);
+		var startNode = list.FindInsertionNodeUnsafe(KeyToPair(start), pairComparer);
 		var node = comparer.Equal(startNode.Item.Key, start) ? startNode : startNode.NextNode;
 
 		while (node != null && comparer.Less(node.Item.Key, end))
@@ -95,7 +98,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 			ThrowHelper.ThrowException("All keys are larger than the given key.");
 		}
 		
-		var insertionNode = list.FindInsertionNode(new KeyValuePair<TKey, TValue>(key, default), pairComparer);
+		var insertionNode = list.FindInsertionNodeUnsafe(new KeyValuePair<TKey, TValue>(key, default), pairComparer);
 				
 		Assert(comparer.LessOrEqual(insertionNode.Item.Key, key));
 				
@@ -163,7 +166,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
-		var insertionNode = list.FindInsertionNode(KeyToPair(key), pairComparer);
+		var insertionNode = list.FindInsertionNodeUnsafe(KeyToPair(key), pairComparer);
 
 		while (comparer.Less(insertionNode.Item.Key, key))
 		{
@@ -182,41 +185,26 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 	public bool TryGetValue(TKey key, out TValue value)
 	{
-		bool result = TryFirst(key, out var pair);
-		value = result ? pair.Value : default!;
+		KeyValuePair<TKey, TValue> pair = default;
+		var node = list.First;
+		bool found = false;
 
-		return result;
+		while (node != null)
+		{
+			if (comparer.Equal(key, node.Item.Key))
+			{
+				pair = node.Item;
+				found = true;
+				break;
+			}
+
+			node = node.NextNode;
+		}
+		
+		value = pair.Value; // Will bde default(TValue) if pair is still default;
+
+		return found;
 	}
 
 	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default);
-
-	private bool TryFirst(TKey key, out KeyValuePair<TKey, TValue> pair)
-	{
-		foreach (var listPair in list)
-		{
-			if (comparer.Equal(key, listPair.Key))
-			{
-				pair = listPair;
-				return true;
-			}
-		}
-
-		pair = default;
-		return false;
-	}
-
-	private bool TryFirstNode(TKey key, out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
-	{
-		foreach (var listNode in list.Nodes)
-		{
-			if (comparer.Equal(key, listNode.Item.Key))
-			{
-				node = listNode;
-				return true;
-			}
-		}
-
-		node = default;
-		return false;
-	}
 }

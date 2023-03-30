@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Support;
 
@@ -37,6 +38,45 @@ public static partial class WhiteBoxTesting
 	internal static partial void __Add(string name)
 	{
 		Counter.Add(name);
+	}
+}
+#else
+public static partial class WhiteBoxTesting
+{
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	public static partial void __AddCompareTo()
+	{
+	}
+
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	public static partial void __AddPass()
+	{
+		
+	}
+
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	public static partial void __AddSwap()
+	{
+	}
+
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	public static partial void __ClearWhiteBoxContainers()
+	{
+	}
+
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	public static partial void __WriteCounts()
+	{
+	}
+
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	public static partial void __WriteEvents()
+	{
+	}
+
+	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	internal static partial void __Add(string name)
+	{
 	}
 }
 #endif

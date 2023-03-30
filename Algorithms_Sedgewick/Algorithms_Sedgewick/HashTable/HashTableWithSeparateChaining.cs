@@ -3,33 +3,25 @@
 using System.Diagnostics.CodeAnalysis;
 using SymbolTable;
 
-public class SeparateChainingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
+public class HashTableWithSeparateChaining<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
-	private readonly SymbolTableWithKeyArray<TKey, TValue>[] table;
+	private readonly ISymbolTable<TKey, TValue>[] table;
 	private readonly int tableSize;
 
 	public int Count => table.Select(t => t.Count).Sum();
 
-	public TValue this[TKey key]
-	{
-		get => AsSymbolTable[key];
-		set => AsSymbolTable[key] = value;
-	}
-
 	public IEnumerable<TKey> Keys 
 		=> table.SelectMany(st => st.Keys);
 
-	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
-
-	public SeparateChainingHashTable(IComparer<TKey> comparer)
+	public HashTableWithSeparateChaining(IComparer<TKey> comparer)
 		: this(997, comparer)
 	{
 	}
 
-	public SeparateChainingHashTable(int tableSize, IComparer<TKey> comparer)
+	public HashTableWithSeparateChaining(int tableSize, IComparer<TKey> comparer)
 	{ 
 		this.tableSize = tableSize;
-		table = new SymbolTableWithKeyArray<TKey, TValue>[tableSize];
+		table = new ISymbolTable<TKey, TValue>[tableSize];
 		
 		for (int i = 0; i < tableSize; i++)
 		{
@@ -56,12 +48,26 @@ public class SeparateChainingHashTable<TKey, TValue> : ISymbolTable<TKey, TValue
 		table[GetHash(key)].RemoveKey(key);
 	}
 
-	public bool TryGetValue(TKey key, out TValue value)
+	public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
 	{
 		key.ThrowIfNull();
 		
 		return table[GetHash(key)].TryGetValue(key, out value);
 	}
+	
+#if WHITEBOXTESTING
+	// 3.4.30
+	public double ChiSquare()
+	{
+		double Sqr(double x) => x * x;
+		
+		double fractionCountOfTableSize = Count / (double)tableSize;
+		return table
+			.Select(t => Sqr(t.Count - fractionCountOfTableSize))
+			.Sum()
+			* tableSize / Count;
+	}
+#endif
 
 	private int GetHash([DisallowNull]TKey key)
 	{

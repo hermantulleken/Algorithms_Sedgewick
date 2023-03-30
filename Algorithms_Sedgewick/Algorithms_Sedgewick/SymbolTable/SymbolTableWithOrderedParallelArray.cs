@@ -11,15 +11,7 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	public int Count => arrays.Count;
 
-	public TValue this[TKey key]
-	{
-		get => AsSymbolTable[key];
-		set => AsSymbolTable[key] = value;
-	}
-
 	public IEnumerable<TKey> Keys => arrays.Keys;
-
-	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public SymbolTableWithOrderedParallelArray(IComparer<TKey> comparer)
 	{
