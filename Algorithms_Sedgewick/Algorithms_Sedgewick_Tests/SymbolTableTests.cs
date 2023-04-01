@@ -43,6 +43,9 @@ public class SymbolTableTests
 		
 		new(() => new HashTableWithSeparateChaining2<int, string>(SharedData.IntComparer))
 			{ TestName = "HT with Separate chaining 2" },
+		
+		new(() => new CuckooHashTable<int, string>(SharedData.IntComparer))
+			{ TestName = "Cuckoo HT" },
 	};
 
 	[TestCaseSource(nameof(factories))]

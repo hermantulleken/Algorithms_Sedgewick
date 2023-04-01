@@ -28,6 +28,7 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 		if (tree.TryFindNode(KeyToPair(key), out var node))
 		{
 			node.Item = newPair;
+			return;
 		}
 			
 		tree.Add(newPair);

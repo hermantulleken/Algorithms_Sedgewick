@@ -24,6 +24,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 		if (TryFindKey(key, out int index))
 		{
 			array[index] = new KeyValuePair<TKey, TValue>(key, value);
+			return;
 		}
 			
 		array.InsertSorted(new KeyValuePair<TKey, TValue>(key, value), pairComparer);

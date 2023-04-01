@@ -29,6 +29,7 @@ public interface ISymbolTable<TKey, TValue>
 
 	IEnumerable<TKey> Keys { get; }
 
+	// TODO: Should not allow setting if already set
 	public void Add(TKey key, TValue value);
 
 	bool ContainsKey(TKey key) => TryGetValue(key, out _);

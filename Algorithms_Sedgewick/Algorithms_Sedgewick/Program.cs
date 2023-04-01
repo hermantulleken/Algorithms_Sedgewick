@@ -12,7 +12,11 @@ internal static class Program
 {
 	public static void Main()
 	{
-		TimeSymbolTables();
+		int start = 4;
+		int end = 5;
+
+		// Execute the loop body concurrently for each index in the range
+		Parallel.For(start, end, TimeSymbolTables);
 
 		// imeSearchers();
 
@@ -96,53 +100,37 @@ internal static class Program
 		}
 	}
 	
-	public static void TimeSymbolTables()
+	public static void TimeSymbolTables(int n)
 	{
+		const int keysToFindCount = 10000000;
+		
+		int keysToAddCount = 1 << n;
+		int range = keysToAddCount;
+		
+		// Console.WriteLine(keysToAddCount);
+		
 		var comparer = Comparer<int>.Default;
 		
 		void Experiment(ISymbolTable<int, int> table, int[] keysToAdd, int[] keysToFind)
 		{
 			int count = keysToFind.Count(table.ContainsKey);
-			Console.WriteLine($"count = {count}");
+			// Console.WriteLine($"count = {count} {table.Count} ... {(float)count / keysToFindCount}");
 		}
 
-		const int keysToFindCount = 1000000;
-		const int range = int.MaxValue/100;
-		const int keysToAddCount = 160000;
-		const float x = 0.5f;
-
-		const int sharedKeysCount = (int)(keysToFindCount * x);
-		const int extraKeysToAddCount = keysToAddCount - sharedKeysCount;
-		const int extraKeysToFindCount = keysToFindCount - sharedKeysCount;
-		const int longEnough = 3*(keysToFindCount + keysToAddCount);
-		
-		var sharedKeys = Generator
-			.UniformRandomInt(range)
-			.Take(longEnough)
+		// keys lie between 0 and 2 range
+		var keysToAdd = Generator
+			.UniformRandomInt(2*range)
+			.Take(keysToAddCount)
 			.ToArray();
 		
-		var extraKeysToFind = Generator
-			.UniformRandomInt(range)
+		// keys lie between range and 3 range
+		var keysToFind = Generator
+			.UniformRandomInt(2 * range)
 			.Select(x => x + range)
-			.Take(longEnough)
-			.ToArray();
-
-		var extraKeysToAdd = Generator
-			.UniformRandomInt(range)
-			.Select(x => x + 2 * range)
-			.Take(longEnough)
-			.ToArray();
-
-		int[] keysToFind = sharedKeys
-			.Take(sharedKeysCount)
-			.Concat(extraKeysToFind.Take(extraKeysToFindCount))
+			.Take(keysToFindCount)
 			.ToArray();
 		
-		int[] keysToAdd = sharedKeys
-			.Take(sharedKeysCount)
-			.Concat(extraKeysToAdd.Take(extraKeysToAddCount))
-			.ToArray();
-
+		// Console.WriteLine("----");
 		Func<ISymbolTable<int, int>> AddKeys(Func<ISymbolTable<int, int>> factory)
 		{
 			var table = factory();
@@ -162,45 +150,47 @@ internal static class Program
 		
 		var factories = new Func<ISymbolTable<int, int>>[]
 		{
-			// () => new SymbolTableWithKeyArray<int, int>(comparer),
-			// () => new SymbolTableWithSelfOrderingKeyArray<int, int>(comparer),
-			//
-			// () => new SymbolTableWithParallelArrays<int, int>(comparer),
-			// () => new OrderedSymbolTableWithUnorderedLinkedList<int, int>(comparer),
-			//
-			// () => new OrderedSymbolTableWithOrderedArray<int, int>(comparer),
-			// () => new SymbolTableWithOrderedParallelArray<int, int>(comparer),
-			//
-			// () => new OrderedSymbolTableWithOrderedKeyArray<int, int>(comparer),
-			// () => new OrderedSymbolTableWithOrderedLinkedList<int, int>(comparer),
-			//
-			// () => new SymbolTableWithBinarySearchTree<int, int>(comparer),
+			() => new SymbolTableWithKeyArray<int, int>(comparer),
+			() => new SymbolTableWithSelfOrderingKeyArray<int, int>(comparer),
+			
+			() => new SymbolTableWithParallelArrays<int, int>(comparer),
+			() => new OrderedSymbolTableWithUnorderedLinkedList<int, int>(comparer),
+			
+			() => new OrderedSymbolTableWithOrderedArray<int, int>(comparer),
+			() => new SymbolTableWithOrderedParallelArray<int, int>(comparer),
+			
+			() => new OrderedSymbolTableWithOrderedKeyArray<int, int>(comparer),
+			() => new OrderedSymbolTableWithOrderedLinkedList<int, int>(comparer),
+			
+			() => new SymbolTableWithBinarySearchTree<int, int>(comparer),
 			
 			() => new HashTableWithLinearProbing<int, int>(comparer),
 			() => new HashTableWithLinearProbing2<int, int>(comparer),
 			() => new HashTableWithSeparateChaining<int, int>(320000, comparer),
 			() => new HashTableWithSeparateChaining2<int, int>(320000, comparer),
+			() => new CuckooHashTable<int, int>(comparer),
 			() => new SystemDictionary<int, int>(comparer),
 		}.Select(AddKeys);
 		
 		var factoryTypeNames = new[]
 		{
-			// nameof(SymbolTableWithKeyArray<int, int>),
-			// nameof(SymbolTableWithSelfOrderingKeyArray<int, int>),
-			// nameof(SymbolTableWithParallelArrays<int, int>),
-			// nameof(OrderedSymbolTableWithUnorderedLinkedList<int, int>),
-			// nameof(OrderedSymbolTableWithOrderedArray<int, int>),
-			// nameof(SymbolTableWithOrderedParallelArray<int, int>),
-			//
-			// nameof(OrderedSymbolTableWithOrderedKeyArray<int, int>),
-			// nameof(OrderedSymbolTableWithOrderedLinkedList<int, int>),
-			//
-			// nameof(SymbolTableWithBinarySearchTree<int, int>),
+			nameof(SymbolTableWithKeyArray<int, int>),
+			nameof(SymbolTableWithSelfOrderingKeyArray<int, int>),
+			nameof(SymbolTableWithParallelArrays<int, int>),
+			nameof(OrderedSymbolTableWithUnorderedLinkedList<int, int>),
+			nameof(OrderedSymbolTableWithOrderedArray<int, int>),
+			nameof(SymbolTableWithOrderedParallelArray<int, int>),
+			
+			nameof(OrderedSymbolTableWithOrderedKeyArray<int, int>),
+			nameof(OrderedSymbolTableWithOrderedLinkedList<int, int>),
+			
+			nameof(SymbolTableWithBinarySearchTree<int, int>),
 			
 			nameof(HashTableWithLinearProbing<int, int>),
 			nameof(HashTableWithLinearProbing2<int, int>),
 			nameof(HashTableWithSeparateChaining<int, int>),
 			nameof(HashTableWithSeparateChaining2<int, int>),
+			nameof(CuckooHashTable<int, int>),
 			nameof(SystemDictionary<int, int>),
 		};
 
@@ -208,11 +198,16 @@ internal static class Program
 			= factories.Select(FactoryToExperiment);
 
 		var times = Timer.Time(experiments, () => keysToAdd, () => keysToFind);
+		Console.WriteLine(Formatter.DottedLine);
+		Console.WriteLine(keysToAddCount);
+		Console.WriteLine(Formatter.DottedLine);
 		
 		foreach (var time in times.Zip(factoryTypeNames))
 		{
-			Console.WriteLine(time.Second + "\t" + time.First);
+			Console.WriteLine(time.First);
 		}
+		
+		Console.WriteLine(Formatter.DottedLine);
 	}
 
 	private static void TimeSorts()

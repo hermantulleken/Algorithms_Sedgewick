@@ -40,6 +40,20 @@ public class HashTableWithSeparateChaining2<TKey, TValue> : ISymbolTable<TKey, T
 		
 		tableToAddTo[key] = value;
 	}
+	
+#if WHITEBOXTESTING
+	// 3.4.30
+	public double ChiSquare()
+	{
+		double Sqr(double x) => x * x;
+		
+		double fractionCountOfTableSize = Count / (double)tableSize;
+		return table
+			.Select(t => Sqr(t.Count - fractionCountOfTableSize))
+			.Sum()
+			* tableSize / Count;
+	}
+#endif
 
 	public void RemoveKey(TKey key)
 	{

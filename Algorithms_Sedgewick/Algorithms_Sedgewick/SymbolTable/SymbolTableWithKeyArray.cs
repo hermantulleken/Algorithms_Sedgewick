@@ -8,7 +8,6 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 	// TODO: Should this rather be an equality comparer? 
 	private readonly IComparer<TKey> comparer;
 
-	// TODO: Consider a parallel array structure
 	private readonly ResizeableArray<TKey> keys;
 	private readonly ResizeableArray<TValue> values;
 

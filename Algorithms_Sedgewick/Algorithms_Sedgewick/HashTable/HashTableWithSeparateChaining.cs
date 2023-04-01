@@ -41,19 +41,6 @@ public class HashTableWithSeparateChaining<TKey, TValue> : ISymbolTable<TKey, TV
 		
 		return table[GetHash(key)].ContainsKey(key);
 	}
-
-	public void RemoveKey(TKey key)
-	{
-		key.ThrowIfNull();
-		table[GetHash(key)].RemoveKey(key);
-	}
-
-	public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
-	{
-		key.ThrowIfNull();
-		
-		return table[GetHash(key)].TryGetValue(key, out value);
-	}
 	
 #if WHITEBOXTESTING
 	// 3.4.30
@@ -68,6 +55,19 @@ public class HashTableWithSeparateChaining<TKey, TValue> : ISymbolTable<TKey, TV
 			* tableSize / Count;
 	}
 #endif
+
+	public void RemoveKey(TKey key)
+	{
+		key.ThrowIfNull();
+		table[GetHash(key)].RemoveKey(key);
+	}
+
+	public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
+	{
+		key.ThrowIfNull();
+		
+		return table[GetHash(key)].TryGetValue(key, out value);
+	}
 
 	private int GetHash([DisallowNull]TKey key)
 	{

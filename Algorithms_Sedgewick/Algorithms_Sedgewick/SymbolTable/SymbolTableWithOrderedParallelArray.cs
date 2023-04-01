@@ -24,8 +24,10 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 		if (TryFindKey(key, out int index))
 		{
 			arrays.Set(index, key, value);
+			return;
 		}
-			
+		
+		// TODO Can we use ~index. If not, can we make it so?
 		int insertionIndex = arrays.Keys.FindInsertionIndex(key, comparer);
 		arrays.InsertAt(insertionIndex, key, value);
 	}
