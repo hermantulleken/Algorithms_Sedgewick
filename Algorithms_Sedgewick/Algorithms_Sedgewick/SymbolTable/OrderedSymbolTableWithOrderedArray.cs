@@ -16,7 +16,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 	{
 		array = new ResizeableArray<KeyValuePair<TKey, TValue>>();
 		this.comparer = comparer;
-		pairComparer = comparer.Convert<TKey, KeyValuePair<TKey, TValue>>(PairToKey);
+		pairComparer = new PairComparer<TKey, TValue>(comparer);
 	}
 
 	public void Add(TKey key, TValue value)

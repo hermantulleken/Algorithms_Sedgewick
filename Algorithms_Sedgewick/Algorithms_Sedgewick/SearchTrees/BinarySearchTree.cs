@@ -6,21 +6,32 @@ using Stack;
 using static System.Diagnostics.Debug;
 using static Support.Tools;
 
-public class BinarySearchTree<T> 
+public static class BinarySearchTree
+{
+	public static IBinarySearchTree<KeyValuePair<TKey, TValue>> Plain<TKey, TValue>(IComparer<KeyValuePair<TKey, TValue>> comparer)
+	{
+		return new BinarySearchTree<KeyValuePair<TKey, TValue>>(comparer);
+	}
+	
+	public static IBinarySearchTree<KeyValuePair<TKey, TValue>> RedBlack<TKey, TValue>(IComparer<KeyValuePair<TKey, TValue>> comparer)
+	{
+		return new RedBlackTree<KeyValuePair<TKey, TValue>>(comparer);
+	}
+}
+
+public class BinarySearchTree<T> : IBinarySearchTree<T>
 {
 	[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = DataTransferStruct)]
-	public class Node
+	public class Node : INode<T>
 	{
-		public T Item;
 		public Node? LeftChild = null;
 		public Node? RightChild = null;
-		
-		// ReSharper disable once StaticMemberInGenericType
-		private static int idCounter = 0;
-		
+
 		public int Id { get; }
 
 		public bool IsLeaf => LeftChild == null && RightChild == null;
+
+		public T Item { get; set; }
 
 		public Node(T item, Node? leftChild = null, Node? rightRight = null)
 		{
@@ -30,6 +41,9 @@ public class BinarySearchTree<T>
 			Id = idCounter;
 			idCounter++;
 		}
+
+		// ReSharper disable once StaticMemberInGenericType
+		private static int idCounter = 0;
 	}
 
 	private readonly IComparer<T> comparer;
@@ -188,6 +202,16 @@ public class BinarySearchTree<T>
 
 	public Node? Root => root;
 
+	IEnumerable<INode<T>> IBinarySearchTree<T>.NodesInOrder => NodesInOrder;
+
+	IEnumerable<INode<T>> IBinarySearchTree<T>.NodesLevelOrder => NodesLevelOrder;
+
+	IEnumerable<INode<T>> IBinarySearchTree<T>.NodesPostOrder => NodesPostOrder;
+
+	IEnumerable<INode<T>> IBinarySearchTree<T>.NodesPreOrder => NodesPreOrder;
+
+	INode<T>? IBinarySearchTree<T>.Root => Root;
+
 	public BinarySearchTree(IComparer<T> comparer)
 	{
 		this.comparer = comparer;
@@ -206,31 +230,6 @@ public class BinarySearchTree<T>
 
 		Count++;
 		version++;
-	}
-
-	public void AddToNode(Node node, T item)
-	{
-		while (true)
-		{
-			bool addToLeft = comparer.LessOrEqual(item, node.Item);
-			var childNode = addToLeft ? node.LeftChild : node.RightChild;
-
-			if (childNode == null)
-			{
-				if (addToLeft)
-				{
-					node.LeftChild = new Node(item);
-				}
-				else
-				{
-					node.RightChild = new Node(item);
-				}
-				
-				return;
-			}
-
-			node = childNode;
-		}
 	}
 
 	public int CountNodesSmallerThan(T item)
@@ -309,22 +308,12 @@ public class BinarySearchTree<T>
 			.TakeWhile(node => comparer.LessOrEqual(node.Item, key))
 			.LastOrDefault();
 
-	public Node? NextNodeInOrder(Node node)
-	{
-		var nodeAndNext = NodesInOrder.SkipWhile(n => n != node).Take(2);
-
-		// ReSharper disable PossibleMultipleEnumeration
-		return nodeAndNext.Count() == 2
-			? nodeAndNext.Last() 
-			: null; // The given node is last
-		
-		// ReSharper restore PossibleMultipleEnumeration
-	}
-
 	public IEnumerable<Node> Range(T start, T end) =>
 		NodesInOrder
 			.SkipWhile(node => comparer.Less(node.Item, start))
 			.TakeWhile(node => comparer.Less(node.Item, end));
+
+	IEnumerable<INode<T>> IBinarySearchTree<T>.Range(T start, T end) => Range(start, end);
 
 	public void Remove(T item)
 	{
@@ -333,7 +322,9 @@ public class BinarySearchTree<T>
 		version++;
 	}
 
-	public Node? RemoveMaxNode() => RemoveNode(root, GetMaxNode().Item);
+	// TODO: The null forgive here may be wrong
+	// GetMaxNode throws if IsEmpty, but what if the item is not found?
+	public Node RemoveMaxNode() => RemoveNode(root, GetMaxNode().Item)!;
 
 	public Node RemoveMinNode()
 	{
@@ -371,8 +362,25 @@ public class BinarySearchTree<T>
 			.SkipWhile(node => comparer.Less(node.Item, key))
 			.FirstOrDefault();
 
-	public bool TryFindNode(T item, [MaybeNullWhen(false)] out Node node)
-		=> TryFindAtNode(root, item, out node);
+	public bool TryFindNode(T item, [MaybeNullWhen(false)] out INode<T> node)
+	{
+		bool found = TryFindAtNode(root, item, out var theNode);
+		node = theNode;
+		return found;
+	}
+
+	INode<T> IBinarySearchTree<T>.GetMaxNode() => GetMaxNode();
+
+	INode<T> IBinarySearchTree<T>.GetMinNode() => GetMinNode();
+
+	INode<T>? IBinarySearchTree<T>.LargestKeyLessThanOrEqualTo(T key) => LargestKeyLessThanOrEqualTo(key);
+
+	// What if the item is not found?
+	INode<T> IBinarySearchTree<T>.RemoveMaxNode() => RemoveMaxNode();
+
+	INode<T> IBinarySearchTree<T>.RemoveMinNode() => RemoveMinNode();
+	
+	INode<T>? IBinarySearchTree<T>.SmallestKeyGreaterThanOrEqualTo(T key) => SmallestKeyGreaterThanOrEqualTo(key);
 
 	private static Node GetMaxNode(Node node)
 	{
@@ -394,12 +402,37 @@ public class BinarySearchTree<T>
 		return node;
 	}
 
+	private void AddToNode(Node node, T item)
+	{
+		while (true)
+		{
+			bool addToLeft = comparer.LessOrEqual(item, node.Item);
+			var childNode = addToLeft ? node.LeftChild : node.RightChild;
+
+			if (childNode == null)
+			{
+				if (addToLeft)
+				{
+					node.LeftChild = new Node(item);
+				}
+				else
+				{
+					node.RightChild = new Node(item);
+				}
+				
+				return;
+			}
+
+			node = childNode;
+		}
+	}
+
 	private Node? RemoveNode(Node? rootNode, T item)
 	{
 		// Base case: tree is empty or key is not found
 		if (rootNode == null)
 		{
-			return rootNode;
+			return null;
 		}
 
 		switch (comparer.Compare(item, rootNode.Item))

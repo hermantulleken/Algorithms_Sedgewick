@@ -6,7 +6,7 @@ using SearchTrees;
 
 public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
-	private readonly BinarySearchTree<KeyValuePair<TKey, TValue>> tree;
+	private readonly IBinarySearchTree<KeyValuePair<TKey, TValue>> tree;
 
 	public int Count => tree.Count;
 
@@ -15,11 +15,13 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 	public IEnumerable<TKey> Keys 
 		=> tree.NodesInOrder.Select(NodeToKey);
 
-	public SymbolTableWithBinarySearchTree(IComparer<TKey> comparer)
+	public SymbolTableWithBinarySearchTree(
+		Func<IComparer<KeyValuePair<TKey, TValue>>, IBinarySearchTree<KeyValuePair<TKey, TValue>>> treeFactory, 
+		IComparer<TKey> comparer)
 	{
-		var pairComparer = comparer.Convert<TKey, KeyValuePair<TKey, TValue>>(PairToKey);
+		IComparer<KeyValuePair<TKey, TValue>> pairComparer = new PairComparer<TKey, TValue>(comparer);
 		
-		tree = new BinarySearchTree<KeyValuePair<TKey, TValue>>(pairComparer);
+		tree = treeFactory(pairComparer);
 	}
 
 	public void Add(TKey key, TValue value)
@@ -91,7 +93,5 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 
 	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default!);
 
-	private static TKey NodeToKey(BinarySearchTree<KeyValuePair<TKey, TValue>>.Node node) => node.Item.Key;
-
-	private static TKey PairToKey(KeyValuePair<TKey, TValue> pair) => pair.Key;
+	private static TKey NodeToKey(INode<KeyValuePair<TKey, TValue>> node) => node.Item.Key;
 }

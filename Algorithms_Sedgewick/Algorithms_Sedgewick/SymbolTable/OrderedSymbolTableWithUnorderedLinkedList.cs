@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Algorithms_Sedgewick.SymbolTable;
 
@@ -207,13 +208,23 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedS
 
 	private bool TryFindNodeWithKey(TKey key, [MaybeNullWhen(false)] out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
 	{
-		foreach (var listNode in list.Nodes)
+		if (list.IsEmpty)
 		{
-			if (Equals(listNode.Item.Key, key))
+			node = null;
+			return false;
+		}
+		
+		var current = list.First;
+			
+		while (current != null)
+		{
+			if (Equals(current.Item.Key, key))
 			{
-				node = listNode;
+				node = current;
 				return true;
 			}
+			
+			current = current.NextNode;
 		}
 
 		node = null;

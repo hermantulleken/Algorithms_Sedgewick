@@ -42,16 +42,19 @@ internal static class ThrowHelper
 	internal static KeyNotFoundException KeyNotFoundException<TKey>(TKey key) 
 		=> new(string.Format(KeyNotFound, key));
 
+	[DoesNotReturn]
 	internal static void ThrowCapacityCannotBeNegative(int argument, [CallerArgumentExpression("argument")] string? argumentName = null) 
 		=> throw new ArgumentException(CapacityCannotBeNegative, argumentName);
 
+	[DoesNotReturn]
 	internal static void ThrowCapacityCannotBeNegativeOrZero(int argument, [CallerArgumentExpression("argument")] string? argumentName = null)
 		=> throw new ArgumentException(CapacityCannotBeNegativeOrZero, argumentName);
 
-	[JetBrains.Annotations.ContractAnnotation("=>halt")]
+	[DoesNotReturn]
 	internal static void ThrowContainerEmpty() 
 		=> throw ContainerEmptyException;
 
+	[DoesNotReturn]
 	internal static void ThrowContainerFull() 
 		=> throw ContainerFullException;
 
@@ -75,7 +78,6 @@ internal static class ThrowHelper
 		return list;
 	}
 
-	[JetBrains.Annotations.ContractAnnotation("obj:null => halt")]
 	internal static T ThrowIfNull<T>([NotNull] this T? obj, [CallerArgumentExpression("obj")] string? objArgName = null)
 	{
 		if (obj == null)

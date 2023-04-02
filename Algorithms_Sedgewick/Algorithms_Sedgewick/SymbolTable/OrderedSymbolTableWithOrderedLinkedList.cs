@@ -4,16 +4,6 @@ using static System.Diagnostics.Debug;
 
 public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
-	private sealed class PairComparer : IComparer<KeyValuePair<TKey, TValue>>
-	{
-		private readonly IComparer<TKey> comparer;
-
-		public PairComparer(IComparer<TKey> comparer) => this.comparer = comparer;
-
-		public int Compare(KeyValuePair<TKey, TValue> x, KeyValuePair<TKey, TValue> y) 
-			=> comparer.Compare(x.Key, y.Key);
-	}
-	
 	private readonly IComparer<TKey> comparer;
 	private readonly List.LinkedList<KeyValuePair<TKey, TValue>> list;
 	private readonly IComparer<KeyValuePair<TKey, TValue>> pairComparer;
@@ -22,12 +12,11 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 	public IEnumerable<TKey> Keys => list.Select(pair => pair.Key);
 
-
 	public OrderedSymbolTableWithOrderedLinkedList(IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
 		list = new List.LinkedList<KeyValuePair<TKey, TValue>>();
-		pairComparer = new PairComparer(comparer);
+		pairComparer = new PairComparer<TKey, TValue>(comparer);
 	}
 
 	public void Add(TKey key, TValue value)
@@ -38,7 +27,8 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 		}
 		else
 		{
-			var insertionNode = list.FindInsertionNodeUnsafe(new KeyValuePair<TKey, TValue>(key, default), pairComparer);
+			// Question: Do we really need to create this class here?
+			var insertionNode = list.FindInsertionNodeUnsafe(KeyToPair(key), pairComparer);
 				
 			Assert(comparer.LessOrEqual(insertionNode.Item.Key, key));
 				
@@ -98,7 +88,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 			ThrowHelper.ThrowException("All keys are larger than the given key.");
 		}
 		
-		var insertionNode = list.FindInsertionNodeUnsafe(new KeyValuePair<TKey, TValue>(key, default), pairComparer);
+		var insertionNode = list.FindInsertionNodeUnsafe(KeyToPair(key), pairComparer);
 				
 		Assert(comparer.LessOrEqual(insertionNode.Item.Key, key));
 				
@@ -206,5 +196,5 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 		return found;
 	}
 
-	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default);
+	private static KeyValuePair<TKey, TValue> KeyToPair(TKey key) => new(key, default!);
 }

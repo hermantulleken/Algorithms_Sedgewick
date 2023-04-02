@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Algorithms_Sedgewick.HashTable;
+using Algorithms_Sedgewick.SearchTrees;
 
 namespace Algorithms_Sedgewick_Tests;
 
@@ -14,8 +15,11 @@ public class SymbolTableTests
 		new(() => new OrderedSymbolTableWithOrderedArray<int, string>(SharedData.IntComparer))
 			{ TestName = "OST with Ordered Array" },
 		
-		new(() => new SymbolTableWithBinarySearchTree<int, string>(SharedData.IntComparer))
-			{ TestName = "OST with Binary Search Tree" },
+		new(() => new SymbolTableWithBinarySearchTree<int, string>(BinarySearchTree.Plain, SharedData.IntComparer))
+			{ TestName = "OST with Plain Binary Search Tree" },
+		
+		new(() => new SymbolTableWithBinarySearchTree<int, string>(BinarySearchTree.RedBlack, SharedData.IntComparer))
+			{ TestName = "OST with Red Black Binary Search Tree" },
 		
 		new(() => new OrderedSymbolTableWithOrderedKeyArray<int, string>(SharedData.IntComparer))
 			{ TestName = "OST with Ordered Key Array" },

@@ -1,4 +1,5 @@
 ﻿using Algorithms_Sedgewick.HashTable;
+using Algorithms_Sedgewick.SearchTrees;
 using Algorithms_Sedgewick.SymbolTable;
 using Support;
 
@@ -12,11 +13,16 @@ internal static class Program
 {
 	public static void Main()
 	{
-		int start = 4;
-		int end = 5;
+		int start = 9;
+		int end = 20;
 
 		// Execute the loop body concurrently for each index in the range
-		Parallel.For(start, end, TimeSymbolTables);
+		//Parallel.For(start, end, TimeSymbolTables);
+
+		for (int i = start; i < end; i++)
+		{
+			TimeSymbolTables(i);
+		}
 
 		// imeSearchers();
 
@@ -162,12 +168,13 @@ internal static class Program
 			() => new OrderedSymbolTableWithOrderedKeyArray<int, int>(comparer),
 			() => new OrderedSymbolTableWithOrderedLinkedList<int, int>(comparer),
 			
-			() => new SymbolTableWithBinarySearchTree<int, int>(comparer),
+			() => new SymbolTableWithBinarySearchTree<int, int>(BinarySearchTree.Plain, comparer),
+			() => new SymbolTableWithBinarySearchTree<int, int>(BinarySearchTree.RedBlack, comparer),
 			
 			() => new HashTableWithLinearProbing<int, int>(comparer),
 			() => new HashTableWithLinearProbing2<int, int>(comparer),
-			() => new HashTableWithSeparateChaining<int, int>(320000, comparer),
-			() => new HashTableWithSeparateChaining2<int, int>(320000, comparer),
+			() => new HashTableWithSeparateChaining<int, int>(2 * keysToAddCount, comparer),
+			() => new HashTableWithSeparateChaining2<int, int>(2 * keysToAddCount, comparer),
 			() => new CuckooHashTable<int, int>(comparer),
 			() => new SystemDictionary<int, int>(comparer),
 		}.Select(AddKeys);
@@ -184,7 +191,8 @@ internal static class Program
 			nameof(OrderedSymbolTableWithOrderedKeyArray<int, int>),
 			nameof(OrderedSymbolTableWithOrderedLinkedList<int, int>),
 			
-			nameof(SymbolTableWithBinarySearchTree<int, int>),
+			nameof(SymbolTableWithBinarySearchTree<int, int>) + ".Plain",
+			nameof(SymbolTableWithBinarySearchTree<int, int>) + ".RedBlack",
 			
 			nameof(HashTableWithLinearProbing<int, int>),
 			nameof(HashTableWithLinearProbing2<int, int>),

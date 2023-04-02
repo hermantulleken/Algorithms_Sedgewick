@@ -6,16 +6,19 @@ public static class Timer
 {
 	public static IList<long> Time(IEnumerable<Action> actions)
 	{
-		var times = new List<long>();
-		foreach (var action in actions)
+		var actionList = actions.ToList();
+		var times = new long[actionList.Count];
+
+		Parallel.ForEach(actionList.Select((action, index) => (action, index)), pair =>
 		{
+			var (action, index) = pair;
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 			action.Invoke();
 			stopwatch.Stop();
-			times.Add(stopwatch.ElapsedMilliseconds);
-		}
-		
+			times[index] = stopwatch.ElapsedMilliseconds;
+		});
+
 		return times;
 	}
 
