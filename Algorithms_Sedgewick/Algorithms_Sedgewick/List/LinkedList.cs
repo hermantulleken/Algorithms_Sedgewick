@@ -1,7 +1,8 @@
-﻿namespace Algorithms_Sedgewick.List;
+﻿using static System.Diagnostics.Debug;
+
+namespace Algorithms_Sedgewick.List;
 
 using System.Collections;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using static Support.Tools;
 
@@ -54,12 +55,13 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		get
 		{
 			ValidateNotEmpty();
-			Debug.Assert(front != null);
+			Assert(front != null);
 				
 			return front;
 		}
 	}
 
+	[MemberNotNullWhen(false, nameof(front), nameof(back))]
 	public bool IsEmpty => front == null;
 
 	public bool IsSingleton => front == back;
@@ -69,7 +71,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		get
 		{
 			ValidateNotEmpty();
-			Debug.Assert(back != null);
+			Assert(back != null);
 				
 			return back;
 		}
@@ -101,13 +103,21 @@ public sealed class LinkedList<T> : IEnumerable<T>
 
 	public void Concat(LinkedList<T> other)
 	{
+		other.ThrowIfNull();
+		
+		if (other.IsEmpty)
+		{
+			// Nothing to do
+			return;
+		}
+		
 		var otherFront = other.front;
 		var otherBack = other.back;
 		int otherCount = other.Count;
 		
-		other.Clear(); // Clear so there is no nodes part of both lists
+		other.Clear(); // Clear so there are no nodes part of both lists
 
-		if (back == null)
+		if (IsEmpty)
 		{
 			front = otherFront;
 		}
@@ -125,20 +135,15 @@ public sealed class LinkedList<T> : IEnumerable<T>
 
 	public Node InsertAfter(Node node, T item)
 	{
-		if (node == null)
-		{
-			throw new ArgumentNullException(nameof(node));
-		}
-
+		node.ThrowIfNull();
+		
 		if (node == back)
 		{
 			return InsertAtBack(item);
 		}
-		
-		var newNode = new Node(item)
-		{
-			NextNode = node.NextNode,
-		};
+
+		// newNode has node's NextNode
+		var newNode = node with { Item = item };
 
 		node.NextNode = newNode;
 		
@@ -157,8 +162,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 			
 			return InsertFirstItem(item);
 		}
-
-		Debug.Assert(back != null);
+		
 		back.NextNode = new Node(item);
 		back = back.NextNode;
 		
