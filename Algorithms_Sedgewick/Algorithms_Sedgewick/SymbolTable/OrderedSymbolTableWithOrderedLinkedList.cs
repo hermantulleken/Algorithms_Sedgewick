@@ -21,14 +21,17 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 	public void Add(TKey key, TValue value)
 	{
+		var newItem = new KeyValuePair<TKey, TValue>(key, value);
+		
 		if (list.IsEmpty || comparer.Less(key, list.First.Item.Key))
 		{
-			list.InsertAtFront(new KeyValuePair<TKey, TValue>(key, value));
+			list.InsertAtFront(newItem);
 		}
 		else
 		{
 			// Question: Do we really need to create this class here?
-			var insertionNode = list.FindInsertionNodeUnsafe(KeyToPair(key), pairComparer);
+			
+			var insertionNode = list.FindInsertionNodeUnsafe(newItem, pairComparer);
 				
 			Assert(comparer.LessOrEqual(insertionNode.Item.Key, key));
 				
@@ -36,9 +39,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 			{
 				Assert(comparer.Less(key, insertionNode.NextNode.Item.Key));
 			}
-
-			var newItem = new KeyValuePair<TKey, TValue>(key, value);
-				
+			
 			if (comparer.Equal(key, insertionNode.Item.Key))
 			{
 				insertionNode.Item = newItem;

@@ -22,9 +22,9 @@ public class SystemDictionary<TKey, TValue> : ISymbolTable<TKey, TValue>
 		public int GetHashCode(TKey obj) => obj.GetHashCode();
 	}
 
-	public SystemDictionary(IComparer<TKey> comparer)
+	public SystemDictionary(int initialCapacity, IComparer<TKey> comparer)
 	{
-		dictionary = new Dictionary<TKey, TValue>(new EqualityComparer(comparer));
+		dictionary = new Dictionary<TKey, TValue>(initialCapacity, new EqualityComparer(comparer));
 	}
 
 	public int Count => dictionary.Count;

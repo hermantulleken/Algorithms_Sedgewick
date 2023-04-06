@@ -16,10 +16,15 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 	public IEnumerable<TKey> Keys => keys;
 
 	public SymbolTableWithKeyArray(IComparer<TKey> comparer)
+        : this(ResizeableArray.DefaultCapacity, comparer)
+	{
+	}
+
+	public SymbolTableWithKeyArray(int initialCapacity, IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
-		keys = new ResizeableArray<TKey>();
-		values = new ResizeableArray<TValue>();
+		keys = new ResizeableArray<TKey>(initialCapacity);
+		values = new ResizeableArray<TValue>(initialCapacity);
 	}
 
 	public void Add(TKey key, TValue value)

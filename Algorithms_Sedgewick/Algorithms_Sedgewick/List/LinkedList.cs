@@ -11,37 +11,22 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		Exposing the node class makes the linked list a more useful container to
 		use for implementing other algorithms.
 	*/
-	[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = DataTransferStruct)]
-	public sealed record Node
+	[SuppressMessage(
+		"StyleCop.CSharp.MaintainabilityRules", 
+		"SA1401:Fields should be private", 
+		Justification = DataTransferStruct)]
+	public sealed record Node(T Item)
 	{
-		#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 		private const int RecursiveStringLimit = 100;
-		#endif
+#endif
 		
-		public T Item;
+		public T Item = Item;
 		public Node? NextNode;
 
-		public Node(T item)
-		{
-			Item = item;
-		}
-
-		public IEnumerable<Node> Rest
-		{
-			get
-			{
-				var node = this;
-				while (node.NextNode != null)
-				{
-					yield return node.NextNode;
-					node = node.NextNode;
-				}
-			}
-		}
-		
 		private string? ItemString => Item == null ? "null" : Item.ToString();
 		
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 		public override string ToString() => ToDebugString();
 
 		public string ToDebugString() => ToDebugString(RecursiveStringLimit);

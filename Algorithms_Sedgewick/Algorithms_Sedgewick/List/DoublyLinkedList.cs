@@ -1,5 +1,7 @@
 ﻿using System.Collections;
-using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Support;
+using static System.Diagnostics.Debug;
 
 namespace Algorithms_Sedgewick.List;
 
@@ -9,16 +11,23 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		Exposing the node class makes the linked list a more useful container to
 		use for implementing other algorithms.
 	*/
-	public sealed record Node
+	[SuppressMessage(
+		"StyleCop.CSharp.MaintainabilityRules", 
+		"SA1401:Fields should be private", 
+		Justification = Tools.DataTransferStruct)]
+	public sealed record Node(T Item)
 	{
-		public T Item;
-		public Node NextNode;
-		public Node PreviousNode;
+		public T Item = Item;
+		
+		public Node? NextNode;
+		
+		public Node? PreviousNode;
 	}
 
-	private Node back;
+	private Node? back;
 
-	private Node front;
+	private Node? front;
+	
 	private int version = 0;
 
 	public int Count
@@ -32,12 +41,13 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		get
 		{
 			ValidateNotEmpty();
-			Debug.Assert(front != null);
+			Assert(front != null);
 				
 			return front;
 		}
 	}
 
+	[MemberNotNullWhen(false, nameof(front), nameof(back))]
 	public bool IsEmpty => front == null;
 	
 	public bool IsSingleton => front == back;
@@ -47,7 +57,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		get
 		{
 			ValidateNotEmpty();
-			Debug.Assert(back != null);
+			Assert(back != null);
 				
 			return back;
 		}
@@ -79,15 +89,30 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 
 	public void Concat(DoublyLinkedList<T> other)
 	{
+		if (other.IsEmpty)
+		{
+			// Nothing to do
+			return;
+		}
+		
 		var otherFront = other.front;
 		var otherBack = other.back;
 		int otherCount = other.Count;
 		
 		other.Clear(); // Clear so there is no nodes part of both lists
+
+		if (!IsEmpty)
+		{
+			back.NextNode = otherFront;
+			otherFront.PreviousNode = back;
+			back = otherBack;
+		}
+		else
+		{
+			front = otherFront;
+			back = otherBack;
+		}
 		
-		back.NextNode = otherFront;
-		otherFront.PreviousNode = back;
-		back = otherBack;
 		Count += otherCount;
 		version++;
 	}
@@ -96,10 +121,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 
 	public Node InsertAfter(Node node, T item)
 	{
-		if (node == null)
-		{
-			throw new ArgumentNullException(nameof(node));
-		}
+		node.ThrowIfNull();
 
 		return InsertNode(node, node.NextNode, item);
 	}
@@ -113,7 +135,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 			return InsertFirstItem(item);
 		}
 
-		back.NextNode = new Node{Item = item, PreviousNode = back};
+		back.NextNode = new Node(item) { PreviousNode = back };
 		back = back.NextNode;
 
 		Count++;
@@ -131,10 +153,9 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 			return InsertFirstItem(item);
 		}
 
-		var newHead = new Node
+		var newHead = new Node(item)
 		{
-			Item = item,
-			NextNode = front
+			NextNode = front,
 		};
 
 		front.PreviousNode = newHead;
@@ -158,19 +179,23 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 
 	public Node RemoveAfter(Node node)
 	{
-		if (node == null)
-		{
-			throw new ArgumentNullException(nameof(node));
-		}
+		node.ThrowIfNull();
 
+		if (node.NextNode == null)
+		{
+			throw new Exception("Nothing to remove.");
+		}
+		
 		return RemoveNode(node.NextNode);
 	}
 
 	public Node RemoveBefore(Node node)
 	{
-		if (node == null)
+		node.ThrowIfNull();
+		
+		if (node.PreviousNode == null)
 		{
-			throw new ArgumentNullException(nameof(node));
+			throw new Exception("Nothing to remove.");
 		}
 
 		return RemoveNode(node.PreviousNode);
@@ -193,7 +218,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 			return removedNode;
 		}
 
-		back = back.PreviousNode;
+		back = back.PreviousNode!; // back has a previous node since the list is not empty nor a singleton
 		back.NextNode = null;
 		
 		Count--;
@@ -218,9 +243,8 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 			version++;
 			return removedNode;
 		}
-
 		
-		front = front.NextNode;
+		front = front.NextNode!; // front has a NextNode since the list is not empty or a singleton
 		front.PreviousNode = null;
 		Count--;
 		version++;
@@ -230,10 +254,7 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 
 	public Node RemoveNode(Node nodeToRemove)
 	{
-		if (nodeToRemove == null)
-		{
-			throw new ArgumentNullException(nameof(nodeToRemove));
-		}
+		nodeToRemove.ThrowIfNull();
 		
 		var nodeBeforeRemoval = nodeToRemove.PreviousNode;
 
@@ -277,9 +298,9 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-	private Node InsertFirstItem(T item) => front = back = new Node { Item = item};
+	private Node InsertFirstItem(T item) => front = back = new Node(item);
 
-	private Node InsertNode(Node nodeBeforeInsertion, Node nodeAfterInsertion, T item)
+	private Node InsertNode(Node? nodeBeforeInsertion, Node? nodeAfterInsertion, T item)
 	{
 		if (nodeBeforeInsertion == null)
 		{
@@ -291,9 +312,8 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 			return InsertAtBack(item);
 		}
 
-		var newNode = new Node
+		var newNode = new Node(item)
 		{
-			Item = item,
 			PreviousNode = nodeBeforeInsertion,
 			NextNode = nodeAfterInsertion,
 		};

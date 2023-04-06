@@ -1,8 +1,10 @@
-﻿using System.Collections;
-using System.Reflection;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Support;
+
+using System.Collections;
+using System.Reflection;
+using System.Text;
 
 public static class Formatter
 {
@@ -35,7 +37,7 @@ public static class Formatter
 	// An empty dictionary of functions used to write types.
 	private static readonly IReadOnlyDictionary<Type, Func<object, string>> EmptyTypeWriters = new Dictionary<Type, Func<object, string>>();
 
-	public static string ListVariable(IEnumerable list, string name = null)
+	public static string ListVariable(IEnumerable list, string? name = null)
 	{
 		string printName = string.IsNullOrEmpty(name) ? NameMissing : name;
 		return FormatKeyValue(printName, Pretty(list));
@@ -49,15 +51,16 @@ public static class Formatter
 
 	public static string ObjectDetail<T>(
 		T obj,
-		string name = null,
+		string? name = null,
 		BindingFlags bindingFlags = PublicInstances,
-		IReadOnlyDictionary<Type, Func<object, string>> typeWriters = null)
+		IReadOnlyDictionary<Type, Func<object, string>>? typeWriters = null)
 	{
+		string printName = string.IsNullOrEmpty(name) ? NameMissing : name;
 		typeWriters ??= EmptyTypeWriters;
 		var type = IsNull(obj) ? typeof(T) : obj.GetType();
 		var builder = new StringBuilder();
 
-		builder.AppendLine("{");
+		builder.AppendLine($"{printName} = {{");
 		AppendObjectDetail(builder, obj, bindingFlags, typeWriters, type);
 		builder.AppendLine("}");
 		
@@ -66,9 +69,9 @@ public static class Formatter
 
 	public static string ObjectDetailVariable<T>(
 		T obj,
-		string name = null,
+		string? name = null,
 		BindingFlags bindingFlags = PublicInstances,
-		IReadOnlyDictionary<Type, Func<object, string>> typeWriters = null)
+		IReadOnlyDictionary<Type, Func<object, string>>? typeWriters = null)
 	{
 		typeWriters ??= EmptyTypeWriters;
 
@@ -110,7 +113,7 @@ public static class Formatter
 			default:
 				try
 				{
-					string objAsString = obj.ToString();
+					string objAsString = obj.ToString() ?? NullString;
 					return objAsString;
 				}
 				catch (Exception e)
@@ -187,7 +190,7 @@ public static class Formatter
 
 	private static string FieldToString(FieldInfo fieldInfo, object obj, IReadOnlyDictionary<Type, Func<object, string>> typeWriters)
 	{
-		object value = fieldInfo.GetValue(obj);
+		object? value = fieldInfo.GetValue(obj);
 
 		if (!typeWriters.ContainsKey(fieldInfo.FieldType))
 		{
@@ -218,7 +221,7 @@ public static class Formatter
 
 	// This is a method so we can suppress the warning in one place. 
 	// ReSharper disable once CompareNonConstrainedGenericWithNull
-	private static bool IsNull<T>(T obj) => obj == null;
+	private static bool IsNull<T>([NotNullWhen(false)]T obj) => obj == null;
 
 	private static string PropertyToString(PropertyInfo propertyInfo, object obj, IReadOnlyDictionary<Type, Func<object, string>> typeWriters)
 	{
@@ -244,10 +247,12 @@ public static class Formatter
 		return typeWriters[propertyInfo.PropertyType](value);
 	}
 
-	private static string ToString<T>(T item, bool isSpecial)
+	private static string ToString<T>(T? item, bool isSpecial)
 	{
-		string str = item == null ? NullString : item.ToString();
-			
+		string str = item != null 
+			? (item.ToString() ?? NullString) 
+			: NullString;
+
 		return isSpecial ? str.Wrap(Parentheses) : str;
 	}
 

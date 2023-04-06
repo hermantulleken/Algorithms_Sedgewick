@@ -1,5 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Algorithms_Sedgewick.List;
+using Support;
 using static System.Diagnostics.Debug;
 
 namespace Algorithms_Sedgewick.HashTable;
@@ -47,24 +49,22 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		}
 	}
 
-	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
-
 	public CuckooHashTable(IComparer<TKey> comparer)
-		: this(4, comparer)
+		: this(ResizeableArray.DefaultCapacity, comparer)
 	{
 	}
 
-	public CuckooHashTable(int log2TableSize, IComparer<TKey> comparer)
+	public CuckooHashTable(int tableSize, IComparer<TKey> comparer)
 	{
+		log2TableSize = Math2.IntegerCeilLog2(tableSize);
+		halfTableSize = 1 << (log2TableSize - 1); // Note: Half the size since we use two tables ;)
+		this.comparer = comparer;
+		
 		void InitTable(out ParallelArrays<TKey?, TValue?> table)
 		{
 			table = new ParallelArrays<TKey?, TValue?>(halfTableSize);
 			FillTable(table, halfTableSize);
 		}
-		
-		halfTableSize = 1 << log2TableSize - 1; // Note: Half the size since we use two tables ;)
-		this.log2TableSize = log2TableSize;
-		this.comparer = comparer;
 		
 		InitTable(out table1);
 		InitTable(out table2);
@@ -83,37 +83,38 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		
 		if (Count >= halfTableSize)
 		{
-			Resize(log2TableSize + 1); // Doubles the size
+			Resize(halfTableSize * 4); // Doubles the size
 		}
 
 		index = GetHash1(key);
 
 		for (int i = 0; i < MaxSteps; i++)
 		{
-			if (keyPresent1[index])
-			{
-				KickKeyFromTable(table1, index, ref key, ref value);
-				index = GetHash2(key);
-
-				if (keyPresent2[index])
-				{
-					KickKeyFromTable(table2, index, ref key, ref value);
-					index = GetHash1(key);
-				}
-				else
-				{
-					AddKeyAt(table2, keyPresent2, index, key, value);
-					return;
-				}
-			}
-			else
+			ValidateIndex(index, keyPresent1);
+			
+			if (!keyPresent1[index])
 			{
 				AddKeyAt(table1, keyPresent1, index, key, value);
 				return;
 			}
+
+			KickKeyFromTable(table1, index, ref key, ref value);
+			index = GetHash2(key);
+
+			ValidateIndex(index, keyPresent2);
+			if (keyPresent2[index])
+			{
+				KickKeyFromTable(table2, index, ref key, ref value);
+				index = GetHash1(key);
+			}
+			else
+			{
+				AddKeyAt(table2, keyPresent2, index, key, value);
+				return;
+			}
 		}
 
-		Resize(log2TableSize + 1);
+		Resize(halfTableSize * 4);
 		Add(key, value);
 	}
 
@@ -122,7 +123,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	public void RemoveKey(TKey key)
 	{
 		int index = GetHash1(key);
-		
+		ValidateIndex(index, keyPresent1);
 		if (keyPresent1[index] && comparer.Equal(table1.Keys[index]!, key))
 		{
 			RemoveKeyAt(table1, index);
@@ -130,7 +131,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		else
 		{
 			index = GetHash2(key);
-			
+			ValidateIndex(index, keyPresent2);
 			if (keyPresent2[index] && comparer.Equal(table2.Keys[index]!, key))
 			{
 				RemoveKeyAt(table2, index);
@@ -152,7 +153,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	public bool TryGetIndex(TKey key, [NotNullWhen(true)] out ParallelArrays<TKey?, TValue?>? table, out int index)
 	{
 		index = GetHash1(key);
-
+		ValidateIndex(index, keyPresent1);
 		if (keyPresent1[index] && comparer.Equal(table1.Keys[index]!, key))
 		{
 			table = table1;
@@ -160,7 +161,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		}
 		
 		index = GetHash2(key);
-		
+		ValidateIndex(index, keyPresent2);
 		if (keyPresent2[index] && comparer.Equal(table2.Keys[index]!, key))
 		{
 			table = table2;
@@ -214,11 +215,9 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		value = tmpValue;
 	}
 
-	private void Resize(int newLog2TableSize) // See page 474.
+	private void Resize(int newTableSize) // See page 474.
 	{
-		var resizedTable = new CuckooHashTable<TKey, TValue>(newLog2TableSize, comparer);
-		
-		void Copy(ParallelArrays<TKey?, TValue?> oldTable, bool[] oldKeyPresent)
+		void Copy(ParallelArrays<TKey?, TValue?> oldTable, bool[] oldKeyPresent, CuckooHashTable<TKey, TValue> newTable)
 		{
 			for (int i = 0; i < halfTableSize; i++)
 			{
@@ -230,21 +229,42 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 					Assert(key != null);
 					Assert(value != null);
 					
-					resizedTable.AsSymbolTable[key] = value;
+					newTable.Add(key, value);
 				}
 			}
 		}
-
-		Copy(table1, keyPresent1);
+		
+		Assert(keyPresent1.Length == halfTableSize);
+		Assert(table1.Keys.Count == halfTableSize);
+		Assert(table1.Values.Count == halfTableSize);
+		
+		Assert(keyPresent2.Length == halfTableSize);
+		Assert(table2.Keys.Count == halfTableSize);
+		Assert(table2.Values.Count == halfTableSize);
+		
+		CuckooHashTable<TKey, TValue> resizedTable 
+			= new CuckooHashTable<TKey, TValue>(newTableSize, comparer);
+		
+		// These two need to be before all the assignments happen
+		Copy(table1, keyPresent1, resizedTable);
+		Copy(table2, keyPresent2, resizedTable);
+		
 		table1 = resizedTable.table1;
 		keyPresent1 = resizedTable.keyPresent1;
 		
-		Copy(table2, keyPresent2);
 		table2 = resizedTable.table2;
 		keyPresent2 = resizedTable.keyPresent2;
 		
-		log2TableSize = newLog2TableSize;
+		log2TableSize = resizedTable.log2TableSize;
 		halfTableSize = resizedTable.halfTableSize;
+		
+		Assert(keyPresent1.Length == halfTableSize);
+		Assert(table1.Keys.Count == halfTableSize);
+		Assert(table1.Values.Count == halfTableSize);
+		
+		Assert(keyPresent2.Length == halfTableSize);
+		Assert(table2.Keys.Count == halfTableSize);
+		Assert(table2.Values.Count == halfTableSize);
 	}
 
 	#region Add and Remove
@@ -265,6 +285,12 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	{
 		table.Set(index, default!, default!);
 		Count--;
+	}
+	
+	[Conditional(Diagnostics.DebugDefine)]
+	private void ValidateIndex<T>(int index, IList<T> list)
+	{
+		Assert(index >= 0 && index < list.Count);
 	}
 
 	#endregion

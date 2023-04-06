@@ -23,8 +23,6 @@ public class RedBlackTree<T> : IBinarySearchTree<T>
 		
 		public T Item { get; set; }
 		
-		public int Id { get; }
-
 		public bool IsLeaf => LeftChild == null && RightChild == null;
 
 		public Node(T item, int count, bool isRed = false, Node? leftChild = null, Node? rightRight = null)
@@ -32,17 +30,15 @@ public class RedBlackTree<T> : IBinarySearchTree<T>
 			Item = item;
 			LeftChild = leftChild;
 			RightChild = rightRight;
-			Id = idCounter;
-			idCounter++;
 			this.isRed = isRed;
-			this.Count = count;
+			Count = count;
 		}
 
 		public static int GetCount(Node? node) 
-			=> node == null ? 0 : node.Count;
+			=> node?.Count ?? 0;
 		
 		public static bool IsNotNullAndRed([NotNullWhen(true)] Node? node)
-			=> node != null && node.isRed;
+			=> node is { isRed: true };
 
 		public Node RotateLeft()
 		{

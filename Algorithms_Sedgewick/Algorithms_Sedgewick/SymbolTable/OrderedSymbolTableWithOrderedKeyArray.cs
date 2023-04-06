@@ -15,9 +15,14 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 	public IEnumerable<TKey> Keys => keys;
 
 	public OrderedSymbolTableWithOrderedKeyArray(IComparer<TKey> comparer)
+		: this(ResizeableArray.DefaultCapacity, comparer)
 	{
-		keys = new ResizeableArray<TKey>();
-		values = new ResizeableArray<TValue>();
+	}
+
+	public OrderedSymbolTableWithOrderedKeyArray(int initialCapacity, IComparer<TKey> comparer)
+	{
+		keys = new ResizeableArray<TKey>(initialCapacity);
+		values = new ResizeableArray<TValue>(initialCapacity);
 		this.comparer = comparer;
 	}
 

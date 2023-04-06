@@ -13,7 +13,10 @@ public static class ResizeableArray
 	internal const int MaxCapacity = int.MaxValue;
 }
 
-[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and Simple version goes together.")]
+[SuppressMessage(
+	"StyleCop.CSharp.MaintainabilityRules", 
+	"SA1402:File may only contain a single type", 
+	Justification = "Generic and Simple version goes together.")]
 public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 {
 	/*
@@ -22,7 +25,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 				so the last values are all null. These nulls are never 
 				exposed to the caller.
 			2. T is nullable, and so null values could have been inserted.  
-	 */
+	*/
 	private T[] items;
 
 	private int version;
@@ -43,8 +46,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 		get
 		{
 			ValidateIndex(index);
-
-			return items[index]!;
+			return items[index];
 		}
 
 		set
@@ -105,7 +107,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 
 		return copy;
 	}
-
+	
 	public T DeleteAt(int index = 0)
 	{
 		ValidateIndex(index);
@@ -127,11 +129,11 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 	public IEnumerator<T> GetEnumerator()
 	{
 		int versionAtStartOfIteration = version;
-			
+		
 		for (int i = 0; i < Count; i++)
 		{
 			ValidateVersion(versionAtStartOfIteration);
-				
+			
 			yield return items[i];
 		}
 	}
@@ -152,7 +154,7 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 		version++;
 		Count++;
 	}
-
+	
 	public T RemoveLast()
 	{
 		if (IsEmpty)
@@ -195,9 +197,11 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 			case ResizeableArray.MaxCapacity:
 				ThrowHelper.ThrowTheContainerIsAtMaximumCapacity();
 				break;
+			
 			case < ResizeableArray.HalfMaxCapacity:
 				Capacity *= 2;
 				break;
+			
 			default:
 				Capacity = ResizeableArray.MaxCapacity;
 				break;

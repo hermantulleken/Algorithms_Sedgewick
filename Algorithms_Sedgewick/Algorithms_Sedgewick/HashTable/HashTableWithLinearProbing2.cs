@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using Algorithms_Sedgewick.List;
 using static System.Diagnostics.Debug;
 
 namespace Algorithms_Sedgewick.HashTable;
@@ -34,12 +35,13 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
 	public HashTableWithLinearProbing2(IComparer<TKey> comparer)
-		: this(0, comparer)
+		: this(ResizeableArray.DefaultCapacity, comparer)
 	{
 	}
 
-	public HashTableWithLinearProbing2(int log2TableSize, IComparer<TKey> comparer)
+	public HashTableWithLinearProbing2(int initialCapacity, IComparer<TKey> comparer)
 	{
+		int log2TableSize = Math2.IntegerCeilLog2(initialCapacity);
 		tableSize = HashTableWithLinearProbing.Primes[log2TableSize];
 		this.log2TableSize = log2TableSize;
 		this.comparer = comparer;

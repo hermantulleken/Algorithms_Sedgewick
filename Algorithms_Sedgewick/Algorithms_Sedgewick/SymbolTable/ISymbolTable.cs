@@ -26,7 +26,7 @@ public interface ISymbolTable<TKey, TValue>
 
 		set => Add(key, value);
 	}
-
+	
 	IEnumerable<TKey> Keys { get; }
 
 	// TODO: Should not allow setting if already set

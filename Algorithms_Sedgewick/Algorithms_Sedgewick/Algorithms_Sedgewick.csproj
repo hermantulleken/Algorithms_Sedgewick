@@ -1,16 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Configurations>Debug;Release;WhiteBoxTesting</Configurations>
+        <Configurations>Debug;Release;With Instrumentation</Configurations>
         <Platforms>AnyCPU</Platforms>
         <LangVersion>11</LangVersion>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'WhiteBoxTesting' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'With Instrumentation' ">
       <DefineConstants>TRACE;DEBUG</DefineConstants>
       <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>

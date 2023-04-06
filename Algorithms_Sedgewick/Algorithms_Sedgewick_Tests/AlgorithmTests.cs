@@ -12,9 +12,9 @@ public class AlgorithmTests
 	{
 		public int Age { get; set; }
 		
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
-		public int CompareTo(Person other)
+		public int CompareTo(Person? other)
 		{
 			if (other == null)
 			{
@@ -37,7 +37,7 @@ public class AlgorithmTests
 		
 		public int Y { get; set; }
 
-		public int CompareTo(Point other)
+		public int CompareTo(Point? other)
 		{
 			if (other == null)
 			{
@@ -62,35 +62,35 @@ public class AlgorithmTests
 	private static readonly IEnumerable<TestCaseData> FindTestCases = new List<TestCaseData>
 	{
 		new(Empty, 0) { ExpectedResult = 0, TestName = "Empty" },
-		new(List135, 0) { ExpectedResult = 0, TestName = "Item before first"},
-		new(List135, 6) { ExpectedResult = 3, TestName = "Item after last"},
+		new(List135, 0) { ExpectedResult = 0, TestName = "Item before first" },
+		new(List135, 6) { ExpectedResult = 3, TestName = "Item after last" },
 		
-		new(List135, 2) {ExpectedResult = 1, TestName = "Item after first"},
-		new(List135, 4) {ExpectedResult = 2, TestName = "Item before last"},
+		new(List135, 2) { ExpectedResult = 1, TestName = "Item after first" },
+		new(List135, 4) { ExpectedResult = 2, TestName = "Item before last" },
 		
-		new(List135, 1) {ExpectedResult = 1, TestName = "Item at first"},
-		new(List135, 3) {ExpectedResult = 2, TestName = "Item at second"},
-		new(List135, 5) {ExpectedResult = 3, TestName = "Item at last"},
-		new(List13335, 3) {ExpectedResult = 4, TestName = "Item at second to fourth"},
+		new(List135, 1) { ExpectedResult = 1, TestName = "Item at first" },
+		new(List135, 3) { ExpectedResult = 2, TestName = "Item at second" },
+		new(List135, 5) { ExpectedResult = 3, TestName = "Item at last" },
+		new(List13335, 3) { ExpectedResult = 4, TestName = "Item at second to fourth" },
 	};
 
 	private static readonly IComparer<int> IncComparer = Comparer<int>.Default;
 
-
+#pragma warning disable CS0612
 	[TestCaseSource(nameof(FindTestCases))]
 	public int TestEqualsSecond(IReadonlyRandomAccessList<int> list, int itemToPlace)
 		=> list.FindInsertionIndex(itemToPlace, Comparer<int>.Default);
+#pragma warning restore CS0612
 
 	#region Remove Duplicates
 
 	[Test]
 	public void SortAndRemoveDuplicates_NullArray_ThrowsArgumentNullException()
 	{
-		ResizeableArray<int> array = null;
+		ResizeableArray<int>? array = null;
 
-		Assert.That(() => array.SortAndRemoveDuplicates(), Throws.ArgumentNullException);
+		Assert.That(() => array!.SortAndRemoveDuplicates(), Throws.ArgumentNullException);
 	}
-
 
 	[Test]
 	public void SortAndRemoveDuplicates_SmallArray_SortsElements()
@@ -185,7 +185,7 @@ public class AlgorithmTests
 		{
 			new() { X = 1, Y = 2 },
 			new() { X = 2, Y = 1 },
-			new() { X = 1, Y = 2 }
+			new() { X = 1, Y = 2 },
 		};
 
 		array.SortAndRemoveDuplicates();
@@ -219,7 +219,18 @@ public class AlgorithmTests
 	#endregion
 
 	#region BinaryRankTests
+	[Test, TestCaseSource(nameof(BinaryRankTestCases))]
+	public void TestBinaryRank(ResizeableArray<int> list, int value, int expectedRank)
+	{
+		Assert.That(list.BinaryRank(value, IncComparer), Is.EqualTo(expectedRank));
+	}
 
+	[Test, TestCaseSource(nameof(BinaryRankTestCases))]
+	public void TestSequentialRank(ResizeableArray<int> list, int value, int expectedRank)
+	{
+		Assert.That(list.SequentialRank(value, IncComparer), Is.EqualTo(expectedRank));
+	}
+	
 	private static IEnumerable<TestCaseData> BinaryRankTestCases()
 	{
 		var emptyList = new ResizeableArray<int>();
@@ -249,18 +260,5 @@ public class AlgorithmTests
 			new(generalList, 6, 6),
 		};
 	}
-
-	[Test, TestCaseSource(nameof(BinaryRankTestCases))]
-	public void TestBinaryRank(ResizeableArray<int> list, int value, int expectedRank)
-	{
-		Assert.That(list.BinaryRank(value, IncComparer), Is.EqualTo(expectedRank));
-	}
-
-	[Test, TestCaseSource(nameof(BinaryRankTestCases))]
-	public void TestSequentialRank(ResizeableArray<int> list, int value, int expectedRank)
-	{
-		Assert.That(list.SequentialRank(value, IncComparer), Is.EqualTo(expectedRank));
-	}
-
 	#endregion
 }

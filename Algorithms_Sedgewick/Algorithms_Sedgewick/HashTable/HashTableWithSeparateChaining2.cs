@@ -41,7 +41,7 @@ public class HashTableWithSeparateChaining2<TKey, TValue> : ISymbolTable<TKey, T
 		tableToAddTo[key] = value;
 	}
 	
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 	// 3.4.30
 	public double ChiSquare()
 	{

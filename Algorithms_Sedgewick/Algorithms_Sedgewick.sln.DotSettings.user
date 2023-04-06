@@ -287,4 +287,4 @@ $EXPR$.ThrowIfNull();</s:String>
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
-	<s:String x:Key="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue">RiderNuGetOptionsPage</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue">InspectionSeverity</s:String></wpf:ResourceDictionary>

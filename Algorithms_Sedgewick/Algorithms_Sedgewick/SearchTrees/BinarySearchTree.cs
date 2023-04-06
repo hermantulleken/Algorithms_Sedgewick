@@ -27,8 +27,6 @@ public class BinarySearchTree<T> : IBinarySearchTree<T>
 		public Node? LeftChild = null;
 		public Node? RightChild = null;
 
-		public int Id { get; }
-
 		public bool IsLeaf => LeftChild == null && RightChild == null;
 
 		public T Item { get; set; }
@@ -38,12 +36,7 @@ public class BinarySearchTree<T> : IBinarySearchTree<T>
 			Item = item;
 			LeftChild = leftChild;
 			RightChild = rightRight;
-			Id = idCounter;
-			idCounter++;
 		}
-
-		// ReSharper disable once StaticMemberInGenericType
-		private static int idCounter = 0;
 	}
 
 	private readonly IComparer<T> comparer;

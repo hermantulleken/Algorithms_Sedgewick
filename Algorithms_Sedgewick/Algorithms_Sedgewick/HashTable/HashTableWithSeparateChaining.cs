@@ -42,7 +42,7 @@ public class HashTableWithSeparateChaining<TKey, TValue> : ISymbolTable<TKey, TV
 		return table[GetHash(key)].ContainsKey(key);
 	}
 	
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 	// 3.4.30
 	public double ChiSquare()
 	{

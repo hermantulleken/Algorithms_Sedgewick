@@ -6,12 +6,12 @@
 
         <IsPackable>false</IsPackable>
 
-        <Configurations>Debug;Release;WhiteBoxTesting</Configurations>
+        <Configurations>Debug;Release;With Instrumentation</Configurations>
 
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'WhiteBoxTesting' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'With Instrumentation' ">
       <DefineConstants>TRACE;DEBUG</DefineConstants>
       <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>

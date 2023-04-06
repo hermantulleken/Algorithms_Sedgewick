@@ -371,6 +371,38 @@ public static class Algorithms
 					? sortedList.Count 
 					: Find(0, sortedList.Count);
 	}
+	
+	public static LinkedList<KeyValuePair<TKey, TValue>>.Node FindInsertionNodeUnsafe<TKey, TValue>(
+		this LinkedList<KeyValuePair<TKey, TValue>> sortedList, TKey key, IComparer<TKey> comparer)
+	{
+		Assert(!sortedList.IsEmpty);
+		
+		// Note: if item < firstItem we need to add it at the front
+		// item >= firstItem
+		Assert(comparer.LessOrEqual(sortedList.First.Item.Key, key));
+
+		var node = sortedList.First;
+		
+		while (true)
+		{
+			var next = node.NextNode;
+
+			if (next == null)
+			{
+				return node;
+			}
+
+			if (comparer.Less(key, next.Item.Key))
+			{
+				return node;
+			}
+
+			node = next;
+		}
+
+		Assert(false); // Unreachable
+		return sortedList.Last;
+	}
 
 	public static LinkedList<T>.Node FindInsertionNodeUnsafe<T>(this LinkedList<T> sortedList, T item, IComparer<T> comparer)
 	{

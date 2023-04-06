@@ -12,9 +12,14 @@ public class SymbolTableWithParallelArrays<TKey, TValue> : ISymbolTable<TKey, TV
 	public IEnumerable<TKey> Keys => arrays.Keys;
 
 	public SymbolTableWithParallelArrays(IComparer<TKey> comparer)
+		: this(ResizeableArray.DefaultCapacity, comparer)
+	{
+	}
+
+	public SymbolTableWithParallelArrays(int initialCapacity, IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
-		arrays = new ParallelArrays<TKey, TValue>(100);
+		arrays = new ParallelArrays<TKey, TValue>(initialCapacity);
 	}
 
 	public void Add(TKey key, TValue value)

@@ -218,7 +218,7 @@ public static class Sort
 		
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 		public T[] ToArray() => deque.ToArray();
 		
 		public T[] ToReverseArray() => deque.Reverse().ToArray(); // We reverse the list so the top is at 0
@@ -324,7 +324,7 @@ public static class Sort
 	public static void DequeueSortWithDeque<T>(IDeque<T> deque) 
 		where T : IComparable<T>
 	{
-		#if WHITEBOXTESTING
+		#if WITH_INSTRUMENTATION
 		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 		static void CheckBottomSortedDescending(DequeueSortHelperWithDeque<T> helper, int n)
 			=> Assert(IsSortedDescending(helper.TopN(n).ToRandomAccessList()), nameof(CheckBottomSortedDescending));
@@ -375,19 +375,19 @@ public static class Sort
 		for (int i = 0; i < count; i++)
 		{
 			GetNthSmallestOnTop(i);
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 			CheckBottomSortedDescending(helper, i);
 			CheckTopIsSmallerThanBottom(helper, count - i - 1);
 			CheckTopBiggerThanTop(helper, i + 1);
 #endif
 			NTopToBottom(i + 1);
 		
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 			CheckTopSortedDescending(helper, i + 1);
 #endif
 		}
 		
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 		CheckIsSorted(helper);
 		CheckIsSorted(deque);
 #endif

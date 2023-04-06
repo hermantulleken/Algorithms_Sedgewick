@@ -14,8 +14,13 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 	public IEnumerable<TKey> Keys => arrays.Keys;
 
 	public SymbolTableWithOrderedParallelArray(IComparer<TKey> comparer)
+		: this(ResizeableArray.DefaultCapacity, comparer)
 	{
-		arrays = new ParallelArrays<TKey, TValue>(100);
+	}
+
+	public SymbolTableWithOrderedParallelArray(int initialCapacity, IComparer<TKey> comparer)
+	{
+		arrays = new ParallelArrays<TKey, TValue>(initialCapacity);
 		this.comparer = comparer;
 	}
 

@@ -16,7 +16,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 {
 	private const string EmptyHeapPresentation = "()";
 
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 	private const string InvalidStateMarker = "~";
 #endif
 	
@@ -24,7 +24,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 	
 	private readonly T[] items;
 
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 	private bool isStateValid = true;
 #endif
 
@@ -51,7 +51,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 		}
 	}
 
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 	private bool IsReferenceType { get; }
 #endif
 	
@@ -63,7 +63,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 		items = new T[StartIndex + capacity];
 		Count = 0;
 		
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 		IsReferenceType = typeof(T).IsClass;
 #endif
 	}
@@ -134,7 +134,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 		return min;
 	}
 
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 	public bool SatisfyHeapProperty() => SatisfyHeapProperty(StartIndex);
 	
 	public string ToDebugString() => isStateValid ? ToPrettyString() : InvalidStateMarker + ToPrettyString();
@@ -212,12 +212,12 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 	public void AssertSatisfyHeapProperty()
 	{
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 		Assert(SatisfyHeapProperty());
 #endif
 	}	
 	
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 	private bool SatisfyHeapProperty(int k)
 	{
 		if (IsEmpty || IsSingleton)
@@ -276,7 +276,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 	private void AssertUnusedEmptyIfReferenceType()
 	{
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 		if (IsReferenceType)
 		{
 			AssertUnusedNull();
@@ -287,7 +287,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 	private void SetStateValid()
 	{
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 		isStateValid = true;
 #endif
 	}
@@ -295,7 +295,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
 	private void SetStateInvalid()
 	{
-#if WHITEBOXTESTING
+#if WITH_INSTRUMENTATION
 		isStateValid = false;
 #endif
 	}

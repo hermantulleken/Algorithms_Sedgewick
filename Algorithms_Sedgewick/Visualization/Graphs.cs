@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using Algorithms_Sedgewick.SearchTrees;
 
 namespace Visualization;
@@ -9,27 +10,29 @@ public class Graphs
 	{
 		var builder = new StringBuilder();
 		builder.AppendLine("digraph G {");
-		GenerateDotFileHelper(builder, tree.Root);
+
+		if (!tree.IsEmpty)
+		{
+			GenerateDotFileHelper(builder, tree.Root);
+		}
+		
 		builder.AppendLine("}");
 		return builder.ToString();
 	}
 
 	private void GenerateDotFileHelper<T>(StringBuilder builder, BinarySearchTree<T>.Node? node)
 	{
-		if (node == null)
-		{
-			return;
-		}
+		Debug.Assert(node != null);
 
 		if (node.LeftChild != null)
 		{
-			builder.AppendLine($"{node.Id} -> {node.LeftChild.Id};");
+			builder.AppendLine($"{node.Item} -> {node.LeftChild.Item};");
 			GenerateDotFileHelper(builder, node.LeftChild);
 		}
 
 		if (node.RightChild != null)
 		{
-			builder.AppendLine($"{node.Id} -> {node.RightChild.Id};");
+			builder.AppendLine($"{node.Item} -> {node.RightChild.Item};");
 			GenerateDotFileHelper(builder, node.RightChild);
 		}
 	}

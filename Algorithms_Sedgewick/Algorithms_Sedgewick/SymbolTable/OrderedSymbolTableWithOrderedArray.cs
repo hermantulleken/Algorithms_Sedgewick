@@ -13,8 +13,13 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 	public IEnumerable<TKey> Keys => array.Select(pair => pair.Key);
 
 	public OrderedSymbolTableWithOrderedArray(IComparer<TKey> comparer)
+		: this(ResizeableArray.DefaultCapacity, comparer)
 	{
-		array = new ResizeableArray<KeyValuePair<TKey, TValue>>();
+	}
+
+	public OrderedSymbolTableWithOrderedArray(int initialCapacity, IComparer<TKey> comparer)
+	{
+		array = new ResizeableArray<KeyValuePair<TKey, TValue>>(initialCapacity);
 		this.comparer = comparer;
 		pairComparer = new PairComparer<TKey, TValue>(comparer);
 	}

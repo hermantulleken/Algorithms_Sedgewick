@@ -107,3 +107,9 @@ internal static class ThrowHelper
 	internal static void ThrowTheContainerIsAtMaximumCapacity() 
 		=> throw ContainerIsAtMaximumCapacityException;
 }
+
+class MySet<T> 
+	where T : notnull
+{
+	
+}

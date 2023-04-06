@@ -1,13 +1,11 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
-using static System.Diagnostics.Debug;
+﻿namespace Support;
 
-namespace Support;
+using System.Diagnostics.CodeAnalysis;
+using static System.Diagnostics.Debug;
 
 public static class Diagnostics
 {
-	public const string WhiteBoxTestingDefine = "WHITEBOXTESTING";
+	public const string WhiteBoxTestingDefine = "WITH_INSTRUMENTATION";
 	public const string DebugDefine = "DEBUG";
 	public const string ShrinkDynamicContainers = "SHRINK_DYNAMIC_CONTAINERS";
 
