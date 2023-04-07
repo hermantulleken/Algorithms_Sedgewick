@@ -239,7 +239,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T>
 		return $"({items[k]}, {ToPrettyString(child0)}, {ToPrettyString(child1)}, {ToPrettyString(child2)})";
 	}
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	public void AssertSatisfyHeapProperty()
 	{
 #if WITH_INSTRUMENTATION
@@ -308,7 +308,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T>
 	}
 #endif
 	
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	private void AssertUnusedEmptyIfReferenceType()
 	{
 #if WITH_INSTRUMENTATION
@@ -319,7 +319,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T>
 #endif
 	}
 	
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	private void SetStateValid()
 	{
 #if WITH_INSTRUMENTATION
@@ -327,7 +327,7 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T>
 #endif
 	}
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	private void SetStateInvalid()
 	{
 #if WITH_INSTRUMENTATION

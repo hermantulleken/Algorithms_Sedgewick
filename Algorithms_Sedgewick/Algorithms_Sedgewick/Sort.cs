@@ -325,23 +325,23 @@ public static class Sort
 		where T : IComparable<T>
 	{
 		#if WITH_INSTRUMENTATION
-		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+		[Conditional(Diagnostics.WithInstrumentationDefine)]
 		static void CheckBottomSortedDescending(DequeueSortHelperWithDeque<T> helper, int n)
 			=> Assert(IsSortedDescending(helper.TopN(n).ToRandomAccessList()), nameof(CheckBottomSortedDescending));
 
-		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+		[Conditional(Diagnostics.WithInstrumentationDefine)]
 		static void CheckTopSortedDescending(DequeueSortHelperWithDeque<T> helper, int n)
 			=> Assert(n == 0 || IsSortedDescending(helper.BottomN(n - 1).ToRandomAccessList()), nameof(CheckTopSortedDescending));
 		
-		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+		[Conditional(Diagnostics.WithInstrumentationDefine)]
 		static void CheckTopIsSmallerThanBottom(DequeueSortHelperWithDeque<T> helper, int bottomCount)
 			=> Assert(bottomCount == 0 || helper.BottomN(bottomCount).Min().CompareTo(helper.Top) >= 0, nameof(CheckTopIsSmallerThanBottom));
 
-		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+		[Conditional(Diagnostics.WithInstrumentationDefine)]
 		static void CheckTopBiggerThanTop(DequeueSortHelperWithDeque<T> helper, int topCount)
 			=> Assert(helper.TopN(topCount).Max().CompareTo(helper.Top) >= 0, nameof(CheckTopBiggerThanTop));
 			
-		[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+		[Conditional(Diagnostics.WithInstrumentationDefine)]
 		static void CheckIsSorted(IEnumerable<T> helper)
 			=> Assert(IsSortedAscending(helper.ToArray().ToRandomAccessList()), nameof(CheckIsSorted));
 		#endif

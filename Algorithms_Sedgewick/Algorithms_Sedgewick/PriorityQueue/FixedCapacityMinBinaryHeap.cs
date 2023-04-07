@@ -209,7 +209,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 				: $"({items[k]}, {ToPrettyString(leftChild)}, {ToPrettyString(rightChild)})";
 	}
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	public void AssertSatisfyHeapProperty()
 	{
 #if WITH_INSTRUMENTATION
@@ -273,7 +273,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 	}
 #endif
 	
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	private void AssertUnusedEmptyIfReferenceType()
 	{
 #if WITH_INSTRUMENTATION
@@ -284,7 +284,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 #endif
 	}
 	
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	private void SetStateValid()
 	{
 #if WITH_INSTRUMENTATION
@@ -292,7 +292,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 #endif
 	}
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	private void SetStateInvalid()
 	{
 #if WITH_INSTRUMENTATION

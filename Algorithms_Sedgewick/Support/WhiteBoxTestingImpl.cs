@@ -43,38 +43,38 @@ public static partial class WhiteBoxTesting
 #else
 public static partial class WhiteBoxTesting
 {
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	public static partial void __AddCompareTo()
 	{
 	}
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	public static partial void __AddPass()
 	{
 		
 	}
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	public static partial void __AddSwap()
 	{
 	}
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	public static partial void __ClearWhiteBoxContainers()
 	{
 	}
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	public static partial void __WriteCounts()
 	{
 	}
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	public static partial void __WriteEvents()
 	{
 	}
 
-	[Conditional(Diagnostics.WhiteBoxTestingDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	internal static partial void __Add(string name)
 	{
 	}

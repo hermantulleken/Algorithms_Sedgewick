@@ -5,7 +5,7 @@ using static System.Diagnostics.Debug;
 
 public static class Diagnostics
 {
-	public const string WhiteBoxTestingDefine = "WITH_INSTRUMENTATION";
+	public const string WithInstrumentationDefine = "WITH_INSTRUMENTATION";
 	public const string DebugDefine = "DEBUG";
 	public const string ShrinkDynamicContainers = "SHRINK_DYNAMIC_CONTAINERS";
 

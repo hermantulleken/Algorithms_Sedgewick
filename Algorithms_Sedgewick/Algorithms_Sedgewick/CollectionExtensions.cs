@@ -41,4 +41,7 @@ public static class CollectionExtensions
 
 		return array;
 	}
+
+	public static bool Contains<T>(this ResizeableArray<T> list, IEqualityComparer<T> comparer, T item) 
+		=> list.Any(t => comparer.Equals(t, item));
 }
