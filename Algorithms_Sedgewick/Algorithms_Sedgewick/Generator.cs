@@ -11,6 +11,7 @@ public static class Generator
 		{
 			yield return Random.Next(maxValue);
 		}
+		
 		// ReSharper disable once IteratorNeverReturns
 	}
 }

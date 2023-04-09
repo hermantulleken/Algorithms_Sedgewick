@@ -14,7 +14,7 @@ public interface IGraph
 
 	IEnumerable<int> GetAdjacents(int vertex);
 	
-	public string ToString()
+	public string Pretty()
 	{
 		string @string = VertexCount + " vertices, " + EdgeCount + " edges\n";
 		

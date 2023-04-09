@@ -24,14 +24,13 @@ public static class Formatter
 	                                            BindingFlags.Instance;
 
 	public const string StripedLine = "-----";
+	public const string NullString = "null";
+	
 	private const string Braces = "{{{0}}}";
-
 	private const string Brackets = "[{0}]";
 	private const string CommaSpace = ", ";
 	private const string IndentString = "\t";
 	private const string NameMissing = "???";
-
-	private const string NullString = "null";
 	private const string Parentheses = "({0})";
 
 	// An empty dictionary of functions used to write types.

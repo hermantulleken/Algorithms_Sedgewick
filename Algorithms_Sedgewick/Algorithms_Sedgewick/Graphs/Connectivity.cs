@@ -41,7 +41,7 @@ public class Connectivity
 		return vertexOfComponent[vertex0] == vertexOfComponent[vertex1];
 	}
 
-	public IEnumerable<int>? GetShortestPathBetween(int vertex0, int vertex1)
+	public IEnumerable<int> GetShortestPathBetween(int vertex0, int vertex1)
 	{
 		vertex0.ThrowIfOutOfRange(VertexCount);
 		vertex1.ThrowIfOutOfRange(VertexCount);
@@ -74,108 +74,6 @@ public class Connectivity
 
 			ComponentCount++;
 			vertex++;
-		}
-	}
-}
-
-public class Cycle
-{
-	private readonly bool[] marked;
-
-	public bool HasCycle { get; private set; }
-
-	private Cycle(IGraph graph)
-	{
-		marked = new bool[graph.VertexCount];
-	}
-
-	public static Cycle Build(IGraph graph)
-	{
-		var cycle = new Cycle(graph);
-		cycle.FindCycles(graph);
-		return cycle;
-	}
-
-	private void FindCycles(IGraph graph)
-	{
-		for (int vertex = 0; vertex < graph.VertexCount; vertex++)
-		{
-			if (!marked[vertex])
-			{
-				Search(graph, vertex, vertex);
-			}
-		}
-	}
-	
-	private void Search(IGraph graph, int vertex0, int vertex1)
-	{
-		// TODO: Does this class detect self loops too?
-		// Can it halt early?
-		// Should we not use one SearchPaths or such instead?
-		marked[vertex0] = true;
-		
-		foreach (int adjacent in graph.GetAdjacents(vertex0))
-		{
-			if (!marked[adjacent])
-			{
-				Search(graph, adjacent, vertex0);
-			}
-			else if (adjacent != vertex1)
-			{
-				HasCycle = true;
-			}
-		}
-	}
-}
-
-public class Bipartite
-{
-	public bool IsBipartite { get; private set; } = true;
-
-	private readonly bool[] marked;
-	private readonly bool[] color;
-
-	private Bipartite(IGraph graph)
-	{
-		marked = new bool[graph.VertexCount];
-		color = new bool[graph.VertexCount];
-	}
-
-	public static Bipartite Build(IGraph graph)
-	{
-		graph.ThrowIfNull();
-		
-		var bipartite = new Bipartite(graph);
-		bipartite.ColorGraph(graph);
-		return bipartite;
-	}
-
-	private void ColorGraph(IGraph graph)
-	{
-		for (int vertex = 0; vertex < graph.VertexCount; vertex++)
-		{
-			if (!marked[vertex])
-			{
-				Search(graph, vertex);
-			}
-		}
-	}
-
-	private void Search(IGraph graph, int vertex)
-	{
-		marked[vertex] = true;
-		
-		foreach (int w in graph.GetAdjacents(vertex))
-		{
-			if (!marked[w])
-			{
-				color[w] = !color[vertex];
-				Search(graph, w);
-			}
-			else if (color[w] == color[vertex])
-			{
-				IsBipartite = false;
-			}
 		}
 	}
 }

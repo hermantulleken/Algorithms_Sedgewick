@@ -115,10 +115,12 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 		
 		if (IsEmpty)
 		{
-			items[StartIndex] = default;
+			items[StartIndex] = default!;
 		}
-		else if (Count > 0)
+		else
 		{
+			Assert(Count > 0);
+			
 			MoveAt(Count + 1, StartIndex);
 
 			if (Count > 1)
@@ -151,6 +153,39 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 			: IsSingleton
 				? AddBrackets(ToPrettyString(StartIndex))
 				: ToPrettyString(StartIndex);
+	
+	// This op is O(n) 
+	public T PopMax()
+	{
+		if (IsEmpty)
+		{
+			ThrowHelper.ThrowContainerEmpty();
+		}
+
+		if (IsSingleton)
+		{
+			return PopMin();
+		}
+
+		int firstLeaf = GetFirstLeaveIndex();
+		int maxIndex = items.FindIndexOfMax(firstLeaf, Count + 1);
+
+		var max = items[maxIndex];
+		items[maxIndex] = items[Count];
+		Swim(maxIndex);
+		Count--;
+		items[Count] = default!;
+		
+		return max;
+	}
+	
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
+	public void AssertSatisfyHeapProperty()
+	{
+#if WITH_INSTRUMENTATION
+		Assert(SatisfyHeapProperty());
+#endif
+	}
 
 	private string AddBrackets(string str) => $"({str})";
 
@@ -203,19 +238,11 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 		int rightChild = leftChild + 1;
 
 		return leftChild > Count
-			? items[k].ToString()
+			? items[k].ToString() ?? Formatter.NullString
 			: rightChild > Count
 				? $"({items[k]}, {ToPrettyString(leftChild)}, . )"
 				: $"({items[k]}, {ToPrettyString(leftChild)}, {ToPrettyString(rightChild)})";
 	}
-
-	[Conditional(Diagnostics.WithInstrumentationDefine)]
-	public void AssertSatisfyHeapProperty()
-	{
-#if WITH_INSTRUMENTATION
-		Assert(SatisfyHeapProperty());
-#endif
-	}	
 	
 #if WITH_INSTRUMENTATION
 	private bool SatisfyHeapProperty(int k)
@@ -263,12 +290,13 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 		Assert(IsReferenceType);
 		
 		// ReSharper disable CompareNonConstrainedGenericWithNull
-		Assert(items[0] == null);
+		Assert(items[0] == null!); // Note: first element is not used!
 		
 		for (int i = Count + StartIndex; i < items.Length; i++)
 		{
-			Assert(items[i] == null);
+			Assert(items[i] == null!);
 		}
+		
 		// ReSharper restore CompareNonConstrainedGenericWithNull
 	}
 #endif
@@ -298,31 +326,6 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 #if WITH_INSTRUMENTATION
 		isStateValid = false;
 #endif
-	}
-
-	// This op is O(n) 
-	public T PopMax()
-	{
-		if (IsEmpty)
-		{
-			ThrowHelper.ThrowContainerEmpty();
-		}
-
-		if (IsSingleton)
-		{
-			return PopMin();
-		}
-
-		int firstLeaf = GetFirstLeaveIndex();
-		int maxIndex = items.FindIndexOfMax(firstLeaf, Count + 1);
-
-		var max = items[maxIndex];
-		items[maxIndex] = items[Count];
-		Swim(maxIndex);
-		Count--;
-		items[Count] = default;
-		
-		return max;
 	}
 
 	private int GetFirstLeaveIndex()

@@ -27,6 +27,9 @@ internal static class ThrowHelper
 
 	[Obsolete("Use a one of the other Throw methods that will throw a more specific exception.")]
 	public static void ThrowException(string message) => throw new Exception(message);
+	
+	public static void ThrowInvalidOperationException(string message) 
+		=> throw new InvalidOperationException(message);
 
 	public static void ThrowKeyNotFound<TKey>(TKey key) => throw KeyNotFoundException(key);
 

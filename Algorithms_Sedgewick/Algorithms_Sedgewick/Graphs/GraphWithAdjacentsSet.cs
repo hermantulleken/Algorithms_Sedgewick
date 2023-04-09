@@ -1,5 +1,6 @@
 ﻿namespace Algorithms_Sedgewick.Graphs;
 
+// 4.1.5
 public class GraphWithAdjacentsSet : IGraph
 {
 	private readonly Set.ISet<int>[] adjacents;
@@ -44,12 +45,12 @@ public class GraphWithAdjacentsSet : IGraph
 	{
 		if (this.AreAdjacent(vertex0, vertex1))
 		{
-			ThrowHelper.ThrowException("Vertices are already adjacent.");
+			ThrowHelper.ThrowInvalidOperationException("Vertices are already adjacent.");
 		}
 
 		if (vertex0 == vertex1)
 		{
-			ThrowHelper.ThrowException("Self loops are not supported.");
+			ThrowHelper.ThrowInvalidOperationException("Self loops are not supported.");
 		}
 		
 		adjacents[vertex0].Add(vertex1);

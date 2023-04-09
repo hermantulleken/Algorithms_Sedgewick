@@ -41,9 +41,8 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 
 	public HashTableWithLinearProbing2(int initialCapacity, IComparer<TKey> comparer)
 	{
-		int log2TableSize = Math2.IntegerCeilLog2(initialCapacity);
+		log2TableSize = Math2.IntegerCeilLog2(initialCapacity);
 		tableSize = HashTableWithLinearProbing.Primes[log2TableSize];
-		this.log2TableSize = log2TableSize;
 		this.comparer = comparer;
 		keys = new TKey[tableSize];
 		values = new TValue[tableSize];

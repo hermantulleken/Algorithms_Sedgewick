@@ -2,7 +2,6 @@
 
 public static class GraphExtensions
 {
-	
 	// 4.1.4
 	public static bool AreAdjacent(this IGraph graph, int vertex1, int vertex2)
 		=> graph.GetAdjacents(vertex1).Contains(vertex2);

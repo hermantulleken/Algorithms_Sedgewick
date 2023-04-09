@@ -1,10 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-
-namespace Algorithms_Sedgewick.SymbolTable;
+﻿namespace Algorithms_Sedgewick.SymbolTable;
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using PriorityQueue;
 
 public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>

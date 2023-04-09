@@ -2,23 +2,6 @@
 
 public static class ComparerExtensions
 {
-	private sealed class ConvertComparer<TSource, TTarget> : IComparer<TTarget>
-	{
-		private readonly IComparer<TSource> comparer;
-		private readonly Func<TTarget, TSource> converter;
-
-		/*public ConvertComparer(IComparer<TSource> comparer, Func<TTarget, TSource> converter)
-		{
-			this.comparer = comparer;
-			this.converter = converter;
-		}*/
-
-		public int Compare(TTarget? x, TTarget? y)
-		{
-			return comparer.Compare(converter(x), converter(y));
-		}
-	}
-
 	/*public static IComparer<TTarget> Convert<TSource, TTarget>(this IComparer<TSource> comparer, Func<TTarget, TSource> converter)
 	{
 		comparer.ThrowIfNull();

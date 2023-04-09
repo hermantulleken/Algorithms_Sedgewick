@@ -37,4 +37,12 @@ public interface ISymbolTable<TKey, TValue>
 	void RemoveKey(TKey key);
 
 	bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value);
+
+	public void Clear()
+	{
+		foreach (var key in Keys)
+		{
+			RemoveKey(key);
+		}
+	}
 }
