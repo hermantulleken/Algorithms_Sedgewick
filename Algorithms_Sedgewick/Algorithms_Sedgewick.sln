@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithms_Sedgewick", "Algorithms_Sedgewick\Algorithms_Sedgewick.csproj", "{ECA91B9A-02BF-4D4F-BCBC-0DF8B4BA411D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithms_Sedgewick_Tests", "Algorithms_Sedgewick_Tests\Algorithms_Sedgewick_Tests.csproj", "{05069449-BDB9-410C-AA87-136951174F09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{05069449-BDB9-410C-AA87-136951174F09}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Support", "Support\Support.csproj", "{08110A09-0736-47C5-A005-962C89CB6559}"
 EndProject
