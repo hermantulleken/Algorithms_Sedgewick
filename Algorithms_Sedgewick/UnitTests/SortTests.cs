@@ -4,7 +4,7 @@ using NUnit.Framework;
 using Support;
 using static Algorithms_Sedgewick.Sort;
 
-namespace Algorithms_Sedgewick_Tests;
+namespace UnitTests;
 
 [Parallelizable]
 public class SortTests

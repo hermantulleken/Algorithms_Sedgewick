@@ -2,7 +2,7 @@
 using Algorithms_Sedgewick.HashTable;
 using Algorithms_Sedgewick.SearchTrees;
 
-namespace Algorithms_Sedgewick_Tests;
+namespace UnitTests;
 
 using Algorithms_Sedgewick.SymbolTable;
 using NUnit.Framework;

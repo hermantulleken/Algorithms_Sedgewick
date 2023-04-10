@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Algorithms_Sedgewick_Tests;
+namespace UnitTests;
 
 public class SharedData
 {

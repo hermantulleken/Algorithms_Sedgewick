@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using static Support.Tools;
 
-namespace Algorithms_Sedgewick_Tests;
+namespace UnitTests;
 
 using System.Linq;
 using System.Numerics;

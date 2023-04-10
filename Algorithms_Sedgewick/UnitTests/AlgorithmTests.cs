@@ -1,4 +1,4 @@
-﻿namespace Algorithms_Sedgewick_Tests;
+﻿namespace UnitTests;
 
 using System.Collections.Generic;
 using Algorithms_Sedgewick;

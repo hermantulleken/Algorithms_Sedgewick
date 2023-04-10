@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Algorithms_Sedgewick.List;
 using NUnit.Framework;
 
-namespace Algorithms_Sedgewick_Tests;
+namespace UnitTests;
 
 [TestOf(typeof(ResizeableArray<>))]
 public class ResizeableArrayTest

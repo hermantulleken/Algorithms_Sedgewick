@@ -1,4 +1,4 @@
-﻿namespace Algorithms_Sedgewick_Tests;
+﻿namespace UnitTests;
 
 using Algorithms_Sedgewick.PriorityQueue;
 using NUnit.Framework;
