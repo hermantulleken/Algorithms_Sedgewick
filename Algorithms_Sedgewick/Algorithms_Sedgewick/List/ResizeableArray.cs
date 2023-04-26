@@ -17,7 +17,7 @@ public static class ResizeableArray
 	"StyleCop.CSharp.MaintainabilityRules", 
 	"SA1402:File may only contain a single type", 
 	Justification = "Generic and Simple version goes together.")]
-public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
+public sealed class ResizeableArray<T> : IRandomAccessList<T>
 {
 	/*
 		This array may have null elements when
@@ -40,7 +40,6 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 
 	public bool IsFull => Count == Capacity;
 
-	/// <inheritdoc />
 	public T this[int index]
 	{
 		get
@@ -92,22 +91,6 @@ public sealed class ResizeableArray<T> : IReadonlyRandomAccessList<T>
 		RemoveLastAlreadyChecked(Count);
 	}
 
-	/// <inheritdoc/>
-	public IReadonlyRandomAccessList<T> Copy()
-	{
-		var copy = new ResizeableArray<T>(Capacity)
-		{
-			Count = Count,
-		};
-
-		for (int i = 0; i < Count; i++)
-		{
-			copy[i] = this[i];
-		}
-
-		return copy;
-	}
-	
 	public T DeleteAt(int index = 0)
 	{
 		ValidateIndex(index);

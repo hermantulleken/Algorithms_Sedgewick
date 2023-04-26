@@ -748,7 +748,7 @@ public static class Algorithms
 	/// Shuffles a list so that each permutation is equally likely.
 	/// </summary>
 	// Fisher-Yates shuffle from https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
-	public static void Shuffle<T>(this IReadonlyRandomAccessList<T> list)
+	public static void Shuffle<T>(this IRandomAccessList<T> list)
 	{
 		list.ThrowIfNull();
 		

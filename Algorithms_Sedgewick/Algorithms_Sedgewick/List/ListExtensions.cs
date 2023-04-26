@@ -9,7 +9,7 @@ using Support;
 
 public static class ListExtensions
 {
-	private sealed class ListWrapper<T> : IReadonlyRandomAccessList<T>
+	private sealed class ListWrapper<T> : IRandomAccessList<T>
 	{
 		private readonly IList<T> list;
 
@@ -32,15 +32,19 @@ public static class ListExtensions
 
 		public static implicit operator ListWrapper<T>(List<T> list) => new(list);
 
-		public IReadonlyRandomAccessList<T> Copy() => list.ToList().ToRandomAccessList();
-
 		public IEnumerator<T> GetEnumerator() => list.GetEnumerator();
 
 		public override string ToString() => list.Pretty();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
-
+	
+	/// <summary>
+	/// Creates a new read-only random access list that contains the same elements as this list.
+	/// </summary>
+	/// <returns>A new read-only random access list that contains the same elements as this list.</returns>
+	public static IReadonlyRandomAccessList<T> Copy<T>(this IEnumerable<T> list) => list.ToList().ToRandomAccessList();
+	
 	public static IReadonlyRandomAccessList<T> ToRandomAccessList<T>(this IList<T> list) => new ListWrapper<T>(list);
 
 	// TODO Do we really need this null check here? 
@@ -79,7 +83,7 @@ public static class ListExtensions
 		=> LessOrEqual(list[i], list[j]);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void MoveAt<T>(IReadonlyRandomAccessList<T?> list, int sourceIndex, int destinationIndex)
+	internal static void MoveAt<T>(IRandomAccessList<T?> list, int sourceIndex, int destinationIndex)
 	{
 		list[destinationIndex] = list[sourceIndex];
 		list[sourceIndex] = default;
@@ -93,7 +97,7 @@ public static class ListExtensions
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void SwapAt<T>(IReadonlyRandomAccessList<T> list, int i, int j)
+	internal static void SwapAt<T>(IRandomAccessList<T> list, int i, int j)
 	{
 		__AddSwap();
 		(list[i], list[j]) = (list[j], list[i]);

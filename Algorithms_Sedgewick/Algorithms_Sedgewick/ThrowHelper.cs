@@ -57,6 +57,14 @@ internal static class ThrowHelper
 	internal static void ThrowContainerEmpty() 
 		=> throw ContainerEmptyException;
 
+	internal static void ThrowIfVersionMismatch(this int version, int expectedVersion)
+	{
+		if (version == expectedVersion)
+		{
+			ThrowIteratingOverModifiedContainer();
+		}
+	}
+
 	[DoesNotReturn]
 	internal static void ThrowContainerFull() 
 		=> throw ContainerFullException;
@@ -109,10 +117,10 @@ internal static class ThrowHelper
 
 	internal static void ThrowTheContainerIsAtMaximumCapacity() 
 		=> throw ContainerIsAtMaximumCapacityException;
-}
 
-class MySet<T> 
-	where T : notnull
-{
-	
+	public static void ThrowGapAtBeginning()
+		=> throw new InvalidOperationException("The gap is already at the beginning.");
+
+	public static void ThrowGapAtEnd()
+		=> throw new InvalidOperationException("The gap is already at the end.");
 }

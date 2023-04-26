@@ -9,13 +9,13 @@ namespace UnitTests;
 [Parallelizable]
 public class SortTests
 {
-	private static readonly Action<IReadonlyRandomAccessList<int>, int, int>[] PartialSortFunctions =
+	private static readonly Action<IRandomAccessList<int>, int, int>[] PartialSortFunctions =
 	{
 		InsertionSort,
 	};
 
 	[DatapointSource]
-	private static readonly Action<IReadonlyRandomAccessList<int>>[]SortFunctions = 
+	private static readonly Action<IRandomAccessList<int>>[]SortFunctions = 
 	{
 		SelectionSort,
 		InsertionSort,

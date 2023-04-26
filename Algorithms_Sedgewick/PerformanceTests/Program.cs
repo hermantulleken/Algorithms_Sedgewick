@@ -123,7 +123,7 @@ internal static class Program
 		const int testCount = 1;
 		const int itemCountBase = 1 << 23;
 		
-		Action<IReadonlyRandomAccessList<int>> AndPrintWhiteBoxInfo(Action<IReadonlyRandomAccessList<int>> action) =>
+		Action<IRandomAccessList<int>> AndPrintWhiteBoxInfo(Action<IRandomAccessList<int>> action) =>
 			list =>
 			{
 				action(list);
@@ -139,7 +139,7 @@ internal static class Program
 				.Take(count)
 				.ToResizableArray(count);
 
-			var sorters = new List<Action<IReadonlyRandomAccessList<int>>>
+			var sorters = new List<Action<IRandomAccessList<int>>>
 				{
 					/*Sort.SelectionSort,
 				Sort.InsertionSort,
