@@ -3,6 +3,9 @@ using Algorithms_Sedgewick.List;
 
 namespace Algorithms_Sedgewick.GapBuffer;
 
+/// <summary>
+/// A <see cref="LazyMoveGapBuffer{T}"/> that also provides random access.
+/// </summary>
 public sealed class RandomAccessLazyMoveGapBuffer<T> : LazyMoveGapBuffer<T>, IRandomAccessList<T>
 {
 	private readonly IRandomAccessList<T> bufferAsList;

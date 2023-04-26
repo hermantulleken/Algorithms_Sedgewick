@@ -2,6 +2,10 @@
 
 namespace Algorithms_Sedgewick.GapBuffer;
 
+/// <summary>
+/// A gap buffer implemented with two stacks. 
+/// </summary>
+/// <inheritdoc cref="IGapBuffer{T}"/>
 public class GapBufferWithStacks<T> : IGapBuffer<T>
 {
 	private readonly IStack<T> itemsAfterCursor;
