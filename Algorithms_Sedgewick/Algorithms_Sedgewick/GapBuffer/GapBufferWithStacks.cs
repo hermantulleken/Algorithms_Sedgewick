@@ -1,6 +1,6 @@
-﻿using Algorithms_Sedgewick.Stack;
+﻿namespace Algorithms_Sedgewick.GapBuffer;
 
-namespace Algorithms_Sedgewick.GapBuffer;
+using Stack;
 
 /// <summary>
 /// A gap buffer implemented with two stacks. 

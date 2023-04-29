@@ -43,9 +43,9 @@ public static class ListExtensions
 	/// Creates a new read-only random access list that contains the same elements as this list.
 	/// </summary>
 	/// <returns>A new read-only random access list that contains the same elements as this list.</returns>
-	public static IReadonlyRandomAccessList<T> Copy<T>(this IEnumerable<T> list) => list.ToList().ToRandomAccessList();
+	public static IRandomAccessList<T> Copy<T>(this IEnumerable<T> list) => list.ToList().ToRandomAccessList();
 	
-	public static IReadonlyRandomAccessList<T> ToRandomAccessList<T>(this IList<T> list) => new ListWrapper<T>(list);
+	public static IRandomAccessList<T> ToRandomAccessList<T>(this IList<T> list) => new ListWrapper<T>(list);
 
 	// TODO Do we really need this null check here? 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

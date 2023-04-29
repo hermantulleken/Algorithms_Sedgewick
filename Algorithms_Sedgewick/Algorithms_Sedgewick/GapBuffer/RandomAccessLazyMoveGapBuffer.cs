@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using Algorithms_Sedgewick.List;
+﻿namespace Algorithms_Sedgewick.GapBuffer;
 
-namespace Algorithms_Sedgewick.GapBuffer;
+using System.Collections;
+
+using List;
 
 /// <summary>
 /// A <see cref="LazyMoveGapBuffer{T}"/> that also provides random access.

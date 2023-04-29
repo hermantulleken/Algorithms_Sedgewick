@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Algorithms_Sedgewick;
+using Algorithms_Sedgewick.GapBuffer;
 using Algorithms_Sedgewick.List;
 using Support;
 
@@ -13,6 +14,9 @@ internal static class Program
 	[SuppressMessage("ReSharper", "UnreachableSwitchCaseDueToIntegerAnalysis")]
 	public static void Main()
 	{
+		TestSequenceInterpolation();
+		return;
+		
 		var tests = new SymbolTablePerformanceTests();
 
 		var experimentType = ExperimentType.TimeAddKeys; // Change this to run a different experiment
@@ -38,6 +42,20 @@ internal static class Program
 			default:
 				Console.WriteLine("Invalid experiment type");
 				break;
+		}
+	}
+
+	private static void TestSequenceInterpolation()
+	{
+		var buffer = new GapBufferWithArray<int>(100);
+		buffer.AddBefore(0);
+		buffer.AddBefore(1);
+
+		Console.WriteLine(buffer.Pretty());
+
+		foreach (var sequence in buffer.Interpolate((int x, int y) => x ^ y, 10))
+		{
+			Console.WriteLine(sequence.Pretty());
 		}
 	}
 

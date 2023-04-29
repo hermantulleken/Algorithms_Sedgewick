@@ -114,10 +114,10 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 	{
 		void MoveLeft()
 		{
-			items[rightBlockStartIndex] = items[gapStartIndex];
-			items[gapStartIndex] = default!;
 			gapStartIndex--;
 			rightBlockStartIndex--;
+			items[rightBlockStartIndex] = items[gapStartIndex];
+			items[gapStartIndex] = default!;
 		}
 
 		void MoveRight()
@@ -128,9 +128,11 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 			rightBlockStartIndex++;
 		}
 
+		newCursorIndex.ThrowIfOutOfRange(0, Count + 1);
+
 		int gapDifference = gapStartIndex - newCursorIndex;
 
-		if (gapStartIndex > 0)
+		if (gapDifference > 0)
 		{
 			for (int i = 0; i < gapDifference; i++)
 			{

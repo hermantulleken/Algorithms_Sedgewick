@@ -59,7 +59,7 @@ internal static class ThrowHelper
 
 	internal static void ThrowIfVersionMismatch(this int version, int expectedVersion)
 	{
-		if (version == expectedVersion)
+		if (version != expectedVersion)
 		{
 			ThrowIteratingOverModifiedContainer();
 		}

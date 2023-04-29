@@ -1,4 +1,6 @@
 ﻿using Algorithms_Sedgewick.Buffer;
+using Algorithms_Sedgewick.GapBuffer;
+using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.Stack;
 
 namespace Algorithms_Sedgewick;
@@ -129,4 +131,64 @@ public static class TestAlgorithms
 			: (b < a) ^ (b < c) 
 				? b 
 				: c;
+	
+	public static void ApplyInterpolationRule<T, TBuffer>(this TBuffer gapBuffer, Func<T, T, T> ruleFunc)
+		where TBuffer : IGapBuffer<T>, IRandomAccessList<T>
+	{
+		int index = 1;
+
+		while (index < ((IRandomAccessList<T>)gapBuffer).Count)
+		{
+			var interpolationValue = ruleFunc(gapBuffer[index - 1], gapBuffer[index]);
+			gapBuffer.MoveCursor(index);
+			gapBuffer.AddBefore(interpolationValue);
+
+			index += 2;
+		}
+	}
+
+	public static void ApplyInterpolationRule<T, TBuffer>(this TBuffer gapBuffer, Func<T, T, T> ruleFunc, int times)
+		where TBuffer : IGapBuffer<T>, IRandomAccessList<T>
+	{
+		for (int i = 0; i < times; i++)
+		{
+			gapBuffer.ApplyInterpolationRule(ruleFunc);
+		}
+	}
+
+	public static IEnumerable<IEnumerable<T>> Interpolate<T, TBuffer>(this TBuffer gapBuffer, Func<T, T, T> ruleFunc, int times)
+		where TBuffer : IGapBuffer<T>, IRandomAccessList<T>
+	{
+		for (int i = 0; i < times; i++)
+		{
+			gapBuffer.ApplyInterpolationRule(ruleFunc);
+			
+			yield return gapBuffer.ToArray();
+		}
+	}
+
+	public static void Substituate<T, TBuffer>(this TBuffer buffer, (T input, T[] output)[] rules)
+		where TBuffer : IGapBuffer<T>, IRandomAccessList<T>
+	{
+		
+		buffer.MoveCursor(0);
+
+		while (buffer.CursorIndex < buffer.Count)
+		{
+			foreach (var rule in rules)
+			{
+				if (buffer[buffer.CursorIndex] == rule.input)
+				{
+					buffer.RemoveAfter();
+
+					foreach (var letter in rule.output.Length)
+					{
+						buffer.AddBefore(letter);
+					}
+				}
+			}
+		
+			buffer.MoveCursor(buffer.CursorIndex + 1);
+		}
+	}
 }

@@ -43,18 +43,18 @@ public class SortTests
 		list => QuickSort(list, QuickSortConfig.Vanilla with {PivotSelection = QuickSortConfig.PivotSelectionAlgorithm.MedianOfThreeFirst}),
 	};
 
-	private static readonly IReadonlyRandomAccessList<int> TestArray = new []{5, 9, 1, 23, 6, 2, 6, 18, 2, 3, 7, 6, 11, 71, 8, 4,  19}.ToRandomAccessList();
+	private static readonly IReadonlyRandomAccessList<int> TestArray = new[] { 5, 9, 1, 23, 6, 2, 6, 18, 2, 3, 7, 6, 11, 71, 8, 4, 19 }.ToRandomAccessList();
 
 	[DatapointSource] 
 	private IReadonlyRandomAccessList<int>[] lists = 
 	{
-		new [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }.ToRandomAccessList(),
-		new [] {9, 8, 7, 6, 5, 4, 3, 2, 1 }.ToRandomAccessList(),
-		TestArray
+		new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }.ToRandomAccessList(),
+		new[] { 9, 8, 7, 6, 5, 4, 3, 2, 1 }.ToRandomAccessList(),
+		TestArray,
 	};
 
 	[TestCaseSource(nameof(SortFunctions))]
-	public void SortCornerCasesTest(Action<IReadonlyRandomAccessList<int>> sortFunction)
+	public void SortCornerCasesTest(Action<IRandomAccessList<int>> sortFunction)
 	{
 		var list1 = Array.Empty<int>().ToRandomAccessList();
 		sortFunction(list1);
@@ -67,17 +67,17 @@ public class SortTests
 	}
 
 	[Theory]
-	public void SortFunctionTest(IReadonlyRandomAccessList<int> input, Action<IReadonlyRandomAccessList<int>> sortFunction)
+	public void SortFunctionTest(IReadonlyRandomAccessList<int> input, Action<IRandomAccessList<int>> sortFunction)
 	{
 		int[] expectedOutput = input.OrderBy(x => x).ToArray();
-
-		sortFunction(input);
-		Assert.That(input, Is.EqualTo(expectedOutput));
-		Console.WriteLine(input.Pretty());
+		var copy = input.Copy(); // Do not sort the original
+		sortFunction(copy);
+		Assert.That(copy, Is.EqualTo(expectedOutput));
+		Console.WriteLine(copy.Pretty());
 	}
 
 	[TestCaseSource(nameof(SortFunctions))]
-	public void SortTest(Action<IReadonlyRandomAccessList<int>> sortFunction)
+	public void SortTest(Action<IRandomAccessList<int>> sortFunction)
 	{
 		var list = TestArray.Copy();
 		sortFunction(list);
@@ -86,7 +86,7 @@ public class SortTests
 	}
 
 	[TestCaseSource(nameof(PartialSortFunctions))]
-	public void TestPartialSort(Action<IReadonlyRandomAccessList<int>, int, int> sortFunction)
+	public void TestPartialSort(Action<IRandomAccessList<int>, int, int> sortFunction)
 	{
 		int startIndex = 4;
 		int endIndex = 7;
