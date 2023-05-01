@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Algorithms_Sedgewick;
 using Algorithms_Sedgewick.GapBuffer;
 using Algorithms_Sedgewick.List;
@@ -14,7 +15,8 @@ internal static class Program
 	[SuppressMessage("ReSharper", "UnreachableSwitchCaseDueToIntegerAnalysis")]
 	public static void Main()
 	{
-		TestSequenceInterpolation();
+		TestSequenceInterpolation1();
+		TestSequenceInterpolation2();
 		return;
 		
 		var tests = new SymbolTablePerformanceTests();
@@ -45,18 +47,110 @@ internal static class Program
 		}
 	}
 
-	private static void TestSequenceInterpolation()
+	
+
+	/*public static string GenerateSvgFromHexCoordinates(List<(int, int)> coordinates, float size, float strokeWidth = 1, float padding = 10)
 	{
-		var buffer = new GapBufferWithArray<int>(100);
-		buffer.AddBefore(0);
-		buffer.AddBefore(1);
+		float sqrt3 = (float)Math.Sqrt(3);
 
-		Console.WriteLine(buffer.Pretty());
-
-		foreach (var sequence in buffer.Interpolate((int x, int y) => x ^ y, 10))
+		Func<(int, int), (float, float)> axialToPixel = (coord) =>
 		{
-			Console.WriteLine(sequence.Pretty());
+			float x = size * (3.0f / 2.0f * coord.Item1);
+			float y = size * (sqrt3 * (coord.Item1 * 0.5f + coord.Item2));
+			return (x, y);
+		};
+
+		List<(float, float)> pixelCoordinates = coordinates.Select(axialToPixel).ToList();
+
+		float minX = pixelCoordinates.Min(coord => coord.Item1);
+		float maxX = pixelCoordinates.Max(coord => coord.Item1);
+		float minY = pixelCoordinates.Min(coord => coord.Item2);
+		float maxY = pixelCoordinates.Max(coord => coord.Item2);
+
+		int width = (int)Math.Ceiling(maxX - minX + 2 * padding);
+		int height = (int)Math.Ceiling(maxY - minY + 2 * padding);
+
+		StringBuilder svgBuilder = new StringBuilder();
+
+		svgBuilder.AppendLine($"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{width}\" height=\"{height}\" viewBox=\"0 0 {width} {height}\">");
+		svgBuilder.AppendLine($"<path d=\"M{pixelCoordinates[0].Item1 - minX + padding},{height - (pixelCoordinates[0].Item2 - minY + padding)}");
+
+		for (int i = 1; i < pixelCoordinates.Count; i++)
+		{
+			svgBuilder.Append($" L{pixelCoordinates[i].Item1 - minX + padding},{height - (pixelCoordinates[i].Item2 - minY + padding)}");
 		}
+
+		svgBuilder.AppendLine($"\" stroke=\"black\" fill=\"none\" stroke-width=\"{strokeWidth}\" />");
+		svgBuilder.AppendLine("</svg>");
+
+		return svgBuilder.ToString();
+	}
+
+	
+	public static string GenerateSvgFromCoordinates(List<(int, int)> coordinates, float strokeWidth = 1, float padding = 10)
+	{
+		int minX = coordinates.Min(coord => coord.Item1);
+		int maxX = coordinates.Max(coord => coord.Item1);
+		int minY = coordinates.Min(coord => coord.Item2);
+		int maxY = coordinates.Max(coord => coord.Item2);
+
+		float width = maxX - minX + padding;
+		float height = maxY - minY + padding;
+
+		StringBuilder svgBuilder = new StringBuilder();
+
+		svgBuilder.AppendLine($"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{width}\" height=\"{height}\" viewBox=\"0 0 {width} {height}\">");
+		svgBuilder.AppendLine($"<path d=\"M{coordinates[0].Item1 - minX + padding/2},{height - (coordinates[0].Item2 - minY + padding/2)}");
+
+		for (int i = 1; i < coordinates.Count; i++)
+		{
+			svgBuilder.Append($" L{coordinates[i].Item1 - minX + padding/2},{height - (coordinates[i].Item2 - minY + padding/2)}");
+		}
+
+		svgBuilder.AppendLine($"\" stroke=\"black\" fill=\"none\" stroke-width=\"{strokeWidth}\" />");
+		svgBuilder.AppendLine("</svg>");
+
+		return svgBuilder.ToString();
+	}*/
+	
+	public static string GenerateSvgFromFloatCoordinates(List<(float, float)> pixelCoordinates, float strokeWidth = 1, float padding = 10)
+	{
+		float minX = pixelCoordinates.Min(coord => coord.Item1);
+		float maxX = pixelCoordinates.Max(coord => coord.Item1);
+		float minY = pixelCoordinates.Min(coord => coord.Item2);
+		float maxY = pixelCoordinates.Max(coord => coord.Item2);
+
+		float width = maxX - minX + 2 * padding;
+		float height = maxY - minY + 2 * padding;
+
+		StringBuilder svgBuilder = new StringBuilder();
+
+		svgBuilder.AppendLine($"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{width}\" height=\"{height}\" viewBox=\"0 0 {width} {height}\">");
+		svgBuilder.AppendLine($"<path d=\"M{pixelCoordinates[0].Item1 - minX + padding},{height - (pixelCoordinates[0].Item2 - minY + padding)}");
+
+		for (int i = 1; i < pixelCoordinates.Count; i++)
+		{
+			svgBuilder.Append($" L{pixelCoordinates[i].Item1 - minX + padding},{height - (pixelCoordinates[i].Item2 - minY + padding)}");
+		}
+
+		svgBuilder.AppendLine($"\" stroke=\"black\" fill=\"none\" stroke-width=\"{strokeWidth}\" />");
+		svgBuilder.AppendLine("</svg>");
+
+		return svgBuilder.ToString();
+	}
+	
+	private static void TestSequenceInterpolation1()
+	{
+		var floatCoordinates = LSystem2D<char>.Hilbert.GenerateCoordinates(4);
+		string svg = GenerateSvgFromFloatCoordinates(floatCoordinates, 0.1f, 0.1f);
+		File.WriteAllText("curve4.svg", svg);
+	}
+	
+	private static void TestSequenceInterpolation2()
+	{
+		var floatCoordinates = LSystem2D<char>.Gosper.GenerateCoordinates(4);
+		string svg = GenerateSvgFromFloatCoordinates(floatCoordinates, 0.1f, 0.1f);
+		File.WriteAllText("curve6.svg", svg);
 	}
 
 	public static void TimeSearchers()

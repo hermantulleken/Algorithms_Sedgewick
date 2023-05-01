@@ -167,28 +167,66 @@ public static class TestAlgorithms
 		}
 	}
 
-	public static void Substituate<T, TBuffer>(this TBuffer buffer, (T input, T[] output)[] rules)
+	public static void Substitute<T, TBuffer>(this TBuffer buffer, (T input, T[] output)[] rules)
 		where TBuffer : IGapBuffer<T>, IRandomAccessList<T>
 	{
-		
 		buffer.MoveCursor(0);
 
-		while (buffer.CursorIndex < buffer.Count)
+		while (true)
 		{
+			bool didRewrite = false;
 			foreach (var rule in rules)
 			{
-				if (buffer[buffer.CursorIndex] == rule.input)
-				{
-					buffer.RemoveAfter();
 
-					foreach (var letter in rule.output.Length)
-					{
-						buffer.AddBefore(letter);
-					}
+				if (!Equals(buffer[buffer.CursorIndex], rule.input))
+                {
+					continue;
+                }
+
+				buffer.RemoveAfter();
+
+				foreach (var letter in rule.output)
+				{
+					buffer.AddBefore(letter);
 				}
+				
+				didRewrite = true;
+				break; // Only apply one rule
 			}
 		
-			buffer.MoveCursor(buffer.CursorIndex + 1);
+			if (buffer.CursorIndex >= ((IGapBuffer<T>)buffer).Count - 1)
+			{
+				break;
+			}
+
+			if (!didRewrite)
+			{
+				buffer.MoveCursor(buffer.CursorIndex + 1);
+			}
 		}
+	}
+
+	public static IEnumerable<T> Substitute<T>(this T[] axiom, (T input, T[] output)[] rules, int iterationCount)
+	{
+		GapBufferWithArray<T> CreateBuffer()
+		{
+			var gapBufferWithArray = new GapBufferWithArray<T>(10000);
+
+			foreach (var item in axiom)
+			{
+				gapBufferWithArray.AddBefore(item);
+			}
+
+			return gapBufferWithArray;
+		}
+
+		var buffer = CreateBuffer();
+		
+		for (int i = 0; i < iterationCount; i++)
+		{
+			buffer.Substitute(rules);
+		}
+
+		return buffer;
 	}
 }

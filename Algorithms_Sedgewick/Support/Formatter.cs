@@ -122,6 +122,12 @@ public static class Formatter
 		}
 	}
 
+    /// <summary>
+    /// Converts lists to strings recursively (and other objects using their <see cref="object.ToString"/> methods.)
+    /// </summary>
+	public static string PrettyString(this IEnumerable<char> charList) 
+		=> string.Join(string.Empty, charList);
+
 	public static string Pretty<T>(IEnumerable<T> list, int[] specialIndexes) 
 		where T : class
 	{

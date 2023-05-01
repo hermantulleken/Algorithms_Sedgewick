@@ -102,7 +102,7 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 			yield return items[i];
 		}
 
-		for (int i = rightBlockStartIndex; i < Count; i++)
+		for (int i = rightBlockStartIndex; i < items.Length; i++)
 		{
 			version.ThrowIfVersionMismatch(versionAtStartOfIteration);
 			
