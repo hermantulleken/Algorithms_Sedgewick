@@ -193,8 +193,8 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 		{
 			newItems[i + Capacity] = items[i];
 		}
-
-		items = newItems;
+		
 		rightBlockStartIndex += Capacity;
+		items = newItems;
 	}
 }

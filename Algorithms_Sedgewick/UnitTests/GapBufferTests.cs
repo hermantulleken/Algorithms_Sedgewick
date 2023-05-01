@@ -76,6 +76,24 @@ public class GapBufferTests
 		gapBuffer.MoveCursor(3);
 		Assert.That(gapBuffer.CursorIndex, Is.EqualTo(3));
 	}
+	
+	[Test]
+	public void AddBefore_GapBufferShouldGrowWhenFull()
+	{
+		// Arrange
+		var gapBuffer = new GapBufferWithArray<int>(2); // Initial capacity of 2
+		gapBuffer.AddBefore(1);
+		gapBuffer.AddBefore(2);
+
+		// Act
+		gapBuffer.AddBefore(3); // This will trigger the Grow() method
+
+		// Assert
+		Assert.That(gapBuffer.Count, Is.EqualTo(3));
+		Assert.That(gapBuffer[0], Is.EqualTo(1));
+		Assert.That(gapBuffer[1], Is.EqualTo(2));
+		Assert.That(gapBuffer[2], Is.EqualTo(3));
+	}
 
 	private static IEnumerable<TestCaseData> GapBufferImplementations()
 	{
