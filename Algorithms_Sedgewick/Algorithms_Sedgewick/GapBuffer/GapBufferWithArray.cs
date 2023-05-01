@@ -1,4 +1,6 @@
-﻿namespace Algorithms_Sedgewick.GapBuffer;
+﻿using System.Diagnostics;
+
+namespace Algorithms_Sedgewick.GapBuffer;
 
 using System.Collections;
 using List;
@@ -155,7 +157,7 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 			ThrowHelper.ThrowGapAtEnd();
 		}
 		
-		T result = items[rightBlockStartIndex];
+		var result = items[rightBlockStartIndex];
 		items[rightBlockStartIndex] = default!;
 		rightBlockStartIndex++;
 		version++;
@@ -195,6 +197,6 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 		}
 		
 		rightBlockStartIndex += Capacity;
-		items = newItems;
+		items = newItems; // This also changes the capacity
 	}
 }

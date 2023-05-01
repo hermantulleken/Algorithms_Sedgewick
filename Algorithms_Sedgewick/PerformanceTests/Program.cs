@@ -3,6 +3,7 @@ using System.Text;
 using Algorithms_Sedgewick;
 using Algorithms_Sedgewick.GapBuffer;
 using Algorithms_Sedgewick.List;
+using Algorithms_Sedgewick.LSystem;
 using Support;
 
 namespace PerformanceTests;
@@ -141,16 +142,18 @@ internal static class Program
 	
 	private static void TestSequenceInterpolation1()
 	{
-		var floatCoordinates = LSystem2D.Hilbert.GenerateCoordinates(4);
+		const int iterationCount = 4;
+		var floatCoordinates = LSystem2D.Hilbert.GenerateCoordinates(iterationCount);
 		string svg = GenerateSvgFromFloatCoordinates(floatCoordinates, 0.1f, 0.1f);
-		File.WriteAllText("curve4.svg", svg);
+		File.WriteAllText("hilbert_{iterationCount}.svg", svg);
 	}
 	
 	private static void TestSequenceInterpolation2()
 	{
-		var floatCoordinates = LSystem2D.Gosper.GenerateCoordinates(4);
+		const int iterationCount = 4;
+		var floatCoordinates = LSystem2D.Gosper.GenerateCoordinates(iterationCount);
 		string svg = GenerateSvgFromFloatCoordinates(floatCoordinates, 0.1f, 0.1f);
-		File.WriteAllText("curve6.svg", svg);
+		File.WriteAllText($"curve_{iterationCount}.svg", svg);
 	}
 
 	public static void TimeSearchers()
