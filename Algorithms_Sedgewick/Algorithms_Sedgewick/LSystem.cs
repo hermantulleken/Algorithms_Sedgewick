@@ -13,30 +13,17 @@ public class LSystem<T>
 	}
 }
 
-public abstract class LSystem2D<T>
+public class LSystem2D
 {
-	public LSystem<T> LSystem { get; }
-
-	public Func<T[], int, int, List<(int x, int y)>> ToCoordinates { get; }
-    
-	public Func<List<(int x, int y)>, float, List<(float x, float y)>> ToFloatCoordinates { get; }
-
-	public LSystem2D(LSystem<T> lSystem, Func<T[], int, int, List<(int x, int y)>> toCoordinates, Func<List<(int x, int y)>, float, List<(float x, float y)>> toFloatCoordinates)
-	{
-		LSystem = lSystem;
-		ToCoordinates = toCoordinates;
-		ToFloatCoordinates = toFloatCoordinates;
-	}
-
 	public static readonly LSystem2D<char> Hilbert = new LSystem2DChar(
-		Algorithms_Sedgewick.LSystem.Hilbert,
+		LSystem.Hilbert,
 		StringToCoordinates4,
 		ConvertIntegerToSquarePixelCoordinates,
 		4, 
 		true);
 
 	public static readonly LSystem2D<char> Gosper = new LSystem2DChar(
-		Algorithms_Sedgewick.LSystem.Gosper,
+		LSystem.Gosper,
 		StringToCoordinates6,
 		ConvertIntegerToHexPixelCoordinates,
 		6,
@@ -132,14 +119,30 @@ public abstract class LSystem2D<T>
 	{
 		return coordinates.Select(coord => (coord.x * size, coord.y * size)).ToList();
 	}
+}
+
+public abstract class LSystem2D<T>
+{
+	public LSystem<T> LSystem { get; }
+
+	public Func<T[], int, int, List<(int x, int y)>> ToCoordinates { get; }
+    
+	public Func<List<(int x, int y)>, float, List<(float x, float y)>> ToFloatCoordinates { get; }
+
+	public LSystem2D(LSystem<T> lSystem, Func<T[], int, int, List<(int x, int y)>> toCoordinates, Func<List<(int x, int y)>, float, List<(float x, float y)>> toFloatCoordinates)
+	{
+		LSystem = lSystem;
+		ToCoordinates = toCoordinates;
+		ToFloatCoordinates = toFloatCoordinates;
+	}
 
 	public abstract List<(float x, float y)> GenerateCoordinates(int iterationCount);
 }
 
 public class LSystem2DChar : LSystem2D<char>
 {
-	private int directionCount;
-	private bool useF;
+	private readonly int directionCount;
+	private readonly bool useF;
 	
 	public LSystem2DChar(
 		LSystem<char> lSystem, Func<char[], int, int, List<(int x, int y)>> toCoordinates, 
@@ -161,11 +164,8 @@ public class LSystem2DChar : LSystem2D<char>
 		{
 			switch (command)
 			{
-				case 'F':
-					if (useF)
-					{
-						absoluteCommands.Add(direction.ToString()[0]);
-					}
+				case 'F' when useF:
+					absoluteCommands.Add(direction.ToString()[0]);
 					break;
 				case '+':
 					direction = (direction + 1) % directionCount;
@@ -173,12 +173,9 @@ public class LSystem2DChar : LSystem2D<char>
 				case '-':
 					direction = (direction + directionCount - 1) % directionCount;
 					break;
-				case 'A':
-				case 'B':
-					if (!useF)
-					{
-						absoluteCommands.Add(direction.ToString()[0]);
-					}
+				case 'A' when !useF:
+				case 'B' when !useF:
+					absoluteCommands.Add(direction.ToString()[0]);
 					break;
 			}
 		}

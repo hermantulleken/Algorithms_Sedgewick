@@ -141,14 +141,14 @@ internal static class Program
 	
 	private static void TestSequenceInterpolation1()
 	{
-		var floatCoordinates = LSystem2D<char>.Hilbert.GenerateCoordinates(4);
+		var floatCoordinates = LSystem2D.Hilbert.GenerateCoordinates(4);
 		string svg = GenerateSvgFromFloatCoordinates(floatCoordinates, 0.1f, 0.1f);
 		File.WriteAllText("curve4.svg", svg);
 	}
 	
 	private static void TestSequenceInterpolation2()
 	{
-		var floatCoordinates = LSystem2D<char>.Gosper.GenerateCoordinates(4);
+		var floatCoordinates = LSystem2D.Gosper.GenerateCoordinates(4);
 		string svg = GenerateSvgFromFloatCoordinates(floatCoordinates, 0.1f, 0.1f);
 		File.WriteAllText("curve6.svg", svg);
 	}
