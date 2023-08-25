@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Algorithms_Sedgewick.GapBuffer;
+﻿namespace Algorithms_Sedgewick.GapBuffer;
 
 using System.Collections;
 using List;
@@ -112,9 +110,9 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 		}
 	}
 
-	public void MoveCursor(int newCursorIndex)
+	public void MoveCursorBy(int offset)
 	{
-		void MoveLeft()
+		void MoveCursorLeft()
 		{
 			gapStartIndex--;
 			rightBlockStartIndex--;
@@ -122,7 +120,7 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 			items[gapStartIndex] = default!;
 		}
 
-		void MoveRight()
+		void MoveCursorRight()
 		{
 			items[gapStartIndex] = items[rightBlockStartIndex];
 			items[rightBlockStartIndex] = default!;
@@ -130,22 +128,20 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 			rightBlockStartIndex++;
 		}
 
-		newCursorIndex.ThrowIfOutOfRange(0, Count + 1);
-
-		int gapDifference = gapStartIndex - newCursorIndex;
-
-		if (gapDifference > 0)
+		((IGapBuffer<T>)this).ValidateCursor(offset);
+		
+		if (offset > 0)
 		{
-			for (int i = 0; i < gapDifference; i++)
+			for (int i = 0; i < offset; i++)
 			{
-				MoveLeft();
+				MoveCursorLeft();
 			}
 		}
 		else
 		{
-			for (int i = 0; i < -gapDifference; i++)
+			for (int i = 0; i < -offset; i++)
 			{
-				MoveRight();
+				MoveCursorRight();
 			}
 		}
 	}

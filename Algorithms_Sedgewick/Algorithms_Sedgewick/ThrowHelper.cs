@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 
 namespace Algorithms_Sedgewick;
 
@@ -27,7 +28,13 @@ internal static class ThrowHelper
 
 	[Obsolete("Use a one of the other Throw methods that will throw a more specific exception.")]
 	public static void ThrowException(string message) => throw new Exception(message);
-	
+
+	public static void ThrowGapAtBeginning()
+		=> throw new InvalidOperationException("The gap is already at the beginning.");
+
+	public static void ThrowGapAtEnd()
+		=> throw new InvalidOperationException("The gap is already at the end.");
+
 	public static void ThrowInvalidOperationException(string message) 
 		=> throw new InvalidOperationException(message);
 
@@ -57,14 +64,6 @@ internal static class ThrowHelper
 	internal static void ThrowContainerEmpty() 
 		=> throw ContainerEmptyException;
 
-	internal static void ThrowIfVersionMismatch(this int version, int expectedVersion)
-	{
-		if (version != expectedVersion)
-		{
-			ThrowIteratingOverModifiedContainer();
-		}
-	}
-
 	[DoesNotReturn]
 	internal static void ThrowContainerFull() 
 		=> throw ContainerFullException;
@@ -89,7 +88,7 @@ internal static class ThrowHelper
 		return list;
 	}
 
-	internal static T ThrowIfNull<T>([NotNull] this T? obj, [CallerArgumentExpression("obj")] string? objArgName = null)
+	internal static T ThrowIfNull<T>([System.Diagnostics.CodeAnalysis.NotNull] this T? obj, [CallerArgumentExpression("obj")] string? objArgName = null)
 	{
 		if (obj == null)
 		{
@@ -102,6 +101,7 @@ internal static class ThrowHelper
 	internal static int ThrowIfOutOfRange(this int n, int end, [CallerArgumentExpression("n")] string? objArgName = null)
 		=> ThrowIfOutOfRange(n, 0, end, objArgName);
 
+	[AssertionMethod]
 	internal static int ThrowIfOutOfRange(this int n, int start, int end, [CallerArgumentExpression("n")] string? objArgName = null)
 	{
 		if (n < start || n >= end)
@@ -112,15 +112,17 @@ internal static class ThrowHelper
 		return n;
 	}
 
+	internal static void ThrowIfVersionMismatch(this int version, int expectedVersion)
+	{
+		if (version != expectedVersion)
+		{
+			ThrowIteratingOverModifiedContainer();
+		}
+	}
+
 	internal static void ThrowIteratingOverModifiedContainer() 
 		=> throw IteratingOverModifiedContainerException;
 
 	internal static void ThrowTheContainerIsAtMaximumCapacity() 
 		=> throw ContainerIsAtMaximumCapacityException;
-
-	public static void ThrowGapAtBeginning()
-		=> throw new InvalidOperationException("The gap is already at the beginning.");
-
-	public static void ThrowGapAtEnd()
-		=> throw new InvalidOperationException("The gap is already at the end.");
 }

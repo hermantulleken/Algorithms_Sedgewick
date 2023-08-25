@@ -36,8 +36,24 @@ public interface IGapBuffer<T>
 	/// Moves the cursor to the specified index.
 	/// </summary>
 	/// <param name="newCursorIndex">The new index for the cursor.</param>
-	public void MoveCursor(int newCursorIndex);
+	public void MoveCursor(int newCursorIndex)
+	{
+		int positionDelta = CursorIndex - newCursorIndex;
 
+		MoveCursorBy(positionDelta);
+	}
+
+	/// <summary>
+	/// Moves the cursor by the specified amount. 
+	/// </summary>
+	/// <param name="offset">The amount to move the cursor by.</param>
+	/// <exception cref="InvalidOperationException">moving the cursor past the begging or end.</exception>
+	public void MoveCursorBy(int offset);
+
+	public void MoveCursorLeft() => MoveCursorBy(-1);
+
+	public void MoveCursorRight() => MoveCursorBy(1);
+	
 	/// <summary>
 	/// Removes an element after the cursor.
 	/// </summary>
@@ -53,4 +69,12 @@ public interface IGapBuffer<T>
 	/// The removed element.
 	/// </returns>
 	public T RemoveBefore();
+
+	public void ValidateCursor(int cursor)
+	{
+		if (cursor < 0 || cursor > Count)
+		{
+			ThrowHelper.ThrowInvalidOperationException("Cannot move cursor past the end.");
+		}
+	}
 }

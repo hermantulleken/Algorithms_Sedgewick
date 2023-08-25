@@ -122,7 +122,7 @@ public static class Algorithms
 			}
 		}
 
-		return -1;
+		return -1;	
 	}
 
 	[Obsolete, PossiblyIncorrect]
@@ -171,6 +171,54 @@ public static class Algorithms
 			if (buffer.Count == 2)
 			{
 				yield return buffer;
+			}
+		}
+	}
+	
+	public static float Median(float[] list) => Median(list, 0, list.Length - 1);
+		
+	private static float Median(float[] list, int start, int end)
+	{
+		if (start >= end)
+		{
+			return list[start];
+		}
+			
+		while (true)
+		{
+			int centerIndex = (start + end) / 2;
+
+			SwapAt(list, start, centerIndex);
+			int pivotIndex = start;
+
+			for (int i = start + 1; i <= end; i++)
+			{
+				if (!(list[i] < list[pivotIndex]))
+                {
+                    continue;
+                }
+				
+				// Move the item to the right of the pivot
+				SwapAt(list, i, pivotIndex + 1);
+
+				// Swap item with pivot
+				SwapAt(list, pivotIndex + 1, pivotIndex);
+
+				// Now the pivot is here
+				pivotIndex++;
+			}
+
+			if (pivotIndex < centerIndex)
+			{
+				start = pivotIndex + 1;
+			}
+			else if (pivotIndex > centerIndex)
+			{
+				end = pivotIndex - 1;
+			}
+			else
+			{
+				return list[pivotIndex];
 			}
 		}
 	}

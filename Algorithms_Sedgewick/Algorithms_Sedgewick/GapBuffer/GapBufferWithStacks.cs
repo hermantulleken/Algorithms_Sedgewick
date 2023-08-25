@@ -33,23 +33,32 @@ public class GapBufferWithStacks<T> : IGapBuffer<T>
 
 	public void MoveCursor(int newCursorIndex)
 	{
+		
+
+		int offset = newCursorIndex - CursorIndex;
+
+		
+	}
+
+	public void MoveCursorBy(int offset)
+	{
+		int newCursorIndex = CursorIndex + offset;
+		
+
+		
 		void MoveCursorLeft() => itemsAfterCursor.Push(itemsBeforeCursor.Pop());
 		void MoveCursorRight() => itemsBeforeCursor.Push(itemsAfterCursor.Pop());
-	
-		newCursorIndex.ThrowIfOutOfRange(0, Count + 1);
-
-		int difference = newCursorIndex - CursorIndex;
-
-		if (difference > 0)
+		
+		if (offset > 0)
 		{
-			for (int i = 0; i < difference; i++)
+			for (int i = 0; i < offset; i++)
 			{
 				MoveCursorRight();
 			}
 		}
 		else
 		{
-			for (int i = 0; i < -difference; i++)
+			for (int i = 0; i < -offset; i++)
 			{
 				MoveCursorLeft();
 			}

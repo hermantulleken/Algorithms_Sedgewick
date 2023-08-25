@@ -1,12 +1,19 @@
-﻿namespace Algorithms_Sedgewick;
+﻿
+
+namespace Algorithms_Sedgewick;
+
 
 using System.Collections;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Deque;
 using List;
 using Queue;
 using Support;
+
+#if WITH_INSTRUMENTATION
+using System.Diagnostics;
+#endif
+
 using static System.Diagnostics.Debug;
 using static List.ListExtensions;
 using static Support.WhiteBoxTesting;

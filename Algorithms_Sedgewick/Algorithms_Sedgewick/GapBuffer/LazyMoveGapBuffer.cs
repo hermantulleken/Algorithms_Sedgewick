@@ -62,7 +62,17 @@ public class LazyMoveGapBuffer<T> : IGapBuffer<T>
     	eagerBuffer.AddBefore(item);
     }
 
-	public void MoveCursor(int newCursorIndex) => cursorIndex = newCursorIndex;
+	public void MoveCursor(int newCursorIndex)
+	{
+		if (newCursorIndex < 0 || newCursorIndex > Count)
+		{
+			ThrowHelper.ThrowInvalidOperationException("Cannot move cursor past the end.");
+		}
+		
+		cursorIndex = newCursorIndex;
+	}
+
+	public void MoveCursorBy(int offset) => MoveCursor(cursorIndex + offset);
 
 	public T RemoveAfter()
     {

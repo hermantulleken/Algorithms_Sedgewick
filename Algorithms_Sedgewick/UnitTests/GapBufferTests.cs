@@ -97,21 +97,28 @@ public class GapBufferTests
 
 	private static IEnumerable<TestCaseData> GapBufferImplementations()
 	{
-		yield return new TestCaseData(CreateSampleGapBuffer(new GapBufferWithArray<int>(5))).SetName("GapBufferWithArray");
-		yield return new TestCaseData(CreateSampleGapBuffer(new GapBufferWithStacks<int>(() => new StackWithResizeableArray<int>()))).SetName("GapBufferWithStacks");
+		yield return new TestCaseData(AddElementsToBuffer(new GapBufferWithArray<int>(5)))
+			.SetName("GapBufferWithArray");
+		
+		yield return new TestCaseData(AddElementsToBuffer(new GapBufferWithStacks<int>(() => new StackWithResizeableArray<int>())))
+			.SetName("GapBufferWithStacks");
 	}
 	
 	private static IEnumerable<TestCaseData> SingleElementGapBufferImplementations()
 	{
-		yield return new TestCaseData(new GapBufferWithArray<int>(1)).SetName("SingleElementGapBufferWithArray");
-		yield return new TestCaseData(new GapBufferWithStacks<int>(() => new StackWithResizeableArray<int>())).SetName("SingleElementGapBufferWithStacks");
+		yield return new TestCaseData(new GapBufferWithArray<int>(1))
+			.SetName("SingleElementGapBufferWithArray");
+		
+		yield return new TestCaseData(new GapBufferWithStacks<int>(() => new StackWithResizeableArray<int>()))
+			.SetName("SingleElementGapBufferWithStacks");
 	}
 
-	private static IGapBuffer<int> CreateSampleGapBuffer(IGapBuffer<int> gapBuffer)
+	private static IGapBuffer<int> AddElementsToBuffer(IGapBuffer<int> gapBuffer)
 	{
 		gapBuffer.AddAfter(1);
 		gapBuffer.AddAfter(2);
 		gapBuffer.AddAfter(3);
+		
 		return gapBuffer;
 	}
 }
