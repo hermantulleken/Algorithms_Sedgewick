@@ -162,7 +162,7 @@ public static class Algorithms
 	public static IEnumerable<IPair<T>> Buffer2<T>(this IEnumerable<T> list)
 	{
 		// Would be nice if we could eliminate this new operation
-		var buffer = new FullCapacity2Buffer<T>();
+		var buffer = new Capacity2Buffer<T>();
 		
 		foreach (var item in list)
 		{
