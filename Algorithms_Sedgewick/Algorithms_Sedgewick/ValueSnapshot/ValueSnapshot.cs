@@ -14,7 +14,7 @@ public class ValueSnapshot<T>
 	/// <summary>
 	/// Buffer to store the current and previous values.
 	/// </summary>
-	protected readonly Capacity2Buffer<T> buffer = new();
+	private readonly Capacity2Buffer<T> buffer = new();
 
 	/// <summary>
 	/// Gets or sets the current value of this snapshot. 
@@ -23,7 +23,7 @@ public class ValueSnapshot<T>
 	/// <exception cref="InvalidOperationException">Thrown when trying to get a value that hasn't been set yet.</exception>
 	public virtual T? Value
 	{
-		get => HasValue ? Value : throw new InvalidOperationException(ValueNotAvailable);
+		get => HasValue ? buffer.Last : throw new InvalidOperationException(ValueNotAvailable);
 		set => buffer.Insert(value);
 	}
 
@@ -32,7 +32,7 @@ public class ValueSnapshot<T>
 	/// </summary>
 	/// <exception cref="InvalidOperationException">Thrown when trying to get a previous value that hasn't been set yet.</exception>
 	public T? PreviousValue
-		=> HasPreviousValue ? PreviousValue : throw new InvalidOperationException(PreviousValueNotAvailable);
+		=> HasPreviousValue ? buffer.First : throw new InvalidOperationException(PreviousValueNotAvailable);
 
 	/// <summary>
 	/// Gets a value indicating whether the <see cref="Value"/> has been set.
