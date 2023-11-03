@@ -1,11 +1,33 @@
 ﻿using System.Collections;
+using Algorithms_Sedgewick.Object;
 
 namespace Algorithms_Sedgewick.Queue;
 
 public sealed class QueueWithLinkedList<T> : IQueue<T>
 {
+	private class IdComparer<T> : IComparer<QueueWithLinkedList<T>>
+	{
+		public int Compare(QueueWithLinkedList<T>? x, QueueWithLinkedList<T>? y)
+		{
+			if (x == y)
+				return 0;
+			if (x == null)
+				return -1;
+			if (y == null)
+				return 1;
+			return x.Id.CompareTo(y.Id);
+		}
+	}
+	
+	public static readonly IComparer<QueueWithLinkedList<T>> Comparer = new IdComparer<T>();
+	
+	private const bool ToStringShowsContents = false;
+	private static readonly IdGenerator IdGenerator = new();
+
 	private readonly List.LinkedList<T> items = new();
 
+	public int Id { get; } = IdGenerator.GetNextId();
+	
 	public int Count => items.Count;
 
 	public bool IsEmpty => items.IsEmpty;
@@ -27,7 +49,11 @@ public sealed class QueueWithLinkedList<T> : IQueue<T>
 
 	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
 
-	public override string ToString() => items.ToString();
+#pragma warning disable CS0162 
+	
+	// We use the constant bool for easy switching when we debug.
+	public override string ToString() => ToStringShowsContents ? items.ToString() : "Q: " + Id;
+#pragma warning restore CS0162
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -38,4 +64,6 @@ public sealed class QueueWithLinkedList<T> : IQueue<T>
 			ThrowHelper.ThrowContainerEmpty();
 		}
 	}
+
+	public override int GetHashCode() => Id.GetHashCode();
 }

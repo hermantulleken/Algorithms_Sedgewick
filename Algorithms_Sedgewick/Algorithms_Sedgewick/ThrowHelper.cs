@@ -25,6 +25,7 @@ internal static class ThrowHelper
 	internal static readonly InvalidOperationException ContainerFullException = new(ContainerFull);
 	internal static readonly InvalidOperationException ContainerIsAtMaximumCapacityException = new(TheContainerIsAtMaximumCapacity);
 	internal static readonly InvalidOperationException IteratingOverModifiedContainerException = new(IteratingOverModifiedContainer);
+	internal static readonly Exception UnreachableCodeException = new InvalidOperationException("Unreachable code.");
 
 	[Obsolete("Use a one of the other Throw methods that will throw a more specific exception.")]
 	public static void ThrowException(string message) => throw new Exception(message);

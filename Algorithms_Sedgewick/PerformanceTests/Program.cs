@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Algorithms_Sedgewick;
+using Algorithms_Sedgewick.Buffer;
 using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.LSystem;
 using Support;
@@ -15,8 +16,10 @@ internal static class Program
 	[SuppressMessage("ReSharper", "UnreachableSwitchCaseDueToIntegerAnalysis")]
 	public static void Main()
 	{
-		TestSequenceInterpolation1();
-		TestSequenceInterpolation2();
+		Buffers();
+		
+		/*TestSequenceInterpolation1();
+		TestSequenceInterpolation2();*/
 		return;
 		
 		var tests = new SymbolTablePerformanceTests();
@@ -274,6 +277,80 @@ internal static class Program
 			{
 				Console.WriteLine($"{line.Second}");
 			}
+		}
+	}
+
+	private static void Buffers()
+	{
+		int range = 100000;
+		int count = 100000000;
+		
+		var sourceList = 
+			Generator
+			.UniformRandomInt(range)
+			.Take(count)
+			.Select(n => n / (float) range)
+			.ToResizableArray(count);
+
+		void CalcAverageDistance(IBuffer<float> buffer, ResizeableArray<float> values)
+		{
+			float differenceSum = 0;
+			
+			foreach (float f in values)
+			{
+				buffer.Insert(f);
+
+				if (buffer.Count == 2)
+				{
+					float difference = buffer.Last - buffer.First;
+					differenceSum += difference;
+				}
+			}
+			
+			Console.WriteLine(differenceSum / (values.Count - 1));
+		}
+
+		var tests = new List<Action<ResizeableArray<float>>>()
+		{
+			list => CalcAverageDistance(new Capacity2Buffer<float>(), list),
+			list => CalcAverageDistance(new RingBuffer<float>(2), list),
+			
+			list => CalcAverageDistance(new Capacity2Buffer<float>(), list),
+			list => CalcAverageDistance(new RingBuffer<float>(2), list),
+			
+			list => CalcAverageDistance(new Capacity2Buffer<float>(), list),
+			list => CalcAverageDistance(new RingBuffer<float>(2), list),
+			
+			list => CalcAverageDistance(new Capacity2Buffer<float>(), list),
+			list => CalcAverageDistance(new RingBuffer<float>(2), list),
+			
+			list => CalcAverageDistance(new Capacity2Buffer<float>(), list),
+			list => CalcAverageDistance(new RingBuffer<float>(2), list),
+		};
+
+		var names = new List<string>
+		{
+			nameof(Capacity2Buffer<float>),
+			nameof(RingBuffer<float>),
+			
+			nameof(Capacity2Buffer<float>),
+			nameof(RingBuffer<float>),
+			
+			nameof(Capacity2Buffer<float>),
+			nameof(RingBuffer<float>),
+			
+			nameof(Capacity2Buffer<float>),
+			nameof(RingBuffer<float>),
+			
+			nameof(Capacity2Buffer<float>),
+			nameof(RingBuffer<float>),
+		};
+		
+		var times = Timer.Time(tests, () => sourceList.Copy());
+		
+		foreach (var line in names.Zip(times))
+		{
+			Console.WriteLine($"{line.Second}");
 		}
 	}
 }

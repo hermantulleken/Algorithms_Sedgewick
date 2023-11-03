@@ -36,7 +36,7 @@ public sealed class Capacity2Buffer<T> : IBuffer<T?>, IPair<T>
 	
 	public bool HasPreviousValue => Count > 1;
 	
-	private T?FirstUnsafe 
+	private T? FirstUnsafe 
 		=> Count == 1 
 			? item2 
 			: (nextInsertIsItem1 ? item1 : item2);

@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Algorithms_Sedgewick.List;
+using Algorithms_Sedgewick.Pool;
+using Algorithms_Sedgewick.Queue;
 using NUnit.Framework;
 using Support;
 using static Algorithms_Sedgewick.Sort;
@@ -9,10 +12,28 @@ namespace UnitTests;
 [Parallelizable]
 public class SortTests
 {
+	private class QueueFactory<T> : IFactory<QueueWithLinkedList<T>>
+	{
+		public QueueWithLinkedList<T> GetNewInstance() => new();
+		
+		public void DestroyInstance(QueueWithLinkedList<T> instance)
+		{
+			instance.Clear();
+		}
+	}
+	
 	private static readonly Action<IRandomAccessList<int>, int, int>[] PartialSortFunctions =
 	{
 		InsertionSort,
 	};
+	
+	private static FixedPreInitializedPool<QueueWithLinkedList<T>> GetQueuePool<T>(int count)
+	{
+		return new FixedPreInitializedPool<QueueWithLinkedList<T>>(
+			new QueueFactory<T>(),
+			count,
+			QueueWithLinkedList<T>.Comparer);
+	}
 
 	[DatapointSource]
 	private static readonly Action<IRandomAccessList<int>>[]SortFunctions = 
@@ -20,6 +41,7 @@ public class SortTests
 		SelectionSort,
 		InsertionSort,
 		ShellSortWithPrattSequence,
+		list => ShellSort(list, new[] { 7, 3, 1 }),
 		DequeueSortWithDeque,
 		DequeueSortWithQueue,
 		GnomeSort,
@@ -33,6 +55,10 @@ public class SortTests
 		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{UseFastMerge = true}),
 		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
 		MergeSortBottomsUpWithQueues,
+		list => MergeSortBottomsUpWithQueues(
+			list, 
+			GetQueuePool<QueueWithLinkedList<int>>(list.Count),
+			GetQueuePool<int>(list.Count)),
 		Merge3Sort,
 		list => MergeKSort(list, 3),
 		list => MergeKSort(list, 4),

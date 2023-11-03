@@ -34,7 +34,7 @@ public class HashSet<T> : ISet<T>
 
 	public HashSet(int initialCapacity, IComparer<T> comparer)
 	{
-		log2TableSize = Math2.IntegerCeilLog2(initialCapacity);
+		log2TableSize = Math.Max(Math2.IntegerCeilLog2(initialCapacity) - 4, 0);
 		tableSize = HashTableWithLinearProbing.Primes[log2TableSize];
 		this.comparer = comparer;
 		keys = new T[tableSize];
@@ -55,9 +55,10 @@ public class HashSet<T> : ISet<T>
 		if (index < 0)
 		{
 			Count++;
+			SetAt(~index, key, true);
 		}
 		
-		SetAt(~index, key, true);
+		// else already there
 	}
 
 	public bool Contains(T key)
@@ -91,18 +92,18 @@ public class HashSet<T> : ISet<T>
 		RemoveKeyAt(index);
 
 		/*
-		    Reinsert all the keys in the same cluster as the removed key.
-		    This is necessary because their positions might have been affected by the removal of the key.
+			Reinsert all the keys in the same cluster as the removed key.
+			This is necessary because their positions might have been affected by the removal of the key.
 		*/
 		for (GetNextIndex(key, ref index); keyPresent[index]; GetNextIndex(key, ref index))
 		{
 			ReinsertAt(index);
 		}
 		
-		if (Count > 0 && Count == tableSize / 8)
+		/*if (Count > 0 && Count <= tableSize / 8)
 		{
 			Resize(log2TableSize - 1);
-		}
+		}*/
 	}
 
 	public IEnumerator<T> GetEnumerator() => keyPresent

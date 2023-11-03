@@ -261,7 +261,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		back = oldFront;
 	}
 
-	public override string ToString() => First.ToString();
+	public override string ToString() => IsEmpty ? "[]" : $"[{First}]";
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

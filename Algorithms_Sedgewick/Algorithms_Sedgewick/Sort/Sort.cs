@@ -1,5 +1,7 @@
 ﻿
 
+using Algorithms_Sedgewick.Pool;
+
 namespace Algorithms_Sedgewick;
 
 
@@ -924,6 +926,70 @@ public static class Sort
 			list[i] = result.Dequeue();
 		}
 	}
+	
+	public static void MergeSortBottomsUpWithQueues<T>(
+		IRandomAccessList<T> list, 
+		FixedPreInitializedPool<QueueWithLinkedList<QueueWithLinkedList<T>>> majorQueues,
+		FixedPreInitializedPool<QueueWithLinkedList<T>> minorQueues) 
+		where T : IComparable<T>
+	{
+		if (list.Count <= 1)
+		{
+			return;
+		}
+		
+		var majorQueue = majorQueues.Get();
+		
+		for (int i = 0; i < list.Count - 1; i += 2)
+		{
+			var item1 = list[i];
+			var item2 = list[i+1];
+			var minorQueue = minorQueues.Get();
+			
+			if (Less(item1, item2))
+			{
+				minorQueue.Enqueue(item1);
+				minorQueue.Enqueue(item2);
+			}
+			else
+			{
+				minorQueue.Enqueue(item2);
+				minorQueue.Enqueue(item1);
+			}
+			
+			majorQueue.Enqueue(minorQueue);
+		}
+
+		if (list.Count % 2 == 1)
+		{
+			var minorQueue = minorQueues.Get();
+			minorQueue.Enqueue(list[^1]);
+			majorQueue.Enqueue(minorQueue);
+		}
+		
+		while (majorQueue.Count > 1)
+		{
+			var sortedQueue = minorQueues.Get();
+			var leftQueue = majorQueue.Dequeue();
+			var rightQueue = majorQueue.Dequeue();
+			
+			Merge(leftQueue, rightQueue, sortedQueue);
+			majorQueue.Enqueue(sortedQueue);
+			
+			minorQueues.Return(leftQueue);
+			minorQueues.Return(rightQueue);
+		}
+
+		var result = majorQueue.Dequeue();
+
+		for (int i = 0; i < list.Count; i++)
+		{
+			list[i] = result.Dequeue();
+		}
+		
+		minorQueues.Return(result);
+		majorQueues.Return(majorQueue);
+	}
 
 	public static void MergeSortBottomUp<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
@@ -1265,7 +1331,7 @@ public static class Sort
 	{
 		int length = list.Count;
 
-		for (int stepSizeIndex = 0; stepSizeIndex <= stepSizes.Length; stepSizeIndex++)
+		for (int stepSizeIndex = 0; stepSizeIndex < stepSizes.Length; stepSizeIndex++)
 		{
 			int stepSize = stepSizes[stepSizeIndex];
 			

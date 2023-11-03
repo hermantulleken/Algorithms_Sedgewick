@@ -1,13 +1,14 @@
-﻿namespace Algorithms_Sedgewick.Buffer;
+﻿using static System.Diagnostics.Debug;
+
+namespace Algorithms_Sedgewick.Buffer;
 
 using System.Collections;
-using System.Diagnostics;
 
 public sealed class RingBuffer<T> : IBuffer<T>
 {
 	private readonly T[] items;
-	private int back;
-	private int front;
+	private int back; // after last element
+	private int front; // first element
 	
 	public bool IsFull => AsIBuffer.IsFull;
 	
@@ -25,7 +26,7 @@ public sealed class RingBuffer<T> : IBuffer<T>
 		get
 		{
 			ValidateIndex(index);
-            
+			
 			return items[GetRealIndex(index)];
 		}
 		
@@ -49,7 +50,7 @@ public sealed class RingBuffer<T> : IBuffer<T>
 		{
 			ThrowHelper.ThrowCapacityCannotBeNegativeOrZero(capacity);
 		}
-        
+		
 		Capacity = capacity;
 		items = new T[capacity];
 		ResetPointers();
@@ -117,7 +118,7 @@ public sealed class RingBuffer<T> : IBuffer<T>
 		front = 0;
 		back = 0;
 		Count = 0;
-        
+		
 		AssertCountInvariants();
 	}
 	
@@ -125,21 +126,25 @@ public sealed class RingBuffer<T> : IBuffer<T>
 
 	private void AssertCountInvariants()
 	{
-		Debug.Assert(Count <= Capacity);
-        
-		if (front < back)
+		Assert(Count <= Capacity);
+		
+		if (Count == 0 || Count == Capacity)
 		{
-			Debug.Assert(Count == back - front);
+			Assert(front == back);
+		}
+		else if (front < back)
+		{
+			Assert(Count == back - front);
 		}
 		else
 		{
-			Debug.Assert(Count == Capacity - front + back);
+			Assert(Count == Capacity - front + back);
 		}
 	}
 
 	private int GetRealIndex(int index)
 	{
-		Debug.Assert(IndexInRange(index));
+		Assert(IndexInRange(index));
 		return (index + front) % Capacity;
 	}
 
