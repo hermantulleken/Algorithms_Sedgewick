@@ -4,6 +4,7 @@ using Algorithms_Sedgewick;
 using Algorithms_Sedgewick.Buffer;
 using Algorithms_Sedgewick.List;
 using Algorithms_Sedgewick.LSystem;
+using Algorithms_Sedgewick.Sort;
 using Support;
 
 namespace PerformanceTests;
@@ -16,7 +17,10 @@ internal static class Program
 	[SuppressMessage("ReSharper", "UnreachableSwitchCaseDueToIntegerAnalysis")]
 	public static void Main()
 	{
-		Buffers();
+		var runner = new LinkedListWithPooledNodesTest();
+		runner.Run();
+		
+		//Buffers();
 		
 		/*TestSequenceInterpolation1();
 		TestSequenceInterpolation2();*/

@@ -1,4 +1,5 @@
 ﻿using Algorithms_Sedgewick;
+using Algorithms_Sedgewick.Sort;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 

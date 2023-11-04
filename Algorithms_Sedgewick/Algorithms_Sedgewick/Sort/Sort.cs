@@ -1,14 +1,11 @@
-﻿
-
-using Algorithms_Sedgewick.Pool;
-
-namespace Algorithms_Sedgewick;
-
+﻿namespace Algorithms_Sedgewick.Sort;
 
 using System.Collections;
 using System.Runtime.CompilerServices;
+
 using Deque;
 using List;
+using Pool;
 using Queue;
 using Support;
 
@@ -45,7 +42,7 @@ public static class Sort
 			Small,
 			Insert,
 			Shell,
-			Merge
+			Merge,
 		};
 		
 		public bool SkipMergeWhenSorted;
@@ -869,21 +866,26 @@ public static class Sort
 	}
 
 	// Ex. 2.2.15
-	public static void MergeSortBottomsUpWithQueues<T>(IRandomAccessList<T> list) 
+	public static void MergeSortBottomsUpWithQueues<T>(
+		IRandomAccessList<T> list,
+		IFactory<IQueue<IQueue<T>>>? majorQueueFactory = null, 
+		IFactory<IQueue<T>>? minorQueueFactory = null) 
 		where T : IComparable<T>
 	{
 		if (list.Count <= 1)
 		{
 			return;
 		}
+		majorQueueFactory ??= Factory.Create<IQueue<IQueue<T>>>(() => new QueueWithLinkedList<IQueue<T>>());
+		minorQueueFactory ??= Factory.Create<IQueue<T>>(() => new QueueWithLinkedList<T>());
 		
-		var majorQueue = new QueueWithLinkedList<QueueWithLinkedList<T>>();
+		var majorQueue = majorQueueFactory.GetNewInstance();
 		
 		for (int i = 0; i < list.Count - 1; i += 2)
 		{
 			var item1 = list[i];
-			var item2 = list[i+1];
-			var minorQueue = new QueueWithLinkedList<T>();
+			var item2 = list[i + 1];
+			var minorQueue = minorQueueFactory.GetNewInstance();
 			
 			if (Less(item1, item2))
 			{
@@ -901,12 +903,12 @@ public static class Sort
 
 		if (list.Count % 2 == 1)
 		{
-			var minorQueue = new QueueWithLinkedList<T>();
+			var minorQueue = minorQueueFactory.GetNewInstance();
 			minorQueue.Enqueue(list[^1]);
 			majorQueue.Enqueue(minorQueue);
 		}
 
-		var sortedQueue = new QueueWithLinkedList<T>();
+		var sortedQueue = minorQueueFactory.GetNewInstance();
 		while (majorQueue.Count > 1)
 		{
 			var leftQueue = majorQueue.Dequeue();
@@ -929,8 +931,8 @@ public static class Sort
 	
 	public static void MergeSortBottomsUpWithQueues<T>(
 		IRandomAccessList<T> list, 
-		FixedPreInitializedPool<QueueWithLinkedList<QueueWithLinkedList<T>>> majorQueues,
-		FixedPreInitializedPool<QueueWithLinkedList<T>> minorQueues) 
+		FixedPreInitializedPool<IQueue<IQueue<T>>> majorQueues,
+		FixedPreInitializedPool<IQueue<T>> minorQueues) 
 		where T : IComparable<T>
 	{
 		if (list.Count <= 1)

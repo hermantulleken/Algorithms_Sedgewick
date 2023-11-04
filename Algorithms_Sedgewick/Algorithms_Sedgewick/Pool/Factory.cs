@@ -17,8 +17,8 @@ public static class Factory
 		
 		public T GetNewInstance() => create();
 		
-		public void DestroyInstance(T instance) => destroy?.Invoke(instance);
+		public void Reset(T instance) => destroy?.Invoke(instance);
 	}
 	
-	public static IFactory<T> Create<T>(Func<T> create, Action<T>? destroy = null) => new FuncFactory<T>(create);
+	public static IFactory<T> Create<T>(Func<T> create, Action<T>? destroy = null) => new FuncFactory<T>(create, destroy);
 }

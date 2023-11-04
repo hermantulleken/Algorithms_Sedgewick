@@ -1,42 +1,57 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using Algorithms_Sedgewick;
 using Algorithms_Sedgewick.List;
+using Algorithms_Sedgewick.Object;
 using Algorithms_Sedgewick.Pool;
 using Algorithms_Sedgewick.Queue;
 using NUnit.Framework;
 using Support;
-using static Algorithms_Sedgewick.Sort;
+using static Algorithms_Sedgewick.Sort.Sort;
 
 namespace UnitTests;
 
 [Parallelizable]
 public class SortTests
 {
-	private class QueueFactory<T> : IFactory<QueueWithLinkedList<T>>
-	{
-		public QueueWithLinkedList<T> GetNewInstance() => new();
-		
-		public void DestroyInstance(QueueWithLinkedList<T> instance)
-		{
-			instance.Clear();
-		}
-	}
-	
 	private static readonly Action<IRandomAccessList<int>, int, int>[] PartialSortFunctions =
 	{
 		InsertionSort,
 	};
 	
-	private static FixedPreInitializedPool<QueueWithLinkedList<T>> GetQueuePool<T>(int count)
+	private static FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool(int count)
 	{
-		return new FixedPreInitializedPool<QueueWithLinkedList<T>>(
-			new QueueFactory<T>(),
-			count,
-			QueueWithLinkedList<T>.Comparer);
+		return new FixedPreInitializedPool<IQueue<IQueue<int>>>(
+			Factory.Create<IQueue<IQueue<int>>>(() => new QueueWithLinkedList<IQueue<int>>(), queue => queue.Clear()),
+			count << 1,
+			IdComparer.Instance);
+	}
+
+	private static FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool(int count)
+	{
+		return new FixedPreInitializedPool<IQueue<int>>(
+			Factory.Create<IQueue<int>>(() => new QueueWithLinkedList<int>(), queue => queue.Clear()),
+			count << 1,
+			IdComparer.Instance);
+	}
+	
+	private static FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool1(int count)
+	{
+		return new FixedPreInitializedPool<IQueue<IQueue<int>>>(
+			Factory.Create<IQueue<IQueue<int>>>(() => new QueueWithLinkedListAndNodePool<IQueue<int>>(count), queue => queue.Clear()),
+			count << 1,
+			IdComparer.Instance);
+	}
+
+	private static FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool1(int count)
+	{
+		return new FixedPreInitializedPool<IQueue<int>>( 
+			Factory.Create<IQueue<int>>(() => new QueueWithLinkedListAndNodePool<int>(count), queue => queue.Clear()),
+			count << 1,
+			IdComparer.Instance);
 	}
 
 	[DatapointSource]
-	private static readonly Action<IRandomAccessList<int>>[]SortFunctions = 
+	private static readonly Action<IRandomAccessList<int>>[] SortFunctions = 
 	{
 		SelectionSort,
 		InsertionSort,
@@ -47,18 +62,23 @@ public class SortTests
 		GnomeSort,
 		HeapSort,
 		MergeSort,
-		list => MergeSort(list, MergeSortConfig.Vanilla with{SkipMergeWhenSorted = true}),
-		list => MergeSort(list, MergeSortConfig.Vanilla with{UseFastMerge = true}),
-		list => MergeSort(list, MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
+		list => MergeSort(list, MergeSortConfig.Vanilla with { SkipMergeWhenSorted = true}),
+		list => MergeSort(list, MergeSortConfig.Vanilla with {UseFastMerge = true}),
+		list => MergeSort(list, MergeSortConfig.Vanilla with {SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
 		MergeSortBottomUp,
 		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{SkipMergeWhenSorted = true}),
 		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{UseFastMerge = true}),
 		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
-		MergeSortBottomsUpWithQueues,
+		list => MergeSortBottomsUpWithQueues(list),
+		
 		list => MergeSortBottomsUpWithQueues(
 			list, 
-			GetQueuePool<QueueWithLinkedList<int>>(list.Count),
-			GetQueuePool<int>(list.Count)),
+			CreateMajorQueuePool(list.Count),
+			CreateMinorQueuePool(list.Count)),
+		list => MergeSortBottomsUpWithQueues(
+			list, 
+			CreateMajorQueuePool1(list.Count),
+			CreateMinorQueuePool1(list.Count)),
 		Merge3Sort,
 		list => MergeKSort(list, 3),
 		list => MergeKSort(list, 4),
@@ -137,5 +157,37 @@ public class SortTests
 		Assert.That(SelectNthLowest(list, 2, config), Is.EqualTo(2));
 		Assert.That(SelectNthLowest(list, 5, config), Is.EqualTo(6));
 		Assert.That(SelectNthLowest(list, 7, config), Is.EqualTo(8));
+	}
+
+	[Test]
+	public void Test_MergeSortBottomsUpWithQueues()
+	{
+		int count = 1 << 8;
+		
+		FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool1()
+		{
+			return new FixedPreInitializedPool<IQueue<IQueue<int>>>(
+				Factory.Create<IQueue<IQueue<int>>>(() => new QueueWithLinkedListAndNodePool<IQueue<int>>(count), queue => queue.Clear()),
+				count << 1,
+				IdComparer.Instance);
+		}
+
+		FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool1()
+		{
+			return new FixedPreInitializedPool<IQueue<int>>(
+				Factory.Create<IQueue<int>>(() => new QueueWithLinkedListAndNodePool<int>(count), queue => queue.Clear()),
+				count << 1,
+				IdComparer.Instance);
+		}
+		
+		var list = Generator.UniformRandomInt(int.MaxValue)
+			.Take(count)
+			.ToResizableArray(count);
+		
+		MergeSortBottomsUpWithQueues(
+			list, 
+			CreateMajorQueuePool1(),
+			CreateMinorQueuePool1());
+
 	}
 }

@@ -34,8 +34,7 @@ public class HashSet<T> : ISet<T>
 
 	public HashSet(int initialCapacity, IComparer<T> comparer)
 	{
-		log2TableSize = Math.Max(Math2.IntegerCeilLog2(initialCapacity) - 4, 0);
-		tableSize = HashTableWithLinearProbing.Primes[log2TableSize];
+		(log2TableSize, tableSize) = HashTableWithLinearProbing.GetTableSize(initialCapacity);
 		this.comparer = comparer;
 		keys = new T[tableSize];
 		keyPresent = new bool[tableSize];
@@ -47,7 +46,7 @@ public class HashSet<T> : ISet<T>
 		
 		if (Count >= tableSize / 2)
 		{
-			Resize(log2TableSize + 1); // Doubles the size
+			Resize(Count * 2); // Doubles the size
 		}
 
 		int index = IndexOf(key);
@@ -161,9 +160,9 @@ public class HashSet<T> : ISet<T>
 		Count--;
 	}
 
-	private void Resize(int newLog2TableSize) // See page 474.
+	private void Resize(int newCapacity) // See page 474.
 	{
-		var newTable = new HashSet<T>(newLog2TableSize, comparer);
+		var newTable = new HashSet<T>(newCapacity, comparer);
 		
 		for (int i = 0; i < tableSize; i++)
 		{
@@ -175,7 +174,7 @@ public class HashSet<T> : ISet<T>
 		
 		keys = newTable.keys;
 		keyPresent = newTable.keyPresent;
-		log2TableSize = newLog2TableSize;
+		log2TableSize = newTable.log2TableSize;
 		tableSize = newTable.tableSize;
 	}
 

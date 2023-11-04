@@ -41,8 +41,8 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 
 	public HashTableWithLinearProbing2(int initialCapacity, IComparer<TKey> comparer)
 	{
-		log2TableSize = Math2.IntegerCeilLog2(initialCapacity);
-		tableSize = HashTableWithLinearProbing.Primes[log2TableSize];
+		(log2TableSize, tableSize) = HashTableWithLinearProbing.GetTableSize(initialCapacity);
+		
 		this.comparer = comparer;
 		keys = new TKey[tableSize];
 		values = new TValue[tableSize];
@@ -55,7 +55,7 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 		
 		if (Count >= tableSize / 2)
 		{
-			Resize(log2TableSize + 1); // Doubles the size
+			Resize(Count * 2); // Doubles the size
 		}
 
 		int index = IndexOf(key);
@@ -105,7 +105,7 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 		
 		if (Count > 0 && Count == tableSize / 8)
 		{
-			Resize(log2TableSize - 1);
+			Resize(Count / 2);
 		}
 	}
 
@@ -169,9 +169,9 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 		Count--;
 	}
 
-	private void Resize(int newLog2TableSize) // See page 474.
+	private void Resize(int newCapacity) // See page 474.
 	{
-		var newTable = new HashTableWithLinearProbing2<TKey, TValue>(newLog2TableSize, comparer);
+		var newTable = new HashTableWithLinearProbing2<TKey, TValue>(newCapacity, comparer);
 		
 		for (int i = 0; i < tableSize; i++)
 		{
@@ -184,7 +184,7 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 		keys = newTable.keys;
 		values = newTable.values;
 		keyPresent = newTable.keyPresent;
-		log2TableSize = newLog2TableSize;
+		log2TableSize = newTable.log2TableSize;
 		tableSize = newTable.tableSize;
 	}
 

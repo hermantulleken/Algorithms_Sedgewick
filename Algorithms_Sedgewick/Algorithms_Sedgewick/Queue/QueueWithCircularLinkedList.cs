@@ -1,11 +1,16 @@
 ﻿using System.Collections;
 using Algorithms_Sedgewick.List;
+using Algorithms_Sedgewick.Object;
 
 namespace Algorithms_Sedgewick.Queue;
 
 public sealed class QueueWithCircularLinkedList<T> : IQueue<T>
 {
 	private readonly CircularLinkedList<T> items = new();
+
+	private static IdGenerator idGenerator = new();
+	
+	public int Id { get; } = idGenerator.GetNextId();
 
 	public int Count => items.Count;
 
@@ -25,6 +30,8 @@ public sealed class QueueWithCircularLinkedList<T> : IQueue<T>
 	public T Dequeue() => items.RemoveFromFront().Item!;
 
 	public void Enqueue(T item) => items.InsertAtBack(item);
+	
+	public override int GetHashCode() => Id.GetHashCode();
 
 	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
 

@@ -8,7 +8,7 @@ using List;
 using Queue;
 using Support;
 using static System.Diagnostics.Debug;
-using static Sort;
+using static Sort.Sort;
 using static Support.WhiteBoxTesting;
 
 public static class Algorithms

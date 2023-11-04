@@ -1,4 +1,6 @@
-﻿using static System.Diagnostics.Debug;
+﻿using System.Diagnostics;
+using Support;
+using static System.Diagnostics.Debug;
 
 namespace Algorithms_Sedgewick.List;
 
@@ -98,7 +100,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	{
 		front = back = null;
 		Count = 0;
-		version++;
+		UpdateVersion();
 	}
 
 	public void Concat(LinkedList<T> other)
@@ -128,7 +130,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		
 		back = otherBack;
 		Count += otherCount;
-		version++;
+		UpdateVersion();
 	}
 
 	public IEnumerator<T> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
@@ -148,7 +150,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		node.NextNode = newNode;
 		
 		Count++;
-		version++;
+		UpdateVersion();
 
 		return newNode;
 	}
@@ -157,9 +159,6 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty)
 		{
-			Count++;
-			version++;
-			
 			return InsertFirstItem(item);
 		}
 		
@@ -167,7 +166,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		back = back.NextNode;
 		
 		Count++;
-		version++;
+		UpdateVersion();
 
 		return back;
 	}
@@ -176,9 +175,6 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	{
 		if (IsEmpty)
 		{
-			Count++;
-			version++;
-			
 			return InsertFirstItem(item);
 		}
 
@@ -190,7 +186,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		front = newHead;
 
 		Count++;
-		version++;
+		UpdateVersion();
 
 		return front;
 	}
@@ -214,10 +210,15 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		// Also works if node.NextNode.NextNode is null
 		var newNextNode = node.NextNode.NextNode;
 		var removedNode = node.NextNode;
-
 		node.NextNode = newNextNode;
+		
+		if (removedNode == back)
+		{
+			back = node;
+		}
+		
 		Count--;
-		version++;
+		UpdateVersion();
 		return removedNode;
 	}
 
@@ -229,12 +230,19 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		}
 
 		var removedNode = front!;
+
+		if (IsSingleton)
+		{
+			front = back = null;
+		}
+		else
+		{
+			front = front!.NextNode;
+		}
 		
-		// Also works when front is the last node, since then NextNode is null.
-		front = front!.NextNode;
 		Count--;
-		version++;
-			
+		UpdateVersion();
+
 		return removedNode;
 	}
 
@@ -265,7 +273,15 @@ public sealed class LinkedList<T> : IEnumerable<T>
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-	private Node InsertFirstItem(T item) => front = back = new Node(item);
+	private Node InsertFirstItem(T item)
+	{
+		Count++;
+		front = back = new Node(item);
+		
+		UpdateVersion();
+
+		return front;
+	}
 
 	private void ValidateNotEmpty()
 	{
@@ -280,6 +296,43 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		if (version != versionAtStartOfIteration)
 		{
 			ThrowHelper.ThrowIteratingOverModifiedContainer();
+		}
+	}
+
+	private void UpdateVersion()
+	{
+		version++;
+		AssertInternalStateIsValid();
+	}
+	
+	[Conditional(Diagnostics.DebugDefine)]
+	private void AssertInternalStateIsValid()
+	{
+		if (IsEmpty)
+		{
+			Assert(Count == 0);
+			Assert(front == null);
+			Assert(back == null);
+		}
+		else if (IsSingleton)
+		{
+			Assert(Count == 1);
+			Assert(front == back);
+			Assert(front != null);
+			Assert(back.NextNode == null);
+		}
+		else
+		{
+			Assert(Count > 1);
+			Assert(front != null);
+			Assert(back != null);
+			Assert(front != back);
+			Assert(back.NextNode == null);
+
+			if (Count == 2)
+			{
+				Assert(front.NextNode == back);
+			}
 		}
 	}
 }

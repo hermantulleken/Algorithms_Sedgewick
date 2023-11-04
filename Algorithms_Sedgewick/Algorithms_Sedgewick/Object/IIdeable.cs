@@ -1,6 +1,6 @@
 ﻿namespace Algorithms_Sedgewick.Object;
 
-public class IIdeable
+public interface IIdeable
 {
-	
+	public int Id { get; }
 }

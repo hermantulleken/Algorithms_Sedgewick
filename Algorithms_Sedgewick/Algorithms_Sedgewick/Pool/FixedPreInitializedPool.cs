@@ -1,21 +1,26 @@
 ﻿using Algorithms_Sedgewick.Stack;
-using static System.Diagnostics.Debug;
 
 namespace Algorithms_Sedgewick.Pool;
 
 public class FixedPreInitializedPool<T>
 {
 	private readonly FixedCapacityStack<T> pool;
-	private readonly Set.HashSet<T> aliveElements;
-	private readonly int elementCount;
+	
+	private readonly IFactory<T> factory;
 
-	public FixedPreInitializedPool(IFactory<T> factory, int elementCount, IComparer<T> comparer)
+	public int AliveElementCount => Capacity - AsleepElementCount;
+	
+	public int AsleepElementCount => pool.Count;
+	
+	public int Capacity { get; }
+
+	public FixedPreInitializedPool(IFactory<T> factory, int capacity, IComparer<T> comparer)
 	{
-		this.elementCount = elementCount;
-		pool = new FixedCapacityStack<T>(elementCount);
-		aliveElements = new Set.HashSet<T>(elementCount, comparer);
+		Capacity = capacity;
+		pool = new FixedCapacityStack<T>(capacity);
 
-		for (int i = 0; i < elementCount; i++)
+		this.factory = factory;
+		for (int i = 0; i < capacity; i++)
 		{
 			pool.Push(factory.GetNewInstance());
 		}
@@ -24,20 +29,13 @@ public class FixedPreInitializedPool<T>
 	public T Get()
 	{
 		var element = pool.Pop();
-		aliveElements.Add(element);
-		
-		Assert(CollectionCountInvariant);
 		
 		return element;
 	}
 
 	public void Return(T element)
 	{
-		aliveElements.Remove(element);
+		factory.Reset(element);
 		pool.Push(element);
-		
-		Assert(CollectionCountInvariant);
 	}
-
-	private bool CollectionCountInvariant => pool.Count + aliveElements.Count == elementCount;
 }

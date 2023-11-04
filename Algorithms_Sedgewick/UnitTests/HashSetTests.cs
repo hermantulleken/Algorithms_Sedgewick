@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Algorithms_Sedgewick;
+using Algorithms_Sedgewick.Object;
 
 namespace UnitTests;
 
@@ -53,6 +55,24 @@ public class HashSetTests
 		hashSet.Add(1);
 		hashSet.Add(2);
 		Assert.That(hashSet.Count, Is.EqualTo(2));
+	}
+
+	[Test]
+	public void AddALot()
+	{
+		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+
+		for (int i = 0; i < 64; i++)
+		{
+			hashSet.Add(i);
+		}
+		
+		Assert.That(hashSet.Count, Is.EqualTo(64));
+
+		for (int i = 0; i < 64; i++)
+		{
+			Assert.That(hashSet.Contains(i), Is.True);
+		}
 	}
 
 	[Test]
@@ -131,7 +151,7 @@ public class HashSetTests
 	public void Remove_OneOfMultipleItems_Object()
 	{
 		// #14
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<ObjectWithId>(ObjectWithId.Comparer);
+		var hashSet = new Algorithms_Sedgewick.Set.HashSet<ObjectWithId>(IdComparer.Instance);
 
 		var obj1 = new ObjectWithId();
 		var obj2 = new ObjectWithId();
@@ -272,7 +292,7 @@ public class HashSetTests
 	{
 		// #24
 		
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<ObjectWithId>(ObjectWithId.Comparer);
+		var hashSet = new Algorithms_Sedgewick.Set.HashSet<ObjectWithId>(IdComparer.Instance);
 		Assert.That(() => hashSet.Add(null), Throws.ArgumentNullException);
 	}
 

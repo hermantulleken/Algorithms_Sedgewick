@@ -28,6 +28,7 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 	}
 
 	private Node? front;
+	private Node? back;
 
 	private int version = 0;
 
@@ -44,10 +45,22 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 		}
 	}
 
+	public Node Back
+	{
+		get
+		{
+			ValidateNotEmpty();
+			Assert(back != null);
+
+			return back;
+		}
+	}
+
 	[MemberNotNullWhen(false, nameof(front))]
+	[MemberNotNullWhen(false, nameof(back))]
 	public bool IsEmpty => front == null;
 
-	public bool IsSingleton => !IsEmpty && front!.NextNode == front;
+	public bool IsSingleton => !IsEmpty && front == back;
 
 	public IEnumerable<Node> Nodes
 	{
@@ -76,6 +89,7 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 	public void Clear()
 	{
 		front = null;
+		back = null;
 		Count = 0;
 		version++;
 	}
@@ -92,15 +106,28 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 		var newNode = new Node(item, node.NextNode);
 
 		node.NextNode = newNode;
+		
+		Count++;
+		version++;
+
+		if (node == back)
+		{
+			back = newNode;
+		}
 
 		return newNode;
 	}
 
 	public void InsertAtBack(T item)
 	{
-		InsertAtFront(item);
-		Assert(front != null);
-		front = front.NextNode; // Rotate so that new item is at the back
+		if (IsEmpty)
+		{
+			InsertFirstItem(item);
+		}
+		else
+		{
+			InsertAfter(back, item);
+		}
 	}
 
 	public Node InsertAtFront(T item)
@@ -112,12 +139,25 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 
 		Assert(front != null);
 
-		var newHead = new Node(item, front);
-		front = newHead;
-		Count++;
-		version++;
+		var oldBack = back;
+		var newNode = InsertAfter(back, item);
+		front = back;
+		back = oldBack;
+		return newNode;
+	}
+	
+	public void RotateLeft()
+	{
+		if (IsEmpty)
+		{
+			return;
+		}
 
-		return front;
+		Assert(front != null);
+
+		var oldFront = front;
+		front = front.NextNode;
+		back = oldFront;
 	}
 
 	public Node RemoveAfter(Node node)
@@ -127,7 +167,7 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 			throw new ArgumentNullException(nameof(node));
 		}
 
-		if (node.NextNode == First)
+		if (node == back)
 		{
 			return RemoveFromFront();
 		}
@@ -138,6 +178,8 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 		var removedNode = node.NextNode;
 
 		node.NextNode = newNextNode;
+		Count--;
+		version++;
 		
 		return removedNode;
 	}
@@ -148,30 +190,33 @@ public sealed class CircularLinkedList<T> : IEnumerable<T>
 		{
 			ThrowHelper.ThrowContainerEmpty();
 		}
-		
-		Assert(front != null);
-		var removedNode = front;
-		
+
 		if (IsSingleton)
 		{
-			front = null;
+			var removedNode = front;
+			Clear();
 			return removedNode;
 		}
 
+		var oldFront = front;
 		front = front.NextNode;
+		back.NextNode = front;
+		
 		Count--;
 		version++;
-			
-		return removedNode;
+		return oldFront;
 	}
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 	private Node InsertFirstItem(T item)
 	{
-		front = new Node(item);
-		front.NextNode = front;
+		Assert(IsEmpty);
+		Assert(Count == 0);
 		
+		front = back = new Node(item);
+		front.NextNode = front;
+		Count++;
 		return front;
 	}
 

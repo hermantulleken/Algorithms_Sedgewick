@@ -35,6 +35,14 @@ public static class HashTableWithLinearProbing
 		1073741789,
 		2147483647,
 	};
+
+	public static (int log2TableSize, int taleSize) GetTableSize(int initialCapacity)
+	{
+		int log2TableSize = Math.Max(Math2.IntegerCeilLog2(initialCapacity) - 4, 0);
+		int tableSize = Primes[log2TableSize];
+
+		return (log2TableSize, tableSize);
+	}
 }
 
 /*

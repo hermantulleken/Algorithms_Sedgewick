@@ -92,4 +92,20 @@ public class LinkedListTests
 		Assert.That(list.Count, Is.EqualTo(0));
 		Assert.That(front, Is.EqualTo(300));
 	}
+
+	[Test]
+	public void TestRemoveAfter()
+	{
+		var list = new LinkedList<int>();
+		var node1 = list.InsertAtFront(1);
+		var node2 = list.InsertAtFront(2);
+		var node3 = list.InsertAtFront(3);
+
+		var removedNode = list.RemoveAfter(node2);
+		
+		Assert.That(removedNode, Is.EqualTo(node1));
+		Assert.That(list.Count, Is.EqualTo(2));
+		Assert.That(list.First, Is.EqualTo(node3));
+		Assert.That(list.Last, Is.EqualTo(node2));
+	}
 }

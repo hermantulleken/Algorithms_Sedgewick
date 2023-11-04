@@ -5,5 +5,5 @@ public interface IFactory<T>
 {
 	T GetNewInstance();
 	
-	void DestroyInstance(T instance);
+	void Reset(T instance);
 }

@@ -5,5 +5,5 @@ public class DefaultFactory<T> : IFactory<T>
 {
 	public T GetNewInstance() => new T();
 	
-	public void DestroyInstance(T instance) => instance = default!;
+	public void Reset(T instance) => instance = default!;
 }
