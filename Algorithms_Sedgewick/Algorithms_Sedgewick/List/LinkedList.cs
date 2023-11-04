@@ -1,15 +1,22 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Support;
-using static System.Diagnostics.Debug;
 
 namespace Algorithms_Sedgewick.List;
 
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using static Support.Tools;
+using static Debug;
+using static Tools;
 
+/// <summary>
+/// Represents a singly linked list.
+/// </summary>
+/// <typeparam name="T">The type of elements in the <see cref="LinkedList{T}"/>.</typeparam>
 public sealed class LinkedList<T> : IEnumerable<T>
 {
+	/// <summary>
+	/// Represents a node in the <see cref="LinkedList{T}"/>.
+	/// </summary>
 	/*
 		Exposing the node class makes the linked list a more useful container to
 		use for implementing other algorithms.
@@ -46,12 +53,18 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	}
 
 	private Node? back;
-
 	private Node? front;
 	private int version = 0;
 
+	/// <summary>
+	/// Gets the number of elements contained in the <see cref="LinkedList{T}"/>.
+	/// </summary>
 	public int Count { get; private set; } = 0;
 
+	/// <summary>
+	/// Gets the first node of the <see cref="LinkedList{T}"/>.
+	/// </summary>
+	/// <exception cref="System.InvalidOperationException">Thrown when the <see cref="LinkedList{T}"/> is empty.</exception>
 	public Node First
 	{
 		get
@@ -63,11 +76,22 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		}
 	}
 
+	/// <summary>
+	/// Gets a value indicating whether the linked list is empty.
+	/// </summary>
+	[MemberNotNullWhen(false, nameof(front), nameof(back))]
 	[MemberNotNullWhen(false, nameof(front), nameof(back))]
 	public bool IsEmpty => front == null;
 
+	/// <summary>
+	/// Gets a value indicating whether the linked list has only one item.
+	/// </summary>
 	public bool IsSingleton => front == back;
-
+	
+	/// <summary>
+	/// Gets the last node of the linked list.
+	/// </summary>
+	/// <exception cref="System.InvalidOperationException">Thrown when the linked list is empty.</exception>
 	public Node Last
 	{
 		get
@@ -79,6 +103,9 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		}
 	}
 
+	/// <summary>
+	/// Gets an enumerable collection of nodes in the linked list.
+	/// </summary>
 	public IEnumerable<Node> Nodes
 	{
 		get
@@ -96,6 +123,9 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		}
 	}
 
+	/// <summary>
+	/// Removes all nodes from this <see cref="LinkedList{T}"/>.
+	/// </summary>
 	public void Clear()
 	{
 		front = back = null;
@@ -103,6 +133,10 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		UpdateVersion();
 	}
 
+	/// <summary>
+	/// Concatenates the current <see cref="LinkedList{T}"/> with another <see cref="LinkedList{T}"/>.
+	/// </summary>
+	/// <param name="other">The <see cref="LinkedList{T}"/> to concatenate with.</param>
 	public void Concat(LinkedList<T> other)
 	{
 		other.ThrowIfNull();
@@ -133,8 +167,15 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		UpdateVersion();
 	}
 
+	/// <inheritdoc/>
 	public IEnumerator<T> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
 
+	/// <summary>
+	/// Inserts a new item after the specified node in the linked list.
+	/// </summary>
+	/// <param name="node">The node after which to insert the new item.</param>
+	/// <param name="item">The item to insert.</param>
+	/// <returns>The newly created node containing the inserted item.</returns>
 	public Node InsertAfter(Node node, T item)
 	{
 		node.ThrowIfNull();
@@ -155,6 +196,11 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		return newNode;
 	}
 
+	/// <summary>
+	/// Inserts a new item at the end of the linked list.
+	/// </summary>
+	/// <param name="item">The item to insert.</param>
+	/// <returns>The newly created node containing the inserted item.</returns>
 	public Node InsertAtBack(T item)
 	{
 		if (IsEmpty)
@@ -171,6 +217,11 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		return back;
 	}
 
+	/// <summary>
+	/// Inserts a new item at the beginning of the linked list.
+	/// </summary>
+	/// <param name="item">The item to insert.</param>
+	/// <returns>The newly created node containing the inserted item.</returns>
 	public Node InsertAtFront(T item)
 	{
 		if (IsEmpty)
@@ -222,6 +273,10 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		return removedNode;
 	}
 
+	/// <summary>
+	/// Removes the first item from the linked list.
+	/// </summary>
+	/// <returns>The removed node.</returns>
 	public Node RemoveFromFront()
 	{
 		if (IsEmpty)
@@ -246,6 +301,9 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		return removedNode;
 	}
 
+	/// <summary>
+	/// Reverses the order of the nodes in the linked list.
+	/// </summary>
 	public void Reverse()
 	{
 		if (IsEmpty || IsSingleton)
@@ -269,8 +327,10 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		back = oldFront;
 	}
 
+	/// <inheritdoc/>
 	public override string ToString() => IsEmpty ? "[]" : $"[{First}]";
 
+	/// <inheritdoc/>
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 	private Node InsertFirstItem(T item)
