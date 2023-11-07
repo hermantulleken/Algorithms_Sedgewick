@@ -13,59 +13,55 @@ namespace Benchmarks;
 [SimpleJob(RunStrategy.Throughput, launchCount: 1, iterationCount: 1)]
 public class MergeSortBenchmarks
 {
-	private const int Count = 1 << 12;
+	private const int Count = 1 << 10;
 
 	[Params( /*Count / 16, Count / 8, Count / 4, */Count / 2, Count)]
 	public int ItemCount { get; set; }
 
 	private ResizeableArray<int> list;
 	
-	private readonly FixedPreInitializedPool<IQueue<int>> minorQueuePool;
-	private readonly FixedPreInitializedPool<IQueue<IQueue<int>>> majorQueuePool;
-	private readonly FixedPreInitializedPool<IQueue<int>> minorQueuePool1;
-	private readonly FixedPreInitializedPool<IQueue<IQueue<int>>> majorQueuePool1;
+	private readonly FixedPreInitializedPool<IQueue<int>> minorQueuePool_Fixed;
+	private readonly FixedPreInitializedPool<IQueue<IQueue<int>>> majorQueuePool_Fixed;
+	private readonly FixedPreInitializedPool<IQueue<int>> minorQueuePool_Linked;
+	private readonly FixedPreInitializedPool<IQueue<IQueue<int>>> majorQueuePool_Linked;
 	private static FixedPreInitializedPool<LinkedListWithPooledNodes<IQueue<int>>.Node> majorNodePool;
 	private static FixedPreInitializedPool<LinkedListWithPooledNodes<int>.Node> minorNodePool;
 
 	public MergeSortBenchmarks()
 	{
-		minorQueuePool = CreateMinorQueuePool();
-		majorQueuePool = CreateMajorQueuePool();
+		minorQueuePool_Fixed = CreateMinorQueuePool_Fixed();
+		majorQueuePool_Fixed = CreateMajorQueuePool_Fixed();
 		
-		minorQueuePool1 = CreateMinorQueuePool1();
-		majorQueuePool1 = CreateMajorQueuePool1();
+		minorQueuePool_Linked = CreateMinorQueuePool_Linked();
+		majorQueuePool_Linked = CreateMajorQueuePool_Linked();
 	}
 
-	private static FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool()
+	private static FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool_Fixed()
 	{
 		return new FixedPreInitializedPool<IQueue<IQueue<int>>>(
 			Factory.Create<IQueue<IQueue<int>>>(() => new FixedCapacityQueue<IQueue<int>>(Count), queue => queue.Clear()),
-			Count << 1,
-			IdComparer.Instance);
+			Count << 1);
 	}
 
-	private static FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool()
+	private static FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool_Fixed()
 	{
 		return new FixedPreInitializedPool<IQueue<int>>(
 			Factory.Create<IQueue<int>>(() => new FixedCapacityQueue<int>(Count), queue => queue.Clear()),
-			Count << 1,
-			IdComparer.Instance);
+			Count << 1);
 	}
 	
-	private static FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool1()
+	private static FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool_Linked()
 	{
 		return new FixedPreInitializedPool<IQueue<IQueue<int>>>(
 			Factory.Create<IQueue<IQueue<int>>>(() => new QueueWithLinkedListAndNodePool<IQueue<int>>(Count), queue => queue.Clear()),
-			Count << 1,
-			IdComparer.Instance);
+			Count << 1);
 	}
 
-	private static FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool1()
+	private static FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool_Linked()
 	{
 		return new FixedPreInitializedPool<IQueue<int>>(
 			Factory.Create<IQueue<int>>(() => new QueueWithLinkedListAndNodePool<int>(Count), queue => queue.Clear()),
-			Count << 1,
-			IdComparer.Instance);
+			Count << 1);
 	}
 
 	private void ResetList()
@@ -158,17 +154,37 @@ public class MergeSortBenchmarks
 	}
 	
 	[Benchmark]
-	public void MergeSortBottomsUpWithQueuesPool()
+	public void MergeSortBottomsUpWithQueuesPool_FF()
 	{
 		ResetList();
-		Sort.MergeSortBottomsUpWithQueues(list, majorQueuePool, minorQueuePool);
+		Sort.MergeSortBottomsUpWithQueues(list, majorQueuePool_Fixed, minorQueuePool_Fixed);
 	}
 	
 	[Benchmark]
-	public void MergeSortBottomsUpWithQueuesPoolAndNodesPool()
+	public void MergeSortBottomsUpWithQueuesPoolAndNodesPool_LL()
 	{
 		ResetList();
-		Sort.MergeSortBottomsUpWithQueues(list, majorQueuePool1, minorQueuePool1);
+		Sort.MergeSortBottomsUpWithQueues(list, majorQueuePool_Linked, minorQueuePool_Linked);
+		
+		/*Debug.Assert(majorQueuePool.AliveElementCount == 0);
+		Debug.Assert(minorQueuePool.AliveElementCount == 0);*/
+	}
+	
+	[Benchmark]
+	public void MergeSortBottomsUpWithQueuesPoolAndNodesPool_LF()
+	{
+		ResetList();
+		Sort.MergeSortBottomsUpWithQueues(list, majorQueuePool_Linked, minorQueuePool_Fixed);
+		
+		/*Debug.Assert(majorQueuePool.AliveElementCount == 0);
+		Debug.Assert(minorQueuePool.AliveElementCount == 0);*/
+	}
+	
+	[Benchmark]
+	public void MergeSortBottomsUpWithQueuesPoolAndNodesPool_FL()
+	{
+		ResetList();
+		Sort.MergeSortBottomsUpWithQueues(list, majorQueuePool_Fixed, minorQueuePool_Linked);
 		
 		/*Debug.Assert(majorQueuePool.AliveElementCount == 0);
 		Debug.Assert(minorQueuePool.AliveElementCount == 0);*/

@@ -10,23 +10,31 @@ namespace Algorithms_Sedgewick.Queue;
 /// <typeparam name="T">The type of the queue's items.</typeparam>
 public sealed class FixedCapacityQueue<T> : IQueue<T>
 {
+	// ReSharper disable once StaticMemberInGenericType
+	private static readonly IdGenerator IdGenerator = new();
+	
 	private readonly T?[] items;
 	private int version = 0;
 	private int head = 0;
 	private int tail = 0;
 	
-	private static IdGenerator idGenerator = new();
-	
-	public int Id { get; } = idGenerator.GetNextId();
-
+	/// <summary>
+	/// Gets the capacity for this instance.
+	/// </summary>
 	public int Capacity { get; }
 
+	/// <inheritdoc />
 	public int Count { get; private set; }
 
+	/// <inheritdoc />
 	public bool IsEmpty => Count == 0;
 
+	/// <summary>
+	/// Gets a value indicating whether the queue is full, that is <see cref="Count"/> equals <see cref="Capacity"/>.
+	/// </summary>
 	public bool IsFull => Count == Capacity;
-
+	
+	/// <inheritdoc />
 	public T Peek
 	{
 		get
@@ -35,7 +43,14 @@ public sealed class FixedCapacityQueue<T> : IQueue<T>
 			return items[head]!;
 		}
 	}
+	
+	private int Id { get; } = IdGenerator.GetNextId();
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="FixedCapacityQueue{T}"/> class.
+	/// </summary>
+	/// <param name="capacity">The maximum number of items that can be contained in the queue.</param>
+	/// <exception cref="ArgumentException"><paramref name="capacity"/> is negative.</exception>
 	public FixedCapacityQueue(int capacity)
 	{
 		items = capacity switch
@@ -47,7 +62,8 @@ public sealed class FixedCapacityQueue<T> : IQueue<T>
 
 		Capacity = capacity;
 	}
-
+	
+	/// <inheritdoc />
 	public void Clear()
 	{
 		for (int i = 0; i < Count; i++)
@@ -60,6 +76,7 @@ public sealed class FixedCapacityQueue<T> : IQueue<T>
 		tail = 0;
 	}
 
+	/// <inheritdoc />
 	public IEnumerator<T> GetEnumerator()
 	{
 		int versionAtStartOfIteration = version;
@@ -72,6 +89,7 @@ public sealed class FixedCapacityQueue<T> : IQueue<T>
 		}
 	}
 
+	/// <inheritdoc />
 	public T Dequeue()
 	{
 		ValidateNotEmpty();
@@ -85,6 +103,7 @@ public sealed class FixedCapacityQueue<T> : IQueue<T>
 		return result!;
 	}
 
+	/// <inheritdoc />
 	public void Enqueue(T item)
 	{
 		if (IsFull)
@@ -98,8 +117,10 @@ public sealed class FixedCapacityQueue<T> : IQueue<T>
 		version++;
 	}
 
+	/// <inheritdoc />
 	public override string ToString() => this.Pretty();
-	
+
+	/// <inheritdoc />
 	public override int GetHashCode() => Id.GetHashCode();
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

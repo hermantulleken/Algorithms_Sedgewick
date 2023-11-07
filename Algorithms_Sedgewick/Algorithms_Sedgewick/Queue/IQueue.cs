@@ -1,12 +1,10 @@
-﻿using Algorithms_Sedgewick.Object;
-
-namespace Algorithms_Sedgewick.Queue;
+﻿namespace Algorithms_Sedgewick.Queue;
 
 /// <summary>
 /// Represents a generic queue of items.
 /// </summary>
 /// <typeparam name="T">The type of items contained in the queue.</typeparam>
-public interface IQueue<T> : IEnumerable<T>, IIdeable
+public interface IQueue<T> : IEnumerable<T>
 {
 	/// <summary>
 	/// Gets the number of items contained in the <see cref="IQueue{T}"/>.

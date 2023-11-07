@@ -13,6 +13,10 @@
       <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\Algorithms_Sedgewick.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\Support\Support.csproj" />
     </ItemGroup>

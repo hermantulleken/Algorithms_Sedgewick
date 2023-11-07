@@ -1,33 +1,57 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Algorithms_Sedgewick.Stack;
 using Support;
-using static System.Diagnostics.Debug;
-using static Support.Tools;
 
 namespace Algorithms_Sedgewick.List;
 
-public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
+using static Debug;
+using static Tools;
+
+/// <summary>
+/// Represents a singly linked list.
+/// </summary>
+/// <typeparam name="T">The type of elements in the <see cref="LinkedListWithClassNode{T}"/>.</typeparam>
+public sealed class LinkedListWithClassNode<T> : IEnumerable<T>
 {
+	/// <summary>
+	/// Represents a node in the <see cref="LinkedListWithClassNode{T}"/>.
+	/// </summary>
 	/*
 		Exposing the node class makes the linked list a more useful container to
-		use for implementing other algorithms.
+		use for implementing other algorithms, but more "unsafe" to use (since 
+		by changing the node the list can be corrupted.
 	*/
 	[SuppressMessage(
 		"StyleCop.CSharp.MaintainabilityRules", 
 		"SA1401:Fields should be private", 
 		Justification = DataTransferStruct)]
-	public sealed record Node
+	public sealed class Node
 	{
 #if WITH_INSTRUMENTATION
 		private const int RecursiveStringLimit = 100;
 #endif
 		
-		public T? Item;
+		/// <summary>
+		/// The contents of this node. 
+		/// </summary>
+		public T Item;
+		
+		/// <summary>
+		/// The next node in the linked list. <see langword="null"/> if this is the last node.
+		/// </summary>
 		public Node? NextNode;
-
+		
 		private string? ItemString => Item == null ? "null" : Item.ToString();
+		
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Node"/> class.
+		/// </summary>
+		/// <param name="item">The item contained in this node.</param>
+		public Node(T item)
+		{
+			Item = item;
+		}
 		
 #if WITH_INSTRUMENTATION
 		public override string ToString() => ToDebugString();
@@ -45,15 +69,20 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		public override string ToString() => $"Node:{{{ItemString}}}";
 #endif
 	}
-	
-	private readonly FixedCapacityStack<Node> pool;
-	
+
 	private Node? back;
 	private Node? front;
 	private int version = 0;
 
+	/// <summary>
+	/// Gets the number of elements contained in the <see cref="LinkedListWithClassNode{T}"/>.
+	/// </summary>
 	public int Count { get; private set; } = 0;
 
+	/// <summary>
+	/// Gets the first node of the <see cref="LinkedListWithClassNode{T}"/>.
+	/// </summary>
+	/// <exception cref="System.InvalidOperationException">Thrown when the <see cref="LinkedListWithClassNode{T}"/> is empty.</exception>
 	public Node First
 	{
 		get
@@ -65,11 +94,22 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 	}
 
+	/// <summary>
+	/// Gets a value indicating whether the linked list is empty.
+	/// </summary>
+	[MemberNotNullWhen(false, nameof(front), nameof(back))]
 	[MemberNotNullWhen(false, nameof(front), nameof(back))]
 	public bool IsEmpty => front == null;
 
+	/// <summary>
+	/// Gets a value indicating whether the linked list has only one item.
+	/// </summary>
 	public bool IsSingleton => front == back;
-
+	
+	/// <summary>
+	/// Gets the last node of the linked list.
+	/// </summary>
+	/// <exception cref="System.InvalidOperationException">Thrown when the linked list is empty.</exception>
 	public Node Last
 	{
 		get
@@ -81,6 +121,9 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 	}
 
+	/// <summary>
+	/// Gets an enumerable collection of nodes in the linked list.
+	/// </summary>
 	public IEnumerable<Node> Nodes
 	{
 		get
@@ -98,32 +141,21 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 	}
 
-	public LinkedListWithPooledNodes(int capacity)
-	{
-		pool = new FixedCapacityStack<Node>(capacity);
-		
-		for (int i = 0; i < capacity; i++)
-		{
-			pool.Push(new Node());
-		}
-	}
-
+	/// <summary>
+	/// Removes all nodes from this <see cref="LinkedListWithClassNode{T}"/>.
+	/// </summary>
 	public void Clear()
 	{
-		foreach (var node in Nodes)
-		{
-			ReturnToPool(node);
-		}
-		
-		ClearWithoutRelease();
+		front = back = null;
+		Count = 0;
+		UpdateVersion();
 	}
 
 	/// <summary>
-	/// Concatenates the other list to the end of this list.
+	/// Concatenates the current <see cref="LinkedListWithClassNode{T}"/> with another <see cref="LinkedListWithClassNode{T}"/>.
 	/// </summary>
-	/// <param name="other">The list to concatenate to this list.</param>
-	/// <remarks>The other list is cleared after this operation.</remarks>
-	public void Concat(LinkedListWithPooledNodes<T> other)
+	/// <param name="other">The <see cref="LinkedListWithClassNode{T}"/> to concatenate with.</param>
+	public void Concat(LinkedListWithClassNode<T> other)
 	{
 		other.ThrowIfNull();
 		
@@ -137,7 +169,7 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		var otherBack = other.back;
 		int otherCount = other.Count;
 		
-		other.ClearWithoutRelease(); // Clear so there are no nodes part of both lists, bit do not return the nodes to pool. 
+		other.Clear(); // Clear so there are no nodes part of both lists
 
 		if (IsEmpty)
 		{
@@ -153,8 +185,15 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		UpdateVersion();
 	}
 
-	public IEnumerator<T?> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
+	/// <inheritdoc/>
+	public IEnumerator<T> GetEnumerator() => Nodes.Select(node => node.Item).GetEnumerator();
 
+	/// <summary>
+	/// Inserts a new item after the specified node in the linked list.
+	/// </summary>
+	/// <param name="node">The node after which to insert the new item.</param>
+	/// <param name="item">The item to insert.</param>
+	/// <returns>The newly created node containing the inserted item.</returns>
 	public Node InsertAfter(Node node, T item)
 	{
 		node.ThrowIfNull();
@@ -165,11 +204,8 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 
 		// newNode has node's NextNode
-		var newNode = node with
-		{
-			Item = item,
-			NextNode = null,
-		};
+		var newNode = node;
+		newNode.Item = item;
 
 		node.NextNode = newNode;
 		
@@ -179,6 +215,11 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		return newNode;
 	}
 
+	/// <summary>
+	/// Inserts a new item at the end of the linked list.
+	/// </summary>
+	/// <param name="item">The item to insert.</param>
+	/// <returns>The newly created node containing the inserted item.</returns>
 	public Node InsertAtBack(T item)
 	{
 		if (IsEmpty)
@@ -186,12 +227,8 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 			return InsertFirstItem(item);
 		}
 		
-		var newNode = back.NextNode = pool.Pop();
-
-		newNode.Item = item;
-		newNode.NextNode = null;
-		
-		back = newNode;
+		back.NextNode = new Node(item);
+		back = back.NextNode;
 		
 		Count++;
 		UpdateVersion();
@@ -199,6 +236,11 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		return back;
 	}
 
+	/// <summary>
+	/// Inserts a new item at the beginning of the linked list.
+	/// </summary>
+	/// <param name="item">The item to insert.</param>
+	/// <returns>The newly created node containing the inserted item.</returns>
 	public Node InsertAtFront(T item)
 	{
 		if (IsEmpty)
@@ -206,12 +248,11 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 			return InsertFirstItem(item);
 		}
 
-		var newHead = pool.Pop() with
+		var newHead = new Node(item)
 		{
-			Item = item, 
 			NextNode = front,
 		};
-
+			
 		front = newHead;
 
 		Count++;
@@ -224,14 +265,10 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 	/// Removes the node after the specified node.
 	/// </summary>
 	/// <param name="node">The node whose successor is to be removed.</param>
+	/// <returns>The removed node.</returns>
 	/// <exception cref="System.ArgumentNullException">Thrown when the input node is null.</exception>
 	/// <exception cref="System.InvalidOperationException">Thrown when the input node does not have a successor to remove.</exception>
-	/*
-		Here and in RemoveFromFront below we do not return the removed node, since we return it to the pool.
-		If we returned it, the caller would have to return it to the pool, which
-		makes leaks more probable. 
-	*/
-	public void RemoveAfter(Node node)
+	public Node RemoveAfter(Node node)
 	{
 		node.ThrowIfNull();
 		
@@ -241,7 +278,6 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 
 		// Also works if node.NextNode.NextNode is null
-		
 		var newNextNode = node.NextNode.NextNode;
 		var removedNode = node.NextNode;
 		node.NextNode = newNextNode;
@@ -250,14 +286,17 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		{
 			back = node;
 		}
-
+		
 		Count--;
 		UpdateVersion();
-		
-		ReturnToPool(removedNode);
+		return removedNode;
 	}
 
-	public void RemoveFromFront()
+	/// <summary>
+	/// Removes the first item from the linked list.
+	/// </summary>
+	/// <returns>The removed node.</returns>
+	public Node RemoveFromFront()
 	{
 		if (IsEmpty)
 		{
@@ -265,7 +304,7 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 
 		var removedNode = front!;
-		
+
 		if (IsSingleton)
 		{
 			front = back = null;
@@ -277,10 +316,13 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		
 		Count--;
 		UpdateVersion();
-			
-		ReturnToPool(removedNode);
+
+		return removedNode;
 	}
 
+	/// <summary>
+	/// Reverses the order of the nodes in the linked list.
+	/// </summary>
 	public void Reverse()
 	{
 		if (IsEmpty || IsSingleton)
@@ -304,28 +346,19 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		back = oldFront;
 	}
 
+	/// <inheritdoc/>
 	public override string ToString() => IsEmpty ? "[]" : $"[{First}]";
 
+	/// <inheritdoc/>
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-	private void ClearWithoutRelease()
-	{
-		front = back = null;
-		Count = 0;
-		UpdateVersion();
-	}
-	
 	private Node InsertFirstItem(T item)
 	{
 		Count++;
-		front = back = pool.Pop() with
-		{
-			Item = item,
-			NextNode = null,
-		};
+		front = back = new Node(item);
 		
 		UpdateVersion();
-		
+
 		return front;
 	}
 
@@ -344,7 +377,7 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 			ThrowHelper.ThrowIteratingOverModifiedContainer();
 		}
 	}
-	
+
 	private void UpdateVersion()
 	{
 		version++;
@@ -380,10 +413,5 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 				Assert(front.NextNode == back);
 			}
 		}
-	}
-	
-	private void ReturnToPool(Node cachedNode)
-	{
-		pool.Push(cachedNode);
 	}
 }

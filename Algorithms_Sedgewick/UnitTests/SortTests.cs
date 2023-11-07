@@ -22,32 +22,28 @@ public class SortTests
 	{
 		return new FixedPreInitializedPool<IQueue<IQueue<int>>>(
 			Factory.Create<IQueue<IQueue<int>>>(() => new QueueWithLinkedList<IQueue<int>>(), queue => queue.Clear()),
-			count << 1,
-			IdComparer.Instance);
+			count << 1);
 	}
 
 	private static FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool(int count)
 	{
 		return new FixedPreInitializedPool<IQueue<int>>(
 			Factory.Create<IQueue<int>>(() => new QueueWithLinkedList<int>(), queue => queue.Clear()),
-			count << 1,
-			IdComparer.Instance);
+			count << 1);
 	}
 	
 	private static FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool1(int count)
 	{
 		return new FixedPreInitializedPool<IQueue<IQueue<int>>>(
 			Factory.Create<IQueue<IQueue<int>>>(() => new QueueWithLinkedListAndNodePool<IQueue<int>>(count), queue => queue.Clear()),
-			count << 1,
-			IdComparer.Instance);
+			count << 1);
 	}
 
 	private static FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool1(int count)
 	{
 		return new FixedPreInitializedPool<IQueue<int>>( 
 			Factory.Create<IQueue<int>>(() => new QueueWithLinkedListAndNodePool<int>(count), queue => queue.Clear()),
-			count << 1,
-			IdComparer.Instance);
+			count << 1);
 	}
 
 	[DatapointSource]
@@ -168,16 +164,14 @@ public class SortTests
 		{
 			return new FixedPreInitializedPool<IQueue<IQueue<int>>>(
 				Factory.Create<IQueue<IQueue<int>>>(() => new QueueWithLinkedListAndNodePool<IQueue<int>>(count), queue => queue.Clear()),
-				count << 1,
-				IdComparer.Instance);
+				count << 1);
 		}
 
 		FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool1()
 		{
 			return new FixedPreInitializedPool<IQueue<int>>(
 				Factory.Create<IQueue<int>>(() => new QueueWithLinkedListAndNodePool<int>(count), queue => queue.Clear()),
-				count << 1,
-				IdComparer.Instance);
+				count << 1);
 		}
 		
 		var list = Generator.UniformRandomInt(int.MaxValue)

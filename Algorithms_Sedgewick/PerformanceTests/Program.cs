@@ -12,12 +12,15 @@ namespace PerformanceTests;
 using static WhiteBoxTesting;
 using Timer = Support.Timer;
 
+/*
+	This is an obsolete project, and these tests should be replaced by new ones defined in Benchmark.
+*/
 internal static class Program
 {
 	[SuppressMessage("ReSharper", "UnreachableSwitchCaseDueToIntegerAnalysis")]
 	public static void Main()
 	{
-		var runner = new LinkedListWithPooledNodesTest();
+		var runner = new MergeSortTest();
 		runner.Run();
 		
 		//Buffers();

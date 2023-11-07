@@ -14,7 +14,7 @@ public class FixedPreInitializedPool<T>
 	
 	public int Capacity { get; }
 
-	public FixedPreInitializedPool(IFactory<T> factory, int capacity, IComparer<T> comparer)
+	public FixedPreInitializedPool(IFactory<T> factory, int capacity)
 	{
 		Capacity = capacity;
 		pool = new FixedCapacityStack<T>(capacity);

@@ -15,7 +15,7 @@ public class QueueWithLinkedListAndNodePool<T> : IQueue<T>
 	// ReSharper disable once StaticMemberInGenericType
 	private static readonly IdGenerator IdGenerator = new();
 
-	private readonly LinkedListWithPooledNodes<T> items;
+	private readonly LinkedListWithPooledClassNodes<T> items;
 
 	/// <summary>
 	/// Gets the Id for this instance.
@@ -36,7 +36,7 @@ public class QueueWithLinkedListAndNodePool<T> : IQueue<T>
 		get
 		{
 			ValidateNotEmpty();
-			return items.First()!;
+			return items.First.Item!;
 		}
 	}
 	
@@ -46,7 +46,7 @@ public class QueueWithLinkedListAndNodePool<T> : IQueue<T>
 	/// <param name="capacity">The capacity of this queue.</param>
 	public QueueWithLinkedListAndNodePool(int capacity)
 	{
-		items = new LinkedListWithPooledNodes<T>(capacity);
+		items = new LinkedListWithPooledClassNodes<T>(capacity);
 	}
 
 	/// <inheritdoc/>

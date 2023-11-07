@@ -8,7 +8,7 @@ using static Support.Tools;
 
 namespace Algorithms_Sedgewick.List;
 
-public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
+public class LinkedListWithPooledClassNodes<T> : IEnumerable<T?>
 {
 	/*
 		Exposing the node class makes the linked list a more useful container to
@@ -18,7 +18,7 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		"StyleCop.CSharp.MaintainabilityRules", 
 		"SA1401:Fields should be private", 
 		Justification = DataTransferStruct)]
-	public sealed record Node
+	public class Node
 	{
 #if WITH_INSTRUMENTATION
 		private const int RecursiveStringLimit = 100;
@@ -98,7 +98,7 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 	}
 
-	public LinkedListWithPooledNodes(int capacity)
+	public LinkedListWithPooledClassNodes(int capacity)
 	{
 		pool = new FixedCapacityStack<Node>(capacity);
 		
@@ -123,7 +123,7 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 	/// </summary>
 	/// <param name="other">The list to concatenate to this list.</param>
 	/// <remarks>The other list is cleared after this operation.</remarks>
-	public void Concat(LinkedListWithPooledNodes<T> other)
+	public void Concat(LinkedListWithPooledClassNodes<T> other)
 	{
 		other.ThrowIfNull();
 		
@@ -165,13 +165,9 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 
 		// newNode has node's NextNode
-		var newNode = node with
-		{
-			Item = item,
-			NextNode = null,
-		};
-
-		node.NextNode = newNode;
+		var newNode = node;
+		newNode.Item = item;
+		newNode.NextNode = newNode;
 		
 		Count++;
 		UpdateVersion();
@@ -206,11 +202,10 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 			return InsertFirstItem(item);
 		}
 
-		var newHead = pool.Pop() with
-		{
-			Item = item, 
-			NextNode = front,
-		};
+		var newHead = pool.Pop();
+
+		newHead.Item = item;
+		newHead.NextNode = front;
 
 		front = newHead;
 
@@ -318,12 +313,9 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 	private Node InsertFirstItem(T item)
 	{
 		Count++;
-		front = back = pool.Pop() with
-		{
-			Item = item,
-			NextNode = null,
-		};
-		
+		front = back = pool.Pop();
+		front.Item = item;
+		front.NextNode = null;
 		UpdateVersion();
 		
 		return front;
@@ -382,8 +374,8 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 	}
 	
-	private void ReturnToPool(Node cachedNode)
+	private void ReturnToPool(Node node)
 	{
-		pool.Push(cachedNode);
+		pool.Push(node);
 	}
 }

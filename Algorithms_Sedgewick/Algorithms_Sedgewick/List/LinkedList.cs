@@ -19,7 +19,8 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	/// </summary>
 	/*
 		Exposing the node class makes the linked list a more useful container to
-		use for implementing other algorithms.
+		use for implementing other algorithms, but more "unsafe" to use (since 
+		by changing the node the list can be corrupted.
 	*/
 	[SuppressMessage(
 		"StyleCop.CSharp.MaintainabilityRules", 
@@ -31,9 +32,16 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		private const int RecursiveStringLimit = 100;
 #endif
 		
+		/// <summary>
+		/// The contents of this node. 
+		/// </summary>
 		public T Item = Item;
+		
+		/// <summary>
+		/// The next node in the linked list. <see langword="null"/> if this is the last node.
+		/// </summary>
 		public Node? NextNode;
-
+		
 		private string? ItemString => Item == null ? "null" : Item.ToString();
 		
 #if WITH_INSTRUMENTATION
@@ -48,6 +56,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 					? "..." 
 					: $"{Item} [{NextNode.ToDebugString(depth - 1)}]";
 #else
+		/// <inheritdoc/>
 		public override string ToString() => $"Node:{{{ItemString}}}";
 #endif
 	}
