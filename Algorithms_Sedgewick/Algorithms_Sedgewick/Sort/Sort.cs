@@ -17,8 +17,15 @@ using static System.Diagnostics.Debug;
 using static List.ListExtensions;
 using static Support.WhiteBoxTesting;
 
+/// <summary>
+/// Provides a variety of sorting algorithms. 
+/// </summary>
 public static class Sort
 {
+	
+	/// <summary>
+	/// Represents variations on a merge sort algorithm.
+	/// </summary>
 	public struct MergeSortConfig
 	{
 		public static MergeSortConfig Vanilla => new()
@@ -43,7 +50,7 @@ public static class Sort
 			Insert,
 			Shell,
 			Merge,
-		};
+		}
 		
 		public bool SkipMergeWhenSorted;
 		public SortAlgorithm SmallArraySortAlgorithm;
@@ -59,6 +66,9 @@ public static class Sort
 		}
 	}
 
+	/// <summary>
+	/// Represents variations on a quick sort algorithm.
+	/// </summary>
 	public struct QuickSortConfig
 	{
 		public enum PivotSelectionAlgorithm
@@ -124,6 +134,8 @@ public static class Sort
 				yield return item;
 			}
 		}
+		
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		public void Sort()
 		{
@@ -140,8 +152,6 @@ public static class Sort
 		private void DequeueToRight() => Peek1 = queue.Dequeue();
 
 		private void Enqueue(T item) => queue.Enqueue(item);
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		private void Rotate()
 		{
@@ -182,17 +192,8 @@ public static class Sort
 	/// This data structure supports extra methods so it can be used to implement the
 	/// deque sort algorithm.
 	/// </summary>
-	private sealed class DequeueSortHelperWithDeque<T> : IEnumerable<T>
+	private sealed class DequeueSortHelperWithDeque<T>(IDeque<T> deque) : IEnumerable<T>
 	{
-		private readonly IDeque<T> deque;
-
-		public T Top => deque.PeekRight;
-
-		public DequeueSortHelperWithDeque(IDeque<T> deque)
-		{
-			this.deque = deque;
-		}
-
 		public void ExchangeTop()
 		{
 			var card1 = deque.PopRight();
@@ -317,7 +318,6 @@ public static class Sort
 		int countAfter = deque.Count;
 		
 		Assert(countBefore == countAfter);
-
 		
 		for (int i = 0; i < list.Count; i++)
 		{
@@ -427,10 +427,20 @@ public static class Sort
 		}
 	}
 
-	// From https://en.wikipedia.org/wiki/Gnome_sort
-	public static void GnomeSort<T>(IRandomAccessList<T> list) 
+	/// <summary>
+	/// Performs the Gnome sort algorithm on a list, which is a simple comparison-based sorting algorithm.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the list, which must implement IComparable<T>.</typeparam>
+	/// <param name="list">The list to be sorted. It must support random access by index.</param>
+	/// <remarks>
+	/// The performance of Gnome sort is O(n^2) in the average and worst cases.
+	/// </remarks>
+	/// <exception cref="ArgumentNullException">Thrown if the list is null.</exception>
+	/// <seealso href="https://en.wikipedia.org/wiki/Gnome_sort"/>
+	public static void GnomeSort<T>(IRandomAccessList<T> list)
 		where T : IComparable<T>
 	{
+		list.ThrowIfNull();
 		int i = 0;
 		while (i < list.Count)
 		{
@@ -455,6 +465,7 @@ public static class Sort
 		}
 		
 		int GetChildIndex(int index) => 2 * index + 1;
+		
 		// int GetParentIndex(int index) => (index - 1) / 2;
 		
 		void Sink(int k, int count)
@@ -465,7 +476,7 @@ public static class Sort
 			
 			while (child < count)
 			{
-				if (child < count && LessAt(list, child, child+1))
+				if (child < count && LessAt(list, child, child + 1))
 				{
 					child++;
 				}
@@ -490,7 +501,7 @@ public static class Sort
 			Console.WriteLine(list.Pretty());
 		}
 
-		int i = count-1;
+		int i = count - 1;
 		
 		while (i >= 1)
 		{
@@ -501,12 +512,18 @@ public static class Sort
 		}
 	}
 
+	/// <summary>
+	/// Performs insertion sort algorithm on a list.
+	/// </summary>
 	public static void InsertionSort<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
 	{
 		InsertionSort(list, 0, list.Count);
 	}
 
+	/// <summary>
+	/// Performs insertion sort algorithm on a list.
+	/// </summary>
 	public static void InsertionSort<T>(IRandomAccessList<T> list, int start, int end) 
 		where T : IComparable<T>
 	{
@@ -1408,6 +1425,155 @@ public static class Sort
 			list[i] = labelledList[i].Item;
 		}
 	}
+
+	/// <summary>
+	/// Sorts a list containing only 0 and 1.
+	/// </summary>
+	/// <param name="list">The list to sort.</param>
+	public static void Sort2(IRandomAccessList<int> list)
+	{
+		list.ThrowIfNull();
+		Sort2(list, 0, 1);
+	}
+
+	/// <summary>
+	/// Sorts a list containing only two elements in O(n) time.
+	/// </summary>
+	/// <param name="list">The list to sort.</param>
+	/// <param name="smallElement">The smaller element.</param>
+	/// <param name="largeElement">The larger element.</param>
+	/// <typeparam name="T">The type of the elements in the list.</typeparam>
+	/// <remarks>The list is sorted so that all instances of <paramref name="smallElement"/>
+	/// come before instances of <paramref name="largeElement"/>. The order is does not
+	/// depend on external orderings, for example, if <paramref name="smallElement"/> is given
+	/// as 1 and <paramref name="largeElement"/> is given as 0, then the list is sorted so that all
+	/// 1s appear before all 0s.
+	/// .</remarks>
+	public static void Sort2<T>(IRandomAccessList<T> list, T smallElement, T largeElement)
+	{
+		list.ThrowIfNull();
+		
+		if (list.IsEmpty || list.Count == 1 || Equals(smallElement, largeElement))
+		{
+			return;
+		}
+		
+		void ValidateElementAt(int index)
+		{
+			if (!(Equals(list[index], smallElement) || Equals(list[index], largeElement)))
+			{
+				throw new ArgumentException($"The list must only contain {smallElement} and {largeElement}, but contains {list[index]} at position {index}.", nameof(list));
+			}
+		}
+		
+		int count = list.Count;
+		int leftIndex = 0;
+		int rightIndex = count - 1;
+
+		while (leftIndex < rightIndex)
+		{
+			while (Equals(list[leftIndex], smallElement) && leftIndex < rightIndex)
+			{
+				leftIndex++;
+			}
+			
+			Assert(leftIndex < count);
+			ValidateElementAt(leftIndex);
+			
+			while (Equals(list[rightIndex], largeElement) && leftIndex < rightIndex)
+			{
+				rightIndex--;
+			}
+			
+			Assert(rightIndex >= 0);
+			ValidateElementAt(rightIndex);
+
+			if (leftIndex >= rightIndex)
+			{
+				break;
+			}
+			
+			list[leftIndex] = smallElement;
+			list[rightIndex] = largeElement;
+
+			leftIndex++;
+			rightIndex--;
+		}
+	}
+
+	public static void DutchFlagSort(IRandomAccessList<int> list) => DutchFlagSort(list, 0, 1, 2);
+	
+	/// <summary>
+	/// Sorts a list containing only three distinct elements into a given order, in O(n) time complexity.
+	/// This is based on the Dutch National Flag sorting problem, which is solved here in a single linear pass.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the list. Must support equality comparison.</typeparam>
+	/// <param name="list">The list to be sorted. It must support random access.</param>
+	/// <param name="smallElement">The element considered as the "small" element in the sorting order.</param>
+	/// <param name="mediumElement">The element considered as the "medium" element in the sorting order.</param>
+	/// <param name="largeElement">The element considered as the "large" element in the sorting order.</param>
+	/// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+	/// <exception cref="ArgumentException"><paramref name="list"/> contains elements other than the specified
+	/// small, medium, or large elements.</exception>
+	/// <exception cref="ArgumentException"><paramref name="smallElement"/> equals <see cref="largeElement"/> but
+	/// not <see cref="mediumElement"/>.</exception>
+	public static void DutchFlagSort<T>(IRandomAccessList<T> list, T smallElement, T mediumElement, T largeElement)
+	{
+		list.ThrowIfNull();
+
+		if (Equals(smallElement, mediumElement))
+		{
+			Sort2(list, mediumElement, largeElement);
+			return;
+		}
+		
+		if (Equals(mediumElement, largeElement))
+		{
+			Sort2(list, smallElement, mediumElement);
+			return;
+		}
+
+		if (Equals(smallElement, largeElement))
+		{
+			throw new ArgumentException("Order of the elements are not consistent");
+		}
+		
+		if (list.IsEmpty || list.Count == 1)
+		{
+			return;
+		}
+		
+		int count = list.Count;
+
+		int low = 0;
+		int mid = 0; 
+		int high = count - 1;
+
+		while (mid <= high)
+		{
+			var element = list[mid];
+			
+			if (Equals(element, smallElement))
+			{
+				SwapAt(list, low, mid);
+				low++;
+				mid++;
+			}
+			else if (Equals(element, mediumElement))
+			{
+				mid++;
+			}
+			else if (Equals(element, largeElement))
+			{
+				SwapAt(list, mid, high);
+				high--;
+			}
+			else
+			{
+				throw new ArgumentException($"The list must only contain {smallElement}, {mediumElement}, and {largeElement}, but contains{element} at index {mid}.");
+			}
+		}
+	}
 	
 	// Ex 2.2.10
 	private static void FastMerge<T>(
@@ -1488,7 +1654,8 @@ public static class Sort
 		int rightEndIndex) 
 		where T : IComparable<T>
 	{
-		for (int k = leftStartIndex; k < rightEndIndex; k++) // this is <= in original
+		// this is <= in original
+		for (int k = leftStartIndex; k < rightEndIndex; k++) 
 		{
 			helpList[k] = list[k];
 		}
@@ -1496,7 +1663,8 @@ public static class Sort
 		int leftIndex = leftStartIndex;
 		int rightIndex = rightStartIndex; // this is middle + 1 in original
 		
-		for (int k = leftStartIndex; k < rightEndIndex; k++) // this is <= in original
+		// this is <= in original
+		for (int k = leftStartIndex; k < rightEndIndex; k++) 
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			void TakeAt(ref int index)
@@ -1505,7 +1673,8 @@ public static class Sort
 				index++;
 			}
 			
-			if (leftIndex >= rightStartIndex) // This is > in the original
+			// This is > in the original
+			if (leftIndex >= rightStartIndex) 
 			{
 				TakeAt(ref rightIndex);
 			}
@@ -1523,8 +1692,7 @@ public static class Sort
 			}
 		}
 	}
-
-
+	
 	// Ex. 2.2.22
 	private static void Merge3<T>(
 		IRandomAccessList<T> list,
@@ -1535,7 +1703,8 @@ public static class Sort
 		int list2End)
 		where T : IComparable<T>
 	{
-		for (int k = list0Start; k < list2End; k++) // this is <= in original
+		// this is <= in original
+		for (int k = list0Start; k < list2End; k++) 
 		{
 			helpList[k] = list[k];
 		}
@@ -1575,28 +1744,33 @@ public static class Sort
 				}
 			}
 			
-			if (list0Index >= list1Start) // list 0 is empty
+			if (list0Index >= list1Start)
 			{
+				// list 0 is empty
 				TakesSmallestAt(ref list1Index, list2Start, ref list2Index, list2End);
 			}
-			else if (list1Index >= list2Start) // list 1 is empty
-			{
+			else if (list1Index >= list2Start) 
+			{	// list 1 is empty
 				TakesSmallestAt(ref list0Index, list1Start, ref list2Index, list2End);
 			}
-			else if (list2Index >= list2End) // list 2 is empty
+			else if (list2Index >= list2End) 
 			{
+				// list 2 is empty
 				TakesSmallestAt(ref list0Index, list1Start, ref list1Index, list2Start);
 			}
 			else if (LessAt(helpList, list0Index, list1Index) && LessAt(helpList, list0Index, list2Index))
-			{ // 0 1 2 or 0 2 1
+			{ 
+				// 0 1 2 or 0 2 1
 				TakeAt(ref list0Index);
 			}
 			else if (LessAt(helpList, list1Index, list2Index))
-			{ // 1 0 2 or 1 2 0
+			{ 
+				// 1 0 2 or 1 2 0
 				TakeAt(ref list1Index);
 			}
 			else 
-			{ // 2 0 1 or 2 1 0
+			{ 
+				// 2 0 1 or 2 1 0
 				TakeAt(ref list2Index);
 			}
 		}

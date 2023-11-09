@@ -6,18 +6,34 @@ using System.Runtime.CompilerServices;
 using Support;
 using static System.Diagnostics.Debug;
 
+/// <summary>
+/// Contains constants for the <see cref="ResizeableArray{T}"/> class.
+/// </summary>
 public static class ResizeableArray
 {
 	internal const int DefaultCapacity = 16;
 	internal const int HalfMaxCapacity = MaxCapacity >> 1;
 	internal const int MaxCapacity = int.MaxValue;
+	
+	internal static class Builder
+	{
+		internal static ResizeableArray<T> Create<T>(ReadOnlySpan<T> values) => new(values);
+	}
 }
 
+/// <summary>
+/// Represents a generic list of items.
+/// </summary>
+/// <param name="capacity">The initial capacity of the list.</param>
+/// <typeparam name="T">The type of items contained in the list.</typeparam>
+/// <exception cref="ArgumentException"><paramref name="capacity"/> is negative.</exception>
 [SuppressMessage(
 	"StyleCop.CSharp.MaintainabilityRules", 
 	"SA1402:File may only contain a single type", 
 	Justification = "Generic and Simple version goes together.")]
-public sealed class ResizeableArray<T> : IRandomAccessList<T>
+[CollectionBuilder(typeof(ResizeableArray.Builder), nameof(ResizeableArray.Builder.Create))]
+public sealed class ResizeableArray<T>(int capacity = ResizeableArray.DefaultCapacity)
+	: IRandomAccessList<T>
 {
 	/*
 		This array may have null elements when
@@ -26,11 +42,19 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 				exposed to the caller.
 			2. T is nullable, and so null values could have been inserted.  
 	*/
-	private T[] items;
+	private T[] items = capacity switch
+	{
+		< 0 => throw ThrowHelper.CapacityCannotBeNegativeException(capacity),
+		0 => Array.Empty<T>(),
+		_ => new T[capacity],
+	};
 
-	private int version;
-
-	public int Capacity { get; private set; }
+	private int version = 0;
+	
+	/// <summary>
+	/// Gets the capacity for this instance, that is the maximum number of items it can hold without resizing.
+	/// </summary>
+	public int Capacity { get; private set; } = capacity;
 
 	/// <inheritdoc />
 	public int Count { get; private set; }
@@ -38,8 +62,15 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 	/// <inheritdoc/>
 	public bool IsEmpty => Count == 0;
 
+	/// <summary>
+	/// Gets a value indicating whether the <see cref="ResizeableArray{T}"/> is full, that is <see cref="Count"/> equals <see cref="Capacity"/>.
+	/// </summary>
 	public bool IsFull => Count == Capacity;
 
+	/// <summary>
+	/// Gets or sets the item at the specified index.
+	/// </summary>
+	/// <param name="index">The index of the item to get or set.</param>
 	public T this[int index]
 	{
 		get
@@ -56,19 +87,16 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		}
 	}
 
-	public ResizeableArray(int capacity = ResizeableArray.DefaultCapacity)
+	internal ResizeableArray(ReadOnlySpan<T> elements)
+		: this(elements.Length)
 	{
-		items = capacity switch
-		{
-			< 0 => throw ThrowHelper.CapacityCannotBeNegativeException(capacity),
-			0 => Array.Empty<T>(),
-			_ => new T[capacity],
-		};
-
-		version = 0;
-		Capacity = capacity;
+		AddRange(elements);
 	}
 
+	/// <summary>
+	/// Adds an item to the end of the <see cref="ResizeableArray{T}"/>.
+	/// </summary>
+	/// <pqram name="item">The item to add to the <see cref="ResizeableArray{T}"/>.</pqram>
 	public void Add(T item)
 	{
 		if (IsFull)
@@ -81,6 +109,9 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		version++;
 	}
 
+	/// <summary>
+	/// Removes all items from the <see cref="ResizeableArray{T}"/>.
+	/// </summary>
 	public void Clear()
 	{
 		if (IsEmpty)
@@ -91,6 +122,11 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		RemoveLastAlreadyChecked(Count);
 	}
 
+	/// <summary>
+	/// Deletes the item at the specified index.
+	/// </summary>
+	/// <param name="index">The index of the item to delete.</param>
+	/// <returns>The deleted item.</returns>
 	public T DeleteAt(int index = 0)
 	{
 		ValidateIndex(index);
@@ -109,6 +145,7 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		return firstItem;
 	}
 
+	/// <inheritdoc />
 	public IEnumerator<T> GetEnumerator()
 	{
 		int versionAtStartOfIteration = version;
@@ -121,6 +158,11 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		}
 	}
 
+	/// <summary>
+	/// Inserts an item at the beginning of the <see cref="ResizeableArray{T}"/>.
+	/// </summary>
+	/// <param name="item">The item to insert.</param>
+	/// <param name="index">The index at which to insert the item.</param>
 	public void InsertAt(T item, int index = 0)
 	{
 		if (IsFull)
@@ -138,6 +180,10 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		Count++;
 	}
 	
+	/// <summary>
+	/// Removes the last item from the <see cref="ResizeableArray{T}"/>.
+	/// </summary>
+	/// <returns> The removed item. </returns>
 	public T RemoveLast()
 	{
 		if (IsEmpty)
@@ -153,8 +199,11 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		return result;
 	}
 
-	// Ignores negative values
-	public void RemoveLast(int n)
+	/// <summary>
+	/// Removes the last <paramref name="n"/> items from the <see cref="ResizeableArray{T}"/>.
+	/// </summary>
+	/// <param name="n">The number of items to remove.</param>
+	public void RemoveLast(int n) // Ignores negative values
 	{
 		if (n <= 0)
 		{
@@ -169,10 +218,22 @@ public sealed class ResizeableArray<T> : IRandomAccessList<T>
 		RemoveLastAlreadyChecked(n > Count ? Count : n);
 	}
 
+	/// <inheritdoc />
 	public override string ToString() => this.Pretty();
-
+	
+	/// <inheritdoc />
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+	private void AddRange(ReadOnlySpan<T> elements)
+	{
+		for (int i = 0; i < elements.Length; i++)
+		{
+			items[i] = elements[i];
+		}
+
+		Count = elements.Length;
+	}
+	
 	private void Grow()
 	{
 		switch (Capacity)

@@ -8,154 +8,154 @@ namespace UnitTests;
 public class ResizeableArrayTest
 {
 	[Test]
-    public void Add_WhenFull_IncreasesCapacity()
-    {
-        var arr = new ResizeableArray<int>(2);
-        arr.Add(1);
-        arr.Add(2);
-        arr.Add(3);
-        Assert.AreEqual(3, arr.Count);
-        Assert.AreEqual(4, arr.Capacity);
-    }
+	public void Add_WhenFull_IncreasesCapacity()
+	{
+		var arr = new ResizeableArray<int>(2);
+		arr.Add(1);
+		arr.Add(2);
+		arr.Add(3);
+		Assert.AreEqual(3, arr.Count);
+		Assert.AreEqual(4, arr.Capacity);
+	}
 
-    [Test]
-    public void Add_WhenNotFull_IncreasesCount()
-    {
-        var arr = new ResizeableArray<int>(10);
-        arr.Add(1);
-        Assert.AreEqual(1, arr.Count);
-    }
+	[Test]
+	public void Add_WhenNotFull_IncreasesCount()
+	{
+		var arr = new ResizeableArray<int>(10);
+		arr.Add(1);
+		Assert.AreEqual(1, arr.Count);
+	}
 
-    [Test]
-    public void Capacity_WithCapacityParameter_ReturnsCapacity()
-    {
-        var arr = new ResizeableArray<int>(10);
-        Assert.AreEqual(10, arr.Capacity);
-    }
+	[Test]
+	public void Capacity_WithCapacityParameter_ReturnsCapacity()
+	{
+		var arr = new ResizeableArray<int>(10);
+		Assert.AreEqual(10, arr.Capacity);
+	}
 
-    ///
-	 [Test]
-    public void Count_EmptyArray_ReturnsZero()
-    {
-        var arr = new ResizeableArray<int>();
-        Assert.AreEqual(0, arr.Count);
-    }
+	///
+	[Test]
+	public void Count_EmptyArray_ReturnsZero()
+	{
+		var arr = new ResizeableArray<int>();
+		Assert.AreEqual(0, arr.Count);
+	}
 
-    [Test]
-    public void Enumerator_ReturnsAllElements()
-    {
-        var arr = new ResizeableArray<int> { 1, 2, 3 };
+	[Test]
+	public void Enumerator_ReturnsAllElements()
+	{
+		var arr = new ResizeableArray<int> { 1, 2, 3 };
 
-        var result = new List<int>();
+		var result = new List<int>();
 
-        foreach (int item in arr)
-        {
-            result.Add(item);
-        }
+		foreach (int item in arr)
+		{
+			result.Add(item);
+		}
 
-        Assert.AreEqual(3, result.Count);
-        Assert.AreEqual(1, result[0]);
-        Assert.AreEqual(2, result[1]);
-        Assert.AreEqual(3, result[2]);
-    }
+		Assert.AreEqual(3, result.Count);
+		Assert.AreEqual(1, result[0]);
+		Assert.AreEqual(2, result[1]);
+		Assert.AreEqual(3, result[2]);
+	}
 
-    [Test]
-    public void Enumerator_ReturnsItemsInCorrectOrder()
-    {
-	    var array = new ResizeableArray<int>();
-	    array.Add(1);
-	    array.Add(2);
-	    array.Add(3);
+	[Test]
+	public void Enumerator_ReturnsItemsInCorrectOrder()
+	{
+		var array = new ResizeableArray<int>();
+		array.Add(1);
+		array.Add(2);
+		array.Add(3);
 
-	    using var result = array.GetEnumerator();
+		using var result = array.GetEnumerator();
 
-	    Assert.That(result.MoveNext(), Is.True);
-	    Assert.That(result.Current, Is.EqualTo(1));
-	    Assert.That(result.MoveNext(), Is.True);
-	    Assert.That(result.Current, Is.EqualTo(2));
-	    Assert.That(result.MoveNext(), Is.True);
-	    Assert.That(result.Current, Is.EqualTo(3));
-	    Assert.That(result.MoveNext(), Is.False);
-    }
+		Assert.That(result.MoveNext(), Is.True);
+		Assert.That(result.Current, Is.EqualTo(1));
+		Assert.That(result.MoveNext(), Is.True);
+		Assert.That(result.Current, Is.EqualTo(2));
+		Assert.That(result.MoveNext(), Is.True);
+		Assert.That(result.Current, Is.EqualTo(3));
+		Assert.That(result.MoveNext(), Is.False);
+	}
 
-    [Test]
-    public void Enumerator_WhenModifiedDuringIteration_ThrowsInvalidOperationException()
-    {
-	    var array = new ResizeableArray<int>();
-	    array.Add(1);
-	    array.Add(2);
-	    var enumerator = array.GetEnumerator();
-	    enumerator.MoveNext();
+	[Test]
+	public void Enumerator_WhenModifiedDuringIteration_ThrowsInvalidOperationException()
+	{
+		var array = new ResizeableArray<int>();
+		array.Add(1);
+		array.Add(2);
+		var enumerator = array.GetEnumerator();
+		enumerator.MoveNext();
 
-	    array.Add(3);
+		array.Add(3);
 
-	    Assert.Throws<InvalidOperationException>(() => enumerator.MoveNext());
-    }
+		Assert.Throws<InvalidOperationException>(() => enumerator.MoveNext());
+	}
 
-    [Test]
-    public void Indexer_Get_WhenIndexInRange_ReturnsValue()
-    {
-        var arr = new ResizeableArray<int>();
-        arr.Add(1);
-        arr.Add(2);
-        var result = arr[1];
-        Assert.AreEqual(2, result);
-    }
+	[Test]
+	public void Indexer_Get_WhenIndexInRange_ReturnsValue()
+	{
+		var arr = new ResizeableArray<int>();
+		arr.Add(1);
+		arr.Add(2);
+		var result = arr[1];
+		Assert.AreEqual(2, result);
+	}
 
-    [Test]
-    public void Indexer_Get_WhenIndexOutOfRange_ThrowsIndexOutOfRangeException()
-    {
-        var arr = new ResizeableArray<int>();
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-	        _ = arr[0];
-        });
-    }
+	[Test]
+	public void Indexer_Get_WhenIndexOutOfRange_ThrowsIndexOutOfRangeException()
+	{
+		var arr = new ResizeableArray<int>();
+		Assert.Throws<ArgumentOutOfRangeException>(() =>
+		{
+			_ = arr[0];
+		});
+	}
 
-    [Test]
-    public void Indexer_Set_WhenIndexInRange_SetsValue()
-    {
-        var arr = new ResizeableArray<int>();
-        arr.Add(1);
-        arr[0] = 2;
-        Assert.AreEqual(2, arr[0]);
-    }
+	[Test]
+	public void Indexer_Set_WhenIndexInRange_SetsValue()
+	{
+		var arr = new ResizeableArray<int>();
+		arr.Add(1);
+		arr[0] = 2;
+		Assert.AreEqual(2, arr[0]);
+	}
 
-    [Test]
-    public void Indexer_Set_WhenIndexOutOfRange_ThrowsIndexOutOfRangeException()
-    {
-        var arr = new ResizeableArray<int>();
-        Assert.Throws<ArgumentOutOfRangeException>(() => arr[0] = 1);
-    }
+	[Test]
+	public void Indexer_Set_WhenIndexOutOfRange_ThrowsIndexOutOfRangeException()
+	{
+		var arr = new ResizeableArray<int>();
+		Assert.Throws<ArgumentOutOfRangeException>(() => arr[0] = 1);
+	}
 
-    [Test]
-    public void RemoveLast_WhenEmpty_ThrowsInvalidOperationException()
-    {
-        var arr = new ResizeableArray<int>();
-        Assert.Throws<InvalidOperationException>(() => arr.RemoveLast());
-    }
+	[Test]
+	public void RemoveLast_WhenEmpty_ThrowsInvalidOperationException()
+	{
+		var arr = new ResizeableArray<int>();
+		Assert.Throws<InvalidOperationException>(() => arr.RemoveLast());
+	}
 
-    [Test]
-    public void RemoveLast_WhenNotEmpty_DecreasesCount()
-    {
-        var arr = new ResizeableArray<int>();
-        arr.Add(1);
-        arr.Add(2);
-        arr.RemoveLast();
-        Assert.AreEqual(1, arr.Count);
-    }
+	[Test]
+	public void RemoveLast_WhenNotEmpty_DecreasesCount()
+	{
+		var arr = new ResizeableArray<int>();
+		arr.Add(1);
+		arr.Add(2);
+		arr.RemoveLast();
+		Assert.AreEqual(1, arr.Count);
+	}
 
-    [Test]
-    public void RemoveLast_WhenNotEmpty_ReturnsLastElement()
-    {
-        var arr = new ResizeableArray<int>();
-        arr.Add(1);
-        arr.Add(2);
-        var result = arr.RemoveLast();
-        Assert.AreEqual(2, result);
-    }
+	[Test]
+	public void RemoveLast_WhenNotEmpty_ReturnsLastElement()
+	{
+		var arr = new ResizeableArray<int>();
+		arr.Add(1);
+		arr.Add(2);
+		var result = arr.RemoveLast();
+		Assert.AreEqual(2, result);
+	}
 
-    [Test]
+	[Test]
 	public void TestAdd()
 	{
 		var list = new ResizeableArray<int> { 0, 1, 2 };

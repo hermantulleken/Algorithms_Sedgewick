@@ -8,20 +8,28 @@ namespace Algorithms_Sedgewick.Queue;
 /// A queue with a fixed capacity.
 /// </summary>
 /// <typeparam name="T">The type of the queue's items.</typeparam>
-public sealed class FixedCapacityQueue<T> : IQueue<T>
+/// <exception cref="ArgumentException"><paramref name="capacity"/> is negative.</exception>
+public sealed class FixedCapacityQueue<T>(int capacity)
+	: IQueue<T>
 {
 	// ReSharper disable once StaticMemberInGenericType
 	private static readonly IdGenerator IdGenerator = new();
 	
-	private readonly T?[] items;
+	private readonly T?[] items = capacity switch
+	{
+		< 0 => throw ThrowHelper.CapacityCannotBeNegativeException(capacity),
+		0 => Array.Empty<T>(),
+		_ => new T[capacity],
+	};
+	
 	private int version = 0;
 	private int head = 0;
 	private int tail = 0;
-	
+
 	/// <summary>
 	/// Gets the capacity for this instance.
 	/// </summary>
-	public int Capacity { get; }
+	public int Capacity { get; } = capacity;
 
 	/// <inheritdoc />
 	public int Count { get; private set; }
@@ -45,23 +53,6 @@ public sealed class FixedCapacityQueue<T> : IQueue<T>
 	}
 	
 	private int Id { get; } = IdGenerator.GetNextId();
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="FixedCapacityQueue{T}"/> class.
-	/// </summary>
-	/// <param name="capacity">The maximum number of items that can be contained in the queue.</param>
-	/// <exception cref="ArgumentException"><paramref name="capacity"/> is negative.</exception>
-	public FixedCapacityQueue(int capacity)
-	{
-		items = capacity switch
-		{
-			< 0 => throw ThrowHelper.CapacityCannotBeNegativeException(capacity),
-			0 => Array.Empty<T>(),
-			_ => new T[capacity],
-		};
-
-		Capacity = capacity;
-	}
 	
 	/// <inheritdoc />
 	public void Clear()

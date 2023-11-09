@@ -1,5 +1,12 @@
-﻿using BenchmarkDotNet.Running;
+﻿#if DEBUG
+using BenchmarkDotNet.Configs;
+#endif
+
+using BenchmarkDotNet.Running;
 using Benchmarks;
 
-//_ = BenchmarkRunner.Run<LinkedListBenchMarks>(new DebugInProcessConfig());
-_ = BenchmarkRunner.Run<MergeSortBenchmarks>();
+#if DEBUG
+_ = BenchmarkRunner.Run<Sort3Elements>(new DebugInProcessConfig());
+#else
+_ = BenchmarkRunner.Run<Sort3Elements>();
+#endif

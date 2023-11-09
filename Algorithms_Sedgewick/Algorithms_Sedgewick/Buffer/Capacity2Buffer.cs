@@ -32,8 +32,14 @@ public sealed class Capacity2Buffer<T> : IBuffer<T?>, IPair<T>
 	public T? Last 
 		=> (Count == 0) ? throw ThrowHelper.ContainerEmptyException : LastUnsafe;
 
+	/// <summary>
+	/// Gets a value indicating whether this <see cref="Capacity2Buffer{T}"/> has a value.
+	/// </summary>
 	public bool HasValue => Count > 0;
 	
+	/// <summary>
+	/// Gets a value indicating whether this <see cref="Capacity2Buffer{T}"/> has a previous value.
+	/// </summary>
 	public bool HasPreviousValue => Count > 1;
 	
 	private T? FirstUnsafe 
@@ -49,6 +55,7 @@ public sealed class Capacity2Buffer<T> : IBuffer<T?>, IPair<T>
 	/// </summary>
 	public Capacity2Buffer() => Clear();
 
+	/// <inheritdoc/>
 	public void Clear()
 	{
 		Count = 0;
