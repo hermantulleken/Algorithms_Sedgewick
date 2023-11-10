@@ -7,6 +7,11 @@ namespace Algorithms_Sedgewick.HashTable;
 
 using SymbolTable;
 
+/// <summary>
+/// Represents a hash table that uses linear probing to resolve collisions.
+/// </summary>
+/// <typeparam name="TKey">The type of keys in the hash table.</typeparam>
+/// <typeparam name="TValue">The type of values in the hash table.</typeparam>
 // Ex. 3.4.28
 /*
 	This class represents a hash table that uses linear probing to resolve collisions.
@@ -24,9 +29,11 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 	private int log2TableSize;
 	private int tableSize;
 	private TValue[] values;
-	
+
+	/// <inheritdoc />
 	public int Count { get; private set; }
 
+	/// <inheritdoc />
 	public IEnumerable<TKey> Keys 
 		=> keyPresent
 			.IndexWhere(Algorithms.Identity)
@@ -34,11 +41,20 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 
 	private ISymbolTable<TKey, TValue> AsSymbolTable => this;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="HashTableWithLinearProbing2{TKey,TValue}"/> class.
+	/// </summary>
+	/// <param name="comparer">The comparer used to compare keys.</param>
 	public HashTableWithLinearProbing2(IComparer<TKey> comparer)
 		: this(ResizeableArray.DefaultCapacity, comparer)
 	{
 	}
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="HashTableWithLinearProbing2{TKey,TValue}"/> class.
+	/// </summary>
+	/// <param name="initialCapacity">The initial capacity of the hash table.</param>
+	/// <param name="comparer">The comparer used to compare keys.</param>
 	public HashTableWithLinearProbing2(int initialCapacity, IComparer<TKey> comparer)
 	{
 		(log2TableSize, tableSize) = HashTableWithLinearProbing.GetTableSize(initialCapacity);
@@ -49,6 +65,7 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 		keyPresent = new bool[tableSize];
 	}
 
+	/// <inheritdoc />
 	public void Add(TKey key, TValue value)
 	{
 		key.ThrowIfNull();
@@ -71,8 +88,10 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 		}
 	}
 
+	/// <inheritdoc />
 	public bool ContainsKey(TKey key) => TryGetValue(key, out _);
 
+	/// <inheritdoc />
 	public void RemoveKey(TKey key)
 	{
 		key.ThrowIfNull();
@@ -95,8 +114,8 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 		RemoveKeyAt(index);
 
 		/*
-		    Reinsert all the keys in the same cluster as the removed key.
-		    This is necessary because their positions might have been affected by the removal of the key.
+			Reinsert all the keys in the same cluster as the removed key.
+			This is necessary because their positions might have been affected by the removal of the key.
 		*/
 		for (GetNextIndex(key, ref index); keyPresent[index]; GetNextIndex(key, ref index))
 		{
@@ -109,6 +128,7 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 		}
 	}
 
+	/// <inheritdoc />
 	public bool TryGetValue(TKey key, out TValue value)
 	{
 		key.ThrowIfNull();

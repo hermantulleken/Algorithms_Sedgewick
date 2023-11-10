@@ -8,6 +8,16 @@ namespace Algorithms_Sedgewick.HashTable;
 
 using SymbolTable;
 
+/// <summary>
+/// Represents a Cuckoo hash table implementation that stores key-value pairs.
+/// </summary>
+/// <remarks>
+/// Cuckoo hashing allows for constant time complexity in the average case for search, insert, and delete operations.
+/// It uses two hash functions and two tables to resolve collisions. This implementation provides methods for adding, 
+/// removing, and checking the presence of keys.
+/// </remarks>
+/// <typeparam name="TKey">The type of keys in the hash table.</typeparam>
+/// <typeparam name="TValue">The type of values in the hash table.</typeparam>
 public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	private const int MaxSteps = 5;
@@ -24,8 +34,10 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	private ParallelArrays<TKey?, TValue?> table2;
 	private int halfTableSize;
 
+	/// <inheritdoc />
 	public int Count { get; private set; }
 
+	/// <inheritdoc />
 	public IEnumerable<TKey> Keys
 	{
 		get
@@ -49,11 +61,20 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		}
 	}
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CuckooHashTable{TKey, TValue}"/> class with the specified comparer.
+	/// </summary>
+	/// <param name="comparer">The <see cref="IComparer{TKey}"/> to use for comparing keys.</param>
 	public CuckooHashTable(IComparer<TKey> comparer)
 		: this(ResizeableArray.DefaultCapacity, comparer)
 	{
 	}
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CuckooHashTable{TKey, TValue}"/> class with the specified table size and comparer.
+	/// </summary>
+	/// <param name="tableSize">The initial size of the table.</param>
+	/// <param name="comparer">The <see cref="IComparer{TKey}"/> to use for comparing keys.</param>
 	public CuckooHashTable(int tableSize, IComparer<TKey> comparer)
 	{
 		log2TableSize = Math2.IntegerCeilLog2(tableSize);
@@ -63,7 +84,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		void InitTable(out ParallelArrays<TKey?, TValue?> table)
 		{
 			table = new ParallelArrays<TKey?, TValue?>(halfTableSize);
-			FillTable(table, halfTableSize);
+			CuckooHashTable<TKey, TValue>.FillTable(table, halfTableSize);
 		}
 		
 		InitTable(out table1);
@@ -72,7 +93,8 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		keyPresent1 = new bool[halfTableSize];
 		keyPresent2 = new bool[halfTableSize];
 	}
-
+	
+	/// <inheritdoc />
 	public void Add(TKey key, TValue value)
 	{
 		if (TryGetIndex(key, out var table, out int index))
@@ -98,13 +120,13 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 				return;
 			}
 
-			KickKeyFromTable(table1, index, ref key, ref value);
+			CuckooHashTable<TKey, TValue>.KickKeyFromTable(table1, index, ref key, ref value);
 			index = GetHash2(key);
 
 			ValidateIndex(index, keyPresent2);
 			if (keyPresent2[index])
 			{
-				KickKeyFromTable(table2, index, ref key, ref value);
+				CuckooHashTable<TKey, TValue>.KickKeyFromTable(table2, index, ref key, ref value);
 				index = GetHash1(key);
 			}
 			else
@@ -118,8 +140,10 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		Add(key, value);
 	}
 
+	/// <inheritdoc />
 	public bool ContainsKey(TKey key) => TryGetValue(key, out _);
 
+	/// <inheritdoc />
 	public void RemoveKey(TKey key)
 	{
 		int index = GetHash1(key);
@@ -143,13 +167,37 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		}
 	}
 
+	/// <inheritdoc />
 	public bool TryGetValue(TKey key, [NotNullWhen(true)] out TValue? value)
 	{
 		bool found = TryGetIndex(key, out var table, out int index);
 		value = found ? table!.Values[index] : default; // table not null when found
 		return found;
 	}
-
+	
+	/// <summary>
+	/// Tries to get the index and corresponding table where the specified key is stored.
+	/// </summary>
+	/// <param name="key">The key to locate in the cuckoo hash table.</param>
+	/// <param name="table">
+	/// When this method returns, contains the <see cref="ParallelArrays{TKey,TValue}"/> table 
+	/// in which the key is potentially stored, if the key is found; otherwise, <c>null</c>.
+	/// This parameter is passed uninitialized.
+	/// </param>
+	/// <param name="index">
+	/// When this method returns, contains the index at which the key is potentially stored in the table, 
+	/// if the key is found; otherwise, the default value for the type of the index parameter.
+	/// This parameter is passed uninitialized.
+	/// </param>
+	/// <returns>
+	/// <see langword="true"/> if the cuckoo hash table contains an element with the specified key; otherwise, <see langword="false"/>.
+	/// </returns>
+	/// <remarks>
+	/// This method is a key part of the cuckoo hashing algorithm, which involves using two hash functions 
+	/// and two tables. It attempts to find the specified key by checking both tables with respective hash functions. 
+	/// If the key is found, the method returns <see langword="true"/>, and outputs the table and index where the key is stored. 
+	/// If the key is not found, the method returns <see langword="false"/>, and the output parameters are set to their default values.
+	/// </remarks> 
 	public bool TryGetIndex(TKey key, [NotNullWhen(true)] out ParallelArrays<TKey?, TValue?>? table, out int index)
 	{
 		index = GetHash1(key);
@@ -172,13 +220,31 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		return false;
 	}
 	
-	private void FillTable(ParallelArrays<TKey?, TValue?> table, int size, TKey? initialKey = default, TValue? initialValue = default)
+	private static void FillTable(ParallelArrays<TKey?, TValue?> table, int size, TKey? initialKey = default, TValue? initialValue = default)
 	{
 		for (int i = 0; i < size; i++)
 		{
 			table.Add(initialKey, initialValue);
 		}
 	}
+	
+	/*
+		This method puts the given key and value in the table, and assign the key and value
+		that were already there to the key value variables. Essentially, we kick the existing
+		pair from the table so we can find a place for them instead.
+
+		Note: This could be a local function but the name clashes are too messy to deal with
+	*/
+	private static void KickKeyFromTable(ParallelArrays<TKey?, TValue?> table, int index, ref TKey key, ref TValue value)
+	{
+		var tmpKey = table.Keys[index]!; // We checked that key is present at the call site. 
+		var tmpValue = table.Values[index]!;
+
+		table.Set(index, key, value);
+
+		key = tmpKey;
+		value = tmpValue;
+	}	
 
 	private int GetHash(TKey key, int prime)
 	{
@@ -196,24 +262,6 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	private int GetHash1(TKey key) => GetHash(key, Prime1);
 
 	private int GetHash2(TKey key) => GetHash(key, Prime2);
-
-	/*
-		This method puts the given key and value in the table, and assign the key and value 
-		that were already there to the key value variables. Essentially, we kick the existing 
-		pair from the table so we can find a place for them instead.
-		
-		Note: This could be a local function but the name clashes are too messy to deal with
-	*/
-	private void KickKeyFromTable(ParallelArrays<TKey?, TValue?> table, int index, ref TKey key, ref TValue value)
-	{
-		var tmpKey = table.Keys[index]!; // We checked that key is present at the call site. 
-		var tmpValue = table.Values[index]!;
-
-		table.Set(index, key, value);
-
-		key = tmpKey;
-		value = tmpValue;
-	}
 
 	private void Resize(int newTableSize) // See page 474.
 	{
