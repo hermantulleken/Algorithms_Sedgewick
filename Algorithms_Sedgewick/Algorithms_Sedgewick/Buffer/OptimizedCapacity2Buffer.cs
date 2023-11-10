@@ -10,6 +10,7 @@ public sealed class OptimizedCapacity2Buffer<T> : IBuffer<T?>, IPair<T>
 {
 	private readonly T?[] items = new T[2];
 
+	/// <inheritdoc />
 	public IEnumerator<T?> GetEnumerator()
 	{
 		if (Count == 1)
@@ -26,10 +27,13 @@ public sealed class OptimizedCapacity2Buffer<T> : IBuffer<T?>, IPair<T>
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+	/// <inheritdoc />
 	public int Capacity => 2;
-	
+
+	/// <inheritdoc />
 	public int Count { get; private set; }
-	
+
+	/// <inheritdoc cref="IBuffer{T}" />
 	public T? First => Count switch
 	{
 		0 => throw ThrowHelper.ContainerEmptyException,
@@ -38,17 +42,25 @@ public sealed class OptimizedCapacity2Buffer<T> : IBuffer<T?>, IPair<T>
 		_ => throw ThrowHelper.UnreachableCodeException,
 	};
 	
+	/// <summary>
+	/// Gets a value indicating whether this buffer has a value. 
+	/// </summary>
 	public bool HasValue => Count > 0;
 	
+	/// <summary>
+	/// Gets a value indicating whether this buffer has a previous value.
+	/// </summary>
 	public bool HasPreviousValue => Count > 1;
 
+	/// <inheritdoc cref="IBuffer{T}"/>
 	public T? Last => Count switch
 	{
 		0 => throw ThrowHelper.ContainerEmptyException,
 		1 or 2 => items[1],
 		_ => throw ThrowHelper.UnreachableCodeException,
 	};
-	
+
+	/// <inheritdoc />
 	public void Clear()
 	{
 		Count = 0;
@@ -56,6 +68,7 @@ public sealed class OptimizedCapacity2Buffer<T> : IBuffer<T?>, IPair<T>
 		items[1] = default;
 	}
 
+	/// <inheritdoc />
 	public void Insert(T? item)
 	{
 		items[0] = items[1];

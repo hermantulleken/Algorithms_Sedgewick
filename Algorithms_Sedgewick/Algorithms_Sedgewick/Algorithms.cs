@@ -11,12 +11,27 @@ using static System.Diagnostics.Debug;
 using static Sort.Sort;
 using static Support.WhiteBoxTesting;
 
+/// <summary>
+/// Provides algorithms for various tasks, especially for operating on lists. 
+/// </summary>
 public static class Algorithms
 {
 	private static readonly Random Random = new();
 	
+	/// <summary>
+	/// Returns the supplied parameter. 
+	/// </summary>
+	/// <param name="value">The value to return.</param>
+	/// <typeparam name="T">The type of the value to return.</typeparam>
+	/// <remarks>This class is useful for cases where a function is required, but no transformation is needed.</remarks>
 	public static T Identity<T>(T value) => value;
 
+	/// <summary>
+	/// Gives the indexes of elements in a list that satisfy the given predicate.
+	/// </summary>
+	/// <param name="list">The enumerable list to search.</param>
+	/// <param name="predicate">A function to test each element for a condition.</param>
+	/// <typeparam name="T">The type of the values in the list.</typeparam>
 	public static IEnumerable<int> IndexWhere<T>(this IEnumerable<T> list, Func<T, bool> predicate)
 	{
 		int index = 0;
@@ -681,8 +696,20 @@ public static class Algorithms
 			.Where(node => predicate(node.NextNode!));
 	}
 
+	/// <summary>
+	/// Returns the nth node in a list.
+	/// </summary>
+	/// <param name="list">The list to return the element from.</param>
+	/// <param name="n">The index of the element to return. 0 Will return the first element.</param>
+	/// <typeparam name="T">The type of items in the list.</typeparam>
 	public static LinkedList<T>.Node Nth<T>(this LinkedList<T> list, int n) => list.Nodes.Skip(n).First();
 
+	/// <summary>
+	/// Remove elements from a list that satisfy a predicate.
+	/// </summary>
+	/// <param name="list">The list to process.</param>
+	/// <param name="predicate">A predicate items to be removed should satisfy.</param>
+	/// <typeparam name="T">The type of items in the list.</typeparam>
 	public static void RemoveIf<T>(this LinkedList<T> list, Func<LinkedList<T>.Node, bool> predicate)
 	{
 		if (list.IsEmpty)
@@ -807,6 +834,11 @@ public static class Algorithms
 		}
 	}
 
+	/// <summary>
+	/// Sorts a list and removes any duplicates. 
+	/// </summary>
+	/// <param name="list">The list to sort.</param>
+	/// <typeparam name="T">The type of items in the list.</typeparam>
 	// Ex. 2.5.4
 	public static void SortAndRemoveDuplicates<T>(this ResizeableArray<T> list) 
 		where T : IComparable<T>
@@ -842,6 +874,11 @@ public static class Algorithms
 		list.RemoveLast(list.Count - i - 1);
 	}
 
+	/// <summary>
+	/// Sorts a list and removes duplicates by using a buffer. 
+	/// </summary>
+	/// <param name="list">The list to sort.</param>
+	/// <typeparam name="T">The type of the items in the list.</typeparam>
 	public static void SortAndRemoveDuplicatesWithBuffer<T>(this ResizeableArray<T> list) 
 		where T : IComparable<T>
 	{

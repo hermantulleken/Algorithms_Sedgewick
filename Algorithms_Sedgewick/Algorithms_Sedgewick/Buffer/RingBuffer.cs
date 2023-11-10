@@ -9,13 +9,17 @@ public sealed class RingBuffer<T> : IBuffer<T>
 	private readonly T[] items;
 	private int back; // after last element
 	private int front; // first element
-	
+
+	/// <inheritdoc />
 	public bool IsFull => AsIBuffer.IsFull;
-	
+
+	/// <inheritdoc />
 	public int Capacity { get; }
 
+	/// <inheritdoc />
 	public int Count { get; private set; }
 
+	/// <inheritdoc />
 	public T First 
 		=> Count > 0 
 			? this[0]
@@ -37,6 +41,7 @@ public sealed class RingBuffer<T> : IBuffer<T>
 		}
 	}
 
+	/// <inheritdoc />
 	public T Last 
 		=> Count > 0
 			? this[Count - 1]
@@ -56,12 +61,14 @@ public sealed class RingBuffer<T> : IBuffer<T>
 		ResetPointers();
 	}
 
+	/// <inheritdoc />
 	public void Clear()
 	{
 		ReInitialize();
 		ResetPointers();
 	}
 
+	/// <inheritdoc />
 	public IEnumerator<T> GetEnumerator()
 	{
 		if (front < back)
@@ -85,6 +92,7 @@ public sealed class RingBuffer<T> : IBuffer<T>
 		}
 	}
 
+	/// <inheritdoc />
 	public void Insert(T item)
 	{
 		items[back] = item;
