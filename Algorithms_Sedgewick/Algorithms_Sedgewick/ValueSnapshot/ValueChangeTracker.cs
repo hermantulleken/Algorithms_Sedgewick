@@ -70,5 +70,5 @@ public sealed class ValueChangeTracker<T> : ValueSnapshot<T>
 		=> Value = initialValue;
 
 	/// <inheritdoc/>
-	public override string ToString() => HasValue ? Value.ToString2() : string.Empty;
+	public override string ToString() => HasValue ? Value.AsText() : string.Empty;
 }

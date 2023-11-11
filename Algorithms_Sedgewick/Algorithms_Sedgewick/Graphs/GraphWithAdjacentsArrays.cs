@@ -1,4 +1,5 @@
-﻿using Algorithms_Sedgewick.List;
+﻿using System.Collections;
+using Algorithms_Sedgewick.List;
 
 namespace Algorithms_Sedgewick.Graphs;
 
@@ -37,7 +38,8 @@ public class GraphWithAdjacentsArrays : IGraph
 
 		EdgeCount = 0;
 	}
-	
+
+	/// <inheritdoc />
 	public void AddEdge(int vertex0, int vertex1)
 	{
 		adjacents[vertex0].Add(vertex1);
@@ -46,4 +48,21 @@ public class GraphWithAdjacentsArrays : IGraph
 	}
 
 	public IEnumerable<int> GetAdjacents(int vertex) => adjacents[vertex];
+
+	public IEnumerator<(int vertex0, int vertex2)> GetEnumerator()
+	{
+		for (int vertex0 = 0; vertex0 < VertexCount; vertex0++)
+		{
+			foreach (int vertex1 in adjacents[vertex0])
+			{
+				if (vertex0 <= vertex1)
+				{
+					yield return (vertex0, vertex1);
+				}
+			}
+		}
+	}
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

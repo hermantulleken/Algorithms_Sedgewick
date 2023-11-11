@@ -18,10 +18,10 @@ public static class Formatter
 	/// <summary>
 	/// <see cref="BindingFlags"/> that represent public instance fields and get-properties.
 	/// </summary>
-	public const BindingFlags PublicInstances = BindingFlags.Public |
-	                                            BindingFlags.GetField |
-	                                            BindingFlags.GetProperty |
-	                                            BindingFlags.Instance;
+	public const BindingFlags PublicInstances = BindingFlags.Public | 
+												BindingFlags.GetField | 
+												BindingFlags.GetProperty | 
+												BindingFlags.Instance;
 
 	public const string StripedLine = "-----";
 	public const string NullString = "null";

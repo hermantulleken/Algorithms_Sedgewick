@@ -1,53 +1,71 @@
-﻿namespace Algorithms_Sedgewick.Graphs;
+﻿using static System.Diagnostics.Debug;
+
+namespace Algorithms_Sedgewick.Graphs;
 
 public class Bipartite
 {
+	/// <summary>
+	/// Gets a value indicating whether the graph is bipartite.
+	/// </summary>
 	public bool IsBipartite { get; private set; } = true;
-
-	private readonly bool[] marked;
-	private readonly bool[] color;
-
-	private Bipartite(IGraph graph)
+	
+	private Bipartite()
 	{
-		marked = new bool[graph.VertexCount];
-		color = new bool[graph.VertexCount];
 	}
 
 	public static Bipartite Build(IGraph graph)
 	{
 		graph.ThrowIfNull();
 		
-		var bipartite = new Bipartite(graph);
+		var bipartite = new Bipartite();
 		bipartite.ColorGraph(graph);
 		return bipartite;
 	}
 
 	private void ColorGraph(IGraph graph)
 	{
+		bool[] marked = new bool[graph.VertexCount];
+		bool[] color = new bool[graph.VertexCount];
+
+		IsBipartite = true; // Unless proven otherwise
+		
 		for (int vertex = 0; vertex < graph.VertexCount; vertex++)
 		{
-			if (!marked[vertex])
+			if (marked[vertex])
 			{
-				Search(graph, vertex);
+				continue;
+			}
+			
+			color[vertex] = true;
+			Search(vertex);
+			
+			if (!IsBipartite)
+			{
+				return;
 			}
 		}
-	}
-
-	private void Search(IGraph graph, int vertex)
-	{
-		marked[vertex] = true;
 		
-		foreach (int w in graph.GetAdjacents(vertex))
+		Assert(AllVerticesMarked());
+		
+		void Search(int vertex)
 		{
-			if (!marked[w])
+			marked[vertex] = true;
+		
+			foreach (int adjacent in graph.GetAdjacents(vertex))
 			{
-				color[w] = !color[vertex];
-				Search(graph, w);
-			}
-			else if (color[w] == color[vertex])
-			{
-				IsBipartite = false;
+				if (!marked[adjacent])
+				{
+					color[adjacent] = !color[vertex];
+					Search(adjacent);
+				}
+				else if (color[adjacent] == color[vertex])
+				{
+					IsBipartite = false;
+					return;
+				}
 			}
 		}
+
+		bool AllVerticesMarked() => marked.All(vertex => vertex);
 	}
 }

@@ -20,6 +20,8 @@ public class GapBufferWithStacks<T> : IGapBuffer<T>
 		get => throw new NotImplementedException();
 		set => throw new NotImplementedException();
 	}
+	
+	public IGapBuffer<T> @this => this;
 
 	public GapBufferWithStacks(Func<IStack<T>> stackFactory)
 	{
@@ -33,18 +35,16 @@ public class GapBufferWithStacks<T> : IGapBuffer<T>
 
 	public void MoveCursor(int newCursorIndex)
 	{
-		
-
 		int offset = newCursorIndex - CursorIndex;
 
-		
+		MoveCursorBy(offset);
 	}
 
 	public void MoveCursorBy(int offset)
 	{
 		int newCursorIndex = CursorIndex + offset;
-		
 
+		((IGapBuffer<T>)this).ValidateCursor(newCursorIndex);
 		
 		void MoveCursorLeft() => itemsAfterCursor.Push(itemsBeforeCursor.Pop());
 		void MoveCursorRight() => itemsBeforeCursor.Push(itemsAfterCursor.Pop());

@@ -39,35 +39,32 @@ public class LazyMoveGapBuffer<T> : IGapBuffer<T>
 	public int CursorIndex => cursorIndex;
 
 	public LazyMoveGapBuffer(Func<IGapBuffer<T>> eagerBufferFactory)
-    	: this(eagerBufferFactory())
-    {
-    }
+		: this(eagerBufferFactory())
+	{
+	}
 
 	protected LazyMoveGapBuffer(int initialCapacity) 
-    	: this(() => new GapBufferWithArray<T>(initialCapacity))
-    {
-    }
+		: this(() => new GapBufferWithArray<T>(initialCapacity))
+	{
+	}
 
 	protected LazyMoveGapBuffer(IGapBuffer<T> eagerBuffer) => this.eagerBuffer = eagerBuffer;
 
 	public void AddAfter(T item)
-    {
-    	UpdateCursorPosition();
-    	eagerBuffer.AddAfter(item);
-    }
+	{
+		UpdateCursorPosition();
+		eagerBuffer.AddAfter(item);
+	}
 
 	public void AddBefore(T item)
-    {
-    	UpdateCursorPosition();
-    	eagerBuffer.AddBefore(item);
-    }
+	{
+		UpdateCursorPosition();
+		eagerBuffer.AddBefore(item);
+	}
 
 	public void MoveCursor(int newCursorIndex)
 	{
-		if (newCursorIndex < 0 || newCursorIndex > Count)
-		{
-			ThrowHelper.ThrowInvalidOperationException("Cannot move cursor past the end.");
-		}
+		@this.ValidateCursor(newCursorIndex);
 		
 		cursorIndex = newCursorIndex;
 	}
@@ -75,22 +72,24 @@ public class LazyMoveGapBuffer<T> : IGapBuffer<T>
 	public void MoveCursorBy(int offset) => MoveCursor(cursorIndex + offset);
 
 	public T RemoveAfter()
-    {
-    	UpdateCursorPosition();
-    	return eagerBuffer.RemoveAfter();
-    }
+	{
+		UpdateCursorPosition();
+		return eagerBuffer.RemoveAfter();
+	}
 
 	public T RemoveBefore()
-    {
-    	UpdateCursorPosition();
-    	return eagerBuffer.RemoveBefore();
-    }
+	{
+		UpdateCursorPosition();
+		return eagerBuffer.RemoveBefore();
+	}
+
+	public IGapBuffer<T> @this => this;
 
 	private void UpdateCursorPosition()
-    {
-    	if (eagerBuffer.CursorIndex != cursorIndex)
-    	{
-    		eagerBuffer.MoveCursor(cursorIndex);
-    	}
-    }
+	{
+		if (eagerBuffer.CursorIndex != cursorIndex)
+		{
+			eagerBuffer.MoveCursor(cursorIndex);
+		}
+	}
 }

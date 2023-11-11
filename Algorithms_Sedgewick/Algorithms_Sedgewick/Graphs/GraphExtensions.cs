@@ -20,4 +20,6 @@ public static class GraphExtensions
 
 	public static float AverageDegree(this IGraph graph)
 		=> 2 * graph.EdgeCount / (float)graph.VertexCount;
+	
+	public static void Add(this IGraph graph, int vertex0, int vertex1) => graph.AddEdge(vertex0, vertex1);
 }

@@ -58,6 +58,8 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 	private int GapSize => rightBlockStartIndex - gapStartIndex;
 
 	private bool IsFull => GapSize == 0;
+	
+	public IGapBuffer<T> @this => this;
 
 	public GapBufferWithArray(int initialCapacity)
 	{
@@ -128,20 +130,20 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 			rightBlockStartIndex++;
 		}
 
-		((IGapBuffer<T>)this).ValidateCursor(offset);
+		@this.ValidateCursor(CursorIndex + offset);
 		
 		if (offset > 0)
 		{
 			for (int i = 0; i < offset; i++)
 			{
-				MoveCursorLeft();
+				MoveCursorRight();
 			}
 		}
 		else
 		{
 			for (int i = 0; i < -offset; i++)
 			{
-				MoveCursorRight();
+				MoveCursorLeft();
 			}
 		}
 	}

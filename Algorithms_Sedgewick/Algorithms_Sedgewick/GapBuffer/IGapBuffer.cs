@@ -38,7 +38,7 @@ public interface IGapBuffer<T>
 	/// <param name="newCursorIndex">The new index for the cursor.</param>
 	public void MoveCursor(int newCursorIndex)
 	{
-		int positionDelta = CursorIndex - newCursorIndex;
+		int positionDelta = newCursorIndex - CursorIndex;
 
 		MoveCursorBy(positionDelta);
 	}
@@ -70,11 +70,13 @@ public interface IGapBuffer<T>
 	/// </returns>
 	public T RemoveBefore();
 
+	public IGapBuffer<T> @this { get; }
+	
 	public void ValidateCursor(int cursor)
 	{
 		if (cursor < 0 || cursor > Count)
 		{
-			ThrowHelper.ThrowInvalidOperationException("Cannot move cursor past the end.");
+			ThrowHelper.ThrowArgumentOutOfRangeException("Cannot move cursor past the end.");
 		}
 	}
 }

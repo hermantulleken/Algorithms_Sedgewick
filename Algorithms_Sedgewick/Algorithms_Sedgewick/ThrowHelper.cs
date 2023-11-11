@@ -38,6 +38,9 @@ internal static class ThrowHelper
 
 	public static void ThrowInvalidOperationException(string message) 
 		=> throw new InvalidOperationException(message);
+	
+	public static void ThrowArgumentOutOfRangeException(string message) 
+		=> throw new ArgumentOutOfRangeException(message);
 
 	public static void ThrowKeyNotFound<TKey>(TKey key) => throw KeyNotFoundException(key);
 

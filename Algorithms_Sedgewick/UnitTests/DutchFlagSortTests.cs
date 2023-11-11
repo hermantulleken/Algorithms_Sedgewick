@@ -2,6 +2,8 @@
 using Algorithms_Sedgewick.Sort;
 using NUnit.Framework;
 
+namespace UnitTests;
+
 [TestFixture]
 public class DutchFlagSortTests
 {
