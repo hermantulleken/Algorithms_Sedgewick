@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Algorithms_Sedgewick.Graphs;
 using NUnit.Framework;
 
@@ -7,10 +6,27 @@ namespace UnitTests;
 
 public static class GraphTestFixtureSource
 {
+	private static IGraph MakeDynamicGraph(int vertCount)
+	{
+		var graph = new DynamicGraph();
+
+		for (int i = 0; i < vertCount; i++)
+		{
+			graph.AddVertexes(i);
+		}
+
+		return graph;
+	}
+	
 	public static Func<int, IGraph>[] TestCases = 
 	{
-		vertexCount => new GraphWithAdjacentsArrays(vertexCount),
+		vertexCount => new GraphWithAdjacentsIntArray(vertexCount),
+		vertexCount => new GraphWithAdjacentsBoolArray(vertexCount),
+		vertexCount => new GraphWithAdjacentsLists(vertexCount),
 		vertexCount => new GraphWithAdjacentsSet(vertexCount),
+		vertexCount => new GraphWithAdjacentsCounters(vertexCount),
+		vertexCount => new GraphWtihNoSelfLoops(() => new GraphWithAdjacentsLists(vertexCount)),
+		MakeDynamicGraph,
 	};
 }
 
@@ -85,5 +101,54 @@ public class GraphTests(Func<int, IGraph> graphFactory)
 		// Assert the graph state remains unchanged
 		Assert.That(graph.VertexCount, Is.EqualTo(5));
 		Assert.That(graph.EdgeCount, Is.EqualTo(0));
+	}
+	
+	[Test]
+	public void TestAddSelfLoop()
+	{
+		var graph = graphFactory(5);
+		
+		if(graph.SupportsSelfLoops)
+		{
+			graph.AddEdge(0, 0);
+
+			Assert.That(graph.EdgeCount, Is.EqualTo(1));
+		}
+		else
+		{
+			Assert.That(() => graph.AddEdge(0, 0), Throws.ArgumentException);
+			Assert.That(graph.EdgeCount, Is.EqualTo(0));
+		}
+	}
+
+	public void TestAddParallelEdge()
+	{
+		var graph = graphFactory(5);
+		graph.AddEdge(0, 0);
+
+		if (graph.SupportsParallelEdges)
+		{
+			graph.AddEdge(0, 0);
+			Assert.That(graph.EdgeCount, Is.EqualTo(2));
+		}
+		else
+		{
+			Assert.That(() => graph.AddEdge(0, 0), Throws.ArgumentException);
+			Assert.That(graph.EdgeCount, Is.EqualTo(1));
+		}
+	}
+	
+	// Test ContainsEdge
+	[Test]
+	public void TestContainsEdge()
+	{
+		var graph = graphFactory(5);
+		graph.Add(0, 1);
+		
+		Assert.That(graph.ContainsEdge(0, 1), Is.True);
+		Assert.That(graph.ContainsEdge(1, 0), Is.True);
+		
+		Assert.That(graph.Contains((0, 1)));
+		Assert.That(!graph.Contains((1, 0))); // enumeration does not contain the same edge twice
 	}
 }

@@ -9,8 +9,9 @@ public static class Textify
 	
 	public const string NewLine = "\n";
 	public const string Tab = "\t";
-	
-	private const string NullString = "<null>";
+
+	public const string NoValueString = "<no value>";
+	public const string NullString = "<null>";
 	private const string ToStringReturnedNull = "<ToString() returned null>";
 
 	public static string AsText<T>(this T? obj) 
