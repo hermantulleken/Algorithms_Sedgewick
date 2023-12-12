@@ -22,6 +22,8 @@ public class SetWithArray<T> : ISet<T>
 			items.Add(item);
 		}
 	}
+	
+	public bool Remove(T item) => items.Remove(item, comparer);
 
 	public bool Contains(T item) => items.Contains(comparer, item);
 	

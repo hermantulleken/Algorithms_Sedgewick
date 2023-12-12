@@ -91,7 +91,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 			throw ThrowHelper.KeyNotFoundException(key);
 		}
 
-		array.DeleteAt(index);
+		array.RemoveAt(index);
 	}
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)

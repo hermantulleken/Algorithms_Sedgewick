@@ -1,3 +1,7 @@
+// ReSharper disable MemberCanBeProtected.Global
+
+using Support;
+
 namespace Algorithms_Sedgewick.ValueSnapshot;
 
 using Buffer;
@@ -6,6 +10,7 @@ using Buffer;
 /// Represents a snapshot of a value, capturing its current and previous states.
 /// </summary>
 /// <typeparam name="T">The type of the value being tracked.</typeparam>
+/// <remarks>Tis type is mostly useful as a base for other types. See for example <see cref="ValueChangeTracker{T}"/>.</remarks>
 public class ValueSnapshot<T>
 {
 	private const string ValueNotAvailable = $"{nameof(Value)} is not available until the value has been set at least once.";
@@ -55,7 +60,7 @@ public class ValueSnapshot<T>
 	/// Initializes a new instance of the <see cref="ValueSnapshot{T}"/> class with an initial value.
 	/// </summary>
 	/// <param name="initialValue">The initial value to set.</param>
-	public ValueSnapshot(T initialValue)
+	public ValueSnapshot(T? initialValue)
 	{
 		buffer.Insert(initialValue);
 	}
@@ -80,8 +85,6 @@ public class ValueSnapshot<T>
 	/// <inheritdoc/>
 	public override string ToString() 
 		=> !HasValue 
-			? "<no value>" 
-			: Value == null 
-				? "<null>" 
-				: Value.ToString()!;
+			? Formatter.NoValueString 
+			: Value.AsText();
 }

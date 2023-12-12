@@ -833,6 +833,27 @@ public static class Algorithms
 			SwapAt(list, i, j);
 		}
 	}
+	
+	/// <summary>
+	/// This is a variant of the Fisher-Yates shuffle that shuffles only the first <paramref name="count"/> elements of
+	/// the list.
+	/// </summary>
+	public static void Shuffle<T>(this IRandomAccessList<T> list, int count)
+	{
+		list.ThrowIfNull();
+		int listCount = list.Count;
+
+		if (count > listCount - 1)
+		{
+			count = listCount - 1;
+		}
+
+		for (int i = 0; i < count; i++)
+		{
+			int j = Generator.NextUniformRandomInt(i, listCount);
+			SwapAt(list, i, j);
+		}
+	}
 
 	/// <summary>
 	/// Sorts a list and removes any duplicates. 

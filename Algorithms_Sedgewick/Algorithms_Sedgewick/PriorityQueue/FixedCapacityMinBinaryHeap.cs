@@ -238,7 +238,7 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 		int rightChild = leftChild + 1;
 
 		return leftChild > Count
-			? items[k].ToString() ?? Formatter.NullString
+			? items[k].AsText()
 			: rightChild > Count
 				? $"({items[k]}, {ToPrettyString(leftChild)}, . )"
 				: $"({items[k]}, {ToPrettyString(leftChild)}, {ToPrettyString(rightChild)})";

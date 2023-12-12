@@ -6,4 +6,5 @@ public interface ISet<T> : IEnumerable<T>
 	
 	public bool Contains(T item);
 	
+	public bool Remove(T item);
 }

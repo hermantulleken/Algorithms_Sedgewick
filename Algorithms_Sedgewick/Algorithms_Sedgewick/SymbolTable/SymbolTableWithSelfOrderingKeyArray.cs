@@ -49,8 +49,8 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 	{
 		if (TryFind(key, out int index))
 		{
-			keys.DeleteAt(index);
-			values.DeleteAt(index);
+			keys.RemoveAt(index);
+			values.RemoveAt(index);
 		}
 		else
 		{

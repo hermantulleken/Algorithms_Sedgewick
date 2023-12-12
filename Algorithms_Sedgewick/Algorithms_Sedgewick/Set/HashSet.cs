@@ -70,7 +70,7 @@ public class HashSet<T> : ISet<T>
 		return found;
 	}
 
-	public void Remove(T key)
+	public bool Remove(T key)
 	{
 		key.ThrowIfNull();
 		
@@ -85,7 +85,7 @@ public class HashSet<T> : ISet<T>
 
 		if (index < 0)
 		{
-			throw ThrowHelper.KeyNotFoundException(key);
+			return false;
 		}
 
 		RemoveKeyAt(index);
@@ -103,6 +103,8 @@ public class HashSet<T> : ISet<T>
 		{
 			Resize(log2TableSize - 1);
 		}*/
+
+		return true;
 	}
 
 	public IEnumerator<T> GetEnumerator() => keyPresent

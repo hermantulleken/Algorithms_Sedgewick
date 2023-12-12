@@ -41,7 +41,7 @@ public sealed class PriorityQueueWithOrderedArray<T> : IPriorityQueue<T>
 			ThrowContainerEmpty();
 		}
 
-		var min = items.DeleteAt();
+		var min = items.RemoveAt();
 		return min;
 	}
 

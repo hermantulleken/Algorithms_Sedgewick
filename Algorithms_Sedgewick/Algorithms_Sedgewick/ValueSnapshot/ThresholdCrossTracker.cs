@@ -7,6 +7,12 @@ namespace Algorithms_Sedgewick.ValueSnapshot;
 public class ThresholdCrossTracker<T> : ValueSnapshot<T>
 {
 	private readonly IComparer<T> comparer;
+	
+	/// <summary>
+	/// Gets or sets a value indicating whether tracking is enabled for this <see cref="ThresholdCrossTracker{T}"/>.
+	/// </summary>
+	/// <remarks>When <see langword="false"/>, none of this type's events will be raised.</remarks>
+	public bool TrackingEnabled { get; set; }
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ThresholdCrossTracker{T}"/> class.
@@ -17,6 +23,7 @@ public class ThresholdCrossTracker<T> : ValueSnapshot<T>
 	{
 		this.comparer = comparer ?? Comparer<T>.Default;
 		Threshold = threshold;
+		TrackingEnabled = true;
 	}
 
 	/// <summary>
@@ -50,6 +57,11 @@ public class ThresholdCrossTracker<T> : ValueSnapshot<T>
 			base.Value = value;
 
 			if (!HasPreviousValue)
+			{
+				return;
+			}
+
+			if (!TrackingEnabled)
 			{
 				return;
 			}

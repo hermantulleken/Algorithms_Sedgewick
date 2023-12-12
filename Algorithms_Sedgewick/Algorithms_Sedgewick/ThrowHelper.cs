@@ -92,7 +92,9 @@ internal static class ThrowHelper
 		return list;
 	}
 
-	internal static T ThrowIfNull<T>([System.Diagnostics.CodeAnalysis.NotNull] this T? obj, [CallerArgumentExpression("obj")] string? objArgName = null)
+	internal static T ThrowIfNull<T>(
+		[System.Diagnostics.CodeAnalysis.NotNull, NoEnumeration] this T? obj, 
+		[CallerArgumentExpression("obj")] string? objArgName = null)
 	{
 		if (obj == null)
 		{
@@ -129,4 +131,9 @@ internal static class ThrowHelper
 
 	internal static void ThrowTheContainerIsAtMaximumCapacity() 
 		=> throw ContainerIsAtMaximumCapacityException;
+
+	public static void ThrowEndOfStream()
+	{
+		throw new InvalidOperationException("Reached the end of the stream.");
+	}
 }

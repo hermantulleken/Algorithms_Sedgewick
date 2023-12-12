@@ -80,8 +80,8 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 	{
 		if (TryFindKey(key, out int index))
 		{
-			keys.DeleteAt(index);
-			values.DeleteAt(index);
+			keys.RemoveAt(index);
+			values.RemoveAt(index);
 		}
 		else
 		{

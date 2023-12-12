@@ -38,7 +38,7 @@ public sealed class PriorityQueueWithUnorderedArray<T> : IPriorityQueue<T>
 		}
 
 		var min = items[LastIndex];
-		items.DeleteAt(LastIndex);
+		items.RemoveAt(LastIndex);
 
 		if (Count > 1)
 		{

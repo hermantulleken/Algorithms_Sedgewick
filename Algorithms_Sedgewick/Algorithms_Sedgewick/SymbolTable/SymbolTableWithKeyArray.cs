@@ -46,8 +46,8 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 	{
 		if (TryFind(key, out int index))
 		{
-			keys.DeleteAt(index);
-			values.DeleteAt(index);
+			keys.RemoveAt(index);
+			values.RemoveAt(index);
 		}
 		else
 		{

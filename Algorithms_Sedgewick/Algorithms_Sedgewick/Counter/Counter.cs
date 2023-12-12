@@ -3,18 +3,13 @@
 using HashTable;
 using SymbolTable;
 
-public class Counter<T> : ICounter<T>
+public class Counter<T>(IComparer<T> comparer) : ICounter<T>
 {
-	private readonly ISymbolTable<T, int> counts;
-
-	public Counter(IComparer<T> comparer)
-	{
-		counts = new HashTableWithLinearProbing2<T, int>(comparer);
-	}
+	private readonly ISymbolTable<T, int> counts = new HashTableWithLinearProbing2<T, int>(comparer);
 
 	public IEnumerable<T> Keys => counts.Keys;
 
-	public int this[T item] => counts[item];
+	public int this[T item] => counts.ContainsKey(item) ? counts[item] : 0;
 
 	public void Add(T item)
 	{
@@ -48,4 +43,12 @@ public class Counter<T> : ICounter<T>
 	public int GetCount(T item) => counts.ContainsKey(item) ? counts[item] : 0;
 
 	public void Clear() => counts.Clear();
+
+	public void RemoveAll(T item)
+	{
+		if (counts.ContainsKey(item))
+		{
+			counts.RemoveKey(item);
+		} // else nothing left to do
+	}
 }

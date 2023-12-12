@@ -1,4 +1,6 @@
-﻿namespace Algorithms_Sedgewick.ValueSnapshot;
+﻿using Support;
+
+namespace Algorithms_Sedgewick.ValueSnapshot;
 
 /// <summary>
 /// Wrapper that can raise an event when a value changes. 
@@ -36,6 +38,7 @@ public sealed class ValueChangeTracker<T> : ValueSnapshot<T>
 	public bool TrackingEnabled { get; set; }
 
 	// ReSharper disable once InvalidXmlDocComment
+	// Used to document the action argument
 	
 	/// <summary>
 	/// Raised when <see cref="Value"/> has changed from its previous value and <see cref="TrackingEnabled"/> is true.
