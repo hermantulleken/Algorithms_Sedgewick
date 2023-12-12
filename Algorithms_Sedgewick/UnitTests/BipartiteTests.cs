@@ -39,7 +39,7 @@ public class BipartiteTests
 	[Test]
 	public void TestBuildWithBipartiteGraph()
 	{
-		IGraph bipartiteGraph = new GraphWithAdjacentsArrays(4)
+		IGraph bipartiteGraph = new GraphWithAdjacentsLists(4)
 		{
 			{ 0, 1 },
 			{ 0, 3 },
@@ -54,7 +54,7 @@ public class BipartiteTests
 	[Test]
 	public void TestBuildWithNonBipartiteGraph()
 	{
-		IGraph nonBipartiteGraph = new GraphWithAdjacentsArrays(3)
+		IGraph nonBipartiteGraph = new GraphWithAdjacentsLists(3)
 		{
 			{ 0, 1 },
 			{ 1, 2 },
@@ -67,7 +67,7 @@ public class BipartiteTests
 	[Test]
 	public void TestColorGraphWithDisconnectedGraph()
 	{
-		IGraph disconnectedGraph = new GraphWithAdjacentsArrays(6)
+		IGraph disconnectedGraph = new GraphWithAdjacentsLists(6)
 		{
 			{ 0, 1 },
 			{ 2, 3 },
@@ -89,10 +89,10 @@ public class BipartiteTests
 	[Test]
 	public void TestColorGraphWithCompleteBipartiteGraph()
 	{
-		var completeBipartiteGraph = Graph.CreateCompleteBipartiteGraph(n => new GraphWithAdjacentsArrays(n), 3, 3);
+		var completeBipartiteGraph = Graph.CreateCompleteBipartiteGraph(n => new GraphWithAdjacentsLists(n), 3, 3);
 		var bipartite = Bipartite.Build(completeBipartiteGraph);
 		Assert.That(bipartite.IsBipartite, Is.True);
 	}
 	
-	private static IGraph Factory(int n) => new GraphWithAdjacentsArrays(n);
+	private static IGraph Factory(int n) => new GraphWithAdjacentsLists(n);
 }

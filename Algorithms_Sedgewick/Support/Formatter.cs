@@ -12,9 +12,7 @@ public static class Formatter
 	/// <see cref="BindingFlags"/> that represent all instance fields and get-properties.
 	/// </summary>
 	public const BindingFlags AllInstances = PublicInstances | BindingFlags.NonPublic;
-
-	public const string DottedLine = ".....";
-
+	
 	/// <summary>
 	/// <see cref="BindingFlags"/> that represent public instance fields and get-properties.
 	/// </summary>
@@ -22,9 +20,18 @@ public static class Formatter
 												BindingFlags.GetField | 
 												BindingFlags.GetProperty | 
 												BindingFlags.Instance;
-
+	
+	public const string DottedLine = ".....";
 	public const string StripedLine = "-----";
-	public const string NullString = "null";
+	public const string Space = " ";
+	public const string SemiColonSpace = "; ";
+	public const string ColonSpace = ": ";
+	
+	public const string NewLine = "\n";
+	public const string Tab = "\t";
+
+	public const string NoValueString = "<no value>";
+	public const string NullString = "<null>";
 	
 	private const string Braces = "{{{0}}}";
 	private const string Brackets = "[{0}]";
@@ -32,6 +39,8 @@ public static class Formatter
 	private const string IndentString = "\t";
 	private const string NameMissing = "???";
 	private const string Parentheses = "({0})";
+	
+	private const string ToStringReturnedNull = "<ToString() returned null>";
 
 	// An empty dictionary of functions used to write types.
 	private static readonly IReadOnlyDictionary<Type, Func<object, string>> EmptyTypeWriters = new Dictionary<Type, Func<object, string>>();
@@ -105,14 +114,13 @@ public static class Formatter
 			case IEnumerable list:
 			{
 				string values = Pretty(list, specialIndexes);
-
 				return values.Wrap((obj is IDictionary) ? Braces : Brackets);
 			}
 			
 			default:
 				try
 				{
-					string objAsString = obj.ToString() ?? NullString;
+					string objAsString = obj.AsText();
 					return objAsString;
 				}
 				catch (Exception e)
@@ -146,6 +154,29 @@ public static class Formatter
 			.Select((item, i) => ToString(item, specialIndexes.Contains(i)));
 
 		return string.Join(CommaSpace, stringList.ToArray());
+	}
+	
+	public static string AsText<T>(this T? obj) 
+		=> (obj == null ? NullString : obj.ToString()) ?? ToStringReturnedNull;
+	
+	public static string AsText<T>(this IEnumerable<T>? enumerable, string separator = CommaSpace)
+		=> enumerable == null ? NullString : string.Join(separator, enumerable.Select(AsText));
+	
+	public static string Describe<TLabel, TDescription>(this TLabel label, TDescription description, string separator = ColonSpace)
+		=> label.AsText() + separator + description.AsText();
+	
+	public static string Bracket(this string @string, string leftBracket = "[", string? rightBracket = null)
+	{
+		rightBracket ??= leftBracket switch
+		{
+			"(" => ")",
+			"[" => "]",
+			"{" => "}",
+			"<" => ">",
+			_ => leftBracket,
+		};
+		
+		return leftBracket + @string + rightBracket;
 	}
 
 	internal static string KeyValueToString<TKey, TValue>(TKey key, TValue value) 
@@ -254,9 +285,7 @@ public static class Formatter
 
 	private static string ToString<T>(T? item, bool isSpecial)
 	{
-		string str = item != null 
-			? (item.ToString() ?? NullString) 
-			: NullString;
+		string str = item.AsText();
 
 		return isSpecial ? str.Wrap(Parentheses) : str;
 	}

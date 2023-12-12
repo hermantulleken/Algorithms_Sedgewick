@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Algorithms_Sedgewick;
 using Algorithms_Sedgewick.Object;
 
@@ -123,7 +122,7 @@ public class HashSetTests
 	{
 		// #12
 		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
-		Assert.That(() => hashSet.Remove(1), Throws.TypeOf<KeyNotFoundException>());
+		Assert.That(hashSet.Remove(1), Is.False);
 	}
 
 	[Test]
@@ -132,7 +131,8 @@ public class HashSetTests
 		// #13
 		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
-		hashSet.Remove(1);
+		bool remove = hashSet.Remove(1);
+		Assert.That(remove, Is.True);
 		Assert.That(hashSet.Count, Is.EqualTo(0));
 	}
 
