@@ -31,7 +31,13 @@ public sealed class StackWithResizeableArray<T> : IStack<T>
 
 	public void Clear() => items.Clear();
 
-	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
+	public IEnumerator<T> GetEnumerator()
+	{
+		for (int i = Count - 1; i >= 0; i--)
+		{
+			yield return items[i];
+		}
+	}
 
 	public T Pop() => items.RemoveLast();
 

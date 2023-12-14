@@ -38,6 +38,57 @@ public static class ListExtensions
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
+
+	private sealed class ListWindow<T> : IRandomAccessList<T>
+	{
+		private readonly int offset;
+		private readonly IRandomAccessList<T> list;
+
+		public ListWindow(IRandomAccessList<T> list, int offset, int count)
+		{
+			if (offset + count > list.Count)
+			{
+				throw new ArgumentException("The window is out of bounds.");
+			}
+			
+			this.list = list;
+			this.offset = offset;
+			Count = count;
+		}
+
+		public IEnumerator<T> GetEnumerator() => list.Skip(offset).Take(Count).GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public int Count { get; private set; }
+
+		public T this[int index]
+		{
+			get => list[index + offset];
+			set => list[index + offset] = value;
+		}
+	}
+
+	public static void Fill<T>(this IRandomAccessList<T> list, T value) => list.FillRange(0, list.Count, value);
+	
+	public static void FillRange<T>(this IRandomAccessList<T> list, int start, int count, T value)
+	{
+		for (int i = start; i < start + count; i++)
+		{
+			list[i] = value;
+		}
+	}
+	
+	public static IRandomAccessList<int> Range(int start, int count)
+	{
+		var list = new ResizeableArray<int>(count);
+		for (int i = 0; i < count; i++)
+		{
+			list.Add(i + start);
+		}
+
+		return list;
+	}
 	
 	/// <summary>
 	/// Creates a new read-only random access list that contains the same elements as this list.
@@ -47,6 +98,19 @@ public static class ListExtensions
 	
 	public static IRandomAccessList<T> ToRandomAccessList<T>(this IList<T> list) => new ListWrapper<T>(list);
 
+	public static void AddN<T>(this ResizeableArray<T> list, T item, int timesToAdd)
+	{
+		for (int i = 0; i < timesToAdd; i++)
+		{
+			list.Add(item);
+		}
+	}
+	
+	public static IRandomAccessList<T> Take<T>(this IRandomAccessList<T> list, int count)
+	{
+		return new ListWindow<T>(list, 0, count);
+	}
+	
 	// TODO Do we really need this null check here? 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static bool Less<T>(T v, T w) 

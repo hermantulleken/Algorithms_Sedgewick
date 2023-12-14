@@ -58,8 +58,10 @@ public sealed class GapBufferWithArray<T> : IGapBuffer<T>, IRandomAccessList<T>
 	private int GapSize => rightBlockStartIndex - gapStartIndex;
 
 	private bool IsFull => GapSize == 0;
-	
-	public IGapBuffer<T> @this => this;
+
+	IGapBuffer<T> IGapBuffer<T>.@this => @this;
+
+	IGapBuffer<T> @this => this;
 
 	public GapBufferWithArray(int initialCapacity)
 	{

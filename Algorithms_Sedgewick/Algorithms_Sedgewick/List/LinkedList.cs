@@ -42,7 +42,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		/// </summary>
 		public Node? NextNode;
 		
-		private string? ItemString => Item == null ? "null" : Item.ToString();
+		private string ItemString => Item.AsText();
 		
 #if WITH_INSTRUMENTATION
 		public override string ToString() => ToDebugString();

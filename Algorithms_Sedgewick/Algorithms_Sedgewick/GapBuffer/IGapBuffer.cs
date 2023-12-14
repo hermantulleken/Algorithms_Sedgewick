@@ -70,7 +70,7 @@ public interface IGapBuffer<T>
 	/// </returns>
 	public T RemoveBefore();
 
-	public IGapBuffer<T> @this { get; }
+	protected IGapBuffer<T> @this { get; }
 	
 	public void ValidateCursor(int cursor)
 	{

@@ -17,6 +17,9 @@ public static class ResizeableArray
 	
 	internal static class Builder
 	{
+		/*
+			This is used so we can use collection expressions. See the attributes of ResizeableArray<T>.
+		*/
 		internal static ResizeableArray<T> Create<T>(ReadOnlySpan<T> values) => new(values);
 	}
 }
@@ -67,6 +70,8 @@ public sealed class ResizeableArray<T>(int capacity = ResizeableArray.DefaultCap
 	/// </summary>
 	public bool IsFull => Count == Capacity;
 
+	public static ResizeableArray<int> Empty = [];
+
 	/// <summary>
 	/// Gets or sets the item at the specified index.
 	/// </summary>
@@ -109,6 +114,69 @@ public sealed class ResizeableArray<T>(int capacity = ResizeableArray.DefaultCap
 		version++;
 	}
 
+	public bool Remove(T item, IEqualityComparer<T> comparer)
+	{
+		for (int i = 0; i < Count; i++)
+		{
+			if (comparer.Equals(items[i], item))
+			{
+				RemoveAt(i);
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	public bool Remove(T item)
+	{
+		for (int i = 0; i < Count; i++)
+		{
+			if (Equals(items[i], item))
+			{
+				RemoveAt(i);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+	/// <summary>
+	/// Sets the <see cref="Count"/> to the specified value, growing the <see cref="ResizeableArray{T}"/> if necessary.
+	/// </summary>
+	/// <param name="newCount">The new value for <see cref="Count"/>.</param>
+	/*
+		Why not put this in Count's setter?
+		Because Count is a property, that is supposed to execute quickly, but setting the size in this way could
+		trigger a UpdateCapacity, which is not a quick operation.
+	*/
+	public void SetCount(int newCount)
+	{
+		Assert(newCount < ResizeableArray.MaxCapacity);
+		
+		if (newCount > capacity)
+		{
+			/*
+				I am not sure if this should not rather be newCount * 2 to avoid further resizes for some time. 
+				It would be nice if this was exactly the same as adding individual items to the list, but that would be
+				too tricky. 
+			*/
+			UpdateCapacity(newCount);
+		}
+
+		if (newCount < Count)
+		{
+			RemoveLastAlreadyChecked(Count - newCount);
+		}
+		else
+		{
+			Count = newCount;
+			version++;
+		}
+	}
+
 	/// <summary>
 	/// Removes all items from the <see cref="ResizeableArray{T}"/>.
 	/// </summary>
@@ -127,7 +195,7 @@ public sealed class ResizeableArray<T>(int capacity = ResizeableArray.DefaultCap
 	/// </summary>
 	/// <param name="index">The index of the item to delete.</param>
 	/// <returns>The deleted item.</returns>
-	public T DeleteAt(int index = 0)
+	public T RemoveAt(int index = 0)
 	{
 		ValidateIndex(index);
 		
@@ -236,28 +304,21 @@ public sealed class ResizeableArray<T>(int capacity = ResizeableArray.DefaultCap
 	
 	private void Grow()
 	{
-		switch (Capacity)
+		int newCapacity = Capacity switch
 		{
-			case ResizeableArray.MaxCapacity:
-				ThrowHelper.ThrowTheContainerIsAtMaximumCapacity();
-				break;
-			
-			case < ResizeableArray.HalfMaxCapacity:
-				Capacity *= 2;
-				break;
-			
-			default:
-				Capacity = ResizeableArray.MaxCapacity;
-				break;
-		}
+			ResizeableArray.MaxCapacity => throw ThrowHelper.ContainerIsAtMaximumCapacityException,
+			< ResizeableArray.HalfMaxCapacity => 2 * Capacity,
+			_ => ResizeableArray.MaxCapacity,
+		};
+		
+		UpdateCapacity(newCapacity);
+	}
 
+	private void UpdateCapacity(int newCapacity)
+	{
+		Capacity = newCapacity;
 		var newItems = new T[Capacity];
-
-		for (int i = 0; i < items.Length; i++)
-		{
-			newItems[i] = items[i];
-		}
-
+		Array.Copy(items, newItems, Count);
 		items = newItems;
 	}
 

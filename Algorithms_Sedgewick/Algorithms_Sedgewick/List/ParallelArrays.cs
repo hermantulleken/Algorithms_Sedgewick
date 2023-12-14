@@ -89,8 +89,8 @@ public class ParallelArrays<TKey, TValue>
 	/// </summary>
 	public void DeleteAt(int index)
 	{
-		keys.DeleteAt(index);
-		values.DeleteAt(index);
+		keys.RemoveAt(index);
+		values.RemoveAt(index);
 	}
 
 	/// <summary>

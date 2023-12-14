@@ -136,4 +136,10 @@ internal static class ThrowHelper
 	{
 		throw new InvalidOperationException("Reached the end of the stream.");
 	}
+
+	public static Exception TriedButFailed(string queryMethodName, string hasResultMethodName, string tryQueryMethodName)
+	{
+		return new InvalidOperationException($"Tried to get the result of {queryMethodName} but {hasResultMethodName} returned false. " +
+											$"Try using {tryQueryMethodName} instead, or call {hasResultMethodName} before calling {queryMethodName}.");
+	}
 }

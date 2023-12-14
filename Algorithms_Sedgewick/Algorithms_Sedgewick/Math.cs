@@ -1,7 +1,16 @@
-﻿namespace Algorithms_Sedgewick;
+﻿using System.Runtime.CompilerServices;
 
-public class Math2
+namespace Algorithms_Sedgewick;
+
+public static class Math2
 {
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static int IntegerCeilLog2(int n) 
 		=> n <= 1 ? 0 : (int)Math.Ceiling(Math.Log(n, 2));
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static int Sqr(int vertexCount) => vertexCount * vertexCount;
+	
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static int Cub(int vertexCount) => vertexCount * vertexCount * vertexCount;
 }
