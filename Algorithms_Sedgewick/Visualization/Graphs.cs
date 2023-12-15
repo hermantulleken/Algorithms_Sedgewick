@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using Algorithms_Sedgewick.SearchTrees;
+using AlgorithmsSW.SearchTrees;
 
 namespace Visualization;
 

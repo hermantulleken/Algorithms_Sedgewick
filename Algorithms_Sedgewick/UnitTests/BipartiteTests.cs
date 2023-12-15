@@ -1,4 +1,4 @@
-﻿using Algorithms_Sedgewick.Graphs;
+﻿using AlgorithmsSW.Graphs;
 using NUnit.Framework;
 
 namespace UnitTests;

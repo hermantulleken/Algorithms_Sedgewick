@@ -1,4 +1,4 @@
-﻿using Algorithms_Sedgewick;
+﻿using AlgorithmsSW;
 using BenchmarkDotNet.Attributes;
 
 namespace Benchmarks;

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Algorithms_Sedgewick.HashTable;
-using Algorithms_Sedgewick.SearchTrees;
+using AlgorithmsSW.HashTable;
+using AlgorithmsSW.SearchTrees;
 
 namespace UnitTests;
 
-using Algorithms_Sedgewick.SymbolTable;
+using AlgorithmsSW.SymbolTable;
 using NUnit.Framework;
 
 [Parallelizable]

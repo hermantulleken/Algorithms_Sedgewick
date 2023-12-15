@@ -1,8 +1,8 @@
 ﻿namespace UnitTests;
 
 using System.Collections.Generic;
-using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.List;
+using AlgorithmsSW;
+using AlgorithmsSW.List;
 using NUnit.Framework;
 
 [Parallelizable]

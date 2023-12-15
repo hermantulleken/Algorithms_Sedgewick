@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.Buffer;
-using Algorithms_Sedgewick.Graphs;
-using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.LSystem;
-using Algorithms_Sedgewick.Sort;
+using AlgorithmsSW;
+using AlgorithmsSW.Buffer;
+using AlgorithmsSW.Graphs;
+using AlgorithmsSW.List;
+using AlgorithmsSW.LSystem;
+using AlgorithmsSW.Sort;
 using Support;
 
 namespace PerformanceTests;

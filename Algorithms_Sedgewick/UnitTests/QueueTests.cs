@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Algorithms_Sedgewick.Queue;
+using AlgorithmsSW.Queue;
 using NUnit.Framework;
 
 namespace UnitTests

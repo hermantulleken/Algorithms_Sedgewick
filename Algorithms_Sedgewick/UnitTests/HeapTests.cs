@@ -1,6 +1,8 @@
-﻿namespace UnitTests;
+﻿using System.Collections.Generic;
 
-using Algorithms_Sedgewick.PriorityQueue;
+namespace UnitTests;
+
+using AlgorithmsSW.PriorityQueue;
 using NUnit.Framework;
 using Support;
 
@@ -167,23 +169,23 @@ public class HeapTests
 
 	private static Func<IPriorityQueue<int>>[] intPriorityQueueFactories = 
 	{
-		() => new FixedCapacityMinBinaryHeap<int>(10),
-		() => new FixedCapacityMin3Heap<int>(10),
-		() => new PriorityTree<int>(),
-		() => new PriorityQueueWithOrderedArray<int>(10),
-		() => new PriorityQueueWithUnorderedArray<int>(),
-		() => new PriorityQueueWithOrderedLinkedList<int>(),
-		() => new PriorityQueueWithUnorderedLinkedList<int>(),
+		() => new FixedCapacityMinBinaryHeap<int>(10, Comparer<int>.Default),
+		() => new FixedCapacityMin3Heap<int>(10, Comparer<int>.Default),
+		() => new PriorityTree<int>(Comparer<int>.Default),
+		() => new PriorityQueueWithOrderedArray<int>(10, Comparer<int>.Default),
+		() => new PriorityQueueWithUnorderedArray<int>(Comparer<int>.Default),
+		() => new PriorityQueueWithOrderedLinkedList<int>(Comparer<int>.Default),
+		() => new PriorityQueueWithUnorderedLinkedList<int>(Comparer<int>.Default),
 	};
 
 	private static Func<IPriorityQueue<Person>>[] personPriorityQueueFactories = 
 	{
-		() => new FixedCapacityMinBinaryHeap<Person>(10),
-		() => new FixedCapacityMin3Heap<Person>(10),
-		() => new PriorityTree<Person>(),
-		() => new PriorityQueueWithOrderedArray<Person>(10),
-		() => new PriorityQueueWithUnorderedArray<Person>(),
-		() => new PriorityQueueWithOrderedLinkedList<Person>(),
-		() => new PriorityQueueWithUnorderedLinkedList<Person>(),
+		() => new FixedCapacityMinBinaryHeap<Person>(10, Comparer<Person>.Default),
+		() => new FixedCapacityMin3Heap<Person>(10, Comparer<Person>.Default),
+		() => new PriorityTree<Person>(Comparer<Person>.Default),
+		() => new PriorityQueueWithOrderedArray<Person>(10, Comparer<Person>.Default),
+		() => new PriorityQueueWithUnorderedArray<Person>(Comparer<Person>.Default),
+		() => new PriorityQueueWithOrderedLinkedList<Person>(Comparer<Person>.Default),
+		() => new PriorityQueueWithUnorderedLinkedList<Person>(Comparer<Person>.Default),
 	};
 }

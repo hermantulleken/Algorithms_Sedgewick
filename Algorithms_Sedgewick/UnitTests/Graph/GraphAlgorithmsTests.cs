@@ -1,4 +1,4 @@
-﻿using Algorithms_Sedgewick.Graphs;
+﻿using AlgorithmsSW.Graphs;
 using NUnit.Framework;
 
 namespace UnitTests;
@@ -67,7 +67,7 @@ public class GraphAlgorithmsTests
 		
 		int result = GraphAlgorithms.FindNodeSafeToDelete(graph);
 		graph.RemoveVertex(result);
-		var connectivity = Connectivity.Build(graph); 
+		var connectivity = new Connectivity(graph); 
 		
 		Assert.IsTrue(connectivity.IsConnected); 
 	}
@@ -87,7 +87,7 @@ public class GraphAlgorithmsTests
 
 		int result = GraphAlgorithms.FindNodeSafeToDelete(graph);
 		graph.RemoveVertex(result);
-		var connectivity = Connectivity.Build(graph); 
+		var connectivity = new Connectivity(graph); 
 		
 		Assert.IsTrue(connectivity.IsConnected); 
 	}

@@ -1,5 +1,5 @@
-using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.ValueSnapshot;
+using AlgorithmsSW;
+using AlgorithmsSW.ValueSnapshot;
 
 namespace Demos;
 

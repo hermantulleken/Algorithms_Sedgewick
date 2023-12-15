@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Algorithms_Sedgewick.Stack;
+using AlgorithmsSW.Stack;
 
 namespace UnitTests;
 
 using System;
-using Algorithms_Sedgewick.GapBuffer;
+using AlgorithmsSW.GapBuffer;
 using NUnit.Framework;
 
 [TestFixture]

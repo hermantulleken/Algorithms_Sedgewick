@@ -1,4 +1,4 @@
-﻿using Algorithms_Sedgewick.Graphs;
+﻿using AlgorithmsSW.Graphs;
 using NUnit.Framework;
 
 namespace UnitTests;
@@ -22,7 +22,7 @@ public class ConnectivityTests
 		graph.AddEdge(0, 1);
 		graph.AddEdge(1, 2);
 
-		connectivity = Connectivity.Build(graph);
+		connectivity = new Connectivity(graph);
 	}
 
 	[Test]

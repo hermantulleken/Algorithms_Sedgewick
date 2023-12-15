@@ -1,4 +1,4 @@
-﻿using Algorithms_Sedgewick.Digraphs;
+﻿using AlgorithmsSW.Digraphs;
 using NUnit.Framework;
 
 namespace UnitTests;

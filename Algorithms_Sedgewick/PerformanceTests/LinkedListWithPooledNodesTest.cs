@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.Object;
+using AlgorithmsSW;
+using AlgorithmsSW.List;
+using AlgorithmsSW.Object;
 
 namespace PerformanceTests;
 

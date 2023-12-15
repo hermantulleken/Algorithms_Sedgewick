@@ -5,7 +5,7 @@ namespace UnitTests;
 
 using System.Linq;
 using System.Numerics;
-using Algorithms_Sedgewick;
+using AlgorithmsSW;
 using NUnit.Framework;
 using Support;
 

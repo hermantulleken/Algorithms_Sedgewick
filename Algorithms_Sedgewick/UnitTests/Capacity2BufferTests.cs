@@ -1,6 +1,6 @@
 ﻿namespace UnitTests;
 
-using Algorithms_Sedgewick.Buffer;
+using AlgorithmsSW.Buffer;
 using NUnit.Framework;
 
 [TestFixture]

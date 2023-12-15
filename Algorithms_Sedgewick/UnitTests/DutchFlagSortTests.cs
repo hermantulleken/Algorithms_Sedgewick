@@ -1,5 +1,5 @@
-﻿using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.Sort;
+﻿using AlgorithmsSW.List;
+using AlgorithmsSW.Sort;
 using NUnit.Framework;
 
 namespace UnitTests;

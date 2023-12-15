@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Algorithms_Sedgewick\Algorithms_Sedgewick.csproj" />
+      <ProjectReference Include="..\AlgorithmsSW\AlgorithmsSW.csproj" />
       <ProjectReference Include="..\Support\Support.csproj" />
     </ItemGroup>
 

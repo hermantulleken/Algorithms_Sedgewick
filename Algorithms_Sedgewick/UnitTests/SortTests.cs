@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.Object;
-using Algorithms_Sedgewick.Pool;
-using Algorithms_Sedgewick.Queue;
+using AlgorithmsSW;
+using AlgorithmsSW.List;
+using AlgorithmsSW.Object;
+using AlgorithmsSW.Pool;
+using AlgorithmsSW.Queue;
 using NUnit.Framework;
 using Support;
-using static Algorithms_Sedgewick.Sort.Sort;
+using static AlgorithmsSW.Sort.Sort;
 
 namespace UnitTests;
 

@@ -1,5 +1,5 @@
-﻿using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.List;
+﻿using AlgorithmsSW;
+using AlgorithmsSW.List;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 
@@ -14,7 +14,7 @@ public class LinkedListBenchMarks
 	
 	private ResizeableArray<int> list;
 	private readonly LinkedListWithPooledNodes<int> targetList2;
-	private readonly Algorithms_Sedgewick.List.LinkedList<int> targetList1;
+	private readonly AlgorithmsSW.List.LinkedList<int> targetList1;
 	private readonly LinkedListWithPooledClassNodes<int> targetList3;
 
 	[Params( /*Count / 64, Count / 32, Count / 16, Count / 8, Count / 4, */Count / 2, Count)]
@@ -23,7 +23,7 @@ public class LinkedListBenchMarks
 	public LinkedListBenchMarks()
 	{
 		targetList2 = new LinkedListWithPooledNodes<int>(Count);
-		targetList1 = new Algorithms_Sedgewick.List.LinkedList<int>();
+		targetList1 = new AlgorithmsSW.List.LinkedList<int>();
 		targetList3 = new LinkedListWithPooledClassNodes<int>(Count);
 	}
 

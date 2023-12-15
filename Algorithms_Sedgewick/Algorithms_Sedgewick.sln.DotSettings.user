@@ -10,6 +10,7 @@ $EXPR$.ThrowIfNull()</s:String>
 // $MESSAGE$ -- string literal in the form of "$NAME$ != null"
 $EXPR$.ThrowIfNull();</s:String>
 	<s:Int64 x:Key="/Default/CodeInspection/CognitiveComplexityAnalysis/MiddleComplexityThreshold/@EntryValue">100</s:Int64>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=ECA91B9A_002D02BF_002D4D4F_002DBCBC_002D0DF8B4BA411D_002Fd_003AGraph_002Ff_003ASubGraph_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/SweaWarningsMode/@EntryValue">ShowAndRun</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeCleanup/RecentlyUsedProfile/@EntryValue">Apply file Layout</s:String>
 	<s:String x:Key="/Default/CodeStyle/CSharpFileLayoutPatterns/Pattern/@EntryValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;&#xD;
@@ -230,7 +231,7 @@ $EXPR$.ThrowIfNull();</s:String>
   &lt;/TypePattern&gt;&#xD;
 &lt;/Patterns&gt;</s:String>
 	<s:String x:Key="/Default/Environment/ExternalSources/IlViewer/CodeType/@EntryValue">IL</s:String>
-	<s:Int64 x:Key="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue">994</s:Int64>
+	<s:Int64 x:Key="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue">1110</s:Int64>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EAlwaysTreatStructAsNotReorderableMigration/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=831eb438_002D6ec2_002D41e7_002D944a_002D9513f4f16f72/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
@@ -240,4 +241,4 @@ $EXPR$.ThrowIfNull();</s:String>
 	<s:Boolean x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8df2c6e3_002Da0d8_002D4309_002Da21f_002D3b95183232f5/@EntryIndexRemoved">True</s:Boolean>
 	
 	
-	<s:String x:Key="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue">InspectionSeverity</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue">SolutionBuilderGeneralOptionsPage</s:String></wpf:ResourceDictionary>

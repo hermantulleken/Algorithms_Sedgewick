@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.Object;
+using AlgorithmsSW;
+using AlgorithmsSW.Object;
 
 namespace UnitTests;
 
@@ -14,7 +14,7 @@ public class HashSetTests
 	public void DefaultConstructor_InitialState()
 	{
 		// #1
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		Assert.That(hashSet.Count, Is.EqualTo(0));
 	}
 
@@ -22,7 +22,7 @@ public class HashSetTests
 	public void Constructor_WithInitialCapacity()
 	{
 		// #2
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(10, Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(10, Comparer<int>.Default);
 		Assert.That(hashSet.Count, Is.EqualTo(0)); // Assuming the table size is accessible.
 	}
 	
@@ -31,7 +31,7 @@ public class HashSetTests
 	public void Add_SingleItem()
 	{
 		// #4
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		Assert.That(hashSet.Count, Is.EqualTo(1));
 	}
@@ -40,7 +40,7 @@ public class HashSetTests
 	public void Add_SameItemTwice()
 	{
 		// #5
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		hashSet.Add(1);
 		Assert.That(hashSet.Count, Is.EqualTo(1));
@@ -50,7 +50,7 @@ public class HashSetTests
 	public void Add_MultipleItems()
 	{
 		// #6
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		hashSet.Add(2);
 		Assert.That(hashSet.Count, Is.EqualTo(2));
@@ -59,7 +59,7 @@ public class HashSetTests
 	[Test]
 	public void AddALot()
 	{
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 
 		for (int i = 0; i < 64; i++)
 		{
@@ -80,7 +80,7 @@ public class HashSetTests
 		// #7
 		// This depends on the internal details of HashSet resizing mechanism.
 
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(10, Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(10, Comparer<int>.Default);
 		for (int i = 0; i < 16; i++) // table size for 10 is 31, so we need to go more than half that
 		{
 			hashSet.Add(i);
@@ -93,7 +93,7 @@ public class HashSetTests
 	public void Contains_ItemNotInSet()
 	{
 		// #8
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		Assert.That(hashSet.Contains(1), Is.False);
 	}
 
@@ -101,7 +101,7 @@ public class HashSetTests
 	public void Contains_AfterAdd()
 	{
 		// #9
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		Assert.That(hashSet.Contains(1), Is.True);
 	}
@@ -110,7 +110,7 @@ public class HashSetTests
 	public void Contains_MultipleAddedItems()
 	{
 		// #10
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		hashSet.Add(2);
 		Assert.That(hashSet.Contains(1) && hashSet.Contains(2), Is.True);
@@ -121,7 +121,7 @@ public class HashSetTests
 	public void Remove_NonExistingItem()
 	{
 		// #12
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		Assert.That(hashSet.Remove(1), Is.False);
 	}
 
@@ -129,7 +129,7 @@ public class HashSetTests
 	public void Remove_SingleItem()
 	{
 		// #13
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		bool remove = hashSet.Remove(1);
 		Assert.That(remove, Is.True);
@@ -140,7 +140,7 @@ public class HashSetTests
 	public void Remove_OneOfMultipleItems()
 	{
 		// #14
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		hashSet.Add(2);
 		hashSet.Remove(1);
@@ -151,7 +151,7 @@ public class HashSetTests
 	public void Remove_OneOfMultipleItems_Object()
 	{
 		// #14
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<ObjectWithId>(IdComparer.Instance);
+		var hashSet = new AlgorithmsSW.Set.HashSet<ObjectWithId>(IdComparer.Instance);
 
 		var obj1 = new ObjectWithId();
 		var obj2 = new ObjectWithId();
@@ -168,7 +168,7 @@ public class HashSetTests
 	public void Remove_UntilResize()
 	{
 		// #15
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(20, Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(20, Comparer<int>.Default);
 		for (int i = 0; i < 10; i++)
 		{
 			hashSet.Add(i);
@@ -186,7 +186,7 @@ public class HashSetTests
 	{
 		// #16
 		// Ideally, you'd find values which have the same hash, add them, remove one, and check the state.
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		hashSet.Add(2);
 		hashSet.Remove(1);
@@ -198,7 +198,7 @@ public class HashSetTests
 	public void GetEnumerator_MultipleItems()
 	{
 		// #17
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		hashSet.Add(2);
 		int sum = 0;
@@ -213,7 +213,7 @@ public class HashSetTests
 	public void GetEnumerator_AddAndRemove()
 	{
 		// #18
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		hashSet.Add(2);
 		hashSet.Remove(1);
@@ -230,7 +230,7 @@ public class HashSetTests
 	public void Hash_Collisions()
 	{
 		// #19
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		hashSet.Add(11);  // Assuming these produce a collision.
 		Assert.That(hashSet.Count, Is.EqualTo(2));
@@ -240,7 +240,7 @@ public class HashSetTests
 	public void Hash_RemoveCollidedItems()
 	{
 		// #20
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(Comparer<int>.Default);
 		hashSet.Add(1);
 		hashSet.Add(11);  // Assuming these produce a collision.
 		hashSet.Remove(1);
@@ -251,7 +251,7 @@ public class HashSetTests
 	public void Hash_WrapAround()
 	{
 		// #21
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(5, Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(5, Comparer<int>.Default);
 		hashSet.Add(1);
 		hashSet.Add(6);  // Assuming these wrap around.
 		Assert.That(hashSet.Count, Is.EqualTo(2));
@@ -262,7 +262,7 @@ public class HashSetTests
 	public void Resize_OnAdd()
 	{
 		// #22
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(10, Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(10, Comparer<int>.Default);
 		for (int i = 0; i < 15; i++)
 		{
 			hashSet.Add(i);
@@ -274,7 +274,7 @@ public class HashSetTests
 	public void Resize_OnRemove()
 	{
 		// #23
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<int>(20, Comparer<int>.Default);
+		var hashSet = new AlgorithmsSW.Set.HashSet<int>(20, Comparer<int>.Default);
 		for (int i = 0; i < 15; i++)
 		{
 			hashSet.Add(i);
@@ -292,7 +292,7 @@ public class HashSetTests
 	{
 		// #24
 		
-		var hashSet = new Algorithms_Sedgewick.Set.HashSet<ObjectWithId>(IdComparer.Instance);
+		var hashSet = new AlgorithmsSW.Set.HashSet<ObjectWithId>(IdComparer.Instance);
 		Assert.That(() => hashSet.Add(null), Throws.ArgumentNullException);
 	}
 

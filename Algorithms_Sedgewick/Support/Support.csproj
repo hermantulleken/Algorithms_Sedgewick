@@ -6,7 +6,7 @@
         <Configurations>Debug;Release;With Instrumentation</Configurations>
         <Platforms>AnyCPU</Platforms>
         <LangVersion>12</LangVersion>
-        <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+        <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'With Instrumentation' ">
@@ -20,7 +20,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435">
+      <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.507">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>

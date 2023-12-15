@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Algorithms_Sedgewick.SearchTrees;
+using AlgorithmsSW.SearchTrees;
 using NUnit.Framework;
 
 [TestFixture]

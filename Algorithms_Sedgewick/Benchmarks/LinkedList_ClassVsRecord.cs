@@ -1,7 +1,7 @@
-﻿using Algorithms_Sedgewick.List;
+﻿using AlgorithmsSW.List;
 using BenchmarkDotNet.Attributes;
 
-using LinkedList = Algorithms_Sedgewick.List.LinkedList<int>;
+using LinkedList = AlgorithmsSW.List.LinkedList<int>;
 
 namespace Benchmarks;
 

@@ -1,6 +1,6 @@
-﻿using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.Buffer;
-using Algorithms_Sedgewick.List;
+﻿using AlgorithmsSW;
+using AlgorithmsSW.Buffer;
+using AlgorithmsSW.List;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 

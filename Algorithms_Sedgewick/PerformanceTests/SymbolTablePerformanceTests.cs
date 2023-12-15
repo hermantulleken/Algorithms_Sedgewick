@@ -1,7 +1,7 @@
-﻿using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.HashTable;
-using Algorithms_Sedgewick.SearchTrees;
-using Algorithms_Sedgewick.SymbolTable;
+﻿using AlgorithmsSW;
+using AlgorithmsSW.HashTable;
+using AlgorithmsSW.SearchTrees;
+using AlgorithmsSW.SymbolTable;
 using Support;
 using Timer = Support.Timer;
 

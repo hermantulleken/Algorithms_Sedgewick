@@ -1,8 +1,8 @@
-﻿using Algorithms_Sedgewick;
-using Algorithms_Sedgewick.List;
-using Algorithms_Sedgewick.Pool;
-using Algorithms_Sedgewick.Queue;
-using Algorithms_Sedgewick.Sort;
+﻿using AlgorithmsSW;
+using AlgorithmsSW.List;
+using AlgorithmsSW.Pool;
+using AlgorithmsSW.Queue;
+using AlgorithmsSW.Sort;
 
 namespace PerformanceTests;
 
