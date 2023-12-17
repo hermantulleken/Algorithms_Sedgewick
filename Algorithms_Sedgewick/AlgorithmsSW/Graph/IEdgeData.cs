@@ -1,4 +1,4 @@
-﻿namespace AlgorithmsSW.Graphs;
+﻿namespace AlgorithmsSW.Graph;
 
 public interface IEdgeData<T>
 {

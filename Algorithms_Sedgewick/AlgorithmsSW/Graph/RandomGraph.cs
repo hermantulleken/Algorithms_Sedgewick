@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 using static Debug;
 

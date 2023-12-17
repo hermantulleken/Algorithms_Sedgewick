@@ -1,16 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputTyp>Exe</OutputTyp>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>12</LangVersion>
-        <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\AlgorithmsSW\AlgorithmsSW.csproj" />
+      <ProjectReference Include="..\Support\Support.csproj" />
+      <ProjectReference Include="..\Visualization\Visualization.csproj" />
     </ItemGroup>
 
 </Project>

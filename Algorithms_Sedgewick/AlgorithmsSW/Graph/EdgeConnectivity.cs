@@ -1,4 +1,4 @@
-﻿namespace AlgorithmsSW.Graphs;
+﻿namespace AlgorithmsSW.Graph;
 
 // 4.1.36
 public class EdgeConnectivity

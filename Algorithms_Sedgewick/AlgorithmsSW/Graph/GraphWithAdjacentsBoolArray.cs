@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 /// <summary>
 /// Represents a graph with a fixed number of vertices and edges, where adjacency is represented by a boolean array.
@@ -75,7 +75,9 @@ public class GraphWithAdjacentsBoolArray(int vertexCount) : IGraph
 	/// <inheritdoc/>
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	
-	bool IGraph.SupportsParallelEdges => false;
+	/// <inheritdoc/>
+	bool IReadOnlyGraph.SupportsParallelEdges => false;
 
-	bool IGraph.SupportsSelfLoops => true;
+	/// <inheritdoc/>
+	bool IReadOnlyGraph.SupportsSelfLoops => true;
 }

@@ -41,6 +41,18 @@ public static class CollectionExtensions
 
 		return array;
 	}
+	
+	public static Set.ISet<T> ToSet<T>(this IEnumerable<T> items, IComparer<T> comparer)
+	{
+		var set = DataStructures.Set(comparer);
+			
+		foreach (var item in items)
+		{
+			set.Add(item);
+		}
+
+		return set;
+	}
 
 	public static bool Contains<T>(this ResizeableArray<T> list, IEqualityComparer<T> comparer, T item) 
 		=> list.Any(t => comparer.Equals(t, item));

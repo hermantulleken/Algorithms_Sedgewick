@@ -19,13 +19,14 @@ using static System.Diagnostics.Debug;
 [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and non-generic versions.")]
 public class HashSet<T> : ISet<T>
 {
-	private readonly IComparer<T> comparer;
 	private bool[] keyPresent; // Necessary if TKey is a value type
 	private T[] keys;
 	private int log2TableSize;
 	private int tableSize;
 	
 	public int Count { get; private set; }
+
+	public IComparer<T> Comparer { get; }
 
 	public HashSet(IComparer<T> comparer)
 		: this(ResizeableArray.DefaultCapacity, comparer)
@@ -35,7 +36,7 @@ public class HashSet<T> : ISet<T>
 	public HashSet(int initialCapacity, IComparer<T> comparer)
 	{
 		(log2TableSize, tableSize) = HashTableWithLinearProbing.GetTableSize(initialCapacity);
-		this.comparer = comparer;
+		Comparer = comparer;
 		keys = new T[tableSize];
 		keyPresent = new bool[tableSize];
 	}
@@ -147,7 +148,7 @@ public class HashSet<T> : ISet<T>
 		int i;
 		for (i = GetHash(key); keyPresent[i]; GetNextIndex(key, ref i))
 		{
-			if (comparer.Equal(keys[i], key))
+			if (Comparer.Equal(keys[i], key))
 			{
 				return i;
 			}
@@ -164,7 +165,7 @@ public class HashSet<T> : ISet<T>
 
 	private void Resize(int newCapacity) // See page 474.
 	{
-		var newTable = new HashSet<T>(newCapacity, comparer);
+		var newTable = new HashSet<T>(newCapacity, Comparer);
 		
 		for (int i = 0; i < tableSize; i++)
 		{

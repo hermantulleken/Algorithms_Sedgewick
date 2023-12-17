@@ -3,7 +3,7 @@ using AlgorithmsSW.SymbolTable;
 using AlgorithmsSW.Counter;
 using AlgorithmsSW.Stack;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public static class GraphAlgorithms
 {
@@ -95,5 +95,23 @@ public static class GraphAlgorithms
 		var connectivity = new Connectivity(graph);
 
 		return connectivity.IsConnected;
+	}
+
+	public static bool IsBridge(this IGraph graph, int vertex0, int vertex1)
+	{
+		graph.ThrowIfNull();
+
+		if (!graph.ContainsEdge(vertex0, vertex1))
+		{
+			return false;
+		}
+
+		graph.RemoveEdge(vertex0, vertex1);
+		var connectivity = new Connectivity(graph);
+		bool connected = !connectivity.AreConnected(vertex0, vertex1);
+		graph.AddEdge(vertex0, vertex1);
+		
+		return !connected;
+
 	}
 }

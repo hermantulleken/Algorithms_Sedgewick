@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demos", "Demos\Demos.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{B7EBE53F-2F81-432C-BBDB-C6D624F70045}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Documentation", "Documentation\Documentation.csproj", "{2D055C31-81E8-4CBA-B76F-887C91A4BDB4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,5 +65,11 @@ Global
 		{B7EBE53F-2F81-432C-BBDB-C6D624F70045}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B7EBE53F-2F81-432C-BBDB-C6D624F70045}.With Instrumentation|Any CPU.ActiveCfg = Debug|Any CPU
 		{B7EBE53F-2F81-432C-BBDB-C6D624F70045}.With Instrumentation|Any CPU.Build.0 = Debug|Any CPU
+		{2D055C31-81E8-4CBA-B76F-887C91A4BDB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D055C31-81E8-4CBA-B76F-887C91A4BDB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D055C31-81E8-4CBA-B76F-887C91A4BDB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D055C31-81E8-4CBA-B76F-887C91A4BDB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D055C31-81E8-4CBA-B76F-887C91A4BDB4}.With Instrumentation|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D055C31-81E8-4CBA-B76F-887C91A4BDB4}.With Instrumentation|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

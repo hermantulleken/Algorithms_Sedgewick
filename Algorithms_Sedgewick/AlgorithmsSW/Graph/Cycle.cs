@@ -1,4 +1,6 @@
-﻿namespace AlgorithmsSW.Graphs;
+﻿using Support;
+
+namespace AlgorithmsSW.Graph;
 
 public class Cycle
 {
@@ -6,27 +8,27 @@ public class Cycle
 
 	public bool HasCycle { get; private set; }
 
-	private Cycle(IGraph graph)
+	public Cycle(IGraph graph)
 	{
 		marked = new bool[graph.VertexCount];
+		FindCycles(graph);
 	}
-
-	public static Cycle Build(IGraph graph)
-	{
-		var cycle = new Cycle(graph);
-		cycle.FindCycles(graph);
-		return cycle;
-	}
-
+	
 	private void FindCycles(IGraph graph)
 	{
+		Tracer.Trace(nameof(FindCycles));
+		Tracer.IncLevel();
+		
 		for (int vertex = 0; vertex < graph.VertexCount; vertex++)
 		{
+			Tracer.TraceIteration("Vertex", vertex);
 			if (!marked[vertex])
 			{
 				Search(graph, vertex, vertex);
 			}
 		}
+		
+		Tracer.DecLevel();
 	}
 	
 	private void Search(IGraph graph, int vertex0, int vertex1)
@@ -34,10 +36,16 @@ public class Cycle
 		// TODO: Does this class detect self loops too?
 		// Can it halt early?
 		// Should we not use one SearchPaths or such instead?
+		
+		Tracer.IncLevel();
+		Tracer.Trace(nameof(Search), (vertex0, vertex1));
+		
 		marked[vertex0] = true;
 		
+		Tracer.IncLevel();
 		foreach (int adjacent in graph.GetAdjacents(vertex0))
 		{
+			Tracer.TraceIteration("Adjacent", adjacent);
 			if (!marked[adjacent])
 			{
 				Search(graph, adjacent, vertex0);
@@ -47,5 +55,7 @@ public class Cycle
 				HasCycle = true;
 			}
 		}
+		Tracer.DecLevel();
+		Tracer.DecLevel();
 	}
 }

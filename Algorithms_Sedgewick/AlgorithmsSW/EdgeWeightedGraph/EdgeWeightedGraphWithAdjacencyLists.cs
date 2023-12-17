@@ -1,8 +1,13 @@
-﻿using AlgorithmsSW.List;
+﻿using Support;
 
 namespace AlgorithmsSW.EdgeWeightedGraph;
 
-public class EdgeWeightedGraphWithAdjacencyLists<T>
+using System.Collections;
+
+using Graph;
+using List;
+
+public class EdgeWeightedGraphWithAdjacencyLists<T> : IReadOnlyGraph
 {
 	private readonly ResizeableArray<Edge<T>>[] adjacents;
 	
@@ -16,10 +21,21 @@ public class EdgeWeightedGraphWithAdjacencyLists<T>
 		where edge.Vertex0 <= edge.Vertex1 
 		select edge;
 
+	/// <inheritdoc />
 	public int VertexCount { get; }
 
+	/// <inheritdoc />
 	public int EdgeCount { get; private set; }
-	
+
+	/// <inheritdoc />
+	public bool SupportsParallelEdges { get; }
+
+	/// <inheritdoc />
+	public bool SupportsSelfLoops { get; }
+
+	/// <inheritdoc />
+	public IEnumerable<int> GetAdjacents(int vertex) => throw new NotImplementedException();
+
 	public EdgeWeightedGraphWithAdjacencyLists(int vertexCount, IComparer<T> comparer)
 	{
 		adjacents = new ResizeableArray<Edge<T>>[VertexCount];
@@ -87,4 +103,20 @@ public class EdgeWeightedGraphWithAdjacencyLists<T>
 			throw new ArgumentException("Invalid vertex.");
 		}
 	}
+
+	public bool ContainsEdge(int vertex0, int vertex1)
+	{
+		ValidateVertex(vertex0);
+		ValidateVertex(vertex1);
+
+		return adjacents[vertex0].Any(edge => edge.OtherVertex(vertex0) == vertex1);
+	}
+	
+	public IEnumerator<(int vertex0, int vertex1)> GetEnumerator() 
+		=> Edges.Select(edge => (edge.Vertex0, edge.Vertex1)).GetEnumerator();
+
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+	// 4.3.17
+	public string ToString() => Formatter.Bracket(Edges.AsText());
 }

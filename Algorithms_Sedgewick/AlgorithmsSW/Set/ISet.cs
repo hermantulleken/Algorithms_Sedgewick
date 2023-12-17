@@ -2,6 +2,8 @@
 
 public interface ISet<T> : IEnumerable<T>
 {
+	IComparer<T> Comparer { get; }
+	
 	public void Add(T item);
 	
 	public bool Contains(T item);

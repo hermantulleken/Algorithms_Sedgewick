@@ -3,5 +3,9 @@
 public interface IMst<T>
 {
 	public IEnumerable<Edge<T>> Edges { get; }
-	T Weight { get; }
+
+	public T Weight(Func<T, T, T> add) 
+		=> Edges
+			.Select(e => e.Weight)
+			.Aggregate(add);
 }

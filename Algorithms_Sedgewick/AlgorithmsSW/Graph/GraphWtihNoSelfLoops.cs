@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public class GraphWtihNoSelfLoops(Func<IGraph> graphFactory) : IGraph
 {
@@ -18,9 +18,11 @@ public class GraphWtihNoSelfLoops(Func<IGraph> graphFactory) : IGraph
 	/// <inheritdoc />
 	public int EdgeCount => graph.EdgeCount;
 
-	bool IGraph.SupportsParallelEdges => graph.SupportsParallelEdges;
+    /// <inheritdoc/>
+    bool IReadOnlyGraph.SupportsParallelEdges => graph.SupportsParallelEdges;
 
-	bool IGraph.SupportsSelfLoops => false;
+    /// <inheritdoc/>
+    bool IReadOnlyGraph.SupportsSelfLoops => false;
 
 	/// <inheritdoc />
 	public void AddEdge(int vertex0, int vertex1)

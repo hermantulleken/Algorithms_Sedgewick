@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public static class GraphExtensions
 {

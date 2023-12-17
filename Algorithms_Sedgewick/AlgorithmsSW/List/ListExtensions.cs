@@ -1,4 +1,6 @@
 using System.Runtime.CompilerServices;
+using AlgorithmsSW.Buffer;
+using static System.Diagnostics.Debug;
 using static Support.WhiteBoxTesting;
 
 namespace AlgorithmsSW.List;
@@ -106,9 +108,174 @@ public static class ListExtensions
 		}
 	}
 	
+	/// <summary>
+	/// Adds the elements of the specified collection to the end of the list.
+	/// </summary>
+	/// <param name="list">The list to add the elements to.</param>
+	/// <param name="newITems">The collection whose elements should be added to the end of the list.</param>
+	/// <typeparam name="T">The type of elements in the list.</typeparam>
+	public static void AddRange<T>(this ResizeableArray<T> list, IEnumerable<T> newITems)
+	{
+		foreach (var item in newITems)
+		{
+			list.Add(item);
+		}
+	}
+	
 	public static IRandomAccessList<T> Take<T>(this IRandomAccessList<T> list, int count)
 	{
 		return new ListWindow<T>(list, 0, count);
+	}
+	
+	/// <summary>
+	/// Generates a sequence of sliding windows from the provided sequence.
+	/// Each sliding window is of a specified size and contains a segment of the input sequence.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the input sequence.</typeparam>
+	/// <param name="list">The input sequence from which sliding windows are generated.</param>
+	/// <param name="windowSize">The size of each sliding window. Must be a positive integer.</param>
+	/// <returns>
+	/// An <see cref="IEnumerable{T}"/> where each element is an <see cref="IEnumerable{T}"/> representing a sliding
+	/// window of the specified size over the input sequence.
+	/// </returns>
+	/// <remarks>
+	/// If the window size is greater than the number of elements in the input sequence, no windows are generated.
+	/// This method uses deferred execution and streams the windows as they are generated.
+	/// </remarks>
+	/// <example>
+	/// <code>
+	/// <![CDATA[
+	/// var numbers = new List<int> { 0, 1, 2, 3, 4, 5 };
+	/// foreach (var window in numbers.SlidingWindow(3))
+	/// {
+	///     Console.WriteLine(string.Join(", ", window));
+	/// }
+	/// // Output:
+	/// // 0, 1, 2
+	/// // 1, 2, 3
+	/// // 2, 3, 4
+	/// // 3, 4, 5
+	/// ]]>
+	/// </code>
+	/// </example>
+	public static IEnumerable<IEnumerable<T>> SlidingWindow<T>(this IEnumerable<T> list, int windowSize)
+	{
+		var buffer = new RingBuffer<T>(windowSize);
+
+		foreach (var item in list)
+		{
+			buffer.Insert(item);
+
+			if (buffer.IsFull)
+			{
+				yield return buffer;
+			}
+		}
+	}
+	
+	/// <summary>
+	/// Generates a sequence of circular sliding windows from the provided sequence. Each sliding window is of a
+	/// specified size and contains a segment of the input sequence. This method wraps around the sequence to include
+	/// earlier elements in the window as it reaches the end of the
+	/// sequence.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the input sequence.</typeparam>
+	/// <param name="list">The input sequence from which circular sliding windows are generated.</param>
+	/// <param name="windowSize">The size of each sliding window. Must be a positive integer.</param>
+	/// <returns>
+	/// An <see cref="IEnumerable{T}"/> where each element is an <see cref="IEnumerable{T}"/> representing a circular
+	/// sliding
+	/// window of the specified size over the input sequence.
+	/// </returns>
+	/// <remarks>
+	/// The circular sliding window wraps around the end of the sequence. If the window size is greater than the number
+	/// of elements in the input sequence, it will continue to loop through the sequence until the window is filled.
+	/// This method uses deferred execution and streams the windows as they are generated.
+	/// </remarks>
+	/// <example>
+	/// <code>
+	/// <![CDATA[
+	/// var numbers = new List<int> { 0, 1, 2, 3, 4, 5 };
+	/// foreach (var window in numbers.CircularSlidingWindow(3))
+	/// {
+	///     Console.WriteLine(string.Join(", ", window));
+	/// }
+	/// // Output:
+	/// // 0, 1, 2
+	/// // 1, 2, 3
+	/// // 2, 3, 4
+	/// // 3, 4, 5
+	/// // 4, 5, 0
+	/// // 5, 0, 1
+	/// ]]>
+	/// </code>
+	/// </example>
+	public static IEnumerable<IEnumerable<T>> CircularSlidingWindow<T>(this IEnumerable<T> list, int windowSize)
+	{
+		var buffer = new RingBuffer<T>(windowSize);
+
+		foreach (var item in list)
+		{
+			buffer.Insert(item);
+
+			if (buffer.IsFull)
+			{
+				yield return buffer;
+			}
+		}
+
+		foreach (var item in list.Take(windowSize - 1))
+		{
+			buffer.Insert(item);
+			
+			Assert(buffer.IsFull);
+			
+			yield return buffer;
+		}
+	}
+	
+	/// <summary>
+	/// Provides a variant of <see cref="SlidingWindow{T}"/>, optimized for a window size of 2.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the input sequence.</typeparam>
+	/// <param name="list">The input sequence from which sliding windows are generated.</param>
+	public static IEnumerable<IEnumerable<T?>> SlidingWindow2<T>(this IEnumerable<T?> list)
+	{
+		var buffer = new OptimizedCapacity2Buffer<T>();
+
+		foreach (var item in list)
+		{
+			buffer.Insert(item);
+
+			if (buffer.IsFull)
+			{
+				yield return buffer;
+			}
+		}
+	}
+	
+	/// <summary>
+	/// Provides a variant of <see cref="CircularSlidingWindow{T}"/>, optimized for a window size of 2.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the input sequence.</typeparam>
+	/// <param name="list">The input sequence from which sliding windows are generated.</param>
+	public static IEnumerable<IEnumerable<T?>> CircularSlidingWindow2<T>(this IEnumerable<T?> list)
+	{
+		var buffer = new OptimizedCapacity2Buffer<T>();
+
+		foreach (var item in list)
+		{
+			buffer.Insert(item);
+
+			if (buffer.IsFull)
+			{
+				yield return buffer;
+			}
+		}
+		
+		buffer.Insert(list.First());
+		Assert(buffer.IsFull);
+		yield return buffer;
 	}
 	
 	// TODO Do we really need this null check here? 

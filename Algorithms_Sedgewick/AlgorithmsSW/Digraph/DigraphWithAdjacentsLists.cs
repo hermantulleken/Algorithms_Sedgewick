@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using AlgorithmsSW.Graphs;
+using AlgorithmsSW.Graph;
 using AlgorithmsSW.List;
 
 namespace AlgorithmsSW.Digraphs;

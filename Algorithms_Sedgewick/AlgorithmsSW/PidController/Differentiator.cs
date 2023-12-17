@@ -20,7 +20,7 @@ public sealed class Differentiator : ValueSnapshot<float>
 	/// <remarks>Technically to be a derivative we need to divide by the time. If we assume a constant
 	/// sample rate, this is a constant, that can be absorbed by the PID filter. 
 	/// </remarks>
-	/// <exception cref="InvalidOperationException"><see cref="HasPreviousValue"/> is false.</exception>
+	/// <exception cref="InvalidOperationException"><see cref="ValueSnapshot{T}.HasPreviousValue"/> is false.</exception>
 	public float Difference =>
 		HasPreviousValue
 			? difference

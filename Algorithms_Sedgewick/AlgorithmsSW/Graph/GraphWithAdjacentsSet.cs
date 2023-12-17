@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 // 4.1.5
 public class GraphWithAdjacentsSet : IGraph
@@ -45,9 +45,11 @@ public class GraphWithAdjacentsSet : IGraph
 		EdgeCount = 0;
 	}
 
-	bool IGraph.SupportsParallelEdges => false;
+	/// <inheritdoc/>
+	bool IReadOnlyGraph.SupportsParallelEdges => false;
 
-	bool IGraph.SupportsSelfLoops => true;
+	/// <inheritdoc/>
+	bool IReadOnlyGraph.SupportsSelfLoops => true;
 
 	/// <inheritdoc />
 	/// <remarks>Does not support parallel edges.</remarks>

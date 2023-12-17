@@ -5,7 +5,7 @@ public class Components<T>
 	private bool[] marked;
 	private int[] componentIds;
 	
-	public Components(EdgeWeightedGraphWithAdjacencyLists<T> graph, IComparer<T> comparer)
+	public Components(EdgeWeightedGraphWithAdjacencyLists<T> graph)
 	{
 		int componentId = 0;
 		foreach (var vertex in graph.Vertexes)
@@ -16,7 +16,11 @@ public class Components<T>
 				componentId++;
 			}
 		}
+
+		ComponentCount = componentId;
 	}
+
+	public int ComponentCount { get;  }
 
 	private void Search(EdgeWeightedGraphWithAdjacencyLists<T> graph, int vertex, int componentId)
 	{
@@ -35,4 +39,6 @@ public class Components<T>
 	}
 
 	public int GetComponentId(int vertex) => componentIds[vertex];
+	
+	public bool AreConnected(int vertex0, int vertex1) => GetComponentId(vertex0) == GetComponentId(vertex1);
 }

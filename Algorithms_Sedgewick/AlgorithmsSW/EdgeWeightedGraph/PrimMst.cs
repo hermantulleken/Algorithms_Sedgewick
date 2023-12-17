@@ -15,14 +15,13 @@ public class PrimMst<T> : IMst<T>
 	
 	public PrimMst(
 		EdgeWeightedGraphWithAdjacencyLists<T> graph, 
-		IComparer<T> comparer,
 		T minValue,
 		T maxValue)
 	{
 		edgeTo = new Edge<T>[graph.VertexCount];
 		distTo = new T[graph.VertexCount];
 		marked = new bool[graph.VertexCount];
-		priorityQueue = new IndexPriorityQueue<T>(graph.VertexCount, comparer);
+		priorityQueue = new IndexPriorityQueue<T>(graph.VertexCount, graph.Comparer);
 		
 		for (int vertex = 0; vertex < graph.VertexCount; vertex++)
 		{

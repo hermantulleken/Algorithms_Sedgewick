@@ -2,7 +2,7 @@
 
 public class UnionFind
 {
-	private int[] componentIndex; // access to component id (site indexed)
+	private readonly int[] componentIndex; // access to component id (site indexed)
 	public int ComponentCount { get; private set; }
 	
 	public UnionFind(int vertexCount)

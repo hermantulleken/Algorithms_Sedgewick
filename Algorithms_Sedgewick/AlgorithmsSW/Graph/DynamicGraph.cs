@@ -4,7 +4,7 @@ using AlgorithmsSW.HashTable;
 using AlgorithmsSW.SymbolTable;
 using static System.Diagnostics.Debug;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public class DynamicGraph // Supports removing vertices
 	: IGraph

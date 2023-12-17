@@ -1,6 +1,6 @@
 ﻿using static System.Diagnostics.Debug;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public class Bipartite
 {

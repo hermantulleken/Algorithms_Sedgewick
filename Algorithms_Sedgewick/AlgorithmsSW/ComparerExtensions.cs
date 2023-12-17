@@ -22,6 +22,24 @@ public static class ComparerExtensions
 		return new ConvertComparer<TSource, TTarget>(comparer, converter);
 	}*/
 
+	private class ComparerToEqualityComparerAdapter<T>(IComparer<T> comparer, Func<T, int> getHashCode)
+		: IEqualityComparer<T>
+	{
+		public bool Equals(T? x, T? y) => comparer.Compare(x, y) == 0;
+
+		public int GetHashCode(T obj) => getHashCode(obj);
+	}
+	
+	public static IEqualityComparer<T> ToEqualityComparer<T>(
+		this IComparer<T> comparer,
+		Func<T, int>? getHashCode = null)
+	{
+		comparer.ThrowIfNull();
+		getHashCode ??= obj => obj == null ? 0 : obj.GetHashCode();
+		
+		return new ComparerToEqualityComparerAdapter<T>(comparer, getHashCode);
+	}
+	
 	public static bool Equal<T>(this IComparer<T> comparer, T left, T right) 
 		=> comparer.Compare(left, right) == 0;
 

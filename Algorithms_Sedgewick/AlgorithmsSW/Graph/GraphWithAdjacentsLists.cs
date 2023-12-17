@@ -4,7 +4,7 @@ using System.Runtime.Intrinsics;
 using AlgorithmsSW.List;
 using static System.Diagnostics.Debug;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public class GraphWithAdjacentsLists : IGraph
 {
@@ -104,7 +104,9 @@ public class GraphWithAdjacentsLists : IGraph
 	
 	public bool ContainsEdge(int vertex0, int vertex1) => adjacents[vertex0].Contains(vertex1);
 	
-	bool IGraph.SupportsParallelEdges => true;
+	/// <inheritdoc/>
+	bool IReadOnlyGraph.SupportsParallelEdges => true;
 
-	bool IGraph.SupportsSelfLoops => true;
+	/// <inheritdoc/>
+	bool IReadOnlyGraph.SupportsSelfLoops => true;
 }

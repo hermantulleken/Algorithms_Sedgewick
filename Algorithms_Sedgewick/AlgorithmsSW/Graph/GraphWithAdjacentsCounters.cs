@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using AlgorithmsSW.Counter;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public class GraphWithAdjacentsCounters : IGraph
 {
@@ -28,9 +28,11 @@ public class GraphWithAdjacentsCounters : IGraph
 		EdgeCount = 0;
 	}
 
-	bool IGraph.SupportsParallelEdges => true;
+	/// <inheritdoc/>
+	bool IReadOnlyGraph.SupportsParallelEdges => true;
 
-	bool IGraph.SupportsSelfLoops => true;
+	/// <inheritdoc/>
+	bool IReadOnlyGraph.SupportsSelfLoops => true;
 
 	/// <inheritdoc />
 	/// <remarks>Does not support parallel edges.</remarks>
@@ -68,7 +70,7 @@ public class GraphWithAdjacentsCounters : IGraph
 	// TODO: Verify that when we do lookups on this we do constant time lookups if we use a proper se
 	public IEnumerable<int> GetAdjacents(int vertex)
 	{
-		Counter<int> counter = adjacents[vertex];
+		var counter = adjacents[vertex];
 
 		foreach (int adjacent in counter.Keys)
 		{
@@ -87,12 +89,14 @@ public class GraphWithAdjacentsCounters : IGraph
 			
 			foreach (int vertex1 in counter.Keys)
 			{
-				if (vertex0 <= vertex1)
+				if (vertex0 > vertex1)
 				{
-					for(int i = 0; i < counter[vertex1]; i++)
-					{
-						yield return (vertex0, vertex1);
-					}
+					continue;
+				}
+				
+				for (int i = 0; i < counter[vertex1]; i++)
+				{
+					yield return (vertex0, vertex1);
 				}
 			}
 		}

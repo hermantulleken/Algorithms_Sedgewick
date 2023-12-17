@@ -194,6 +194,10 @@ public static class Sort
 	/// </summary>
 	private sealed class DequeueSortHelperWithDeque<T>(IDeque<T> deque) : IEnumerable<T>
 	{
+#if WITH_INSTRUMENTATION
+		public T Top => ToReverseArray().First();
+#endif
+		
 		public void ExchangeTop()
 		{
 			var card1 = deque.PopRight();
@@ -234,6 +238,7 @@ public static class Sort
 		
 		public T[] BottomN(int n) => ToReverseArray().TakeLast(n).ToArray();
 #endif
+		
 	}
 
 	private struct LabeledItem<T> : IComparable<LabeledItem<T>> 
@@ -430,7 +435,7 @@ public static class Sort
 	/// <summary>
 	/// Performs the Gnome sort algorithm on a list, which is a simple comparison-based sorting algorithm.
 	/// </summary>
-	/// <typeparam name="T">The type of elements in the list, which must implement IComparable<T>.</typeparam>
+	/// <typeparam name="T">The type of elements in the list, which must implement <see cref="IComparable{T}"/>.</typeparam>
 	/// <param name="list">The list to be sorted. It must support random access by index.</param>
 	/// <remarks>
 	/// The performance of Gnome sort is O(n^2) in the average and worst cases.
@@ -1515,8 +1520,8 @@ public static class Sort
 	/// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
 	/// <exception cref="ArgumentException"><paramref name="list"/> contains elements other than the specified
 	/// small, medium, or large elements.</exception>
-	/// <exception cref="ArgumentException"><paramref name="smallElement"/> equals <see cref="largeElement"/> but
-	/// not <see cref="mediumElement"/>.</exception>
+	/// <exception cref="ArgumentException"><paramref name="smallElement"/> equals <paramref name="largeElement"/> but
+	/// not <paramref name="mediumElement"/>.</exception>
 	public static void DutchFlagSort<T>(IRandomAccessList<T> list, T smallElement, T mediumElement, T largeElement)
 	{
 		list.ThrowIfNull();

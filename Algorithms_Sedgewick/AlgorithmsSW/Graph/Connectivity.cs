@@ -1,6 +1,6 @@
 ﻿using AlgorithmsSW.List;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 /// <summary>
 /// A class for querying connectivity properties of a graph. 

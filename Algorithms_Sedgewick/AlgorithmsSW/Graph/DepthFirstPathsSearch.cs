@@ -1,16 +1,16 @@
 ﻿using System.Diagnostics;
 using Support;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public sealed class DepthFirstPathsSearch : GraphPathsSearch
 {
-	public DepthFirstPathsSearch(IGraph graph, int sourceVertex) 
+	public DepthFirstPathsSearch(IReadOnlyGraph graph, int sourceVertex) 
 		: base(graph, sourceVertex)
 	{
 	}
 
-	public static DepthFirstPathsSearch Build(IGraph graph, int sourceVertex)
+	public static DepthFirstPathsSearch Build(IReadOnlyGraph graph, int sourceVertex)
 	{
 		var search = new DepthFirstPathsSearch(graph, sourceVertex);
 		search.Search(graph, sourceVertex);
@@ -40,7 +40,7 @@ public sealed class DepthFirstPathsSearch : GraphPathsSearch
 	}
 #endif
 	
-	private void Search(IGraph graph, int vertex)
+	private void Search(IReadOnlyGraph graph, int vertex)
 	{
 		Stack<int> stack = new Stack<int>(graph.VertexCount);
 		stack.Push(vertex);
@@ -64,7 +64,7 @@ public sealed class DepthFirstPathsSearch : GraphPathsSearch
 	}
 	
 	[Conditional(Diagnostics.WithInstrumentationDefine)]
-	private void ReferenceRecursiveSearch(IGraph graph, int vertex)
+	private void ReferenceRecursiveSearch(IReadOnlyGraph graph, int vertex)
 	{
 		Marked[vertex] = true;
 		

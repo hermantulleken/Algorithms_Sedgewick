@@ -2,7 +2,7 @@
 using System.Text;
 using AlgorithmsSW;
 using AlgorithmsSW.Buffer;
-using AlgorithmsSW.Graphs;
+using AlgorithmsSW.Graph;
 using AlgorithmsSW.List;
 using AlgorithmsSW.LSystem;
 using AlgorithmsSW.Sort;

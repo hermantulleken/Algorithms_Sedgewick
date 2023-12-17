@@ -1,9 +1,10 @@
 ﻿using AlgorithmsSW.Digraphs;
-using AlgorithmsSW.Graphs;
+using AlgorithmsSW.Graph;
 using AlgorithmsSW.HashTable;
 using AlgorithmsSW.List;
 using AlgorithmsSW.PriorityQueue;
 using AlgorithmsSW.Queue;
+using AlgorithmsSW.Set;
 using AlgorithmsSW.Stack;
 using AlgorithmsSW.SymbolTable;
 
@@ -26,7 +27,7 @@ public static class DataStructures
 	
 	public static IRandomAccessList<T> List<T>(int capacity) => new ResizeableArray<T>(capacity);
 	
-	public static ISet<T> Set<T>() => new HashSet<T>();
+	public static Set.ISet<T> Set<T>(IComparer<T> comparer) => new Set.HashSet<T>(comparer);
 	
 	public static ISymbolTable<TKey, TValue> HashTable<TKey, TValue>(IComparer<TKey> comparer) 
 		=> new HashTableWithLinearProbing<TKey, TValue>(comparer);
@@ -39,7 +40,6 @@ public static class DataStructures
 	public static IDigraph Digraph(int vertexCount) => new DigraphWithAdjacentsLists(vertexCount);
 	
 	// This is actually not a good default, we need a dynamic container. 
-	public static IPriorityQueue<T> PriorityQueue<T>(int capacity, IComparer<T> comparer) 
-		where T : IComparable<T> 
+	public static IPriorityQueue<T> PriorityQueue<T>(int capacity, IComparer<T> comparer)
 		=> new FixedCapacityMinBinaryHeap<T>(capacity, comparer);
 }

@@ -1,4 +1,4 @@
-﻿using AlgorithmsSW.Graphs;
+﻿using AlgorithmsSW.Graph;
 using NUnit.Framework;
 
 namespace UnitTests;

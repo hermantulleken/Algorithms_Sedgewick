@@ -1,4 +1,4 @@
-﻿namespace AlgorithmsSW.Graphs;
+﻿namespace AlgorithmsSW.Graph;
 
 // 4.1.26
 public class DepthFirstLimited

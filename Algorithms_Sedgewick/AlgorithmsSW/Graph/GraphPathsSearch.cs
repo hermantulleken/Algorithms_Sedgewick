@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Support;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 [SuppressMessage(
 	"StyleCop.CSharp.MaintainabilityRules", 
@@ -31,7 +31,7 @@ public abstract class GraphPathsSearch
 		}
 	}
 
-	protected GraphPathsSearch(IGraph graph, int sourceVertex)
+	protected GraphPathsSearch(IReadOnlyGraph graph, int sourceVertex)
 	{
 		Marked = new bool[graph.VertexCount];
 		EdgeOnPathFromSourceTo = new int[graph.VertexCount];

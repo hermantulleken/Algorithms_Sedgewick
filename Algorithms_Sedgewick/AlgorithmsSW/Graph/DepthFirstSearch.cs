@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Support;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public sealed class DepthFirstSearch
 {
@@ -35,7 +35,7 @@ public sealed class DepthFirstSearch
 #if WITH_INSTRUMENTATION
 	public static DepthFirstSearch Build(IGraph graph, int sourceVertex, AlgorithmImplementation implementation)
 	{
-		var search = new DepthFirstSearch(graph);
+		var search = new DepthFirstSearch(graph, sourceVertex);
 		
 		switch (implementation)
 		{

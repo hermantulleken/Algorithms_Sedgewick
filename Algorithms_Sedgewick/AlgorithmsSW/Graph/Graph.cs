@@ -1,6 +1,6 @@
 ﻿using AlgorithmsSW.SymbolTable;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public static class Graph
 {

@@ -190,6 +190,28 @@ public static class Algorithms
 		}
 	}
 	
+	public static ResizeableArray<ResizeableArray<T>> PowerSet<T>(IEnumerable<T> set)
+	{
+		ResizeableArray<ResizeableArray<T>> allSubsets = [[]];
+
+		foreach (var element in set)
+		{
+			var newSubsets = new ResizeableArray<ResizeableArray<T>>();
+
+			foreach (var subset in allSubsets)
+			{
+				var newSubset = new ResizeableArray<T>();
+				newSubset.AddRange(subset);
+				newSubset.Add(element);
+				newSubsets.Add(newSubset);
+			}
+
+			allSubsets.AddRange(newSubsets);
+		}
+
+		return allSubsets;
+	}
+	
 	public static float Median(float[] list) => Median(list, 0, list.Length - 1);
 		
 	private static float Median(float[] list, int start, int end)

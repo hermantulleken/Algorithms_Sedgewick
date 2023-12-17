@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using AlgorithmsSW.List;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 [CollectionBuilder(typeof(EdgeList), nameof(Create))]
 public class EdgeList : IEnumerable<(int, int)>

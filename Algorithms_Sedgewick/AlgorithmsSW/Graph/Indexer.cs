@@ -1,7 +1,7 @@
 ﻿using AlgorithmsSW.HashTable;
 using AlgorithmsSW.SymbolTable;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 /// <summary>
 /// Class that can assign indexes to symbols.

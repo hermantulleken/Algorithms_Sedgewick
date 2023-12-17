@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public class GraphReader
 {

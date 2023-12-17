@@ -1,6 +1,6 @@
 ﻿using AlgorithmsSW.List;
 
-namespace AlgorithmsSW.Graphs;
+namespace AlgorithmsSW.Graph;
 
 public sealed class BreadthFirstPathsSearch : GraphPathsSearch
 {

@@ -29,6 +29,9 @@ public sealed class OptimizedCapacity2Buffer<T> : IBuffer<T?>, IPair<T>
 
 	/// <inheritdoc />
 	public int Capacity => 2;
+	
+	/// <inheritdoc />
+	public bool IsFull => Count == 2;
 
 	/// <inheritdoc />
 	public int Count { get; private set; }

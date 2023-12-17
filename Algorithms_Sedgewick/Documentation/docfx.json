@@ -31,6 +31,12 @@
         ]
       }
     ],
+    "overwrite": [{
+      "files": [
+        "overwrites/**.md"
+      ]
+    }
+    ],
     "resource": [
       {
         "files": [
@@ -44,8 +50,8 @@
       "modern"
     ],
     "globalMetadata": {
-      "_appName": "mysite",
-      "_appTitle": "mysite",
+      "_appName": "Algorithms",
+      "_appTitle": "Algorithms",
       "_enableSearch": true,
       "pdf": false
     }

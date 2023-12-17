@@ -178,9 +178,13 @@ public static class Formatter
 		
 		return leftBracket + @string + rightBracket;
 	}
-
+	
+	public static string Indent(this string str, int level, string indent = Tab) => $"{GetIndent(level, indent)}{str}";
+	
 	internal static string KeyValueToString<TKey, TValue>(TKey key, TValue value) 
 		=> FormatKeyValue(Pretty(key), Pretty(value));
+	
+	private static string GetIndent(int level, string indent = Tab) => indent.Repeat(level);
 
 	// We may use this return type if the calling implementation changes or more
 	// methods that use it is added. This also makes it consistent with other StringBuilder extension methods.
@@ -219,6 +223,17 @@ public static class Formatter
 					.AppendKeyValueLine(propertyInfo.Name, value);
 			}
 		}
+	}
+	
+	public static string Repeat(this string str, int count)
+	{
+		var builder = new StringBuilder();
+		for (int i = 0; i < count; i++)
+		{
+			builder.Append(str);
+		}
+
+		return builder.ToString();
 	}
 
 	private static string ExceptionIn(Exception exception, string exceptionSourceName)

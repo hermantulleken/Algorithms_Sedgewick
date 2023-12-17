@@ -13,10 +13,10 @@ public class LazyPrimMst<T> : IMst<T>
 	
 	public T Weight => throw new NotImplementedException();
 	
-	public LazyPrimMst(EdgeWeightedGraphWithAdjacencyLists<T> graph, IComparer<T> comparer)
+	public LazyPrimMst(EdgeWeightedGraphWithAdjacencyLists<T> graph)
 	{
 		marked = new bool[graph.VertexCount];
-		priorityQueue = new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(comparer));
+		priorityQueue = new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));
 		
 		Visit(graph, 0);
 		

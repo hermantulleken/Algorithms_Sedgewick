@@ -4,17 +4,18 @@ namespace AlgorithmsSW.EdgeWeightedGraph;
 
 public class KruskalMst<T> : IMst<T>
 {
-	private readonly Queue<Edge<T>> mst;
+	private readonly Set.ISet<Edge<T>> mst;
 	
 	public IEnumerable<Edge<T>> Edges => mst;
 
-	public T Weight => throw new NotImplementedException();
+	public T Weight { get; }
 
-	public KruskalMst(EdgeWeightedGraphWithAdjacencyLists<T> graph, IComparer<T> comparer)
+	public KruskalMst(EdgeWeightedGraphWithAdjacencyLists<T> graph)
 	{
-		mst = new Queue<Edge<T>>();
+		IComparer<Edge<T>> comparer = new EdgeComparer<T>(graph.Comparer);
+		mst = DataStructures.Set<Edge<T>>(comparer);
 		
-		IPriorityQueue<Edge<T>> priorityQueue = new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(comparer));
+		IPriorityQueue<Edge<T>> priorityQueue = new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));
 		
 		foreach (var edge in graph.Edges)
 		{
@@ -23,6 +24,11 @@ public class KruskalMst<T> : IMst<T>
 		
 		var unionFind = new UnionFind(graph.VertexCount);
 		
+		AddEdges(graph, priorityQueue, unionFind);
+	}
+
+	private void AddEdges(EdgeWeightedGraphWithAdjacencyLists<T> graph, IPriorityQueue<Edge<T>> priorityQueue, UnionFind unionFind)
+	{
 		while (!priorityQueue.IsEmpty() && mst.Count < graph.VertexCount - 1)
 		{
 			var edge = priorityQueue.PopMin();
@@ -35,9 +41,34 @@ public class KruskalMst<T> : IMst<T>
 			}
 			
 			unionFind.Union(vertex0, vertex1);
-			mst.Enqueue(edge);
+			mst.Add(edge);
 		}
 	}
-	
-	
+
+	// 4.3.32
+	public KruskalMst(EdgeWeightedGraphWithAdjacencyLists<T> graph, IEnumerable<Edge<T>> specifiedEdges)
+	{
+		IComparer<Edge<T>> comparer = new EdgeComparer<T>(graph.Comparer);
+		mst = DataStructures.Set(comparer);
+		var unionFind = new UnionFind(graph.VertexCount);
+		
+		foreach (var edge in specifiedEdges)
+		{
+			mst.Add(edge);
+			unionFind.Union(edge.Vertex0, edge.Vertex1);
+		}
+		
+		IPriorityQueue<Edge<T>> priorityQueue 
+			= new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));
+		
+		foreach (var edge in graph.Edges)
+		{
+			if (!mst.Contains(edge))
+			{
+				priorityQueue.Push(edge);
+			}
+		}
+		
+		AddEdges(graph, priorityQueue, unionFind);
+	}
 }

@@ -1,8 +1,7 @@
-﻿using static System.Diagnostics.Debug;
-
-namespace AlgorithmsSW.Buffer;
+﻿namespace AlgorithmsSW.Buffer;
 
 using System.Collections;
+using static System.Diagnostics.Debug;
 
 public sealed class RingBuffer<T> : IBuffer<T>
 {
@@ -84,7 +83,7 @@ public sealed class RingBuffer<T> : IBuffer<T>
 			{
 				yield return items[i];
 			}
-            
+			
 			for (int i = 0; i < back; i++)
 			{
 				yield return items[i];
@@ -159,10 +158,10 @@ public sealed class RingBuffer<T> : IBuffer<T>
 	private bool IndexInRange(int index) => index >= 0 && index < Count;
 
 	/*
-        Not strictly necessary for value types. For reference types, 
-        this prevents having ghost references to objects and 
-        so leak memory. 
-    */
+		Not strictly necessary for value types. For reference types, 
+		this prevents having ghost references to objects and 
+		so leak memory. 
+	*/
 	private void ReInitialize()
 	{
 		if (front < back)
