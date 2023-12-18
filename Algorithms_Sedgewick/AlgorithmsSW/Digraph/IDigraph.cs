@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Support;
 
-namespace AlgorithmsSW.Digraphs;
+namespace AlgorithmsSW.Digraph;
 
 public interface IDigraph
 {

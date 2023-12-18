@@ -145,14 +145,14 @@ public class HashTableWithLinearProbing2<TKey, TValue> : ISymbolTable<TKey, TVal
 	{
 		int hashCode = key.GetHashCode();
 
-		return hashCode % tableSize;
+		return MathX.Mod(hashCode, tableSize);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void GetNextIndex([DisallowNull] TKey key, ref int index)
 	{
 		int offset = GetOffset(key);
-		int result = (index + offset) % tableSize;
+		int result = MathX.Mod(index + offset, tableSize);
 		
 		Assert(result != index);
 		

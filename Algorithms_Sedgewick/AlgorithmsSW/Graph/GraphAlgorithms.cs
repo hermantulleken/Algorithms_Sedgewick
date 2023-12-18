@@ -1,7 +1,8 @@
-﻿using System.Diagnostics;
-using AlgorithmsSW.SymbolTable;
+﻿using AlgorithmsSW.SymbolTable;
 using AlgorithmsSW.Counter;
+using AlgorithmsSW.List;
 using AlgorithmsSW.Stack;
+using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.Graph;
 
@@ -19,7 +20,7 @@ public static class GraphAlgorithms
 
 		if (graph.VertexCount == 1)
 		{
-			return graph.Vertices.First();
+			return graph.Vertexes.First();
 		}
 		
 		// TODO: How can we do this without the connectivity class?
@@ -33,7 +34,7 @@ public static class GraphAlgorithms
 		
 		var stack = new FixedCapacityStack<int>(graph.VertexCount);
 		bool[] marked = new bool[graph.VertexCount];
-		stack.Push(graph.Vertices.First());
+		stack.Push(graph.Vertexes.First());
 
 		while (stack.Any())
 		{
@@ -61,7 +62,7 @@ public static class GraphAlgorithms
 		}
 
 		// Impossible to reach
-		Debug.Assert(false);
+		Assert(false);
 		return -1;
 	}
 
@@ -75,7 +76,7 @@ public static class GraphAlgorithms
 	{
 		graph.ThrowIfNull();
 
-		return graph.Vertices.All(vertex => graph.GetDegree(vertex) % 2 == 0);
+		return graph.Vertexes.All(vertex => graph.GetDegree(vertex) % 2 == 0);
 	}
 	
 	public static bool HasEulerCycle(this IGraph graph)
@@ -113,5 +114,55 @@ public static class GraphAlgorithms
 		
 		return !connected;
 
+	}
+	
+	public static void ConnectComponents(this IGraph graph)
+	{
+		var connectivity = new Connectivity(graph);
+		
+		int numberOfVertices = graph.VertexCount;
+		int numberOfComponents = connectivity.ComponentCount;
+
+		if (connectivity.IsConnected)
+		{
+			return;
+		}
+		
+		int[] componentRepresentatives = new int[numberOfComponents];
+		componentRepresentatives.Fill(-1);
+		int componentsFound = 0;
+
+		// TODO: We can store representatives in the Connectivity class since we find them there and nicely speed this up
+		for (int vertex = 0; vertex < numberOfVertices; vertex++)
+		{
+			int componentIndex = connectivity.GetComponentIndex(vertex);
+
+			if (componentRepresentatives[componentIndex] != -1)
+			{
+				continue; // We already have a representative for this component
+			}
+			
+			componentRepresentatives[componentIndex] = vertex;
+			componentsFound++;
+
+			if (componentsFound == numberOfComponents)
+			{
+				break; // We have them all
+			}
+		}
+
+		Assert(componentsFound == numberOfComponents);
+
+		// Connect the components in order
+		for (int i = 0; i < numberOfComponents - 1; i++)
+		{
+			int vertex0 = componentRepresentatives[i];
+			int vertex1 = componentRepresentatives[i + 1];
+			
+			Assert(vertex0 != -1);
+			Assert(vertex1 != -1);
+			
+			graph.AddEdge(vertex0, vertex1);
+		}
 	}
 }

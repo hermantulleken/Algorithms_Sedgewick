@@ -1,5 +1,5 @@
 ﻿// ReSharper disable IdentifierTypo
-namespace AlgorithmsSW.Digraphs;
+namespace AlgorithmsSW.Digraph;
 
 /// <summary>
 /// Provides an algorithm for finding the strongly connected components of a directed graph.

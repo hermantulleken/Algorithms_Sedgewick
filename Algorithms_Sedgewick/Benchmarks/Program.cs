@@ -6,7 +6,7 @@ using BenchmarkDotNet.Running;
 using Benchmarks;
 
 #if DEBUG
-_ = BenchmarkRunner.Run<UniqueRandomInt>(new DebugInProcessConfig());
+_ = BenchmarkRunner.Run<MstAlgorithms>(new DebugInProcessConfig());
 #else
-_ = BenchmarkRunner.Run<UniqueRandomInt>();
+_ = BenchmarkRunner.Run<MstAlgorithms>();
 #endif

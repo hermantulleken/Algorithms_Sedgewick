@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Runtime.CompilerServices;
 using AlgorithmsSW.Counter;
 using AlgorithmsSW.HashTable;
 using AlgorithmsSW.SymbolTable;
@@ -48,10 +49,7 @@ public class DynamicGraph // Supports removing vertices
 		// Throw exceptions first so we do not change the graph halfway through the operation
 		foreach (int vertex in vertexes)
 		{
-			if (adjacents.ContainsKey(vertex))
-			{
-				throw new ArgumentException($"Vertex {vertex} already exists.");
-			}
+			ValidateVertexDoesNotExist(vertex);
 		}
 
 		foreach (int vertex in vertexes)
@@ -63,6 +61,8 @@ public class DynamicGraph // Supports removing vertices
 	
 	public void RemoveVertex(int vertex)
 	{
+		ValidateVertexExists(vertex);
+		
 		if (!adjacents.ContainsKey(vertex))
 		{
 			throw new ArgumentException($"Vertex {vertex} does not exist.");
@@ -87,15 +87,8 @@ public class DynamicGraph // Supports removing vertices
 
 	public void AddEdge(int vertex0, int vertex1)
 	{
-		if (!adjacents.ContainsKey(vertex0))
-		{
-			throw new ArgumentException($"Vertex {vertex0} does not exist.");
-		}
-		
-		if (!adjacents.ContainsKey(vertex1))
-		{
-			throw new ArgumentException($"Vertex {vertex1} does not exist.");
-		}
+		ValidateVertexExists(vertex0);
+		ValidateVertexExists(vertex1);
 		
 		adjacents[vertex0].Add(vertex1);
 
@@ -135,14 +128,17 @@ public class DynamicGraph // Supports removing vertices
 
 	public IEnumerable<int> GetAdjacents(int vertex)
 	{
-		if (!adjacents.ContainsKey(vertex))
-		{
-			throw new ArgumentException($"Vertex {vertex} does not exist.");
-		}
-
+		ValidateVertexExists(vertex);
 		var counter = adjacents[vertex];
 
 		return counter.Keys.SelectMany(adjacent => Enumerable.Repeat(adjacent, counter[adjacent]));
+	}
+
+	public bool ContainsEdge(int vertex0, int vertex1)
+	{
+		ValidateVertexExists(vertex0);
+		ValidateVertexExists(vertex1);
+		return adjacents[vertex0][vertex1] > 0;
 	}
 
 	public IEnumerator<(int vertex0, int vertex1)> GetEnumerator()
@@ -182,5 +178,26 @@ public class DynamicGraph // Supports removing vertices
 		}
 
 		return EdgeCount == (edgeEndpoints + selfLoops) / 2;
+	}
+	
+	private void ValidateVertexExists(int vertex, [CallerArgumentExpression(nameof(vertex))] string? vertexName = null)
+	{
+		if (!adjacents.ContainsKey(vertex))
+		{
+			/*
+				TODO: This should really be an ArgumentOutOfRangeException, but that would break the tests
+				since all the other ones throw IndexOutOfRangeException. The other containers need to change but we will
+				keep this for now. 
+			*/
+			throw new IndexOutOfRangeException($"Vertex {vertex} does not exist.");
+		}
+	}
+	
+	private void ValidateVertexDoesNotExist(int vertex, [CallerArgumentExpression(nameof(vertex))] string? vertexName = null)
+	{
+		if (adjacents.ContainsKey(vertex))
+		{
+			throw new ArgumentException($"Vertex {vertex} already exists.", vertexName);
+		}
 	}
 }

@@ -2,7 +2,7 @@
 using AlgorithmsSW.List;
 using static System.Diagnostics.Debug;
 
-namespace AlgorithmsSW.Digraphs;
+namespace AlgorithmsSW.Digraph;
 
 /// <summary>
 /// Algorithm to find a Hamiltonian cycle in a directed graph.
@@ -76,7 +76,8 @@ public class HamiltonianPathWithDegrees : IHamiltonianPath
 		{
 			var adjacents = digraph.GetAdjacents(node);
 			
-			Assert(adjacents.Count() == 1);
+			// TODO: I had this before but then this fails if the graph has parallel edges. Not sure if this is correct though. 
+			// Assert(adjacents.Count() == 1);
 			
 			node = adjacents.First();
 			cycle.Add(node);

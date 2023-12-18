@@ -2,7 +2,7 @@
 using AlgorithmsSW.Graph;
 using AlgorithmsSW.List;
 
-namespace AlgorithmsSW.Digraphs;
+namespace AlgorithmsSW.Digraph;
 
 /// <summary>
 /// Represents a directed graph using an array of adjacency lists.

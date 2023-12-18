@@ -36,4 +36,6 @@ public class GraphWtihNoSelfLoops(Func<IGraph> graphFactory) : IGraph
 
 	/// <inheritdoc />
 	public IEnumerable<int> GetAdjacents(int vertex) => graph.GetAdjacents(vertex);
+
+	public bool ContainsEdge(int vertex0, int vertex1) => graph.ContainsEdge(vertex0, vertex1);
 }

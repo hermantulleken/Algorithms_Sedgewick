@@ -1,4 +1,4 @@
-﻿namespace AlgorithmsSW.Digraphs;
+﻿namespace AlgorithmsSW.Digraph;
 
 public class HamiltonianPathWithTopologicalSort : IHamiltonianPath
 {

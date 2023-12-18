@@ -9,14 +9,14 @@ public static class GraphExtensions
 		=> graph.GetAdjacents(vertex1).Contains(vertex2);
 
 	public static int GetSelfLoopCount(this IGraph graph)
-		=> graph.Vertices.Count(v => graph.ContainsEdge(v, v));
+		=> graph.Vertexes.Count(v => graph.ContainsEdge(v, v));
 
 	public static int GetDegree(this IGraph graph, int vertex) 
 		=> graph.GetAdjacents(vertex).Count();
 
 	public static int MaxDegree(this IGraph graph)
 		=> graph
-			.Vertices
+			.Vertexes
 			.Select(graph.GetDegree)
 			.Max();
 

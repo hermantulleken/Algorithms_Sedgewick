@@ -1,4 +1,4 @@
-﻿namespace AlgorithmsSW.Digraphs;
+﻿namespace AlgorithmsSW.Digraph;
 
 /// <summary>
 /// Provides an algorithm for finding the vertices in a directed graph in depth-first pre-order, post-order, and

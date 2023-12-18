@@ -81,6 +81,36 @@ public static class ListExtensions
 		}
 	}
 	
+	public static void Fill<T>(this IList<T> list, T value) => list.FillRange(0, list.Count, value);
+	
+	public static void FillRange<T>(this IList<T> list, int start, int count, T value)
+	{
+		for (int i = start; i < start + count; i++)
+		{
+			list[i] = value;
+		}
+	}
+	
+	public static void Fill<T>(this IRandomAccessList<T> list, Func<T> valueGenerator) => list.FillRange(0, list.Count, valueGenerator);
+	
+	public static void FillRange<T>(this IRandomAccessList<T> list, int start, int count, Func<T> valueGenerator)
+	{
+		for (int i = start; i < start + count; i++)
+		{
+			list[i] = valueGenerator();
+		}
+	}
+	
+	public static void Fill<T>(this IList<T> list, Func<T> valueGenerator) => list.FillRange(0, list.Count, valueGenerator);
+	
+	public static void FillRange<T>(this IList<T> list, int start, int count, Func<T> valueGenerator)
+	{
+		for (int i = start; i < start + count; i++)
+		{
+			list[i] = valueGenerator();
+		}
+	}
+	
 	public static IRandomAccessList<int> Range(int start, int count)
 	{
 		var list = new ResizeableArray<int>(count);

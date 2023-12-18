@@ -1,4 +1,5 @@
-﻿using AlgorithmsSW.Digraphs;
+﻿using AlgorithmsSW.Digraph;
+
 using NUnit.Framework;
 
 namespace UnitTests;

@@ -50,7 +50,7 @@ public class GraphTests(Func<int, IGraph> graphFactory)
 		Assert.That(graph.VertexCount, Is.EqualTo(4));
 		Assert.That(graph.EdgeCount, Is.EqualTo(0));
 		Assert.That(graph.IsEmpty, Is.False);
-		Assert.That(graph.Vertices, Has.Exactly(4).Items);
+		Assert.That(graph.Vertexes, Has.Exactly(4).Items);
 	}
 	
 	[Test]

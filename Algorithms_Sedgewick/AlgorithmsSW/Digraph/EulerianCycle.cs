@@ -1,7 +1,7 @@
 ﻿using AlgorithmsSW.List;
 using static System.Diagnostics.Debug;
 
-namespace AlgorithmsSW.Digraphs;
+namespace AlgorithmsSW.Digraph;
 
 public class EulerianCycle
 {

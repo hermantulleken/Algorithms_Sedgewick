@@ -82,7 +82,7 @@ public class HashTableWithSeparateChaining2<TKey, TValue> : ISymbolTable<TKey, T
 		return table1.TryGetValue(key, out value) || table2.TryGetValue(key, out value);
 	}
 
-	private int GetHash([DisallowNull]TKey key, int keyMultiplayer) => keyMultiplayer * key.GetHashCode() % tableSize;
+	private int GetHash([DisallowNull]TKey key, int keyMultiplayer) => MathX.Mod(keyMultiplayer * key.GetHashCode(), tableSize);
 
 	private int GetHash1([DisallowNull]TKey key) => GetHash(key, 11);
 

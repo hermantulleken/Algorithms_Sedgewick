@@ -1,24 +1,30 @@
-﻿using Support;
-
-namespace AlgorithmsSW.EdgeWeightedGraph;
+﻿namespace AlgorithmsSW.EdgeWeightedGraph;
 
 using System.Collections;
-
-using Graph;
+using System.Diagnostics;
 using List;
+using Support;
 
-public class EdgeWeightedGraphWithAdjacencyLists<T> : IReadOnlyGraph
+/// <summary>
+/// Represents a weighted graph data structure.
+/// </summary>
+/// <typeparam name="TWeight">The type of the edge weights.</typeparam>
+public class EdgeWeightedGraphWithAdjacencyLists<TWeight> 
+	: IEdgeWeightedGraph<TWeight>
 {
-	private readonly ResizeableArray<Edge<T>>[] adjacents;
+	private readonly ResizeableArray<Edge<TWeight>>[] adjacents;
 	
-	public IComparer<T> Comparer { get;  }
+	/// <inheritdoc />
+	public IComparer<TWeight> Comparer { get;  }
 
+	/// <inheritdoc />
 	public IEnumerable<int> Vertexes => Enumerable.Range(0, VertexCount);
 
-	public IEnumerable<Edge<T>> Edges => 
+	/// <inheritdoc />
+	public IEnumerable<Edge<TWeight>> Edges => 
 		from vertex in Vertexes 
 		from edge in GetIncidentEdges(vertex) 
-		where edge.Vertex0 <= edge.Vertex1 
+		where vertex <= edge.OtherVertex(vertex)
 		select edge;
 
 	/// <inheritdoc />
@@ -28,22 +34,24 @@ public class EdgeWeightedGraphWithAdjacencyLists<T> : IReadOnlyGraph
 	public int EdgeCount { get; private set; }
 
 	/// <inheritdoc />
-	public bool SupportsParallelEdges { get; }
+	public bool SupportsParallelEdges => true;
 
 	/// <inheritdoc />
-	public bool SupportsSelfLoops { get; }
+	public bool SupportsSelfLoops => true;
 
 	/// <inheritdoc />
-	public IEnumerable<int> GetAdjacents(int vertex) => throw new NotImplementedException();
+	public IEnumerable<int> GetAdjacents(int vertex)
+		=> adjacents[vertex].Select(edge => edge.OtherVertex(vertex));
 
-	public EdgeWeightedGraphWithAdjacencyLists(int vertexCount, IComparer<T> comparer)
+	public EdgeWeightedGraphWithAdjacencyLists(int vertexCount, IComparer<TWeight> comparer)
 	{
-		adjacents = new ResizeableArray<Edge<T>>[VertexCount];
 		VertexCount = vertexCount;
 		Comparer = comparer;
+		adjacents = new ResizeableArray<Edge<TWeight>>[vertexCount];
+		adjacents.Fill(() => new ResizeableArray<Edge<TWeight>>());
 	}
 	
-	public EdgeWeightedGraphWithAdjacencyLists(int vertexCount, IEnumerable<Edge<T>> edges, IComparer<T> comparer)
+	public EdgeWeightedGraphWithAdjacencyLists(int vertexCount, IEnumerable<Edge<TWeight>> edges, IComparer<TWeight> comparer)
 		: this(vertexCount, comparer)
 	{
 		foreach (var edge in edges)
@@ -52,13 +60,18 @@ public class EdgeWeightedGraphWithAdjacencyLists<T> : IReadOnlyGraph
 		}
 	}
 
-	public EdgeWeightedGraphWithAdjacencyLists(EdgeWeightedGraphWithAdjacencyLists<T> graph)
+	public EdgeWeightedGraphWithAdjacencyLists(EdgeWeightedGraphWithAdjacencyLists<TWeight> graph)
 		: this(graph.VertexCount, graph.Edges, graph.Comparer)
 	{
 	}
 
-	public void AddEdge(Edge<T> edge)
+	/// <inheritdoc />
+	public void AddEdge(Edge<TWeight> edge)
 	{
+		edge.ThrowIfNull();
+		ValidateVertex(edge.Vertex0);
+		ValidateVertex(edge.Vertex1);
+		
 		adjacents[edge.Vertex0].Add(edge);
 
 		if (edge.Vertex0 != edge.Vertex1)
@@ -69,41 +82,41 @@ public class EdgeWeightedGraphWithAdjacencyLists<T> : IReadOnlyGraph
 		EdgeCount++;
 	}
 	
-	public void AddEdge(int vertex0, int vertex1, T weight)
+	/// <inheritdoc />
+	public bool RemoveEdge(Edge<TWeight> edge)
 	{
-		ValidateVertex(vertex0);
-		ValidateVertex(vertex1);
-		
-		AddEdge(new Edge<T>(vertex0, vertex1, weight));
-	}
-	
-	public void RemoveEdge(Edge<T> edge)
-	{
-		adjacents[edge.Vertex0].Remove(edge);
+		if (ContainsEdge(edge.Vertex0, edge.Vertex1))
+		{
+			return false;
+		}
 
+		bool wasRemoved = adjacents[edge.Vertex0].Remove(edge);
+
+		if (!wasRemoved)
+		{
+			return false;
+		}
+		
 		if (edge.Vertex0 != edge.Vertex1)
 		{
-			adjacents[edge.Vertex1].Remove(edge);
+			bool wasAlsoRemoved = adjacents[edge.Vertex1].Remove(edge);
+			Debug.Assert(wasAlsoRemoved);
 		}
 
 		EdgeCount--;
+
+		return true;
 	}
 	
-	public IEnumerable<Edge<T>> GetIncidentEdges(int vertex)
+	/// <inheritdoc />
+	public IEnumerable<Edge<TWeight>> GetIncidentEdges(int vertex)
 	{
 		ValidateVertex(vertex);
 
 		return adjacents[vertex];
 	}
-	
-	private void ValidateVertex(int vertex)
-	{
-		if (vertex < 0 || vertex >= VertexCount)
-		{
-			throw new ArgumentException("Invalid vertex.");
-		}
-	}
 
+	/// <inheritdoc />
 	public bool ContainsEdge(int vertex0, int vertex1)
 	{
 		ValidateVertex(vertex0);
@@ -112,11 +125,22 @@ public class EdgeWeightedGraphWithAdjacencyLists<T> : IReadOnlyGraph
 		return adjacents[vertex0].Any(edge => edge.OtherVertex(vertex0) == vertex1);
 	}
 	
+	/// <inheritdoc />
 	public IEnumerator<(int vertex0, int vertex1)> GetEnumerator() 
 		=> Edges.Select(edge => (edge.Vertex0, edge.Vertex1)).GetEnumerator();
 
+	/// <inheritdoc />
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+	/// <inheritdoc />
 	// 4.3.17
-	public string ToString() => Formatter.Bracket(Edges.AsText());
+	public override string ToString() => Edges.AsText().Bracket();
+	
+	private void ValidateVertex(int vertex)
+	{
+		if (vertex < 0 || vertex >= VertexCount)
+		{
+			throw new ArgumentException("Invalid vertex.");
+		}
+	}
 }

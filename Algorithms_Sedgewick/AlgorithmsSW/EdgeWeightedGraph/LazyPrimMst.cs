@@ -13,7 +13,7 @@ public class LazyPrimMst<T> : IMst<T>
 	
 	public T Weight => throw new NotImplementedException();
 	
-	public LazyPrimMst(EdgeWeightedGraphWithAdjacencyLists<T> graph)
+	public LazyPrimMst(IEdgeWeightedGraph<T> graph)
 	{
 		marked = new bool[graph.VertexCount];
 		priorityQueue = new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));
@@ -45,7 +45,7 @@ public class LazyPrimMst<T> : IMst<T>
 		}
 	}
 
-	private void Visit(EdgeWeightedGraphWithAdjacencyLists<T> graph, int vertex)
+	private void Visit(IEdgeWeightedGraph<T> graph, int vertex)
 	{
 		marked[vertex] = true;
 		

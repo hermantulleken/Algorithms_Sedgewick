@@ -126,10 +126,10 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 			hashCode %= HashTableWithLinearProbing.Primes[log2TableSize + 5];
 		}
 		
-		return hashCode % tableSize;
+		return MathX.Mod(hashCode, tableSize);
 	}
 
-	private void GetNextIndex(ref int index) => index = (index + 1) % tableSize;
+	private void GetNextIndex(ref int index) => index = MathX.Mod(index + 1, tableSize);
 
 	/*
 		Iterate through the table, starting from the hash value of the key and moving linearly.

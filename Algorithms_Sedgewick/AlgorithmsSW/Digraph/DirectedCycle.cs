@@ -1,4 +1,4 @@
-﻿namespace AlgorithmsSW.Digraphs;
+﻿namespace AlgorithmsSW.Digraph;
 
 using System.Diagnostics.CodeAnalysis;
 using Stack;

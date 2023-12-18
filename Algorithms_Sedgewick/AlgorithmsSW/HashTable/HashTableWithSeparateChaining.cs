@@ -72,7 +72,8 @@ public class HashTableWithSeparateChaining<TKey, TValue> : ISymbolTable<TKey, TV
 	private int GetHash([DisallowNull]TKey key)
 	{
 		key.ThrowIfNull();
+		int hashCode = key.GetHashCode();
 		
-		return key.GetHashCode() % tableSize;
+		return MathX.Mod(hashCode, tableSize);
 	}
 }

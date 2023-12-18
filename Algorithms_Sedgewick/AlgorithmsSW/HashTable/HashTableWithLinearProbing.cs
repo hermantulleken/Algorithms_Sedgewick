@@ -38,7 +38,7 @@ public static class HashTableWithLinearProbing
 
 	public static (int log2TableSize, int taleSize) GetTableSize(int initialCapacity)
 	{
-		int log2TableSize = Math.Max(Math2.IntegerCeilLog2(initialCapacity) - 4, 0);
+		int log2TableSize = Math.Max(MathX.IntegerCeilLog2(initialCapacity) - 4, 0);
 		int tableSize = Primes[log2TableSize];
 
 		return (log2TableSize, tableSize);
@@ -159,10 +159,10 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 			hashCode %= HashTableWithLinearProbing.Primes[log2TableSize + 5];
 		}
 		
-		return hashCode % tableSize;
+		return MathX.Mod(hashCode, tableSize);
 	}
 
-	private void GetNextIndex(ref int index) => index = (index + 1) % tableSize;
+	private void GetNextIndex(ref int index) => index = MathX.Mod(index + 1, tableSize);
 
 	/*
 		Iterate through the table, starting from the hash value of the key and moving linearly.

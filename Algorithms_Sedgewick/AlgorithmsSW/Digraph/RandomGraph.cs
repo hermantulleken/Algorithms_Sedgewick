@@ -1,5 +1,4 @@
-﻿using AlgorithmsSW.Digraphs;
-using static System.Diagnostics.Debug;
+﻿using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.Digraph;
 
@@ -24,7 +23,7 @@ public static class RandomGraph
 
 	public static IDigraph RandomSimple(int vertexCount, int edgeCount)
 	{
-		int maxEdgeCount = Math2.Sqr(vertexCount - 1);
+		int maxEdgeCount = MathX.Sqr(vertexCount - 1);
 		var edgeIndexes = Generator.UniqueUniformRandomInt_WithShuffledList(maxEdgeCount, edgeCount);
 		var graph = new DigraphWithAdjacentsLists(vertexCount);
 

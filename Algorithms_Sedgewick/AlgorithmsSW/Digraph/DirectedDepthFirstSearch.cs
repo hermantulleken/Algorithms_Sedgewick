@@ -1,4 +1,4 @@
-﻿namespace AlgorithmsSW.Digraphs;
+﻿namespace AlgorithmsSW.Digraph;
 
 /// <summary>
 /// Provides and algorithm for finding all vertices reachable from a given vertex or set of vertices in a directed

@@ -10,7 +10,7 @@ public class KruskalMst<T> : IMst<T>
 
 	public T Weight { get; }
 
-	public KruskalMst(EdgeWeightedGraphWithAdjacencyLists<T> graph)
+	public KruskalMst(IEdgeWeightedGraph<T> graph)
 	{
 		IComparer<Edge<T>> comparer = new EdgeComparer<T>(graph.Comparer);
 		mst = DataStructures.Set<Edge<T>>(comparer);
@@ -27,7 +27,7 @@ public class KruskalMst<T> : IMst<T>
 		AddEdges(graph, priorityQueue, unionFind);
 	}
 
-	private void AddEdges(EdgeWeightedGraphWithAdjacencyLists<T> graph, IPriorityQueue<Edge<T>> priorityQueue, UnionFind unionFind)
+	private void AddEdges(IEdgeWeightedGraph<T> graph, IPriorityQueue<Edge<T>> priorityQueue, UnionFind unionFind)
 	{
 		while (!priorityQueue.IsEmpty() && mst.Count < graph.VertexCount - 1)
 		{

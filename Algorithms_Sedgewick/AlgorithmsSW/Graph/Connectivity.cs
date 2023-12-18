@@ -56,6 +56,12 @@ public class Connectivity
 		
 		return componentIndexOfVertex[vertex0] == componentIndexOfVertex[vertex1];
 	}
+	
+	public int GetComponentIndex(int vertex)
+	{
+		vertex.ThrowIfOutOfRange(VertexCount);
+		return componentIndexOfVertex[vertex];
+	}
 
 	/// <summary>
 	/// Gets the shortest path between two vertices.

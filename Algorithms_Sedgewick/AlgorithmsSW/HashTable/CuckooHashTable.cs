@@ -77,7 +77,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	/// <param name="comparer">The <see cref="IComparer{TKey}"/> to use for comparing keys.</param>
 	public CuckooHashTable(int tableSize, IComparer<TKey> comparer)
 	{
-		log2TableSize = Math2.IntegerCeilLog2(tableSize);
+		log2TableSize = MathX.IntegerCeilLog2(tableSize);
 		halfTableSize = 1 << (log2TableSize - 1); // Note: Half the size since we use two tables ;)
 		this.comparer = comparer;
 		

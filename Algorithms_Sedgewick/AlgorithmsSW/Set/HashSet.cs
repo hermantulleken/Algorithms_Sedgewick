@@ -36,6 +36,7 @@ public class HashSet<T> : ISet<T>
 	public HashSet(int initialCapacity, IComparer<T> comparer)
 	{
 		(log2TableSize, tableSize) = HashTableWithLinearProbing.GetTableSize(initialCapacity);
+		
 		Comparer = comparer;
 		keys = new T[tableSize];
 		keyPresent = new bool[tableSize];
@@ -119,14 +120,14 @@ public class HashSet<T> : ISet<T>
 	{
 		int hashCode = key.GetHashCode();
 
-		return hashCode % tableSize;
+		return MathX.Mod(hashCode, tableSize);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void GetNextIndex([DisallowNull] T key, ref int index)
 	{
 		int offset = GetOffset(key);
-		int result = (index + offset) % tableSize;
+		int result = MathX.Mod(index + offset, tableSize);
 		
 		Assert(result != index);
 		
@@ -134,7 +135,7 @@ public class HashSet<T> : ISet<T>
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private int GetOffset([DisallowNull] T key) => key.GetHashCode() % (tableSize - 1) + 1;
+	private int GetOffset([DisallowNull] T key) => MathX.Mod(key.GetHashCode(), tableSize - 1) + 1;
 
 	/*
 		Iterate through the table, starting from the hash value of the key and moving linearly.

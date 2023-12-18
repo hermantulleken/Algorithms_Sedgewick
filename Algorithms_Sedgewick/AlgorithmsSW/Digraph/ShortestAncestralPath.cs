@@ -1,6 +1,6 @@
 ﻿using AlgorithmsSW.List;
 
-namespace AlgorithmsSW.Digraphs;
+namespace AlgorithmsSW.Digraph;
 
 public class ShortestAncestralPath
 {

@@ -14,7 +14,7 @@ public class PrimMst<T> : IMst<T>
 	public T Weight => throw new NotImplementedException();
 	
 	public PrimMst(
-		EdgeWeightedGraphWithAdjacencyLists<T> graph, 
+		IEdgeWeightedGraph<T> graph, 
 		T minValue,
 		T maxValue)
 	{
@@ -38,7 +38,7 @@ public class PrimMst<T> : IMst<T>
 		}
 	}
 	
-	private void Visit(EdgeWeightedGraphWithAdjacencyLists<T> graph, int vertex)
+	private void Visit(IEdgeWeightedGraph<T> graph, int vertex)
 	{
 		marked[vertex] = true;
 		

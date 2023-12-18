@@ -27,10 +27,16 @@ public interface IReadOnlyGraph : IEnumerable<(int vertex0, int vertex1)>
 	/// <summary>
 	/// Gets the vertices in the graph.
 	/// </summary>
-	public IEnumerable<int> Vertices => Enumerable.Range(0, VertexCount); 
+	public IEnumerable<int> Vertexes => Enumerable.Range(0, VertexCount); 
 	
+	/// <summary>
+	/// Gets a value indicating whether the graph supports parallel edges.
+	/// </summary>
 	internal bool SupportsParallelEdges { get; }
 	
+	/// <summary>
+	/// Gets a value indicating whether the graph supports self-loops.
+	/// </summary>
 	internal bool SupportsSelfLoops { get; }
 
 	/// <summary>
@@ -39,6 +45,11 @@ public interface IReadOnlyGraph : IEnumerable<(int vertex0, int vertex1)>
 	/// <param name="vertex">The vertex to find adjacents for.</param>
 	/// <returns>An enumerable of adjacent vertices.</returns>
 	public IEnumerable<int> GetAdjacents(int vertex);
+	
+	/// <summary>
+	/// Gets whether the graph contains an edge between two vertices.
+	/// </summary>
+	bool ContainsEdge(int vertex0, int vertex1);
 	
 	/// <summary>
 	/// Creates a human-readable string representation of the graph.
@@ -51,6 +62,6 @@ public interface IReadOnlyGraph : IEnumerable<(int vertex0, int vertex1)>
 		
 		return nameof(VertexCount).Describe(VertexCount.AsText())
 				+ nameof(EdgeCount).Describe(EdgeCount.AsText())
-				+ Vertices.Select(VertexAsText).AsText(Formatter.NewLine);
+				+ Vertexes.Select(VertexAsText).AsText(Formatter.NewLine);
 	}
 }

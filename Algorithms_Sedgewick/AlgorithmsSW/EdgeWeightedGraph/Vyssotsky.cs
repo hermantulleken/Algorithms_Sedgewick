@@ -1,41 +1,48 @@
-﻿namespace AlgorithmsSW.EdgeWeightedGraph;
+﻿using AlgorithmsSW.Queue;
 
-using List;
+namespace AlgorithmsSW.EdgeWeightedGraph;
 
-public class ConditionalStack<T>
-{
-	private ResizeableArray<T> list = new();
-	
-	public int Count => list.Count;
-	
-	public void Push(T item)
+public class Vyssotsky {
+
+	// O(E * (V + E)) = O(E^2)
+	public IQueue<Edge<T>> minimumSpanningTree<T>(IEdgeWeightedGraph<T> graph, T minValue) 
 	{
-		list.Add(item);
-	}
-	
-	public T Pop(Func<T, bool> predicate)
-	{
-		int index = list
-			.IndexWhere(predicate)
-			.First();
+		var putativeTree = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
 
-		return RemoveAt(index);
-	}
+		foreach (var edge in graph.Edges)
+		{
+			putativeTree.AddEdge(edge);
+			Set.HashSet<int> vertexToSearch = new Set.HashSet<int>(Comparer<int>.Default) { edge.Vertex0 };
 
-	public T PopLast() => list.RemoveLast();
+			EdgeWeightedCycle<T> edgeWeightedCycle = new EdgeWeightedCycle<T>(putativeTree, vertexToSearch);
 
-	public T PopFirst() => RemoveAt(0);
-	
-	public T Peek(Func<T, bool> predicate)
-	{
-		return list.First(predicate);
-	}
-	
-	private T RemoveAt(int index)
-	{
-		ListExtensions.SwapAt(list, index, list.Count - 1);
-		var result = list[^1];
-		list.RemoveLast();
-		return result;
+			// If a cycle was formed, delete the maximum-weight edge in it
+			if (edgeWeightedCycle.HasCycle())
+			{
+				Stack<Edge<T>> cycle = edgeWeightedCycle.Cycle();
+				Edge<T> maxWeightEdge = null;
+				T maxWeight = minValue;
+
+				foreach (Edge<T> edgeInCycle in cycle) 
+				{
+					if (graph.Comparer.Compare(edgeInCycle.Weight, maxWeight) > 0)
+					{
+						maxWeight = edgeInCycle.Weight;
+						maxWeightEdge = edgeInCycle;
+					}
+				}
+
+				putativeTree.RemoveEdge(maxWeightEdge);
+			}
+		}
+
+		var minimumSpanningTree = DataStructures.Queue<Edge<T>>();
+		
+		foreach (var edge in putativeTree.Edges)
+		{
+			minimumSpanningTree.Enqueue(edge);
+		}
+		
+		return minimumSpanningTree;
 	}
 }

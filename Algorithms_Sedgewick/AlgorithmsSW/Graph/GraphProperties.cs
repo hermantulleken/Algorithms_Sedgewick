@@ -38,7 +38,7 @@ public class GraphProperties
 		var graphPaths = BreadthFirstPathsSearch.Build(graph, sourceVertex);
 		int longestDistance = 0;
 
-		foreach (int targetVertex in graph.Vertices)
+		foreach (int targetVertex in graph.Vertexes)
 		{
 			if (!graphPaths.HasPathTo[targetVertex])
 			{
@@ -68,7 +68,7 @@ public class GraphProperties
 		Radius = graph.VertexCount; // Note: Always bigger than maximum distance
 		Diameter = 0; 
 		
-		foreach (int sourceVertex in graph.Vertices)
+		foreach (int sourceVertex in graph.Vertexes)
 		{
 			int eccentricity = CalculateEccentricity(graph, sourceVertex);
 			eccentricities[sourceVertex] = eccentricity;

@@ -4,9 +4,9 @@ namespace AlgorithmsSW.Graph;
 
 using static Debug;
 
-public class RandomGraph
+public static class RandomGraph
 {
-	public IGraph ErdosRenyiGraph(int vertexCount, int edgeCount)
+	public static IGraph ErdosRenyiGraph(int vertexCount, int edgeCount)
 	{
 		var vertex0Generator = Generator.UniformRandomInt(vertexCount).Take(edgeCount);
 		var vertex1Generator = Generator.UniformRandomInt(vertexCount).Take(edgeCount);
@@ -20,7 +20,7 @@ public class RandomGraph
 		return graph;
 	}
 	
-	public IGraph GetRandomSimpleGraph(int vertexCount, int edgeCount)
+	public static IGraph GetRandomSimpleGraph(int vertexCount, int edgeCount)
 	{
 		int maxEdgeCount = vertexCount * (vertexCount - 1) / 2;
 		
@@ -90,7 +90,7 @@ public class RandomGraph
 		return graph;
 	}
 	
-	public IGraph GetRandomSimpleGraph2(int vertexCount, int edgeCount)
+	public static IGraph GetRandomSimpleGraph2(int vertexCount, int edgeCount)
 	{
 		var edgeIndexes = Generator.UniqueUniformRandomInt_WithShuffledList(Triangle(vertexCount - 1), edgeCount);
 		var graph = new GraphWithAdjacentsSet(vertexCount);
