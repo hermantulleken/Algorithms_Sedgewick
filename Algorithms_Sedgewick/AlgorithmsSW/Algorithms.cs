@@ -1,13 +1,13 @@
-using System.Diagnostics.CodeAnalysis;
-using static AlgorithmsSW.List.ListExtensions;
-
 namespace AlgorithmsSW;
 
+using System.Diagnostics.CodeAnalysis;
 using Buffer;
 using List;
 using Queue;
 using Support;
+
 using static System.Diagnostics.Debug;
+using static AlgorithmsSW.List.ListExtensions;
 using static Sort.Sort;
 using static Support.WhiteBoxTesting;
 
@@ -225,7 +225,7 @@ public static class Algorithms
 		{
 			int centerIndex = (start + end) / 2;
 
-			SwapAt(list, start, centerIndex);
+			list.SwapAt(start, centerIndex);
 			int pivotIndex = start;
 
 			for (int i = start + 1; i <= end; i++)
@@ -236,10 +236,10 @@ public static class Algorithms
                 }
 				
 				// Move the item to the right of the pivot
-				SwapAt(list, i, pivotIndex + 1);
+				list.SwapAt(i, pivotIndex + 1);
 
 				// Swap item with pivot
-				SwapAt(list, pivotIndex + 1, pivotIndex);
+				list.SwapAt(pivotIndex + 1, pivotIndex);
 
 				// Now the pivot is here
 				pivotIndex++;
@@ -942,7 +942,7 @@ public static class Algorithms
 		for (int i = list.Count - 1; i > 0; i--)
 		{
 			int j = Random.Next(i + 1); // Common mistake: to use i or list.Count here instead of i + 1
-			SwapAt(list, i, j);
+			list.SwapAt(i, j);
 		}
 	}
 	
@@ -963,7 +963,7 @@ public static class Algorithms
 		for (int i = 0; i < count; i++)
 		{
 			int j = Generator.NextUniformRandomInt(i, listCount);
-			SwapAt(list, i, j);
+			list.SwapAt(i, j);
 		}
 	}
 

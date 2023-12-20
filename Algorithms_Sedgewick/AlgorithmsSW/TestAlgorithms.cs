@@ -1,10 +1,10 @@
-﻿using AlgorithmsSW.Buffer;
+﻿namespace AlgorithmsSW;
+
+using AlgorithmsSW.Buffer;
 using AlgorithmsSW.GapBuffer;
 using AlgorithmsSW.List;
 using AlgorithmsSW.Stack;
 using Support;
-
-namespace AlgorithmsSW;
 
 public static class TestAlgorithms
 {
@@ -20,7 +20,7 @@ public static class TestAlgorithms
 				'<' => '>',
 				_ => throw new ArgumentOutOfRangeException(nameof(openBracket), openBracket, null),
 			};
-		}	
+		}
 		
 		const string openingBrackets = "([{<";
 		const string closingBrackets = ")]}>";
@@ -147,10 +147,10 @@ public static class TestAlgorithms
 	public static int GetLucas(int n) => GetGeneralizedFibonacci(2, 1);
 
 	public static float Median(float a, float b, float c) =>
-		(a > b) ^ (a > c) 
-			? a 
-			: (b < a) ^ (b < c) 
-				? b 
+		(a > b) ^ (a > c)
+			? a
+			: (b < a) ^ (b < c)
+				? b
 				: c;
 	
 	public static void ApplyInterpolationRule<T, TBuffer>(this TBuffer gapBuffer, Func<T, T, T> ruleFunc)

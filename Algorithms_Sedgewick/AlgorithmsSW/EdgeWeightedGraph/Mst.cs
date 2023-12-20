@@ -176,148 +176,8 @@ public class Mst
 		return components.Select( c => new KruskalMst<T>(c));
 	}
 	
-	public static EdgeWeightedGraphWithAdjacencyLists<T> MstVyssotsky_Old<T>(IEdgeWeightedGraph<T> graph)
-	{
-		// Assume graph is connected
-		
-		var mstVertexes = DataStructures.Set(Comparer<int>.Default);
-		var mstEdges = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
-		var stack = new ConditionalStack<Edge<T>>();
-
-		bool IsConnectedToMst(Edge<T> edge) => mstVertexes.Contains(edge.Vertex0) || mstVertexes.Contains(edge.Vertex1);
-
-		foreach (var edge in graph.Edges)
-		{
-			stack.Push(edge);
-		}
-
-		void AddMstEdge(Edge<T> edge)
-		{
-			mstEdges.AddEdge(edge);
-			mstVertexes.Add(edge.Vertex0);
-			mstVertexes.Add(edge.Vertex1);
-		}
-
-		var first = stack.PopFirst();
-		AddMstEdge(first);
-		
-		while (stack.Count > 0)
-		{
-			var edge = stack.Pop(IsConnectedToMst);
-			int vertex0 = edge.Vertex0;
-			int vertex1 = edge.Vertex1;
-			
-			if (mstVertexes.Contains(vertex0) && mstVertexes.Contains(vertex1))
-			{
-				var pathSearch = new DepthFirstPathsSearch(mstEdges, vertex0);
-				var path = pathSearch.GetPathTo(vertex1);
-
-				var maxEdge = path
-					.SlidingWindow2()
-					.Select(edge => edge.ToList())
-					.Select(edge => Mst.GetUniqueEdge(graph, edge[0], edge[1]))
-					.MaxBy(edge => edge.Weight);
-
-				if (graph.Comparer.Compare(edge.Weight, maxEdge!.Weight) >= 0)
-				{
-					// the edge is not part of the mst
-					continue;
-				}
-				
-				mstEdges.RemoveEdge(maxEdge);
-				AddMstEdge(edge);
-			}
-			else
-			{
-				
-				AddMstEdge(edge);
-			}
-		}
-
-		return mstEdges;
-	}
-	
-	public static EdgeWeightedGraphWithAdjacencyLists<T> MstVyssotsky_Old2<T>(IEdgeWeightedGraph<T> graph)
-	{
-		// Assume graph is connected
-		
-		var mstVertexes = DataStructures.Set(Comparer<int>.Default);
-		var mstEdges = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
-		var stack = new ConditionalStack<Edge<T>>();
-
-		bool IsConnectedToMst(Edge<T> edge) => mstVertexes.Contains(edge.Vertex0) || mstVertexes.Contains(edge.Vertex1);
-
-		// Ordering the nodes by weight reduces executing time by a third. 
-		foreach (var edge in graph.Edges.OrderBy(edge => edge.Weight, graph.Comparer.Invert()))
-		{
-			stack.Push(edge);
-		}
-
-		void AddMstEdge(Edge<T> edge)
-		{
-			mstEdges.AddEdge(edge);
-			mstVertexes.Add(edge.Vertex0);
-			mstVertexes.Add(edge.Vertex1);
-		}
-
-		var first = stack.PopFirst();
-		AddMstEdge(first);
-		
-		while (stack.Count > 0)
-		{
-			var edge = stack.Pop(IsConnectedToMst);
-			int vertex0 = edge.Vertex0;
-			int vertex1 = edge.Vertex1;
-			
-			if (mstVertexes.Contains(vertex0) && mstVertexes.Contains(vertex1))
-			{
-				var pathSearch = new DepthFirstPathsSearch(mstEdges, vertex0);
-				var path = pathSearch.GetPathTo(vertex1);
-				var maxEdge = FindMaxEdge(graph, path, graph.Comparer);
-				
-				if (graph.Comparer.Compare(edge.Weight, maxEdge!.Weight) >= 0)
-				{
-					// the edge is not part of the mst
-					continue;
-				}
-				
-				mstEdges.RemoveEdge(maxEdge);
-				AddMstEdge(edge);
-			}
-			else
-			{
-				
-				AddMstEdge(edge);
-			}
-		}
-
-		return mstEdges;
-	}
-	
-	private static Edge<T> FindMaxEdge<T>(IEdgeWeightedGraph<T> graph, IEnumerable<int> path, IComparer<T> comparer)
-	{
-		Edge<T> maxEdge = null;
-		int previousNode = -1;
-
-		foreach (int node in path)
-		{
-			if (previousNode != -1)
-			{
-				var edge = GetUniqueEdge(graph, previousNode, node);
-
-				if (maxEdge == null || comparer.Compare(edge.Weight, maxEdge.Weight) > 0)
-				{
-					maxEdge = edge;
-				}
-			}
-
-			previousNode = node;
-		}
-
-		return maxEdge!;
-	}
-	
-	public static EdgeWeightedGraphWithAdjacencyLists<T> MstVyssotsky<T>(IEdgeWeightedGraph<T> graph)
+	// May not work art all.
+	public static EdgeWeightedGraphWithAdjacencyLists<T> MysteryMst<T>(IEdgeWeightedGraph<T> graph)
 	{
 		var mstEdges = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
 		var unionFind = new UnionFind(graph.VertexCount);
@@ -358,7 +218,7 @@ public class Mst
 		return !connected;
 	}
 	
-	EdgeWeightedGraphWithAdjacencyLists<T> Mst_ReverseDelete<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph)
+	public EdgeWeightedGraphWithAdjacencyLists<T> Mst_ReverseDelete<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph)
 	{
 		var mst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
 		var priorityQueue = DataStructures.PriorityQueue(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));

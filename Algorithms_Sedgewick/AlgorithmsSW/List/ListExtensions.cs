@@ -103,11 +103,21 @@ public static class ListExtensions
 	
 	public static void Fill<T>(this IList<T> list, Func<T> valueGenerator) => list.FillRange(0, list.Count, valueGenerator);
 	
+	public static void Fill<T>(this IList<T> list, Func<int, T> valueGenerator) => list.FillRange(0, list.Count, valueGenerator);
+	
 	public static void FillRange<T>(this IList<T> list, int start, int count, Func<T> valueGenerator)
 	{
 		for (int i = start; i < start + count; i++)
 		{
 			list[i] = valueGenerator();
+		}
+	}
+	
+	public static void FillRange<T>(this IList<T> list, int start, int count, Func<int, T> valueGenerator)
+	{
+		for (int i = start; i < start + count; i++)
+		{
+			list[i] = valueGenerator(i);
 		}
 	}
 	
@@ -347,33 +357,33 @@ public static class ListExtensions
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static bool LessOrEqualAt<T>(IReadonlyRandomAccessList<T> list, int i, int j) 
+	internal static bool LessOrEqualAt<T>(this IReadonlyRandomAccessList<T> list, int i, int j) 
 		where T : IComparable<T> 
 		=> LessOrEqual(list[i], list[j]);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void MoveAt<T>(IRandomAccessList<T?> list, int sourceIndex, int destinationIndex)
+	internal static void MoveAt<T>(this IRandomAccessList<T?> list, int sourceIndex, int destinationIndex)
 	{
 		list[destinationIndex] = list[sourceIndex];
 		list[sourceIndex] = default;
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void MoveAt<T>(T?[] list, int sourceIndex, int destinationIndex)
+	internal static void MoveAt<T>(this T?[] list, int sourceIndex, int destinationIndex)
 	{
 		list[destinationIndex] = list[sourceIndex];
 		list[sourceIndex] = default;
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void SwapAt<T>(IRandomAccessList<T> list, int i, int j)
+	internal static void SwapAt<T>(this IRandomAccessList<T> list, int i, int j)
 	{
 		__AddSwap();
 		(list[i], list[j]) = (list[j], list[i]);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void SwapAt<T>(T[] list, int i, int j)
+	internal static void SwapAt<T>(this T[] list, int i, int j)
 	{
 		__AddSwap();
 		(list[i], list[j]) = (list[j], list[i]);

@@ -164,5 +164,10 @@ public static class GraphAlgorithms
 			
 			graph.AddEdge(vertex0, vertex1);
 		}
+		
+		#if DEBUG
+		connectivity = new Connectivity(graph);
+		Assert(connectivity.IsConnected);
+		#endif
 	}
 }

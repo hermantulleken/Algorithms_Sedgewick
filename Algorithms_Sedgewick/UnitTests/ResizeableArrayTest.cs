@@ -15,7 +15,7 @@ public class ResizeableArrayTest
 		arr.Add(2);
 		arr.Add(3);
 		Assert.AreEqual(3, arr.Count);
-		Assert.AreEqual(4, arr.Capacity);
+		Assert.AreEqual(ResizeableArray.DefaultCapacity, arr.Capacity);
 	}
 
 	[Test]

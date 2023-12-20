@@ -306,9 +306,10 @@ public sealed class ResizeableArray<T>(int capacity = ResizeableArray.DefaultCap
 	{
 		int newCapacity = Capacity switch
 		{
-			ResizeableArray.MaxCapacity => throw ThrowHelper.ContainerIsAtMaximumCapacityException,
+			< ResizeableArray.DefaultCapacity / 2 => ResizeableArray.DefaultCapacity, // Note: doubling does not work for 0
 			< ResizeableArray.HalfMaxCapacity => 2 * Capacity,
-			_ => ResizeableArray.MaxCapacity,
+			< ResizeableArray.MaxCapacity => ResizeableArray.MaxCapacity,
+			_ => throw ThrowHelper.ContainerIsAtMaximumCapacityException,
 		};
 		
 		UpdateCapacity(newCapacity);

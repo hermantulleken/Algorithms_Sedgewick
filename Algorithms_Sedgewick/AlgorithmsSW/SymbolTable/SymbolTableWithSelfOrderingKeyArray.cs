@@ -78,8 +78,8 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 			return;
 		}
 		
-		SwapAt(keys, 0, index);
-		SwapAt(values, 0, index);
+		keys.SwapAt(0, index);
+		values.SwapAt(0, index);
 	}
 
 	private bool TryFind(TKey key, out int index)

@@ -449,13 +449,13 @@ public static class Sort
 		int i = 0;
 		while (i < list.Count)
 		{
-			if (i == 0 || LessOrEqualAt(list, i - 1, i))
+			if (i == 0 || list.LessOrEqualAt(i - 1, i))
 			{
 				i++;
 			}
 			else
 			{
-				SwapAt(list, i - 1, i);
+				list.SwapAt(i - 1, i);
 				i--;
 			}
 		}
@@ -491,7 +491,7 @@ public static class Sort
 					break;
 				}
 			
-				SwapAt(list, k, child);
+				list.SwapAt(k, child);
 				k = child;
 				child = GetChildIndex(child);
 			}
@@ -510,7 +510,7 @@ public static class Sort
 		
 		while (i >= 1)
 		{
-			SwapAt(list, 0, i);
+			list.SwapAt(0, i);
 			i--;
 			Sink(0, i);
 			Console.WriteLine(list.Pretty());
@@ -537,7 +537,7 @@ public static class Sort
 			// Insert a[i] among a[i-1], a[i-2], a[i-3]... ..
 			for (int j = i; j > start && LessAt(list, j, j - 1); j--)
 			{
-				SwapAt(list, j, j - 1);
+				list.SwapAt(j, j - 1);
 			}
 		}
 	}
@@ -872,7 +872,7 @@ public static class Sort
 			Sort(middle, end);
 
 			// list[middle] > list[middle + 1]
-			if (config.SkipMergeWhenSorted && LessOrEqualAt(list, middle - 1, middle)) return;
+			if (config.SkipMergeWhenSorted && list.LessOrEqualAt(middle - 1, middle)) return;
 			
 			if (config.UseFastMerge)
 			{
@@ -1056,7 +1056,7 @@ public static class Sort
 					int rightListStart = leftListStart + leftListSize;
 					int rightListEnd = Math.Min(leftListStart + mergedListSize, length);
 
-					if (config.SkipMergeWhenSorted && LessOrEqualAt(list, rightListStart - 1, rightListStart)) continue;
+					if (config.SkipMergeWhenSorted && list.LessOrEqualAt(rightListStart - 1, rightListStart)) continue;
 					
 					if (config.UseFastMerge)
 					{
@@ -1099,7 +1099,7 @@ public static class Sort
 				{
 					int mid = start + 1;
 
-					while (mid < length && LessOrEqualAt(list, mid - 1, mid))
+					while (mid < length && list.LessOrEqualAt(mid - 1, mid))
 					{
 						mid++;
 					}
@@ -1116,7 +1116,7 @@ public static class Sort
 				
 					int end = mid + 1;
 				
-					while (end < length && LessOrEqualAt(list, end-1, end))
+					while (end < length && list.LessOrEqualAt(end-1, end))
 					{
 						end++;
 					}
@@ -1183,7 +1183,7 @@ public static class Sort
 				=> start,
 		};
 
-		SwapAt(list, start, partitionIndex);
+		list.SwapAt(start, partitionIndex);
 		var partitioningElement = list[start];
 		
 		while (true)
@@ -1210,10 +1210,10 @@ public static class Sort
 				break;
 			}
 			
-			SwapAt(list, i, j);
+			list.SwapAt(i, j);
 		}
 		
-		SwapAt(list, start, j);
+		list.SwapAt(start, j);
 		return j;
 	}
 
@@ -1250,12 +1250,12 @@ public static class Sort
 			
 			while (true)
 			{
-				while (LessOrEqualAt(list, leftCounter, start))
+				while (list.LessOrEqualAt(leftCounter, start))
 				{
 					leftCounter++;
 				}
 				
-				while (LessOrEqualAt(list, end, rightCounter))
+				while (list.LessOrEqualAt(end, rightCounter))
 				{
 					rightCounter--;
 				}
@@ -1265,7 +1265,7 @@ public static class Sort
 					break;
 				}
 				
-				SwapAt(list, leftCounter, rightCounter);
+				list.SwapAt(leftCounter, rightCounter);
 			}
 		}
 		
@@ -1274,12 +1274,12 @@ public static class Sort
 			int leftCounter = start;
 			int rightCounter = end;
 			
-			while (LessOrEqualAt(list, leftCounter, start))
+			while (list.LessOrEqualAt(leftCounter, start))
 			{
 				leftCounter++;
 			}
 				
-			while (LessOrEqualAt(list, end, rightCounter))
+			while (list.LessOrEqualAt(end, rightCounter))
 			{
 				rightCounter--;
 			}
@@ -1311,7 +1311,7 @@ public static class Sort
 		// Case 2
 		if (LessAt(list, end, start))
 		{
-			SwapAt(list, start, end);
+			list.SwapAt(start, end);
 			Case1(start, end);
 			return;
 		}
@@ -1337,7 +1337,7 @@ public static class Sort
 				}
 			}
 			
-			SwapAt(list, i, minIndex);
+			list.SwapAt(i, minIndex);
 		}
 	}
 
@@ -1363,7 +1363,7 @@ public static class Sort
 			{
 				for (int j = i; j >= stepSize && LessAt(list, j, j - stepSize); j -= stepSize)
 				{
-					SwapAt(list, j, j - stepSize);
+					list.SwapAt(j, j - stepSize);
 				}
 			}
 		}
@@ -1386,7 +1386,7 @@ public static class Sort
 			{
 				for (int j = i; j >= stepSize && LessAt(list, j, j - stepSize); j -= stepSize)
 				{
-					SwapAt(list, j, j - stepSize);
+					list.SwapAt(j, j - stepSize);
 				}
 			}
 
@@ -1560,7 +1560,7 @@ public static class Sort
 			
 			if (Equals(element, smallElement))
 			{
-				SwapAt(list, low, mid);
+				list.SwapAt(low, mid);
 				low++;
 				mid++;
 			}
@@ -1570,7 +1570,7 @@ public static class Sort
 			}
 			else if (Equals(element, largeElement))
 			{
-				SwapAt(list, mid, high);
+				list.SwapAt(mid, high);
 				high--;
 			}
 			else

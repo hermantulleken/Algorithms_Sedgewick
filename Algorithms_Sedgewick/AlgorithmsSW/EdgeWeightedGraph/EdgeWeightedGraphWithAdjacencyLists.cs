@@ -1,7 +1,8 @@
-﻿namespace AlgorithmsSW.EdgeWeightedGraph;
+﻿using static System.Diagnostics.Debug;
+
+namespace AlgorithmsSW.EdgeWeightedGraph;
 
 using System.Collections;
-using System.Diagnostics;
 using List;
 using Support;
 
@@ -85,7 +86,7 @@ public class EdgeWeightedGraphWithAdjacencyLists<TWeight>
 	/// <inheritdoc />
 	public bool RemoveEdge(Edge<TWeight> edge)
 	{
-		if (ContainsEdge(edge.Vertex0, edge.Vertex1))
+		if (!ContainsEdge(edge.Vertex0, edge.Vertex1))
 		{
 			return false;
 		}
@@ -100,7 +101,7 @@ public class EdgeWeightedGraphWithAdjacencyLists<TWeight>
 		if (edge.Vertex0 != edge.Vertex1)
 		{
 			bool wasAlsoRemoved = adjacents[edge.Vertex1].Remove(edge);
-			Debug.Assert(wasAlsoRemoved);
+			Assert(wasAlsoRemoved);
 		}
 
 		EdgeCount--;

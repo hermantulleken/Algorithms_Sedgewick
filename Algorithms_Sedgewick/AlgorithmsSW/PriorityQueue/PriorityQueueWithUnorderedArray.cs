@@ -65,5 +65,5 @@ public sealed class PriorityQueueWithUnorderedArray<T>(IComparer<T> comparer)
 		}
 	}
 
-	private void MoveMinToLast() => SwapAt(items, LastIndex, items.FindIndexOfMin(comparer));
+	private void MoveMinToLast() => items.SwapAt(LastIndex, items.FindIndexOfMin(comparer));
 }

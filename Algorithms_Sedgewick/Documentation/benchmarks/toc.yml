@@ -1,0 +1,10 @@
+﻿- name: Benchmarks
+  items:
+    - name: Mst Algorithms
+      href: Benchmarks.MstAlgorithms-report-github.md
+    - name: Sort 2 Elements
+      href: Benchmarks.Sort2Elements-report-github.md
+    - name: Sort 3 Elements
+      href: Benchmarks.Sort3Elements-report-github.md
+    - name: Unique Random Int
+      href: Benchmarks.UniqueRandomInt-report-github.md

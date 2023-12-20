@@ -126,6 +126,9 @@ public sealed class DoublyLinkedList<T> : IEnumerable<T>
 		return InsertNode(node, node.NextNode, item);
 	}
 
+	/* So we can use collection initializers and expressions. */
+	public void Add(T item) => InsertAtBack(item);
+
 	public Node InsertAtBack(T item)
 	{
 		if (IsEmpty)

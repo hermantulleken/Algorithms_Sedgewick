@@ -2,3 +2,5 @@
   href: content/
 - name: API
   href: api/
+- name: Benchmarks
+  href: benchmarks/

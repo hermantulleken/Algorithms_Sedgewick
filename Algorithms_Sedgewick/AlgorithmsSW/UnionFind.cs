@@ -1,4 +1,6 @@
-﻿namespace AlgorithmsSW;
+﻿using static System.Diagnostics.Debug;
+
+namespace AlgorithmsSW;
 
 public class UnionFind
 {
@@ -32,6 +34,9 @@ public class UnionFind
 				componentIndex[i] = component0;
 			}
 		}
+
+		ComponentCount--;
+		Assert(ComponentCount > 0);
 	}
 	
 	public int GetComponentIndex(int vertex)

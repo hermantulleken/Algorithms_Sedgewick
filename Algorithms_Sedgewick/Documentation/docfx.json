@@ -29,6 +29,10 @@
         "exclude": [
           "_site/**"
         ]
+      },
+      {
+        "files": ["**/benchmarks/**/*.md"],
+        "dest": "benchmarks"
       }
     ],
     "overwrite": [{

@@ -1,27 +1,59 @@
-﻿using System.Runtime.CompilerServices;
+﻿namespace AlgorithmsSW;
 
-namespace AlgorithmsSW;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 
+/// <summary>
+/// Provides math-related utility methods.
+/// </summary>
 public static class MathX
 {
 	private const double Epsilon = 0.00001;
 	
+	/// <summary>
+	/// Computes the floor of the base-2 logarithm of a number.
+	/// </summary>
+	/// <param name="n">The number whose logarithm is to be computed.</param>
+	/// <returns>0 if <paramref name="n"/> is 1 or smaller (including negative); otherwise, the floor of the base-2
+	/// logarithm of <paramref name="n"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static int IntegerCeilLog2(int n) 
+	public static int IntegerCeilLog2(int n)
 		=> n <= 1 ? 0 : (int)Math.Ceiling(Math.Log(n, 2));
 
+	/// <summary>
+	/// Computes the square of a number.
+	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static int Sqr(int vertexCount) => vertexCount * vertexCount;
+	public static T Sqr<T>(T n)
+		where T : INumber<T>
+		=> n * n;
 	
+	/// <summary>
+	/// Computes the cube of a number.
+	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static int Cub(int vertexCount) => vertexCount * vertexCount * vertexCount;
+	public static T Cube<T>(T n)
+		where T : INumber<T>
+		=> n * n * n;
 
-	public static bool ApproximatelyEqual(double x, double y)
-	{
-		double difference = Math.Abs(x - y);
-		
-		return difference < Epsilon;
-	}
+	/// <summary>
+	/// Checks whether two numbers are approximately equal.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool ApproximatelyEqual(double a, double b) 
+		=> Math.Abs(a - b) < Epsilon;
+
+	/// <summary>
+	/// Returns the given numbers as a tuple where the smallest one is first.
+	/// </summary>
+	/// <param name="a">The first number to compare.</param>
+	/// <param name="b">The second number to compare.</param>
+	/// <typeparam name="T">The type of the numbers.</typeparam>
+	/// <returns>A tuple of the two given numbers where the smallest number is first.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static (T min, T max) MinMax<T>(T a, T b)
+		where T : IComparisonOperators<T, T, bool>
+		=> a < b ? (a, b) : (b, a);
 	
 	/// <summary>
 	/// Computes the modulus of a number, ensuring a non-negative result.
@@ -36,7 +68,7 @@ public static class MathX
 	/// <exception cref="System.ArgumentException">
 	/// Thrown when <paramref name="divisor"/> is 0.
 	/// </exception>
-	public static int Mod(int dividend, int divisor) 
+	public static int Mod(int dividend, int divisor)
 	{
 		if (divisor == 0)
 		{
@@ -47,5 +79,4 @@ public static class MathX
 		int remainder = dividend % positiveDivisor;
 		return remainder < 0 ? remainder + positiveDivisor : remainder;
 	}
-
 }
