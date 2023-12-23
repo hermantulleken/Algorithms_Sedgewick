@@ -6,7 +6,7 @@ using BenchmarkDotNet.Running;
 using Benchmarks;
 
 #if DEBUG
-_ = BenchmarkRunner.Run<MstAlgorithms>(new DebugInProcessConfig());
+_ = BenchmarkRunner.Run<HeapBasedMstAlgorithms>(new DebugInProcessConfig());
 #else
-_ = BenchmarkRunner.Run<MstAlgorithms>();
+_ = BenchmarkRunner.Run<HeapBasedMstAlgorithms>();
 #endif

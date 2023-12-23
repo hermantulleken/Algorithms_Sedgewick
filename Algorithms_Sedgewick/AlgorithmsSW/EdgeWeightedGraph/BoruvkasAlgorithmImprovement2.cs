@@ -7,7 +7,7 @@ using List;
 /// perform nearly the same.
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
-public class BoruvkasAlgorithmImprovement2<TWeight>
+public class BoruvkasAlgorithmImprovement2<TWeight> : IMst<TWeight>
 {
 	private readonly Queue<Edge<TWeight>> minimumSpanningTree;
 

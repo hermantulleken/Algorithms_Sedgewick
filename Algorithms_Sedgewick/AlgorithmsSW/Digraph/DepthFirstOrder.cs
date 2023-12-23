@@ -30,7 +30,7 @@ public class DepthFirstOrder
 	/// Initializes a new instance of the <see cref="DepthFirstOrder"/> class.
 	/// </summary>
 	/// <param name="digraph">The graph to search.</param>
-	public DepthFirstOrder(IDigraph digraph)
+	public DepthFirstOrder(IReadOnlyDigraph digraph)
 	{
 		digraph.ThrowIfNull();
 		
@@ -48,7 +48,7 @@ public class DepthFirstOrder
 		}
 	}
 	
-	private void Search(IDigraph digraph, int vertex)
+	private void Search(IReadOnlyDigraph digraph, int vertex)
 	{
 		preOrder.Enqueue(vertex);
 		marked[vertex] = true;

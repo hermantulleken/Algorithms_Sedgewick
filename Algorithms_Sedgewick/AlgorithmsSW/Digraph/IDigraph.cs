@@ -3,7 +3,7 @@ using Support;
 
 namespace AlgorithmsSW.Digraph;
 
-public interface IDigraph
+public interface IReadOnlyDigraph
 {
 	/// <summary>
 	/// Gets the number of vertices in the graph.
@@ -19,21 +19,6 @@ public interface IDigraph
 	/// Gets the vertices in the graph.
 	/// </summary>
 	public IEnumerable<int> Vertexes => Enumerable.Range(0, VertexCount); 
-	
-	/// <summary>
-	/// Adds an edge between two vertices in the graph.
-	/// </summary>
-	/// <param name="vertex0">The first vertex of the edge to add.</param>
-	/// <param name="vertex1">The second vertex of the edge to add.</param>
-	void AddEdge(int vertex0, int vertex1);
-	
-	/// <summary>
-	/// Removes an edge between two vertices in the graph.
-	/// </summary>
-	/// <param name="vertex0">The first vertex of the edge to remove.</param>
-	/// <param name="vertex1">The second vertex of the edge to remove.</param>
-	/// <returns><see langword="true"/> if the edge was removed, <see langword="false"/> otherwise.</returns>
-	bool RemoveEdge(int vertex0, int vertex1);
 	
 	/// <summary>
 	/// Gets the adjacent vertices of a given vertex.
@@ -57,6 +42,24 @@ public interface IDigraph
 	}
 
 	bool AreAdjacent(int item1, int item2) => GetAdjacents(item1).Contains(item2);
+}
+
+public interface IDigraph : IReadOnlyDigraph
+{
+	/// <summary>
+	/// Adds an edge between two vertices in the graph.
+	/// </summary>
+	/// <param name="vertex0">The first vertex of the edge to add.</param>
+	/// <param name="vertex1">The second vertex of the edge to add.</param>
+	void AddEdge(int vertex0, int vertex1);
+	
+	/// <summary>
+	/// Removes an edge between two vertices in the graph.
+	/// </summary>
+	/// <param name="vertex0">The first vertex of the edge to remove.</param>
+	/// <param name="vertex1">The second vertex of the edge to remove.</param>
+	/// <returns><see langword="true"/> if the edge was removed, <see langword="false"/> otherwise.</returns>
+	bool RemoveEdge(int vertex0, int vertex1);
 }
 
 public static class DigraphValiditor

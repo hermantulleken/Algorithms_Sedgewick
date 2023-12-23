@@ -46,7 +46,7 @@ public class Topological : ITopological
 	/// Initializes a new instance of the <see cref="Topological"/> class.
 	/// </summary>
 	/// <param name="digraph">The graph to topologically sort.</param>
-	public Topological(IDigraph digraph)
+	public Topological(IReadOnlyDigraph digraph)
 	{
 		digraph.ThrowIfNull();
 		var cycleFinder = new DirectedCycle(digraph);

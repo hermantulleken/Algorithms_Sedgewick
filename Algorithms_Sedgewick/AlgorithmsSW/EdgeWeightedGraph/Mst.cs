@@ -140,24 +140,8 @@ public class Mst
 		=> cycle
 			.CircularSlidingWindow2()
 			.Select(edge => edge.ToList())
-			.Select(edge => GetUniqueEdge(graph, edge[0], edge[1]))
+			.Select(edge => graph.GetUniqueEdge(edge[0], edge[1]))
 			.MaxBy(edge => edge.Weight)!;
-
-	public static Edge<T> GetUniqueEdge<T>(IEdgeWeightedGraph<T> graph, int vertex0, int vertex1)
-	{
-		var edges = graph.GetIncidentEdges(vertex0).Where(edge => edge.OtherVertex(vertex0) == vertex1);
-		int count = edges.Count();
-		
-		switch (count)
-		{
-			case 0:
-				throw new ArgumentException("Vertices not connected.");
-			case > 1:
-				throw new ArgumentException("Graph has parallel edges.");
-		}
-		
-		return edges.First();
-	}
 
 	// 4.3.22
 	public static IEnumerable<IMst<T>> MstForest<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph)
@@ -209,7 +193,7 @@ public class Mst
 			return false;
 		}
 
-		var edge = GetUniqueEdge(graph, vertex0, vertex1);
+		var edge = graph.GetUniqueEdge(vertex0, vertex1);
 		graph.RemoveEdge(edge);
 		var connectivity = new Components<T>(graph);
 		bool connected = !connectivity.AreConnected(vertex0, vertex1);

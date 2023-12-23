@@ -1,4 +1,4 @@
-﻿# Observations
+﻿# Observations on implementing algorithms
 
 ## 1. IComparer vs. IComparable
 - It is better  to design a system of containers to use comparers than to make them take IComparables.
@@ -8,7 +8,13 @@ the contents. For example:
     - You can make a min data structure into a max structure by inverting the comparer.
     - You can make a weighted graph unweighted by changing the comparer.
 
-## 2.Graph APIs
+## 2. Generic math
+- Similarly, there is a choice between implementing certain features using generic math or using `Func` to supply the 
+necessary operations. For example, weights in graphs can be implemented as either a IFloatingPoint type or as a general 
+type with `IComparer` and `Func<TWeight, TWeight, TWeight>` for addition where required. I opted to use the latter, partly
+to be consistent, but also because it allows for more flexibility (reinterpreting weights, for example).
+
+## 3.Graph APIs
 - The Graph APIs used here are not very good.
 - The textbook prefer to keep algorithms in classes; the idea is the bulk of the algo is a preprocessing step that 
   results in a structure you can use to make quick queries (which does make sense).
@@ -20,7 +26,7 @@ difficult to reason about the execution time of algorithms in this way.
 Although, I can appreciate it would be difficult to design a API that is clearer, and still allows the user to separate
 once-off operations from the once that need to be performed many times.
 
-## 3. Running Benchmarks
+## 4. Running Benchmarks
 - Running benchmarks is much more instructive than one would imagine.
 - Computers are very fast, and seeing how fast is a good reminder.
 - There are often surprising results.
@@ -30,15 +36,15 @@ once-off operations from the once that need to be performed many times.
 - It shows that optimizing code to solve artificial problems has limited value. Without a real application (that is, 
 data with real distributions and volumes), a lot of the theoretical results really are meaningless.
 
-## 4. Optimization
+## 5. Optimization
 - Optimizing even relatively simple algorithms (such as merge sort) can be very challenging because how tricky it is to
 get reliable benchmarks when dealing with small variations of an algorithm. Do you copy the code and tweak? Or do you 
 make a configurable algorithm?
 
-## 5. SupportsX
+## 6. SupportsX
 - Similar to the ReadOnly property of collections, it turns out to be convienient to have a SupportsX property for 
 graphs for certain features, such as whether the graph supports parallel edges, self-loops, etc. rather than rely 
 on types.
 
-## 6. Readonly data structures
+## 7. Readonly data structures
 - For each container type, I find I need a read only version pretty soon. 

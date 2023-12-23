@@ -46,3 +46,12 @@ BenchmarkDotNet v0.13.9+228a464e8be6c580ad9408e98f18813f6407fb5a, Windows 10 (10
 | PrimMst       | 0.7          | 50             |   804.488 μs |   8.7499 μs |   7.7565 μs |
 | KruskalMst    | 0.7          | 50             |   847.568 μs |   7.4488 μs |   6.2201 μs |
 | MstVyssotsky3 | 0.7          | 50             | 1,512.781 μs |  20.3120 μs |  18.9998 μs |
+
+The following shows the various implementations of Boruvka's algorithm perform roughly the same. 
+```csharp
+
+| Method                     | EdgeFraction | ParameterIndex | Mean     | Error    | StdDev   | Median   |
+|----------------------------|------------- |--------------- |---------:|---------:|---------:|---------:|
+| MstBoruvka                 | 0.7          | 200            | 59.05 ms | 1.164 ms | 2.404 ms | 60.01 ms |
+| BoruvkasAlgorithmImproved  | 0.7          | 200            | 58.39 ms | 1.203 ms | 3.527 ms | 58.42 ms |
+| BoruvkasAlgorithmImproved2 | 0.7          | 200            | 60.19 ms | 1.195 ms | 3.290 ms | 59.87 ms |

@@ -1,7 +1,20 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedGraph;
 
-public record Edge<T>(int Vertex0, int Vertex1, T Weight)
+/// <summary>
+/// Represents an edge in an edge-weighted graph.
+/// </summary>
+/// <param name="Vertex0">One vertex of the edge.</param>
+/// <param name="Vertex1">The other vertex of the edge.</param>
+/// <param name="Weight">The weight of the edge.</param>
+/// <typeparam name="TWeight">The type of weight. See [Weights](../content/Weights.md).</typeparam>
+public record Edge<TWeight>(int Vertex0, int Vertex1, TWeight Weight)
 {
+	/// <summary>
+	/// Given one vertex of the edge, returns the other vertex.
+	/// </summary>
+	/// <param name="vertex"></param>
+	/// <returns></returns>
+	/// <exception cref="ArgumentException"></exception>
 	public int OtherVertex(int vertex) 
 		=> vertex == Vertex1 
 			? Vertex0 
@@ -9,5 +22,6 @@ public record Edge<T>(int Vertex0, int Vertex1, T Weight)
 				? Vertex1 
 				: throw new ArgumentException("Invalid vertex.");
 
+	/// <inheritdoc />
 	public override string ToString() => $"[{Vertex0}, {Vertex1}: {Weight}]";
 }

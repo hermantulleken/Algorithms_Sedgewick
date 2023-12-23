@@ -71,6 +71,16 @@ public static class ListExtensions
 		}
 	}
 
+	public static IRandomAccessList<T> AsList<T>(this IEnumerable<T> source)
+	{
+		return source switch
+		{
+			IRandomAccessList<T> randomAccessList => randomAccessList,
+			IList<T> list => new ListWrapper<T>(list),
+			_ => new ListWrapper<T>(source.ToArray())
+		};
+	}
+	
 	public static void Fill<T>(this IRandomAccessList<T> list, T value) => list.FillRange(0, list.Count, value);
 	
 	public static void FillRange<T>(this IRandomAccessList<T> list, int start, int count, T value)

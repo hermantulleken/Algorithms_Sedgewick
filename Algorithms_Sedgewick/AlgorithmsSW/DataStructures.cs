@@ -5,11 +5,12 @@ using AlgorithmsSW.HashTable;
 using AlgorithmsSW.List;
 using AlgorithmsSW.PriorityQueue;
 using AlgorithmsSW.Queue;
-using AlgorithmsSW.Set;
 using AlgorithmsSW.Stack;
 using AlgorithmsSW.SymbolTable;
 
 namespace AlgorithmsSW;
+
+using EdgeWeightedDigraph;
 
 /// <summary>
 /// Sensible default implementations of data structures.
@@ -46,4 +47,8 @@ public static class DataStructures
 
 	public static IEdgeWeightedGraph<T> EdgeWeightedGraph<T>(int vertexCount, IComparer<T> comparer) 
 		=> new EdgeWeightedGraphWithAdjacencyLists<T>(vertexCount, comparer);
+	
+	
+	public static IEdgeWeightedDigraph<T> EdgeWeightedDigraph<T>(int vertexCount, IComparer<T> comparer) 
+		=> new EdgeWeightedDigraphWithAdjacencyLists<T>(vertexCount, comparer);
 }

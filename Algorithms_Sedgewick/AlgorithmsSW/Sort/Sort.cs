@@ -848,6 +848,7 @@ public static class Sort
 		where T : IComparable<T>
 		=> MergeSort(list, default);
 
+	#region RecursionDepthGuardExample
 	public static void MergeSort<T>(IRandomAccessList<T> list, MergeSortConfig config) 
 		where T : IComparable<T>
 	{
@@ -855,8 +856,11 @@ public static class Sort
 		
 		void Sort(int start, int end)
 		{
+			RecursionDepthGuard.Inc();
+			
 			if (end <= start + 1)
 			{
+				RecursionDepthGuard.Dec();
 				return;
 			}
 			
@@ -865,6 +869,7 @@ public static class Sort
 			if (config.SmallArraySortAlgorithm == MergeSortConfig.SortAlgorithm.Insert && end - start < 12)
 			{
 				InsertionSort(list, start, end);
+				RecursionDepthGuard.Dec();
 				return;
 			}
 
@@ -882,10 +887,13 @@ public static class Sort
 			{
 				Merge(list, helpList, start, middle, end);
 			}
+			RecursionDepthGuard.Dec();
 		}
 		
+		RecursionDepthGuard.Reset();
 		Sort(0, list.Count);
 	}
+	#endregion
 
 	// Ex. 2.2.15
 	public static void MergeSortBottomsUpWithQueues<T>(

@@ -18,7 +18,7 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 	public int EdgeCount { get; private set; }
 
 	/// <inheritdoc />
-	public IEnumerable<int> GetAdjacents(int vertex) => GetIncidentEdges(vertex).Select(edge => edge.ToVertex);
+	public IEnumerable<int> GetAdjacents(int vertex) => GetIncidentEdges(vertex).Select(edge => edge.Target);
 
 	/// <inheritdoc />
 	public IComparer<TWeight> Comparer { get; }
@@ -39,20 +39,44 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 		adjacencyLists.Fill(() => []);
 	}
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="EdgeWeightedDigraphWithAdjacencyLists{TWeight}"/> class from the
+	/// specified graph, but with a different comparer.
+	/// </summary>
+	/// <param name="graph">The graph to construct the new graph from.</param>
+	/// <param name="comparer">The comparer to use when comparing edge weights.</param>
+	public EdgeWeightedDigraphWithAdjacencyLists(IReadOnlyEdgeWeightedDigraph<TWeight> graph, IComparer<TWeight> comparer)
+		: this(graph.VertexCount, comparer)
+	{
+		/*
+			TODO: It would be nice to share the edge data. To do so we need two things:
+			-	We need to original graph to be immutable. (This is slightly different from being read-only, since
+				we can still have a mutable graph behind the read-only interface. 
+				
+				[This is maybe why IsReadOnly properties may be useful oin practice.]
+				
+			- We need to have code that looks if the graph is of the right type. 
+		*/
+		foreach (var edge in graph.Edges)
+		{
+			AddEdge(edge);
+		}
+	}
+
 	/// <inheritdoc />
 	public IEnumerable<DirectedEdge<TWeight>> GetIncidentEdges(int vertex) => adjacencyLists[vertex];
 
 	/// <inheritdoc />
 	public void AddEdge(DirectedEdge<TWeight> edge)
 	{
-		adjacencyLists[edge.FromVertex].Add(edge);
+		adjacencyLists[edge.Source].Add(edge);
 		EdgeCount++;
 	}
 
 	/// <inheritdoc />
 	public void RemoveEdge(DirectedEdge<TWeight> edge)
 	{
-		adjacencyLists[edge.FromVertex].Remove(edge);
+		adjacencyLists[edge.Source].Remove(edge);
 		EdgeCount--;
 	}
 }

@@ -17,7 +17,10 @@
           ]
         }
       ],
-      "dest": "api"
+      "dest": "api",
+      "properties": {
+        "memberLayout": "separatePages"
+      }
     }
   ],
   "build": {
@@ -27,7 +30,8 @@
           "**/*.{md,yml}"
         ],
         "exclude": [
-          "_site/**"
+          "_site/**",
+          "overwrites/**"
         ]
       },
       {

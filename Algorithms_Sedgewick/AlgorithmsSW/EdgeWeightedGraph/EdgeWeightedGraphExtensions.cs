@@ -19,4 +19,20 @@ public static class EdgeWeightedGraphExtensions
 		
 		return edge;
 	}
+	
+	public static Edge<T> GetUniqueEdge<T>(this IEdgeWeightedGraph<T> graph, int vertex0, int vertex1)
+	{
+		var edges = graph.GetIncidentEdges(vertex0).Where(edge => edge.OtherVertex(vertex0) == vertex1);
+		int count = edges.Count();
+		
+		switch (count)
+		{
+			case 0:
+				throw new ArgumentException("Vertices not connected.");
+			case > 1:
+				throw new ArgumentException("Graph has parallel edges.");
+		}
+		
+		return edges.First();
+	}
 }

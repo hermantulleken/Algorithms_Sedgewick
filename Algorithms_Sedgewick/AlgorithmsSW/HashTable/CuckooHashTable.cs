@@ -120,13 +120,14 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 				return;
 			}
 
-			CuckooHashTable<TKey, TValue>.KickKeyFromTable(table1, index, ref key, ref value);
+			KickKeyFromTable(table1, index, ref key, ref value);
 			index = GetHash2(key);
 
 			ValidateIndex(index, keyPresent2);
+			
 			if (keyPresent2[index])
 			{
-				CuckooHashTable<TKey, TValue>.KickKeyFromTable(table2, index, ref key, ref value);
+				KickKeyFromTable(table2, index, ref key, ref value);
 				index = GetHash1(key);
 			}
 			else
@@ -269,16 +270,18 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		{
 			for (int i = 0; i < halfTableSize; i++)
 			{
-				if (oldKeyPresent[i])
+				if (!oldKeyPresent[i])
 				{
-					var key = oldTable.Keys[i];
-					var value = oldTable.Values[i];
-					
-					Assert(key != null);
-					Assert(value != null);
-					
-					newTable.Add(key, value);
+					continue;
 				}
+
+				var key = oldTable.Keys[i];
+				var value = oldTable.Values[i];
+					
+				Assert(key != null);
+				Assert(value != null);
+					
+				newTable.Add(key, value);
 			}
 		}
 		
@@ -290,7 +293,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		Assert(table2.Keys.Count == halfTableSize);
 		Assert(table2.Values.Count == halfTableSize);
 		
-		CuckooHashTable<TKey, TValue> resizedTable 
+		var resizedTable 
 			= new CuckooHashTable<TKey, TValue>(newTableSize, comparer);
 		
 		// These two need to be before all the assignments happen

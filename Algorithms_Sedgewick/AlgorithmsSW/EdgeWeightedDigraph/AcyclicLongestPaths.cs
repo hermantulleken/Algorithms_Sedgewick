@@ -4,7 +4,7 @@ public class AcyclicLongestPaths<TWeight> : IShortestPath<TWeight>
 {
 	private AcyclicShortestPaths<TWeight> invertedShortestPath;
 	
-	AcyclicLongestPaths(IReadOnlyEdgeWeightedDigraph<TWeight> graph, 
+	public AcyclicLongestPaths(IReadOnlyEdgeWeightedDigraph<TWeight> graph, 
 		int source, 
 		Func<TWeight, TWeight, TWeight> add, 
 		TWeight zero, 
@@ -14,9 +14,9 @@ public class AcyclicLongestPaths<TWeight> : IShortestPath<TWeight>
 		invertedShortestPath = new AcyclicShortestPaths<TWeight>(invertedGraph, source, add, zero, minValue);
 	}
 
-	public TWeight DistanceTo(int vertex)
+	public TWeight GetDistanceTo(int vertex)
 	{
-		return invertedShortestPath.DistanceTo(vertex);
+		return invertedShortestPath.GetDistanceTo(vertex);
 	}
 
 	public bool HasPathTo(int vertex)
@@ -24,8 +24,8 @@ public class AcyclicLongestPaths<TWeight> : IShortestPath<TWeight>
 		return invertedShortestPath.HasPathTo(vertex);
 	}
 
-	public IEnumerable<DirectedEdge<TWeight>> PathTo(int target)
+	public IEnumerable<DirectedEdge<TWeight>> GetPathTo(int target)
 	{
-		return invertedShortestPath.PathTo(target);
+		return invertedShortestPath.GetPathTo(target);
 	}
 }

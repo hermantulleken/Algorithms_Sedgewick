@@ -32,7 +32,7 @@ public static class ParameterExtensions
 
 public class MstAlgorithms
 {
-	private readonly IComparer<double> Comparer = Comparer<double>.Default;
+	private static readonly IComparer<double> Comparer = Comparer<double>.Default;
 
 	private static readonly int[] VertexCounts = [10, 50, 200];
 
@@ -70,28 +70,28 @@ public class MstAlgorithms
 		return AlgorithmsSW.EdgeWeightedGraph.RandomGraph.AssignWeights(graph, weights, Comparer);
 	}
 
-	//[Benchmark]
+	[Benchmark]
 	public void LazyPrimMst()
 	{
 		var graph = MakeGraph(ParameterIndex.Value, EdgeFraction);
 		var algorithm = new LazyPrimMst<double>(graph);
 	}
 	
-	//[Benchmark]
+	[Benchmark]
 	public void PrimMst()
 	{
 		var graph = MakeGraph(ParameterIndex.Value, EdgeFraction);
 		var algorithm = new PrimMst<double>(graph, 0, double.MaxValue);
 	}
 	
-	//[Benchmark]
+	[Benchmark]
 	public void KruskalMst()
 	{
 		var graph = MakeGraph(ParameterIndex.Value, EdgeFraction);
 		var algorithm = new KruskalMst<double>(graph);
 	}
 	
-	//[Benchmark]
+	[Benchmark]
 	public void MstVyssotsky()
 	{
 		var graph = MakeGraph(ParameterIndex.Value, EdgeFraction);
@@ -113,9 +113,9 @@ public class MstAlgorithms
 	}
 	
 	[Benchmark]
-	public void BoruvkasAlgorithm3()
+	public void BoruvkasAlgorithmImprovement2()
 	{
 		var graph = MakeGraph(ParameterIndex.Value, EdgeFraction);
-		var algorithm = new BoruvkaMSTImproved3<double>(graph);
+		var algorithm = new BoruvkasAlgorithmImprovement2<double>(graph);
 	}
 }

@@ -11,7 +11,7 @@ public interface IShortestPath<TWeight>
 	/// </summary>
 	/// <param name="vertex">The vertex to find the distance to.</param>
 	/// <returns>The distance from the source vertex to the given vertex.</returns>
-	TWeight DistanceTo(int vertex);
+	TWeight GetDistanceTo(int vertex);
 	
 	/// <summary>
 	/// Whether there is a path from the source vertex to the given vertex.
@@ -26,5 +26,5 @@ public interface IShortestPath<TWeight>
 	/// <param name="target">The vertex to find the path to.</param>
 	/// <returns>An enumerable of edges representing the path from the source vertex to the given vertex.</returns>
 	/// <exception cref="InvalidOperationException">+there is no path from the source vertex to the given vertex.</exception>
-	IEnumerable<DirectedEdge<TWeight>> PathTo(int target);
+	IEnumerable<DirectedEdge<TWeight>> GetPathTo(int target);
 }

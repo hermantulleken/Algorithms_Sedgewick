@@ -49,7 +49,7 @@ public class EdgeWeightedGraphWithAdjacencyLists<TWeight>
 		VertexCount = vertexCount;
 		Comparer = comparer;
 		adjacents = new ResizeableArray<Edge<TWeight>>[vertexCount];
-		adjacents.Fill(() => new ResizeableArray<Edge<TWeight>>());
+		adjacents.Fill(() => []);
 	}
 	
 	public EdgeWeightedGraphWithAdjacencyLists(int vertexCount, IEnumerable<Edge<TWeight>> edges, IComparer<TWeight> comparer)

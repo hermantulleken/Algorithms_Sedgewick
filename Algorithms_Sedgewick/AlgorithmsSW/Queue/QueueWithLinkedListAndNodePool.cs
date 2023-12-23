@@ -20,7 +20,7 @@ public class QueueWithLinkedListAndNodePool<T> : IQueue<T>
 	/// <summary>
 	/// Gets the Id for this instance.
 	/// </summary>
-	/// <remarks>Ids are unique for among instances that share the static <see cref="IdGenerator"/>.
+	/// <remarks>Ids are unique for among instances that share the static <see cref="AlgorithmsSW.Object.IdGenerator"/>.
 	/// </remarks>
 	public int Id { get; } = IdGenerator.GetNextId();
 	
@@ -46,7 +46,7 @@ public class QueueWithLinkedListAndNodePool<T> : IQueue<T>
 	/// <param name="capacity">The capacity of this queue.</param>
 	public QueueWithLinkedListAndNodePool(int capacity)
 	{
-		items = new LinkedListWithPooledClassNodes<T>(capacity);
+		items = new(capacity);
 	}
 
 	/// <inheritdoc/>

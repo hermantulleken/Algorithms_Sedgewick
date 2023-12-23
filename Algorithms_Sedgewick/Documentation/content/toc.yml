@@ -1,2 +1,4 @@
-- name: Observations
+- name: Observations on implementing algorithms
   href: Observations.md
+- name: Weight types in edge-weighted graphs
+  href: Weights.md

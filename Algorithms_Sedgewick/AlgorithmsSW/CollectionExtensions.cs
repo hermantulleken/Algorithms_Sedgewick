@@ -88,4 +88,35 @@ public static class CollectionExtensions
 		}
 		while (--size > 0 && enumerator.MoveNext());
 	}
+	
+	public static IEnumerable<(T, T)> GenerateAllPairs<T>(this IEnumerable<T> source)
+	{
+		var enumerable = source as T[] ?? source.ToArray();
+
+		for (int i = 0; i < enumerable.Length; i++)
+		{
+			for (int j = i + 1; j < enumerable.Length; j++)
+			{
+				yield return (enumerable[i], enumerable[j]);
+			}
+		}
+	}
+
+	public static IEnumerable<(T, T)> GenerateDistinctPairs<T>(this IEnumerable<T> source)
+	{
+		var enumerable = source as T[] ?? source.ToArray();
+
+		for (int i = 0; i < enumerable.Length; i++)
+		{
+			for (int j = i + 1; j < enumerable.Length; j++)
+			{
+				if (!EqualityComparer<T>.Default.Equals(enumerable[i], enumerable[j]))
+				{
+					yield return (enumerable[i], enumerable[j]);
+				}
+			}
+		}
+	}
+	
+
 }

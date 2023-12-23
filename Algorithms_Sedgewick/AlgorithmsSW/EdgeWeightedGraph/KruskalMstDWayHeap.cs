@@ -2,11 +2,23 @@
 
 using PriorityQueue;
 
-public class KruskalMSTDWayHeap<TWeight>
+/// <summary>
+/// An implementation of Kruskal's algorithm for finding the minimum spanning tree of a weighted graph, using a N-heap.
+/// </summary>
+/// <typeparam name="TWeight">The type of the edge weights.</typeparam>
+public class KruskalMstDWayHeap<TWeight> : IMst<TWeight>
 {
-	private Queue<Edge<TWeight>> minimumSpanningTree;
+	private readonly Queue<Edge<TWeight>> minimumSpanningTree;
 
-	public KruskalMSTDWayHeap(IEdgeWeightedGraph<TWeight> graph, int heapDegree)
+	/// <inheritdoc />
+	public IEnumerable<Edge<TWeight>> Edges => minimumSpanningTree;
+	
+	/// <summary>
+	/// Initializes a new instance of the <see cref="KruskalMstDWayHeap{TWeight}"/> class.
+	/// </summary>
+	/// <param name="graph">The graph to find the minimum spanning tree of.</param>
+	/// <param name="heapDegree">The degree of the heap to use.</param>
+	public KruskalMstDWayHeap(IEdgeWeightedGraph<TWeight> graph, int heapDegree)
 	{
 		minimumSpanningTree = new Queue<Edge<TWeight>>();
 		var priorityQueue = new FixedCapacityMinNHeap<Edge<TWeight>>(heapDegree, graph.EdgeCount, new EdgeComparer<TWeight>(graph.Comparer));
@@ -33,6 +45,4 @@ public class KruskalMSTDWayHeap<TWeight>
 			minimumSpanningTree.Enqueue(edge);
 		}
 	}
-
-	public IEnumerable<Edge<TWeight>> Edges => minimumSpanningTree;
 }

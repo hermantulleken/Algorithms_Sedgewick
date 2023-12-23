@@ -2,24 +2,11 @@
 
 using List;
 
-public class Job<TWeight>
+public class CriticalPathMethod<TWeight>
 {
-	public TWeight Duration { get; set; }
-	
-	public IEnumerable<int> Dependencies { get; private set; }
-	
-	public Job(TWeight duration, IEnumerable<int> dependencies)
-	{
-		Duration = duration;
-		Dependencies = dependencies.ToList(); // Copy!
-	}
-}
+	public IRandomAccessList<TWeight> CriticalPath { get; }
 
-public class Schedule<TWeight>
-{
-	public IRandomAccessList<TWeight> BestPath { get; }
-
-	public Schedule(IReadonlyRandomAccessList<Job<TWeight>> jobs, IComparer<TWeight> comparer, Func<TWeight, TWeight, TWeight> add, TWeight zero, TWeight minValue)
+	public CriticalPathMethod(IReadonlyRandomAccessList<Job<TWeight>> jobs, IComparer<TWeight> comparer, Func<TWeight, TWeight, TWeight> add, TWeight zero, TWeight minValue)
 	{
 		/*
 			Note: In the textbook they use a different indexing scheme. I don't think it matters much. 
@@ -34,7 +21,7 @@ public class Schedule<TWeight>
 		{
 			graph.AddEdge(JobStart(jobIndex), JobEnd(jobIndex), jobs[jobIndex].Duration);
 			
-			foreach (var dependency in jobs[jobIndex].Dependencies)
+			foreach (int dependency in jobs[jobIndex].Dependencies)
 			{
 				graph.AddEdge(JobEnd(dependency), JobStart(jobIndex), zero);
 			}
@@ -45,9 +32,9 @@ public class Schedule<TWeight>
 		
 		AcyclicLongestPaths<TWeight> longestPaths = new(graph, source, add, zero, minValue);
 
-		BestPath = Enumerable
+		CriticalPath = Enumerable
 			.Range(0, jobs.Count)
-			.Select(jobIndex => longestPaths.DistanceTo(JobStart(jobIndex)))
+			.Select(jobIndex => longestPaths.GetDistanceTo(JobStart(jobIndex)))
 			.ToResizableArray(jobs.Count);
 	}
 	

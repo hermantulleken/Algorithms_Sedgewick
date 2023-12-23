@@ -26,7 +26,7 @@ public class DirectedCycle
 	/// Initializes a new instance of the <see cref="DirectedCycle"/> class.
 	/// </summary>
 	/// <param name="digraph">The graph to find a cycle in.</param>
-	public DirectedCycle(IDigraph digraph)
+	public DirectedCycle(IReadOnlyDigraph digraph)
 	{
 		onStack = new bool[digraph.VertexCount];
 		edgeTo = new int[digraph.VertexCount];
@@ -55,7 +55,7 @@ public class DirectedCycle
 		return cycle;
 	}
 
-	private void Search(IDigraph digraph, int vertex)
+	private void Search(IReadOnlyDigraph digraph, int vertex)
 	{
 		onStack[vertex] = true;
 		marked[vertex] = true;
