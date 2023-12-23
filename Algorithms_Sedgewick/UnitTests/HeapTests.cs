@@ -171,6 +171,7 @@ public class HeapTests
 	{
 		() => new FixedCapacityMinBinaryHeap<int>(10, Comparer<int>.Default),
 		() => new FixedCapacityMin3Heap<int>(10, Comparer<int>.Default),
+		() => new FixedCapacityMinNHeap<int>(5, 10, Comparer<int>.Default),
 		() => new PriorityTree<int>(Comparer<int>.Default),
 		() => new PriorityQueueWithOrderedArray<int>(10, Comparer<int>.Default),
 		() => new PriorityQueueWithUnorderedArray<int>(Comparer<int>.Default),
@@ -182,6 +183,7 @@ public class HeapTests
 	{
 		() => new FixedCapacityMinBinaryHeap<Person>(10, Comparer<Person>.Default),
 		() => new FixedCapacityMin3Heap<Person>(10, Comparer<Person>.Default),
+		() => new FixedCapacityMinNHeap<Person>(5, 10, Comparer<Person>.Default),
 		() => new PriorityTree<Person>(Comparer<Person>.Default),
 		() => new PriorityQueueWithOrderedArray<Person>(10, Comparer<Person>.Default),
 		() => new PriorityQueueWithUnorderedArray<Person>(Comparer<Person>.Default),

@@ -35,7 +35,7 @@ public static class Formatter
 	
 	private const string Braces = "{{{0}}}";
 	private const string Brackets = "[{0}]";
-	private const string CommaSpace = ", ";
+	public const string CommaSpace = ", ";
 	private const string IndentString = "\t";
 	private const string NameMissing = "???";
 	private const string Parentheses = "({0})";

@@ -1,39 +1,30 @@
-﻿using System.Diagnostics;
+﻿namespace Support;
 
-namespace Support;
+using System.Diagnostics;
 
-public class Guard(int limit, string limitExceededMessage, string incDecMismatchMessage)
-{
-	private int counter;
-	private int limit;
-
-	public void Reset(int limit)
-	{
-		counter = 0;
-		this.limit = limit;
-	}
-	
-	public void Inc()
-	{
-		counter++;
-
-		if (counter > limit)
-		{
-			throw new InvalidOperationException(limitExceededMessage);
-		}
-	}
-
-	public void Dec()
-	{
-		counter--;
-
-		if (counter < 0)
-		{
-			throw new InvalidCastException(incDecMismatchMessage);
-		}
-	}
-}
-
+/// <summary>
+/// Provides methods that can help detect infinite loops in Debug builds. 
+/// </summary>
+/// <remarks>
+/// To use this feature:
+/// <list type="number">
+///	<item> Call <see cref="Reset"/> before the iteration starts, using a limit that makes sense for your tests.</item>
+/// <item> Call <see cref="Inc"/> at the beginning of each iteration. </item>
+/// </list>
+///
+/// If the iteration limit is exceeded, an <see cref="InvalidOperationException"/> is thrown. This makes it easier to
+/// use the debugger to find the problem, since the code will break at the point where the iteration limit is exceeded.
+///
+/// All iteration guard calls use the same guard, so algorithms should not be run in parallel. 
+/// </remarks>
+/// <example>
+/// Here is how the guard can be used in a real example:
+/// [!code-csharp[](../../AlgorithmsSW/EdgeWeightedGraph/BoruvkasAlgorithm.cs#GuardExample)]
+/// This algorithm relies in the fact that eventually there will only be one connected component. If the algorithm is
+/// not implemented correctly, the iteration limit will be exceeded and an exception will be thrown, allowing us to
+/// inspect the internal state and see what is going on. 
+/// </example>
+// TODO: We actually need this to be threadsafe since we want to run Unit tests in parallel.
 public static class IterationGuard
 {
 	private const int DefaultLimit = 1_000_000;
@@ -44,32 +35,14 @@ public static class IterationGuard
 			"Iteration limit exceeded", 
 			"Decrementing counter below zero");
 	
+	/// <summary>
+	/// This resets the counter to zero and sets the limit to the specified value.
+	/// </summary>
+	/// <param name="limit"></param>
+	/// <remarks>Call this before the iteration starts. </remarks>
 	[Conditional(Diagnostics.DebugDefine)]
 	public static void Reset(int limit = DefaultLimit) => Guard.Reset(limit);
 	
 	[Conditional(Diagnostics.DebugDefine)]
 	public static void Inc() => Guard.Inc();
-	
-	[Conditional(Diagnostics.DebugDefine)]
-	public static void Dec() => Guard.Dec();
-}
-
-public static class RecursionDepthGuard
-{
-	private const int DefaultLimit = 100;
-	
-	private static readonly Guard Guard 
-		= new(
-			DefaultLimit,
-			"Iteration limit exceeded", 
-			"Decrementing counter below zero");
-	
-	[Conditional(Diagnostics.DebugDefine)]
-	public static void Reset(int limit = DefaultLimit) => Guard.Reset(limit);
-	
-	[Conditional(Diagnostics.DebugDefine)]
-	public static void Inc() => Guard.Inc();
-	
-	[Conditional(Diagnostics.DebugDefine)]
-	public static void Dec() => Guard.Dec();
 }

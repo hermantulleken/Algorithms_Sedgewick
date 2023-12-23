@@ -1,12 +1,17 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedGraph;
 
 using List;
-	
-public class BoruvkaMSTImproved3<TWeight>
+
+/// <summary>
+/// This implementation is the same as <see cref="BoruvkasAlgorithmImproved{TWeight}"/> with a few tweaks, but the algorithms
+/// perform nearly the same.
+/// </summary>
+/// <typeparam name="TWeight">The type of the edge weights.</typeparam>
+public class BoruvkasAlgorithmImprovement2<TWeight>
 {
 	private readonly Queue<Edge<TWeight>> minimumSpanningTree;
 
-	public BoruvkaMSTImproved3(IReadOnlyEdgeWeightedGraph<TWeight> edgeWeightedGraph)
+	public BoruvkasAlgorithmImprovement2(IReadOnlyEdgeWeightedGraph<TWeight> edgeWeightedGraph)
 	{
 		minimumSpanningTree = new Queue<Edge<TWeight>>();
 		var forest = new DoublyLinkedList<int>[edgeWeightedGraph.VertexCount];

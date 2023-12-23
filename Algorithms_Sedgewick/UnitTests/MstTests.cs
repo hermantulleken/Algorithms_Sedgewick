@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace UnitTests;
 
 [TestFixture]
-public class Mst
+public class MstTests
 {
 	[Datapoints]
 	private static readonly Func<IEdgeWeightedGraph<double>, IMst<double>>[] Factories =
@@ -17,6 +17,9 @@ public class Mst
 		graph => new Vyssotsky<double>(graph, double.MinValue),
 		graph => new BoruvkasAlgorithm<double>(graph),
 		graph => new BoruvkasAlgorithmImproved<double>(graph),
+		graph => new BoruvkasAlgorithmImprovement2<double>(graph),
+		graph => new LazyPrimMstDWayHeap<double>(graph, 5),
+		graph => new KruskalMstDWayHeap<double>(graph, 5),
 	};
 	
 	[Test, TestCaseSource(nameof(Factories))]
