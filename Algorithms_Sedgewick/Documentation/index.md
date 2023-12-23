@@ -2,7 +2,7 @@
 Based on the book by Robert Sedgewick and Kevin Wayne: "Algorithms", 4th edition. This code base is mostly for 
 exploration of the topic of the book. 
 
-- @Algorithms_Sedgewick: Detailed descriptions of all APIs, classes, methods, and more.
+- @AlgorithmsSW: Detailed descriptions of all APIs, classes, methods, and more.
 - @AlgorithmsSW.DataStructures: Provide default implementations of common data structures. 
 
 ## Documentation Tips
