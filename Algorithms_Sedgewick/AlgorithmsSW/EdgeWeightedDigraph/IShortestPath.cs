@@ -26,5 +26,5 @@ public interface IShortestPath<TWeight>
 	/// <param name="target">The vertex to find the path to.</param>
 	/// <returns>An enumerable of edges representing the path from the source vertex to the given vertex.</returns>
 	/// <exception cref="InvalidOperationException">+there is no path from the source vertex to the given vertex.</exception>
-	IEnumerable<DirectedEdge<TWeight>> GetPathTo(int target);
+	IEnumerable<DirectedEdge<TWeight>> GetEdgesOfPathTo(int target);
 }

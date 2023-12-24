@@ -75,7 +75,7 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 	
 	public bool HasPathTo(int vertex) => graph.Comparer.Compare(distanceTo[vertex], maxValue) < 0;
 
-	public IEnumerable<DirectedEdge<TWeight>> GetPathTo(int target)
+	public IEnumerable<DirectedEdge<TWeight>> GetEdgesOfPathTo(int target)
 	{
 		if (!HasPathTo(target))
 		{

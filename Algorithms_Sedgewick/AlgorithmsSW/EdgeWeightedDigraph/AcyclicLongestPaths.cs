@@ -24,8 +24,8 @@ public class AcyclicLongestPaths<TWeight> : IShortestPath<TWeight>
 		return invertedShortestPath.HasPathTo(vertex);
 	}
 
-	public IEnumerable<DirectedEdge<TWeight>> GetPathTo(int target)
+	public IEnumerable<DirectedEdge<TWeight>> GetEdgesOfPathTo(int target)
 	{
-		return invertedShortestPath.GetPathTo(target);
+		return invertedShortestPath.GetEdgesOfPathTo(target);
 	}
 }

@@ -42,6 +42,15 @@ public static class CollectionExtensions
 		return array;
 	}
 	
+	// TODO: add other collection types
+	public static ResizeableArray<T> ToResizableArray<T>(this IEnumerable<T> items) =>
+		items switch
+		{
+			IRandomAccessList<T> randomAccessList => randomAccessList.ToResizableArray(randomAccessList.Count),
+			ICollection<T> collection => collection.ToResizableArray(collection.Count),
+			_ => items.ToResizableArray(Collection.DefaultCapacity),
+		};
+
 	public static Set.ISet<T> ToSet<T>(this IEnumerable<T> items, IComparer<T> comparer)
 	{
 		var set = DataStructures.Set(comparer);

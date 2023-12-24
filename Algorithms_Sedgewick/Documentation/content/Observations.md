@@ -48,3 +48,27 @@ on types.
 
 ## 7. Readonly data structures
 - For each container type, I find I need a read only version pretty soon. 
+
+## 8. Pseudocode
+Pseudocode is not helpful when describing algorithms.
+Pseudocode often make small omissions that can take a fair amount of time to figure out. 
+
+Compare this psuedocode for Dijkstra's k-shortest path's algorithm (from 
+https://en.wikipedia.org/wiki/K_shortest_path_routing) with the actual code.
+
+- $P = \text{empty}$
+- $\text{count}_u = 0$ for all $u \in V$
+- insert path $p_s = \{s\}$ into $B$ with cost $0$
+- while $B$ is not empty and $\text{count}_t < K$:
+  - let $p_u$ be the shortest cost path in $B$ with cost $C$
+  - $B = B - \{p_u\}$, $\text{count}_u = \text{count}_u + 1$
+  - if $u = t$ then $P = P \cup \{p_u\}$
+  - if $\text{count}_u < K$ then
+    - for each vertex $v$ adjacent to $u$:
+      - let $p_v$ be a new path with cost $C + w(u, v)$ formed by concatenating edge $(u, v)$ to path $p_u$
+      - insert $p_v$ into $B$
+
+[!code-csharp[](../../AlgorithmsSW/EdgeWeightedDigraph/KShortestPaths.cs#PseudoCodeExample)]
+
+Although it is possible to make the pseudocode more precise, I think it is better to make an implementation read as 
+well as the pseudocode.

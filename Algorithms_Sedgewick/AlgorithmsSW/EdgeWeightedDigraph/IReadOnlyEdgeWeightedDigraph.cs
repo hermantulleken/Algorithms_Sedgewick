@@ -6,7 +6,8 @@ using Digraph;
 /// Represents a read-only directed edge weighted graph data structure.
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
-public interface IReadOnlyEdgeWeightedDigraph<TWeight> : IReadOnlyDigraph
+public interface IReadOnlyEdgeWeightedDigraph<TWeight> 
+	: IReadOnlyDigraph
 {
 	/// <summary>
 	/// Gets the comparer this <see cref="IReadOnlyEdgeWeightedDigraph{T}"/> use to compare edge weights.

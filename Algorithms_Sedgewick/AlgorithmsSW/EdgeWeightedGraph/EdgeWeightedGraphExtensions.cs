@@ -1,5 +1,7 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using EdgeWeightedDigraph;
+
 /// <summary>
 /// Provides extension methods for <see cref="IEdgeWeightedGraph{T}"/>.
 /// </summary>
@@ -34,5 +36,27 @@ public static class EdgeWeightedGraphExtensions
 		}
 		
 		return edges.First();
+	}
+	
+	/// <summary>
+	/// Converts this <see cref="IEdgeWeightedGraph{T}"/> to an <see cref="IEdgeWeightedDigraph{T}"/> by adding two
+	/// edges (in opposite directions) for each edge in the original graph.
+	/// </summary>
+	/// <param name="graph">The graph to convert.</param>
+	/// <typeparam name="TWeight">The type of the edge weights.</typeparam>
+	public static IEdgeWeightedDigraph<TWeight> ToEdgeWeightedDigraph<TWeight>(this IEdgeWeightedGraph<TWeight> graph)
+	{
+		var digraph = DataStructures.EdgeWeightedDigraph(graph.VertexCount, graph.Comparer);
+		
+		foreach (var edge in graph.Edges)
+		{
+			var directedEdge = new DirectedEdge<TWeight>(edge.Vertex0, edge.Vertex1, edge.Weight);
+			var oppositeDirectedEdge = new DirectedEdge<TWeight>(edge.Vertex1, edge.Vertex0, edge.Weight);
+			
+			digraph.AddEdge(directedEdge);
+			digraph.AddEdge(oppositeDirectedEdge);
+		}
+		
+		return digraph;
 	}
 }

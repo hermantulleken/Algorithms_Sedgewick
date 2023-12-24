@@ -2,6 +2,8 @@
 
 namespace AlgorithmsSW.Graph;
 
+using Digraph;
+
 public static class GraphExtensions
 {
 	// 4.1.4
@@ -24,6 +26,23 @@ public static class GraphExtensions
 		=> 2 * graph.EdgeCount / (float)graph.VertexCount;
 	
 	public static void Add(this IGraph graph, int vertex0, int vertex1) => graph.AddEdge(vertex0, vertex1);
+	
+	/// <summary>
+	/// Converts a graph to a digraph by two edges (in opposite directions) for each edge in the original graph.
+	/// </summary>
+	/// <param name="graph">The graph to convert.</param>
+	public static IDigraph ToDigraph(this IGraph graph)
+	{
+		var digraph = DataStructures.Digraph(graph.VertexCount);
+
+		foreach (var edge in graph)
+		{
+			digraph.AddEdge(edge.vertex0, edge.vertex1);
+			digraph.AddEdge(edge.vertex1, edge.vertex0);
+		}
+
+		return digraph;
+	}
 }
 
 public static class GraphValiditor

@@ -60,7 +60,7 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 	public bool HasPathTo(int vertex) => graph.Comparer.Compare(distTo[vertex], zero) != 0;
 	
 	/// <inheritdoc />
-	public IEnumerable<DirectedEdge<TWeight>> GetPathTo(int target)
+	public IEnumerable<DirectedEdge<TWeight>> GetEdgesOfPathTo(int target)
 	{
 		if (!HasPathTo(target))
 		{
@@ -75,6 +75,13 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 		}
 
 		return path;
+	}
+
+	public Path<TWeight> GetPathTo(int target)
+	{
+		var path = GetEdgesOfPathTo(target);
+		var vertices = path.Select(edge => edge.Source);
+		return new([..vertices, target], GetDistanceTo(target));
 	}
 	
 	private void Relax(IReadOnlyEdgeWeightedDigraph<TWeight> graph, int vertex)

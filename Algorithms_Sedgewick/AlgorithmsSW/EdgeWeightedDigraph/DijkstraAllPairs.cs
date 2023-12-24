@@ -37,7 +37,7 @@ public class DijkstraAllPairs<TWeight>
 	/// <returns>An enumerable of edges representing the shortest path.</returns>
 	public IEnumerable<DirectedEdge<TWeight>> GetPath(int sourceVertex, int targetVertex)
 	{
-		return shortestPaths[sourceVertex].GetPathTo(targetVertex);
+		return shortestPaths[sourceVertex].GetEdgesOfPathTo(targetVertex);
 	}
 	
 	/// <summary>

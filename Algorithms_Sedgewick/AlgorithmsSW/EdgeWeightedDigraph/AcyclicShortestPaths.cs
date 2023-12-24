@@ -70,7 +70,7 @@ public class AcyclicShortestPaths<TWeight> : IShortestPath<TWeight>
 	public bool HasPathTo(int vertex) => graph.Comparer.Compare(distTo[vertex], maxValue) != 0;
 
 	/// <inheritdoc />
-	public IEnumerable<DirectedEdge<TWeight>> GetPathTo(int target)
+	public IEnumerable<DirectedEdge<TWeight>> GetEdgesOfPathTo(int target)
 	{
 		if (!HasPathTo(target))
 		{

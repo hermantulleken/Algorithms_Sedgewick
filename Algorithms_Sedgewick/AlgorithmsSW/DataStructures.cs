@@ -25,7 +25,7 @@ public static class DataStructures
 	
 	public static IQueue<T> Queue<T>(int capacity) => new QueueWithResizeableArray<T>(capacity);
 	
-	public static IRandomAccessList<T> List<T>() => new ResizeableArray<T>();
+	public static ResizeableArray<T> List<T>() => new ResizeableArray<T>();
 	
 	public static IRandomAccessList<T> List<T>(int capacity) => new ResizeableArray<T>(capacity);
 	
