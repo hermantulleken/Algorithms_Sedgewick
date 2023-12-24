@@ -1,6 +1,6 @@
 ﻿namespace AlgorithmsSW.PriorityQueue;
 
-public interface IPriorityQueue<T>
+public interface IPriorityQueue<T> : IEnumerable<T>
 {
 	public int Count { get; }
 

@@ -3,9 +3,11 @@ using static AlgorithmsSW.ThrowHelper;
 
 namespace AlgorithmsSW.PriorityQueue;
 
+using System.Collections;
+
 // Ex. 2.4.3
 public sealed class PriorityQueueWithOrderedArray<T> 
-	: IPriorityQueue<T> 
+	: IPriorityQueue<T>
 {
 	private readonly ResizeableArray<T> items;
 	private readonly IComparer<T> comparer;
@@ -58,4 +60,10 @@ public sealed class PriorityQueueWithOrderedArray<T>
 
 		items.InsertSorted(item, comparer);
 	}
+
+	/// <inheritdoc/>
+	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

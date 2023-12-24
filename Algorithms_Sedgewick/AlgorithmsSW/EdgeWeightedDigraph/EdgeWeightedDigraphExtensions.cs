@@ -1,5 +1,7 @@
 namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Formats.Tar;
+
 public static class EdgeWeightedDigraphExtensions
 {
 	public static void AddEdge<TWeight>(this IEdgeWeightedDigraph<TWeight> graph, int sourceVertex, int targetVertex, TWeight weight)
@@ -24,5 +26,12 @@ public static class EdgeWeightedDigraphExtensions
 		}
 		
 		return edges.First();
+	}
+	
+	public static DirectedEdge<TWeight> RemoveUniqueEdge<TWeight>(this IEdgeWeightedDigraph<TWeight> digraph, int sourceVertex, int targetVertex)
+	{
+		var edge = digraph.GetUniqueEdge(sourceVertex, targetVertex);
+		digraph.RemoveEdge(edge);
+		return edge;
 	}
 }

@@ -51,9 +51,14 @@ on types.
 
 ## 8. Pseudocode
 Pseudocode is not helpful when describing algorithms.
-Pseudocode often make small omissions that can take a fair amount of time to figure out. 
+Pseudocode often make small omissions that can take a fair amount of time to figure out. In partocular, it is not always clear
+what the range of a loop is:
+```python
+for k from 1 to n // is n included?
+    // do something
+```
 
-Compare this psuedocode for Dijkstra's k-shortest path's algorithm (from 
+Compare this pseudocode for Dijkstra's k-shortest path's algorithm (from 
 https://en.wikipedia.org/wiki/K_shortest_path_routing) with the actual code.
 
 - $P = \text{empty}$

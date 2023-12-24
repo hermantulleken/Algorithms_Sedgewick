@@ -3,8 +3,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using AlgorithmsSW.EdgeWeightedDigraph;
+using AlgorithmsSW.EdgeWeightedGraph;
 using NUnit.Framework;
-using Support;
 
 [TestFixture]
 public class KShortestPathsTests
@@ -25,46 +25,56 @@ public class KShortestPathsTests
 	}
 
 	[Test]
-	public void KShortestPaths_FirstShortestPath()
+	[TestCaseSource(nameof(GetAlgorithms))]
+	public void KShortestPaths_FirstShortestPath(Func<EdgeWeightedDigraphWithAdjacencyLists<double>, int, int, int, IKShortestPaths<double>> findPath)
 	{
-		var ksp = new KShortestPaths<double>(graph, 0, 4, 2, 0.0, (x, y) => x + y);
-		var path = ksp.GetPath(0).ToList();
-		var distance = ksp.GetDistance(0);
+		var ksp = findPath(graph, 0, 4, 2);
+		var path = ksp.GetPath(0);
+		var vertexes = path.Vertexes.ToList();
+		var distance = path.Distance;
 		
-		Console.WriteLine(ksp.GetPath(0).Pretty());
-//		Console.WriteLine(ksp.GetPath(1).Pretty());
-
-		Assert.AreEqual(new[] { 0, 1, 2, 3, 4 }, path);
+		Assert.AreEqual(new[] { 0, 1, 2, 3, 4 }, vertexes);
 		Assert.AreEqual(5.0, distance);
 	}
 
 	[Test]
-	public void KShortestPaths_SecondShortestPath()
+	[TestCaseSource(nameof(GetAlgorithms))]
+	public void KShortestPaths_SecondShortestPath(Func<EdgeWeightedDigraphWithAdjacencyLists<double>, int, int, int, IKShortestPaths<double>> findPath)
 	{
-		var ksp = new KShortestPaths<double>(graph, 0, 4, 2, 0.0, (x, y) => x + y);
-		var path = ksp.GetPath(1).ToList();
-		var distance = ksp.GetDistance(1);
+		var ksp = findPath(graph, 0, 4, 2);
+		var path = ksp.GetPath(1);
+		var vertexes = path.Vertexes.ToList();
+		double distance = path.Distance;
 
-		Assert.AreEqual(new[] { 0, 2, 3, 4 }, path);
+		Assert.AreEqual(new[] { 0, 2, 3, 4 }, vertexes);
 		Assert.AreEqual(5.5, distance);
 	}
 
 	[Test]
-	public void KShortestPaths_NoPathExists()
+	[TestCaseSource(nameof(GetAlgorithms))]
+	public void KShortestPaths_NoPathExists(Func<EdgeWeightedDigraphWithAdjacencyLists<double>, int, int, int, IKShortestPaths<double>> findPath)
 	{
 		var edge = graph.GetUniqueEdge(3, 4);
 		graph.RemoveEdge(edge); // Remove edge to make no path
-		var ksp = new KShortestPaths<double>(graph, 0, 4, 1, 0.0, (x, y) => x + y);
+		var ksp = findPath(graph, 0, 4, 1);
 
 		Assert.Throws<InvalidOperationException>(() => ksp.GetPath(0));
 		graph.AddEdge(edge);
 	}
 
 	[Test]
-	public void KShortestPaths_RequestingNonExistentPath()
+	[TestCaseSource(nameof(GetAlgorithms))]
+	public void KShortestPaths_RequestingNonExistentPath(
+		Func<EdgeWeightedDigraphWithAdjacencyLists<double>, int, int, int, IKShortestPaths<double>> findPath)
 	{
-		var ksp = new KShortestPaths<double>(graph, 0, 4, 1, 0.0, (x, y) => x + y);
+		var ksp = findPath(graph, 0, 4, 1);
 
 		Assert.Throws<InvalidOperationException>(() => ksp.GetPath(1));
+	}
+
+	private static IEnumerable<Func<EdgeWeightedDigraphWithAdjacencyLists<double>, int, int, int, IKShortestPaths<double>>> GetAlgorithms()
+	{
+		yield return (graph, source, target, k) => new KShortestPaths<double>(graph, source, target, k, 0.0, (x, y) => x + y);
+		yield return (graph, source, target, k) => new YensAlgorithm(graph, source, target, k);
 	}
 }

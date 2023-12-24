@@ -4,6 +4,8 @@ using static AlgorithmsSW.ThrowHelper;
 
 namespace AlgorithmsSW.PriorityQueue;
 
+using System.Collections;
+
 // Ex. 2.4.3
 // Note: We maintain the minimum object in the last position, as it is the cheapest to delete from.
 public sealed class PriorityQueueWithUnorderedArray<T>(IComparer<T> comparer)
@@ -65,5 +67,11 @@ public sealed class PriorityQueueWithUnorderedArray<T>(IComparer<T> comparer)
 		}
 	}
 
+	/// <inheritdoc/>
+	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+	
 	private void MoveMinToLast() => items.SwapAt(LastIndex, items.FindIndexOfMin(comparer));
 }

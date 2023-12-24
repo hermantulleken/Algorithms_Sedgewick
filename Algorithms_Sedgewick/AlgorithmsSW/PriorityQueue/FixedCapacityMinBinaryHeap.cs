@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.PriorityQueue;
 
+using System.Collections;
 using System.Diagnostics;
 using List;
 using Support;
@@ -145,8 +146,15 @@ public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T>
 	public override string ToString() => ToDebugString();
 	
 #else
+	/// <inheritdoc/>
 	public override string ToString() => ToPrettyString();
 #endif
+	
+	/// <inheritdoc/>
+	public IEnumerator<T> GetEnumerator() => items.Skip(StartIndex).Take(Count).GetEnumerator();
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	
 	public string ToPrettyString()
 		=> IsEmpty 

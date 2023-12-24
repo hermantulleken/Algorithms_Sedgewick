@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.PriorityQueue;
 
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using List;
 using Queue;
@@ -308,8 +309,40 @@ public class PriorityTree<T>
 		Count++;
 	}
 
-	public override string ToString() => root!.ToString();
+	/// <inheritdoc/>
+	public IEnumerator<T> GetEnumerator()
+	{
+		if (IsEmpty)
+		{
+			yield break;
+		}
+		
+		var queue = new QueueWithLinkedList<Node>();
+		queue.Enqueue(root!);
 
+		while (!queue.IsEmpty)
+		{
+			var nextNode = queue.Dequeue();
+			yield return nextNode.Item;
+
+			if (nextNode.LeftChild != null)
+			{
+				queue.Enqueue(nextNode.LeftChild);
+			}
+
+			if (nextNode.RightChild != null)
+			{
+				queue.Enqueue(nextNode.RightChild);
+			}
+		}
+	}
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+	/// <inheritdoc/>
+	public override string ToString() => root!.ToString();
+	
 	private Node GetFirstNodeWithEmptyChild()
 	{
 		Assert(!IsEmpty);

@@ -2,117 +2,154 @@
 
 using EdgeWeightedDigraph;
 using List;
+using PriorityQueue;
+using static System.Diagnostics.Debug;
 
-public class YensAlgorithm<TWeight>(Func<TWeight, TWeight, TWeight> add, TWeight zero, TWeight maxValue)
-{ 
-/*
-function YenKSP(Graph, source, sink, K):
-    // Determine the shortest path from the source to the sink.
-    A[0] = Dijkstra(Graph, source, sink);
-    // Initialize the set to store the potential kth shortest path.
-    B = [];
-    
-    for k from 1 to K:
-        // The spur node ranges from the first node to the next to last node in the previous k-shortest path.
-        for i from 0 to size(A[k − 1]) − 2:
-            
-            // Spur node is retrieved from the previous k-shortest path, k − 1.
-            spurNode = A[k-1].node(i);
-            // The sequence of nodes from the source to the spur node of the previous k-shortest path.
-            rootPath = A[k-1].nodes(0, i);
-            
-            for each path p in A:
-                if rootPath == p.nodes(0, i):
-                    // Remove the links that are part of the previous shortest paths which share the same root path.
-                    remove p.edge(i,i + 1) from Graph;
-            
-            for each node rootPathNode in rootPath except spurNode:
-                remove rootPathNode from Graph;
-            
-            // Calculate the spur path from the spur node to the sink.
-            // Consider also checking if any spurPath found
-            spurPath = Dijkstra(Graph, spurNode, sink);
-            
-            // Entire path is made up of the root path and spur path.
-            totalPath = rootPath + spurPath;
-            // Add the potential k-shortest path to the heap.
-            if (totalPath not in B):
-                B.append(totalPath);
-            
-            // Add back the edges and nodes that were removed from the graph.
-            restore edges to Graph;
-            restore nodes in rootPath to Graph;
-                    
-        if B is empty:
-            // This handles the case of there being no spur paths, or no spur paths left.
-            // This could happen if the spur paths have already been exhausted (added to A), 
-            // or there are no spur paths at all - such as when both the source and sink vertices 
-            // lie along a "dead end".
-            break;
-        // Sort the potential k-shortest paths by cost.
-        B.sort();
-        // Add the lowest cost path becomes the k-shortest path.
-        A[k] = B[0];
-        // In fact we should rather use shift since we are removing the first element
-        B.pop();
-    
-    return A;
-*/
+public interface IKShortestPaths<TWeight>
+{
+	bool HasPath(int k);
+	
+	DirectedPath<TWeight> GetPath(int i);
+}
 
-	public void Find(IEdgeWeightedDigraph<TWeight> digraph, int source, int target, int k)
+public class YensAlgorithm : IKShortestPaths<double>
+{
+	private Func<double, double, double> add = (x, y) => x + y;
+
+	private IComparer<double> comparer = Comparer<double>.Default;
+	private double zero = 0.0;
+	private double maxValue = double.MaxValue;
+	private DirectedPath<double>?[] A;
+	
+	public YensAlgorithm(IEdgeWeightedDigraph<double> digraph, int source, int target, int K)
 	{
-		var dijkstra = new Dijkstra<TWeight>(digraph, source, add, zero, maxValue);
-		var path = dijkstra.GetPathTo(target);
-		IEnumerable<DirectedEdge<TWeight>>[] paths = new IEnumerable<DirectedEdge<TWeight>>[k];
-		paths[0] = path;
-		var B = new ResizeableArray<IEnumerable<DirectedEdge<TWeight>>>();
-
-		for (int kk = 1; kk < k; kk++)
+		A = new DirectedPath<double>[K];
+		var dijsktra = new Dijkstra<double>(digraph, source, add, zero, maxValue);
+		
+		if(!dijsktra.HasPathTo(target))
 		{
-			for(int i = 0; i < paths[kk - 1].Count() - 1; i++)
+			return;
+		}
+		
+		var path = dijsktra.GetPathTo(target);
+		ResizeableArray<DirectedEdge<double>> removedEdges = [];
+		A[0] = path;
+		var B = DataStructures.PriorityQueue(100, new DirectedPathComparer<double>(comparer));
+		
+		for (int k = 1; k < K; k++)
+		{
+			var previousPath = A[k - 1];
+			Assert(previousPath != null);
+			
+			for (int i = 0; i < previousPath.Vertexes.Count() - 2; i++)
 			{
-				int spurNode = paths[kk - 1].ElementAt(i).Source;
-				var rootPath = paths[kk - 1].Take(i);
-
-				foreach (var p in paths)
+				int spurNode = previousPath.Vertexes[i];
+				var rootPath = Enumerable.Take(previousPath.Vertexes, i + 1);
+				Assert(rootPath.Last() == spurNode);
+				
+				foreach (var p in A.Take(k))
 				{
-					if (rootPath.SequenceEqual(p.Take(i)))
+					Assert(p != null);
+
+
+					if (k < A.Length - 1)
 					{
-						digraph.RemoveEdge(p.ElementAt(i));
+						Assert(A[k + 1] == null);
+					}
+
+					if (rootPath.SequenceEqual(Enumerable.Take(p.Vertexes, i + 1)))
+					{
+						var edge = digraph.RemoveUniqueEdge(p.Vertexes[i], p.Vertexes[i + 1]);
+						removedEdges.Add(edge);
 					}
 				}
 
-				foreach (var rootPathNode in rootPath)
+				foreach (var rootPahNode in rootPath)
 				{
-					if (rootPathNode.Source == spurNode)
+					if(rootPahNode == spurNode)
 					{
 						continue;
 					}
+					
+					var edgesToRemove = digraph
+						.GetIncidentEdges(rootPahNode)
+						.Concat(digraph.Edges.Where(edge => edge.Target == rootPahNode))
+						.ToResizableArray();
 
-					digraph.RemoveEdge(rootPathNode);
+					foreach (var edge in edgesToRemove)
+					{
+						digraph.RemoveEdge(edge);
+						removedEdges.Add(edge);
+					}
+						
 				}
 				
-				dijkstra = new Dijkstra<TWeight>(digraph, source, add, zero, maxValue);
-				var spurPath = dijkstra.GetPathTo(target);
-
-				var totalPath = rootPath.Concat(spurPath);
+				dijsktra = new Dijkstra<double>(digraph, spurNode, add, zero, maxValue);
 				
-				if (!B.Contains(totalPath))
+				if(dijsktra.HasPathTo(target))
 				{
-					B.Add(totalPath);
-				}
+					var spurPath = dijsktra.GetPathTo(target);
+					Assert(rootPath.Last() != spurPath.Vertexes.Skip(1).First()); //If not we need to skip a vert
+					var totalPath = rootPath.Concat(spurPath.Vertexes.Skip(1));
+					
+					foreach (var edge in removedEdges)
+					{
+						digraph.AddEdge(edge);
+					} 
 				
-				// restore edges to Graph;
-				// restore nodes in rootPath to Graph;
+					removedEdges.Clear();
+					
+					if (!B.Any(path => path.Vertexes.SequenceEqual(totalPath)))
+					{
+						ResizeableArray<DirectedEdge<double>> edges = [];
 
-				if (B.IsEmpty)
-				{
-					break;
+						foreach (var pairList in ListExtensions.SlidingWindow2(totalPath))
+						{
+							var pair = pairList.ToList();
+							var edge = digraph.GetUniqueEdge(pair[0], pair[1]);
+							edges.Add(edge);
+						}
+					
+						B.Push(new(edges, add));
+					}
 				}
+				else
+				{
+					foreach (var edge in removedEdges)
+					{
+						digraph.AddEdge(edge);
+					} 
 				
-				B.sort();
-				paths[k] = B[0];
-				B.pop();
+					removedEdges.Clear();
+				}
 			}
+
+			if (B.IsEmpty())
+			{
+				// This handles the case of there being no spur paths, or no spur paths left.
+				// This could happen if the spur paths have already been exhausted (added to A), 
+				// or there are no spur paths at all - such as when both the source and sink vertices 
+				// lie along a "dead end".
+				
+				break;
+			}
+
+			A[k] = B.PopMin();
+		}
+	}
+
+	public bool HasPath(int k)
+	{
+		return k >= 0 && k < A.Length && A[k] != null;
+	}
+
+	public DirectedPath<double> GetPath(int i)
+	{
+		if (!HasPath(i))
+		{
+			throw new InvalidOperationException("No path exists");
+		}
+		
+		return A[i]!;
 	}
 }

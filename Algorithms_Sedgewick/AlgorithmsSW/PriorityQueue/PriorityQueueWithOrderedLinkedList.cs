@@ -2,6 +2,8 @@
 
 namespace AlgorithmsSW.PriorityQueue;
 
+using System.Collections;
+
 // Ex. 2.4.3
 public sealed class PriorityQueueWithOrderedLinkedList<T> (IComparer<T> comparer)
 	: IPriorityQueue<T> 
@@ -35,4 +37,10 @@ public sealed class PriorityQueueWithOrderedLinkedList<T> (IComparer<T> comparer
 	}
 
 	public void Push(T item) => items.InsertSorted(item.ThrowIfNull(), comparer);
+
+	/// <inheritdoc/>
+	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

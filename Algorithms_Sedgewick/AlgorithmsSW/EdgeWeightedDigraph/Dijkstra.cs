@@ -16,6 +16,7 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 
 	private readonly Func<TWeight, TWeight, TWeight> add;
 	private readonly TWeight zero;
+	private readonly TWeight maxValue;
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Dijkstra{T}"/> class.
@@ -38,6 +39,7 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 		priorityQueue = new(graph.VertexCount, graph.Comparer);
 		this.add = add;
 		this.zero = zero;
+		this.maxValue = maxValue;
 		
 		for (int i = 0; i < graph.VertexCount; i++)
 		{
@@ -57,7 +59,8 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 	public TWeight GetDistanceTo(int vertex) => distTo[vertex];
 	
 	/// <inheritdoc />
-	public bool HasPathTo(int vertex) => graph.Comparer.Compare(distTo[vertex], zero) != 0;
+	// TODO: this is not a robust test!
+	public bool HasPathTo(int vertex) => graph.Comparer.Compare(distTo[vertex], maxValue) != 0;
 	
 	/// <inheritdoc />
 	public IEnumerable<DirectedEdge<TWeight>> GetEdgesOfPathTo(int target)
@@ -77,11 +80,11 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 		return path;
 	}
 
-	public Path<TWeight> GetPathTo(int target)
+	public DirectedPath<TWeight> GetPathTo(int target)
 	{
-		var path = GetEdgesOfPathTo(target);
-		var vertices = path.Select(edge => edge.Source);
-		return new([..vertices, target], GetDistanceTo(target));
+		var path = GetEdgesOfPathTo(target).ToResizableArray();
+		
+		return new(path, add);
 	}
 	
 	private void Relax(IReadOnlyEdgeWeightedDigraph<TWeight> graph, int vertex)

@@ -4,6 +4,8 @@ using static AlgorithmsSW.ThrowHelper;
 
 namespace AlgorithmsSW.PriorityQueue;
 
+using System.Collections;
+
 // Ex. 2.4.3
 public sealed class PriorityQueueWithUnorderedLinkedList<T>(IComparer<T> comparer) : IPriorityQueue<T> 
 {
@@ -84,4 +86,10 @@ public sealed class PriorityQueueWithUnorderedLinkedList<T>(IComparer<T> compare
 		
 		// else minNode is at the front already. 
 	}
+
+	/// <inheritdoc/>
+	public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

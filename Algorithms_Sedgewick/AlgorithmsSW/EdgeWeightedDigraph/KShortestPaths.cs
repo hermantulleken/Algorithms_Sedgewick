@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using EdgeWeightedGraph;
 using List;
 using PriorityQueue;
 using Support;
@@ -12,9 +13,9 @@ using Support;
 /// <remarks>
 /// Reference: <see href="https://en.wikipedia.org/wiki/K_shortest_path_routing"/>.
 /// </remarks>
-public class KShortestPaths<TWeight>
+public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
 {
-	private readonly ResizeableArray<Path<TWeight>> shortestPaths;
+	private readonly ResizeableArray<DirectedPath<TWeight>> shortestPaths;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="KShortestPaths{TWeight}"/> class.
@@ -35,11 +36,17 @@ public class KShortestPaths<TWeight>
 	{
 		#region PseudoCodeExample
 		shortestPaths = [];
-		var paths = new Path<TWeight>[graph.VertexCount];
+		var paths = new DirectedPath<TWeight>[graph.VertexCount];
 		int[] count = new int[graph.VertexCount];
-		var queue = DataStructures.PriorityQueue(graph.VertexCount, new PathComparer<TWeight>(graph.Comparer));
-		queue.Push(new([source], zero));
+		var queue = DataStructures.PriorityQueue(graph.VertexCount, new DirectedPathComparer<TWeight>(graph.Comparer));
+		
+		//queue.Push(new([source], zero));
 
+		foreach (var edge in graph.GetIncidentEdges(source))
+		{
+			queue.Push(new(edge));
+		}
+		
 		IterationGuard.Reset();
 		
 		while (!queue.IsEmpty() && count[target] < k)
@@ -47,7 +54,7 @@ public class KShortestPaths<TWeight>
 			IterationGuard.Inc();
 			
 			var shortestPath = queue.PopMin();
-			int lastVertex = shortestPath.Vertices[^1];
+			int lastVertex = shortestPath.TargetVertex;
 			paths[lastVertex] = shortestPath;
 			count[lastVertex]++;
 
@@ -62,12 +69,9 @@ public class KShortestPaths<TWeight>
 				if (count[u] >= k) continue;
 			*/
 
-			foreach (int adjacent in graph.GetAdjacents(lastVertex))
+			foreach (var edge in graph.GetIncidentEdges(lastVertex))
 			{
-				var newEdge = graph.GetUniqueEdge(lastVertex, adjacent);
-				var newPath = new Path<TWeight>(
-					[..shortestPath.Vertices, adjacent], 
-					add(shortestPath.Distance, newEdge.Weight));
+				var newPath = shortestPath.Combine(edge, add);
 					
 				queue.Push(newPath);
 			}
@@ -81,14 +85,14 @@ public class KShortestPaths<TWeight>
 	/// <param name="k">The rank of the path to get.</param>
 	/// <exception cref="InvalidOperationException">No path exists with the given rank.</exception>
 	/// <returns>The kth shortest path.</returns>
-	public IRandomAccessList<int> GetPath(int k)
+	public DirectedPath<TWeight> GetPath(int k)
 	{
 		if (!HasPath(k))
 		{
 			throw new InvalidOperationException($"There are only {shortestPaths.Count} paths between the source and target.");
 		}
 		
-		return shortestPaths[k].Vertices;
+		return shortestPaths[k];
 	}
 
 	/// <summary>

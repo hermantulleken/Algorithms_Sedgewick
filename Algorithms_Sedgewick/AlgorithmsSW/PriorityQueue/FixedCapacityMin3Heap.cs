@@ -5,6 +5,8 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.PriorityQueue;
 
+using System.Collections;
+
 public class FixedCapacityMin3Heap<T> : IPriorityQueue<T>
 {
 	private const int Base = 3;
@@ -135,8 +137,15 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T>
 	public override string ToString() => ToDebugString();
 	
 #else
+	/// <inheritdoc/>
 	public override string ToString() => ToPrettyString();
 #endif
+
+	/// <inheritdoc/>
+	public IEnumerator<T> GetEnumerator() => items.Take(Count).GetEnumerator();
+	
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	
 	public string ToPrettyString()
 		=> IsEmpty 

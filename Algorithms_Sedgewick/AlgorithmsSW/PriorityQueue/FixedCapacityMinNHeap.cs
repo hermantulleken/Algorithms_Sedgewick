@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.PriorityQueue;
 
+using System.Collections;
 using System.Diagnostics;
 using System.Text;
 using List;
@@ -139,8 +140,16 @@ public class FixedCapacityMinNHeap<T> : IPriorityQueue<T>
 	public override string ToString() => ToDebugString();
 	
 #else
+	/// <inheritdoc/>
 	public override string ToString() => ToPrettyString();
+	
 #endif
+	
+	/// <inheritdoc/>
+	public IEnumerator<T> GetEnumerator() => items.Take(Count).GetEnumerator();
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	
 	private bool LessAt(int i, int j) => ListExtensions.LessAt(items, i, j, comparer);
 
