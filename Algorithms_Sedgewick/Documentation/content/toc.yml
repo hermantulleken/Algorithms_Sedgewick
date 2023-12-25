@@ -2,3 +2,7 @@
   href: Observations.md
 - name: Weight types in edge-weighted graphs
   href: Weights.md
+- name: Design guides for an data structures and algorithms API
+  href: DesignGuides.md
+- name: Documentation tips
+  href: DocumentationTips.md

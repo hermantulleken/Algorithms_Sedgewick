@@ -9,7 +9,7 @@ public class TopologicalWithQueue : ITopological
 	/// <summary>
 	/// Initializes a new instance of the <see cref="TopologicalWithQueue"/> class.
 	/// </summary>
-	public TopologicalWithQueue(IDigraph digraph)
+	public TopologicalWithQueue(IReadOnlyDigraph digraph)
 	{
 		var degrees = new Degrees(digraph);
 

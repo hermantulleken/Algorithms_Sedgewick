@@ -7,6 +7,8 @@
 the contents. For example:
     - You can make a min data structure into a max structure by inverting the comparer.
     - You can make a weighted graph unweighted by changing the comparer.
+- I could easily made comparers optional by using Comparer<T>.Default, but I decided against it because it is forces me
+to always make them configurable. (If this was a real library, I would make them optional.)
 
 ## 2. Generic math
 - Similarly, there is a choice between implementing certain features using generic math or using `Func` to supply the 
@@ -77,3 +79,20 @@ https://en.wikipedia.org/wiki/K_shortest_path_routing) with the actual code.
 
 Although it is possible to make the pseudocode more precise, I think it is better to make an implementation read as 
 well as the pseudocode.
+
+## 9. Weight types
+I really regret making the type of weights in graphs generic:
+- It is a lot more work to implement. 
+- Double is adequate for most applications.
+- It leads to unusual design choices. For example, should the add function be stored in paths? If not, as I have chosen 
+to do, it leads to the point below.
+- It makes the API ugly in unexpected places, for example, you need to pass in the add function in the Combine method of
+paths. 
+
+Base on these problems, the generic math approach would have been better, although using double directly is probably 
+still the best option. 
+
+There are many other ways to improve how weights are used, for example:
+- Define a custom type that puts everything together
+- Define an interface weights must implement (this is not ideal, since then typical types need to be wrapped)
+- Define a new WeoghtComparer type that holds the extra data (not ideal to have the add function there)

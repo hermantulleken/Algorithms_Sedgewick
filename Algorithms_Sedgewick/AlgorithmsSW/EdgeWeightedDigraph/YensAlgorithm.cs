@@ -1,130 +1,50 @@
-﻿namespace AlgorithmsSW.EdgeWeightedGraph;
+﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
-using EdgeWeightedDigraph;
+using EdgeWeightedGraph;
 using List;
 using PriorityQueue;
 using static System.Diagnostics.Debug;
 
-public interface IKShortestPaths<TWeight>
+/// <summary>
+/// An implementation of Yen's algorithm of finding the k shortest paths between vertices in a directed edge weighted
+/// graph.
+/// </summary>
+/// <typeparam name="TWeight">The type of the edge weights.</typeparam>
+// 4.4.7
+public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 {
-	bool HasPath(int k);
-	
-	DirectedPath<TWeight> GetPath(int i);
-}
+	private readonly DirectedPath<TWeight>?[] shortestPaths;
 
-public class YensAlgorithm : IKShortestPaths<double>
-{
-	private Func<double, double, double> add = (x, y) => x + y;
-
-	private IComparer<double> comparer = Comparer<double>.Default;
-	private double zero = 0.0;
-	private double maxValue = double.MaxValue;
-	private DirectedPath<double>?[] A;
-	
-	public YensAlgorithm(IEdgeWeightedDigraph<double> digraph, int source, int target, int K)
+	/// <summary>
+	/// Initializes a new instance of the <see cref="YensAlgorithm{TWeight}"/> class.
+	/// </summary>
+	/// <param name="digraph">The directed graph in which to find the paths.</param>
+	/// <param name="source">The source vertex from where paths originate.</param>
+	/// <param name="target">The target vertex to which paths should lead.</param>
+	/// <param name="shortestPathCount">The number of shortest paths to find.</param>
+	/// <param name="zero">The zero value for the weight type, used in calculations.</param>
+	/// <param name="maxValue">The maximum value for the weight type, used in calculations.</param>
+	/// <param name="add">A function to add two weight values.</param>
+	public YensAlgorithm(IEdgeWeightedDigraph<TWeight> digraph, int source, int target, int shortestPathCount, TWeight zero, TWeight maxValue, Func<TWeight, TWeight, TWeight> add)
 	{
-		A = new DirectedPath<double>[K];
-		var dijsktra = new Dijkstra<double>(digraph, source, add, zero, maxValue);
+		shortestPaths = new DirectedPath<TWeight>[shortestPathCount];
+		var dijkstra = new Dijkstra<TWeight>(digraph, source, add, zero, maxValue);
 		
-		if(!dijsktra.HasPathTo(target))
+		if (!dijkstra.HasPathTo(target))
 		{
-			return;
+			return; // Nothing left to do
 		}
 		
-		var path = dijsktra.GetPathTo(target);
-		ResizeableArray<DirectedEdge<double>> removedEdges = [];
-		A[0] = path;
-		var B = DataStructures.PriorityQueue(100, new DirectedPathComparer<double>(comparer));
+		var path = dijkstra.GetPathTo(target);
+		ResizeableArray<DirectedEdge<TWeight>> removedEdges = [];
+		shortestPaths[0] = path;
+		var queue = DataStructures.PriorityQueue(100, new DirectedPathComparer<TWeight>(digraph.Comparer));
 		
-		for (int k = 1; k < K; k++)
+		for (int shortestPathIndex = 1; shortestPathIndex < shortestPathCount; shortestPathIndex++)
 		{
-			var previousPath = A[k - 1];
-			Assert(previousPath != null);
-			
-			for (int i = 0; i < previousPath.Vertexes.Count() - 2; i++)
-			{
-				int spurNode = previousPath.Vertexes[i];
-				var rootPath = Enumerable.Take(previousPath.Vertexes, i + 1);
-				Assert(rootPath.Last() == spurNode);
-				
-				foreach (var p in A.Take(k))
-				{
-					Assert(p != null);
+			FindPotentialShortestPaths(shortestPathIndex);
 
-
-					if (k < A.Length - 1)
-					{
-						Assert(A[k + 1] == null);
-					}
-
-					if (rootPath.SequenceEqual(Enumerable.Take(p.Vertexes, i + 1)))
-					{
-						var edge = digraph.RemoveUniqueEdge(p.Vertexes[i], p.Vertexes[i + 1]);
-						removedEdges.Add(edge);
-					}
-				}
-
-				foreach (var rootPahNode in rootPath)
-				{
-					if(rootPahNode == spurNode)
-					{
-						continue;
-					}
-					
-					var edgesToRemove = digraph
-						.GetIncidentEdges(rootPahNode)
-						.Concat(digraph.Edges.Where(edge => edge.Target == rootPahNode))
-						.ToResizableArray();
-
-					foreach (var edge in edgesToRemove)
-					{
-						digraph.RemoveEdge(edge);
-						removedEdges.Add(edge);
-					}
-						
-				}
-				
-				dijsktra = new Dijkstra<double>(digraph, spurNode, add, zero, maxValue);
-				
-				if(dijsktra.HasPathTo(target))
-				{
-					var spurPath = dijsktra.GetPathTo(target);
-					Assert(rootPath.Last() != spurPath.Vertexes.Skip(1).First()); //If not we need to skip a vert
-					var totalPath = rootPath.Concat(spurPath.Vertexes.Skip(1));
-					
-					foreach (var edge in removedEdges)
-					{
-						digraph.AddEdge(edge);
-					} 
-				
-					removedEdges.Clear();
-					
-					if (!B.Any(path => path.Vertexes.SequenceEqual(totalPath)))
-					{
-						ResizeableArray<DirectedEdge<double>> edges = [];
-
-						foreach (var pairList in ListExtensions.SlidingWindow2(totalPath))
-						{
-							var pair = pairList.ToList();
-							var edge = digraph.GetUniqueEdge(pair[0], pair[1]);
-							edges.Add(edge);
-						}
-					
-						B.Push(new(edges, add));
-					}
-				}
-				else
-				{
-					foreach (var edge in removedEdges)
-					{
-						digraph.AddEdge(edge);
-					} 
-				
-					removedEdges.Clear();
-				}
-			}
-
-			if (B.IsEmpty())
+			if (queue.IsEmpty())
 			{
 				// This handles the case of there being no spur paths, or no spur paths left.
 				// This could happen if the spur paths have already been exhausted (added to A), 
@@ -134,22 +54,111 @@ public class YensAlgorithm : IKShortestPaths<double>
 				break;
 			}
 
-			A[k] = B.PopMin();
+			shortestPaths[shortestPathIndex] = queue.PopMin();
+		}
+
+		return;
+
+		void RestoreGraph()
+		{
+			foreach (var edge in removedEdges)
+			{
+				digraph.AddEdge(edge);
+			}
+
+			removedEdges.Clear();
+		}
+
+		void AddPotentialPath(DirectedPath<TWeight> rootPath)
+		{
+			/*	Suppose we have a path from A to B via C.
+				We are looking for an alternative path from B to C; this is called the spur path. B is called the
+				spur vertext. (Spur in this context simply means alternative.)
+				The part between A and B is called the root path. 
+				The total path is the root path combined with the spur path. 
+			*/ 
+			var spurPath = dijkstra.GetPathTo(target);
+					
+			// These asserts confirm how the paths connect. 
+			Assert(rootPath.Vertexes.Last() == spurPath.Vertexes.First());
+			Assert(rootPath.Vertexes.Last() != spurPath.Vertexes.Skip(1).First());
+					
+			var totalPath = rootPath.Combine(spurPath, add);
+
+			if (!queue.Any(p => p.HasEqualVertices(totalPath)))
+			{
+				queue.Push(new(totalPath.Edges, add));
+			}
+		}
+
+		void RemoveOverlappingEdges(DirectedPath<TWeight> rootPath, int shortestPathIndex, int previousPathVertexIndex)
+		{
+			foreach (var shortestPath in shortestPaths.Take(shortestPathIndex))
+			{
+				Assert(shortestPath != null);
+				Assert(shortestPathIndex >= shortestPaths.Length - 1 || shortestPaths[shortestPathIndex + 1] == null);
+
+				if (rootPath.HasEqualVertices(shortestPath.Take(previousPathVertexIndex, zero, add)))
+				{
+					var edge = shortestPath.Edges[previousPathVertexIndex];
+					digraph.RemoveEdge(edge);
+					removedEdges.Add(edge);
+				}
+			}
+		}
+		
+		void RemoveRootPathVertices(DirectedPath<TWeight> rootPath)
+		{
+			foreach (int rootPahvertex in rootPath.Vertexes.SkipLast(1))
+			{
+				removedEdges.AddRange(digraph.RemoveVertex(rootPahvertex));
+			}
+		}
+
+		void FindPotentialShortestPaths(int shortestPathIndex)
+		{
+			var previousPath = shortestPaths[shortestPathIndex - 1];
+			Assert(previousPath != null);
+			
+			/*	Why do we skip the last two?
+				The last vertex in the path is the target. There is no need to find a spur path from the target to
+				itself.
+				The second-to-last vertex does not offer a new spur path that could lead to an alternative route to the
+				target. Any path from this vertex would essentially be part of the already discovered shortest path.
+			*/
+			for (int previousPathVertexIndex = 0; previousPathVertexIndex < previousPath.Vertexes.Count() - 2; previousPathVertexIndex++)
+			{
+				int spurVertex = previousPath.Vertexes[previousPathVertexIndex];
+				var rootPath = previousPath.Take(previousPathVertexIndex, zero, add);
+				
+				Assert(rootPath.Vertexes.Count() == previousPathVertexIndex + 1);
+				Assert(rootPath.Vertexes.Last() == spurVertex);
+
+				RemoveOverlappingEdges(rootPath, shortestPathIndex, previousPathVertexIndex);
+				RemoveRootPathVertices(rootPath);
+				
+				dijkstra = new(digraph, spurVertex, add, zero, maxValue);
+				
+				if (dijkstra.HasPathTo(target))
+				{
+					AddPotentialPath(rootPath);
+				}
+				
+				RestoreGraph();
+			}
 		}
 	}
 
-	public bool HasPath(int k)
-	{
-		return k >= 0 && k < A.Length && A[k] != null;
-	}
+	/// <inheritdoc/>
+	public bool HasPath(int k) => k >= 0 && k < shortestPaths.Length && shortestPaths[k] != null;
 
-	public DirectedPath<double> GetPath(int i)
+	public DirectedPath<TWeight> GetPath(int i)
 	{
 		if (!HasPath(i))
 		{
 			throw new InvalidOperationException("No path exists");
 		}
 		
-		return A[i]!;
+		return shortestPaths[i]!;
 	}
 }

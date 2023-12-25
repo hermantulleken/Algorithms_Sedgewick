@@ -111,8 +111,7 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 			cycle = cycleFinder
 				.Cycle()
 				.SlidingWindow2()
-				.Select(edgeVertices => edgeVertices.ToList())
-				.Select(edgeVertices => graph.GetUniqueEdge(edgeVertices[0], edgeVertices[1]));
+				.Select(edgeVertices => graph.GetUniqueEdge(edgeVertices.first, edgeVertices.last));
 		}
 	}
 	

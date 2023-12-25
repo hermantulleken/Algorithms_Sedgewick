@@ -40,6 +40,16 @@ public static class ComparerExtensions
 		return new ComparerToEqualityComparerAdapter<T>(comparer, getHashCode);
 	}
 	
+	public static bool ApproximatelyEqual<T>(this IComparer<T> comparer, T left, T right, T tolerance, Func<T, T, T> add)
+	{
+		comparer.ThrowIfNull();
+		tolerance.ThrowIfNull();
+		add.ThrowIfNull();
+		
+		// left <= right + tolerance or right <= left + tolerance
+		return comparer.LessOrEqual(left, add(right, tolerance)) && comparer.LessOrEqual(right, add(left, tolerance));
+	}
+	
 	public static bool Equal<T>(this IComparer<T> comparer, T left, T right) 
 		=> comparer.Compare(left, right) == 0;
 

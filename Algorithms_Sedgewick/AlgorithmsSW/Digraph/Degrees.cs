@@ -22,7 +22,7 @@ public class Degrees
 
 	public bool IsSourceless => SourcesCount == 0;
 
-	public Degrees(IDigraph digraph)
+	public Degrees(IReadOnlyDigraph digraph)
 	{
 		digraph.ThrowIfNull();
 		

@@ -15,6 +15,24 @@ public record DirectedPath<TWeight>
 
 	public TWeight Distance { get; }
 
+	private DirectedPath(ResizeableArray<DirectedEdge<TWeight>> Edges, TWeight Distance, int sourceNode, int targetNode)
+	{
+		this.Edges = Edges;
+		SourceVertex = sourceNode;
+		TargetVertex = targetNode;
+		this.Distance = Distance;
+		
+		Vertexes = Edges
+			.Select(edge => edge.Source)
+			.Append(TargetVertex)
+			.ToResizableArray();
+	}
+	
+	public DirectedPath(int singleVertex, TWeight zero)
+		: this([], zero, singleVertex, singleVertex)
+	{
+	}
+	
 	public DirectedPath(ResizeableArray<DirectedEdge<TWeight>> Edges, TWeight Distance)
 	{
 		this.Edges = Edges;
@@ -99,7 +117,23 @@ public record DirectedPath<TWeight>
 	/// <inheritdoc/>
 	public override string ToString() => Edges.Pretty();
 	
-	public DirectedPath<TWeight> Take(int count, Func<TWeight, TWeight, TWeight> add) => new(Edges.Take(count).ToResizableArray(), add);
+	public DirectedPath<TWeight> Take(int count, TWeight zero, Func<TWeight, TWeight, TWeight> add)
+	{
+		var edges = Edges.Take(count).ToResizableArray();
+		
+		return edges.IsEmpty 
+			? new(Edges[0].Source, zero) 
+			: new(edges, add);
+	}
+
+	public DirectedPath<TWeight> Skip(int count, Func<TWeight, TWeight, TWeight> add)
+	{
+		var edges = Edges.Skip(count).ToResizableArray();
+		// TODO: write code if we skip beyond one vertex
+		return edges.IsEmpty 
+			? new(Edges[^1].Target, Distance) 
+			: new(edges, add);
+	}
 	
-	public DirectedPath<TWeight> Skip(int count, Func<TWeight, TWeight, TWeight> add) => new(Edges.Skip(count).ToResizableArray(), add);
+	public bool HasEqualVertices(DirectedPath<TWeight> other) => Vertexes.SequenceEqual(other.Vertexes);
 }

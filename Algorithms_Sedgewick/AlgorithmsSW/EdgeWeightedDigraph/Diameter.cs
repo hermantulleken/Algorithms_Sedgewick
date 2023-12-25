@@ -5,7 +5,8 @@ using PathTerminals = (int source, int target);
 /// <summary>
 /// A class that finds the diameter of a directed graph.
 /// </summary>
-/// <typeparam name="TWeight"></typeparam>
+/// <typeparam name="TWeight">The type of the edge weights.</typeparam>
+// 4.4.8
 public class Diameter<TWeight>
 {
 	/// <summary>

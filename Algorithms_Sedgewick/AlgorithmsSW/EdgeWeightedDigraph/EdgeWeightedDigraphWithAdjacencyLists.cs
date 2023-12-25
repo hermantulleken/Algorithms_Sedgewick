@@ -1,5 +1,6 @@
 namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using EdgeWeightedGraph;
 using List;
 
 /// <summary>
@@ -37,6 +38,16 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 		Comparer = comparer;
 		adjacencyLists = new ResizeableArray<DirectedEdge<TWeight>>[vertexCount];
 		adjacencyLists.Fill(() => []);
+	}
+	
+	public EdgeWeightedDigraphWithAdjacencyLists(IReadOnlyEdgeWeightedGraph<TWeight> graph, IComparer<TWeight> comparer)
+		: this(graph.VertexCount, comparer)
+	{
+		foreach (var edge in graph.Edges)
+		{
+			AddEdge(new(edge.Vertex0, edge.Vertex1, edge.Weight));
+			AddEdge(new(edge.Vertex1, edge.Vertex0, edge.Weight));
+		}
 	}
 
 	/// <summary>
@@ -78,5 +89,10 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 	{
 		adjacencyLists[edge.Source].Remove(edge);
 		EdgeCount--;
+	}
+
+	public bool TryGetUniqueEdge(int pairFirst, int pairLast, out DirectedEdge<TWeight> edge)
+	{
+		throw new NotImplementedException();
 	}
 }

@@ -11,6 +11,7 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 	private DirectedEdge<TWeight>?[,] edges;
 
 	public int VertexCount { get; }
+	
 	public int EdgeCount { get; }
 	
 	public IComparer<TWeight> Comparer { get; }

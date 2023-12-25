@@ -289,7 +289,7 @@ public static class ListExtensions
 	/// </summary>
 	/// <typeparam name="T">The type of elements in the input sequence.</typeparam>
 	/// <param name="list">The input sequence from which sliding windows are generated.</param>
-	public static IEnumerable<IEnumerable<T?>> SlidingWindow2<T>(this IEnumerable<T?> list)
+	public static IEnumerable<(T? first, T? last)> SlidingWindow2<T>(this IEnumerable<T?> list)
 	{
 		var buffer = new OptimizedCapacity2Buffer<T>();
 
@@ -299,7 +299,7 @@ public static class ListExtensions
 
 			if (buffer.IsFull)
 			{
-				yield return buffer;
+				yield return (buffer.First, buffer.Last);
 			}
 		}
 	}
