@@ -46,4 +46,16 @@ public static class SymbolTableAlgorithms
 	}
 
 	public static IReadOnlySymbolTable<int, T> ToSymbolTable<T>(this IReadonlyRandomAccessList<T> list) => new ReadOnlyListAsTable<T>(list);
+	
+	public static IReadOnlySymbolTable<TKey, TValue> ToSymbolTable<TKey, TValue>(this IEnumerable<(TKey key, TValue value)> pairs, IComparer<TKey> comparer)
+	{
+		var table = DataStructures.HashTable<TKey, TValue>(comparer);
+
+		foreach (var (key, value) in pairs)
+		{
+			table[key] = value;
+		}
+
+		return table;
+	}
 }

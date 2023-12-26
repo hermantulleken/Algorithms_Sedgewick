@@ -44,6 +44,8 @@ public static class DataStructures
 	// This is actually not a good default, we need a dynamic container. 
 	public static IPriorityQueue<T> PriorityQueue<T>(int capacity, IComparer<T> comparer)
 		=> new FixedCapacityMinBinaryHeap<T>(capacity, comparer);
+	
+	public static IndexPriorityQueue<T> IndexedPriorityQueue<T>(int capacity, IComparer<T> comparer) => new(capacity, comparer);
 
 	public static IEdgeWeightedGraph<T> EdgeWeightedGraph<T>(int vertexCount, IComparer<T> comparer) 
 		=> new EdgeWeightedGraphWithAdjacencyLists<T>(vertexCount, comparer);

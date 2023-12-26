@@ -55,8 +55,8 @@ public class ParallelArrays<TKey, TValue>
 	// Copy constructor
 	private ParallelArrays(ParallelArrays<TKey, TValue> arraysToCopy)
 	{
-		keys = (ResizeableArray<TKey>)arraysToCopy.keys.Copy();
-		values = (ResizeableArray<TValue>)arraysToCopy.values.Copy();
+		keys = (ResizeableArray<TKey>)arraysToCopy.keys.ToRandomAccessList();
+		values = (ResizeableArray<TValue>)arraysToCopy.values.ToRandomAccessList();
 	}
 
 	/// <summary>

@@ -1,5 +1,6 @@
 namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+// 4.4.28
 public class AcyclicLongestPaths<TWeight> : IShortestPath<TWeight>
 {
 	private AcyclicShortestPaths<TWeight> invertedShortestPath;

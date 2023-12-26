@@ -146,7 +146,7 @@ public static class ListExtensions
 	/// Creates a new read-only random access list that contains the same elements as this list.
 	/// </summary>
 	/// <returns>A new read-only random access list that contains the same elements as this list.</returns>
-	public static IRandomAccessList<T> Copy<T>(this IEnumerable<T> list) => list.ToList().ToRandomAccessList();
+	public static IRandomAccessList<T> ToRandomAccessList<T>(this IEnumerable<T> list) => list.ToList().ToRandomAccessList();
 	
 	public static IRandomAccessList<T> ToRandomAccessList<T>(this IList<T> list) => new ListWrapper<T>(list);
 

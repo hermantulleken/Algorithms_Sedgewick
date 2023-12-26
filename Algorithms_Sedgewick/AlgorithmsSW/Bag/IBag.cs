@@ -21,5 +21,5 @@ public interface IBag<T> : IEnumerable<T>
 	/// Adds an item to the bag. 
 	/// </summary>
 	/// <param name="item">The item to add.</param>
-	public void Add(T item);
+	public void Add(T? item);
 }

@@ -45,6 +45,7 @@ public class Guard(int defaultLimit, string limitExceededMessage, string incDecM
 	{
 		counter++;
 
+		// Question: should this be an assert instead?
 		if (counter > limit)
 		{
 			throw new InvalidOperationException(limitExceededMessage);

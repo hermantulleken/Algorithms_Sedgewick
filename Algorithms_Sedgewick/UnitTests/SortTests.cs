@@ -112,7 +112,7 @@ public class SortTests
 	public void SortFunctionTest(IReadonlyRandomAccessList<int> input, Action<IRandomAccessList<int>> sortFunction)
 	{
 		int[] expectedOutput = input.OrderBy(x => x).ToArray();
-		var copy = input.Copy(); // Do not sort the original
+		var copy = input.ToRandomAccessList(); // Do not sort the original
 		sortFunction(copy);
 		Assert.That(copy, Is.EqualTo(expectedOutput));
 		Console.WriteLine(copy.Pretty());
@@ -121,7 +121,7 @@ public class SortTests
 	[TestCaseSource(nameof(SortFunctions))]
 	public void SortTest(Action<IRandomAccessList<int>> sortFunction)
 	{
-		var list = TestArray.Copy();
+		var list = TestArray.ToRandomAccessList();
 		sortFunction(list);
 		int[] expected = TestArray.OrderBy(x => x).ToArray();
 		Assert.That(list, Is.EqualTo(expected));
@@ -133,7 +133,7 @@ public class SortTests
 		int startIndex = 4;
 		int endIndex = 7;
 		
-		var list = TestArray.Copy();
+		var list = TestArray.ToRandomAccessList();
 
 		sortFunction(list, startIndex, endIndex);
 		

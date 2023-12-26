@@ -109,4 +109,18 @@ public static class EdgeWeightedDigraphExtensions
 		int StartVertex(int vertex) => vertex * 2;
 		int EndVertex(int vertex) => vertex * 2 + 1;
 	}
+	
+	public static IEdgeWeightedDigraph<TWeight> Reverse<TWeight>(this IEdgeWeightedDigraph<TWeight> graph)
+	{
+		graph.ThrowIfNull();
+
+		var reversedGraph = DataStructures.EdgeWeightedDigraph(graph.VertexCount, graph.Comparer);
+
+		foreach (var edge in graph.Edges)
+		{
+			reversedGraph.AddEdge(edge.Target, edge.Source, edge.Weight);
+		}
+		
+		return reversedGraph;
+	}
 }
