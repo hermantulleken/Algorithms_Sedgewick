@@ -4,6 +4,10 @@ using AlgorithmsSW.Stack;
 
 namespace AlgorithmsSW;
 
+/// <summary>
+/// An implementation a linear container that allows insertion and removal at both ends.
+/// </summary>
+/// <typeparam name="T">The type of elements in the steque.</typeparam>
 public class Steque<T> : IStack<T>
 {
 	private readonly DoublyLinkedList<T> items = new();

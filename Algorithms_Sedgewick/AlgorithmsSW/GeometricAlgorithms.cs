@@ -5,6 +5,12 @@ using System.Numerics;
 using List;
 using Stack;
 
+/// <summary>
+/// Provides algorithms for solving geometric problems.
+/// </summary>
+/*
+	This is mostly to provide interesting applications of the algorithms or data structures in this library.
+*/
 public static class GeometricAlgorithms
 {
 	private readonly struct PointRelativeToAnchor : IComparable<PointRelativeToAnchor>

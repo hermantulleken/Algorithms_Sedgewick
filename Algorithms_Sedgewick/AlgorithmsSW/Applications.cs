@@ -1,12 +1,15 @@
 ﻿namespace AlgorithmsSW;
 
-using AlgorithmsSW.Buffer;
-using AlgorithmsSW.GapBuffer;
-using AlgorithmsSW.List;
-using AlgorithmsSW.Stack;
+using Buffer;
+using GapBuffer;
+using List;
+using Stack;
 using Support;
 
-public static class TestAlgorithms
+/// <summary>
+/// Provides algorithms that shows applications of the data structures algorithms in this library.
+/// </summary>
+public static class Applications
 {
 	public static bool AreDelimitersBalanced(string s)
 	{ 

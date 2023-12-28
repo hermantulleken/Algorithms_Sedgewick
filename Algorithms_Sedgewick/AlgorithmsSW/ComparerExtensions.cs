@@ -1,5 +1,8 @@
 ﻿namespace AlgorithmsSW;
 
+/// <summary>
+/// Provides extension methods related to <see cref="IComparer{T}"/>.
+/// </summary>
 public static class ComparerExtensions
 {
 	private class InvertedComparer<T> : IComparer<T>

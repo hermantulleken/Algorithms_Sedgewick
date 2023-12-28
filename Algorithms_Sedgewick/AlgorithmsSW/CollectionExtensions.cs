@@ -3,6 +3,12 @@
 using List;
 using Stack;
 
+/// <summary>
+/// Provides extension methods for collections that do not belong to any specific collection type.
+/// </summary>
+/// <remarks> This includes extension methods for collections defined in this library, and collections in the standard
+/// library. 
+/// </remarks>
 public static class CollectionExtensions
 {
 	public static TStack Copy<TStack, T>(this TStack stack) 

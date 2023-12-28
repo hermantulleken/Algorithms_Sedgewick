@@ -6,6 +6,9 @@ namespace AlgorithmsSW;
 using System.Runtime.CompilerServices;
 using List;
 
+/// <summary>
+/// Provides methods that throw exceptions.
+/// </summary>
 internal static class ThrowHelper
 {
 	internal const string CapacityCannotBeNegative = "Capacity cannot be negative.";

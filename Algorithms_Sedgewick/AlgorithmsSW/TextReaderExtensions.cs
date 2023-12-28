@@ -3,6 +3,10 @@ using System.Text;
 
 namespace AlgorithmsSW;
 
+/// <summary>
+/// Provides extension methods for the <see cref="TextReader"/> class to make it easier to read in collections from
+/// a text file.
+/// </summary>
 public static class TextReaderExtensions
 {
 	public static string ReadWord(this TextReader reader)
@@ -30,7 +34,6 @@ public static class TextReaderExtensions
 		while (c != -1 && !char.IsWhiteSpace((char)c));
 		return sb.ToString();
 	}
-
 	
 	public static void ReadWhiteSpace(this TextReader reader)
 	{

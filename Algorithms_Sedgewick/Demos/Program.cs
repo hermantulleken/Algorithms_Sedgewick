@@ -1,3 +1,3 @@
 ﻿using AlgorithmsSW;
 
-int result = TestAlgorithms.GetFibonacci_Recursive(5);
+int result = Applications.GetFibonacci_Recursive(5);

@@ -15,6 +15,10 @@ using EdgeWeightedDigraph;
 /// <summary>
 /// Sensible default implementations of data structures.
 /// </summary>
+/// <remarks>
+/// This is useful when you need a container with a certain interface but you do not want to make decisions about what
+/// implementation to use. 
+/// </remarks>
 public static class DataStructures
 {
 	public static IStack<T> Stack<T>() => new StackWithResizeableArray<T>();
