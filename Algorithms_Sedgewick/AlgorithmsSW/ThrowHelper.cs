@@ -128,6 +128,17 @@ internal static class ThrowHelper
 
 		return n;
 	}
+	
+	[AssertionMethod]
+	internal static int ThrowIfNotPositive(this int n, [CallerArgumentExpression("n")] string? objArgName = null)
+	{
+		if (n <= 0)
+		{
+			throw new ArgumentOutOfRangeException(objArgName);
+		}
+
+		return n;
+	}
 
 	internal static void ThrowIfVersionMismatch(this int version, int expectedVersion)
 	{

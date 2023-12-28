@@ -1,10 +1,9 @@
-﻿using AlgorithmsSW.SearchTrees;
-
-namespace UnitTests;
+﻿namespace UnitTests;
 
 using System.Collections.Generic;
+using AlgorithmsSW.SearchTrees;
 using AlgorithmsSW.SymbolTable;
-using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 [TestFixture]
 public class OrderedSymbolTableTests

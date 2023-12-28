@@ -1,5 +1,7 @@
 ﻿namespace Support;
 
+using System.Diagnostics;
+
 /// <summary>
 /// A class that can be used to count things (typically executions) and throw an exception if the count exceeds a limit. 
 /// </summary>
@@ -41,6 +43,10 @@ public class Guard(int defaultLimit, string limitExceededMessage, string incDecM
 	/// Increments the counter.
 	/// </summary>
 	/// <exception cref="InvalidOperationException">The limit is exceeded.</exception>
+	/*	Hidden from the debugger so that we get the breakpoint at the call site and not here or down the line. See
+		also IterationGuard.Inc and RecursionDepthGuard.Inc.
+	*/
+	[DebuggerHidden]
 	public void Inc()
 	{
 		counter++;

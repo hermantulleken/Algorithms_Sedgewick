@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿namespace UnitTests;
+
+using System.Collections.Generic;
 using AlgorithmsSW.HashTable;
 using AlgorithmsSW.SearchTrees;
-
-namespace UnitTests;
-
 using AlgorithmsSW.SymbolTable;
 using NUnit.Framework;
 

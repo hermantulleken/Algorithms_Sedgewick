@@ -1,8 +1,7 @@
+namespace UnitTests;
+
 using System.Collections.Generic;
 using AlgorithmsSW.List;
-using NUnit.Framework;
-
-namespace UnitTests;
 
 [TestOf(typeof(ResizeableArray<>))]
 public class ResizeableArrayTest

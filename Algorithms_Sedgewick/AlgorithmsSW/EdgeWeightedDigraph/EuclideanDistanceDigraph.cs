@@ -23,7 +23,7 @@ public class EuclideanDistanceDigraph : IEdgeWeightedDigraph<double>
 	public IComparer<double> Comparer => graph.Comparer;
 
 	/// <inheritdoc/>
-	public IEnumerable<DirectedEdge<double>> Edges => graph.Edges;
+	public IEnumerable<DirectedEdge<double>> WeightedEdges => graph.WeightedEdges;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="EuclideanDistanceDigraph"/> class.

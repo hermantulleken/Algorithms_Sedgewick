@@ -42,6 +42,8 @@ public interface IReadOnlyDigraph
 	}
 
 	bool AreAdjacent(int item1, int item2) => GetAdjacents(item1).Contains(item2);
+	
+	public IEnumerable<(int source, int target)> Edges { get; }
 }
 
 public interface IDigraph : IReadOnlyDigraph

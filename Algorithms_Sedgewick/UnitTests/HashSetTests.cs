@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
+﻿namespace UnitTests;
+
+using System.Collections.Generic;
 using AlgorithmsSW;
 using AlgorithmsSW.Object;
-
-namespace UnitTests;
-
-using NUnit.Framework;
 
 [TestFixture]
 public class HashSetTests

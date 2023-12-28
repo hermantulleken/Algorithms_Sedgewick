@@ -49,7 +49,7 @@ public class BoruvkasAlgorithm<TWeight>
 	{
 		Edge<TWeight>?[] minEdge = new Edge<TWeight>[graph.VertexCount];
 
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			int component1 = unionFind.GetComponentIndex(edge.Vertex0);
 			int component2 = unionFind.GetComponentIndex(edge.Vertex1);

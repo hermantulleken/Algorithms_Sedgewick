@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿namespace UnitTests;
 
-namespace UnitTests;
+using System.Collections.Generic;
 
 public class SharedData
 {

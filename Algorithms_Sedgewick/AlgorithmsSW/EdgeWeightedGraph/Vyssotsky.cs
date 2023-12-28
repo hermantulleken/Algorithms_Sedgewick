@@ -14,7 +14,7 @@ public class Vyssotsky<T> : IMst<T>
 	{
 		var putativeTree = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
 
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			putativeTree.AddEdge(edge);
 			
@@ -45,7 +45,7 @@ public class Vyssotsky<T> : IMst<T>
 
 		minimumSpanningTree = DataStructures.Queue<Edge<T>>();
 		
-		foreach (var edge in putativeTree.Edges)
+		foreach (var edge in putativeTree.WeightedEdges)
 		{
 			minimumSpanningTree.Enqueue(edge);
 		}

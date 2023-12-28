@@ -37,7 +37,7 @@ public class BoruvkasAlgorithmImproved<TWeight>
 			IterationGuard.Inc();
 			minEdge.Fill((Edge<TWeight>?) null);
 			
-			foreach (var edge in graph.Edges)
+			foreach (var edge in graph.WeightedEdges)
 			{
 				int component0 = component[edge.Vertex0];
 				int component1 = component[edge.Vertex1];

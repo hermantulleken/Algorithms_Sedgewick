@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using AlgorithmsSW.Stack;
-
-namespace UnitTests;
+﻿namespace UnitTests;
 
 using System;
+using System.Collections.Generic;
 using AlgorithmsSW.GapBuffer;
+using AlgorithmsSW.Stack;
 using NUnit.Framework;
 
 [TestFixture]

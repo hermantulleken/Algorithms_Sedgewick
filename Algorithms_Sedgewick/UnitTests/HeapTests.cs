@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿namespace UnitTests;
 
-namespace UnitTests;
-
+using System.Collections.Generic;
 using AlgorithmsSW.PriorityQueue;
 using NUnit.Framework;
 using Support;

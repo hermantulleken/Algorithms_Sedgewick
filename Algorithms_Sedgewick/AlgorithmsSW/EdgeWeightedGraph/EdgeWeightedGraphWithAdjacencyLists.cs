@@ -22,7 +22,7 @@ public class EdgeWeightedGraphWithAdjacencyLists<TWeight>
 	public IEnumerable<int> Vertexes => Enumerable.Range(0, VertexCount);
 
 	/// <inheritdoc />
-	public IEnumerable<Edge<TWeight>> Edges => 
+	public IEnumerable<Edge<TWeight>> WeightedEdges => 
 		from vertex in Vertexes 
 		from edge in GetIncidentEdges(vertex) 
 		where vertex <= edge.OtherVertex(vertex)
@@ -62,7 +62,7 @@ public class EdgeWeightedGraphWithAdjacencyLists<TWeight>
 	}
 
 	public EdgeWeightedGraphWithAdjacencyLists(EdgeWeightedGraphWithAdjacencyLists<TWeight> graph)
-		: this(graph.VertexCount, graph.Edges, graph.Comparer)
+		: this(graph.VertexCount, graph.WeightedEdges, graph.Comparer)
 	{
 	}
 
@@ -128,14 +128,14 @@ public class EdgeWeightedGraphWithAdjacencyLists<TWeight>
 	
 	/// <inheritdoc />
 	public IEnumerator<(int vertex0, int vertex1)> GetEnumerator() 
-		=> Edges.Select(edge => (edge.Vertex0, edge.Vertex1)).GetEnumerator();
+		=> WeightedEdges.Select(edge => (edge.Vertex0, edge.Vertex1)).GetEnumerator();
 
 	/// <inheritdoc />
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 	/// <inheritdoc />
 	// 4.3.17
-	public override string ToString() => Edges.AsText().Bracket();
+	public override string ToString() => WeightedEdges.AsText().Bracket();
 	
 	private void ValidateVertex(int vertex)
 	{

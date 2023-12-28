@@ -1,7 +1,6 @@
-﻿using AlgorithmsSW.List;
-using NUnit.Framework;
+﻿namespace UnitTests;
 
-namespace UnitTests;
+using AlgorithmsSW.List;
 
 [Parallelizable]
 public class LinkedListWithPooledNodes

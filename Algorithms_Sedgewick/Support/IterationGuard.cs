@@ -38,11 +38,13 @@ public static class IterationGuard
 	/// <summary>
 	/// This resets the counter to zero and sets the limit to the specified value.
 	/// </summary>
-	/// <param name="limit"></param>
 	/// <remarks>Call this before the iteration starts. </remarks>
 	[Conditional(Diagnostics.DebugDefine)]
 	public static void Reset(int limit = DefaultLimit) => Guard.Reset(limit);
 	
-	[Conditional(Diagnostics.DebugDefine)]
+	/*	Hidden from the debugger so that we get the breakpoint at the call site and not here or down the line. For this
+		to work Guard.Inc must also be hidden.
+	*/
+	[Conditional(Diagnostics.DebugDefine), DebuggerHidden]
 	public static void Inc() => Guard.Inc();
 }

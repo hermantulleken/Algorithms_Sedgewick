@@ -99,7 +99,21 @@ public sealed class DigraphWithAdjacentsLists : IDigraph, IEnumerable<(int verte
 	
 	/// <inheritdoc />
 	public IEnumerable<int> GetAdjacents(int vertex) => adjacents[vertex];
-	
+
+	public IEnumerable<(int, int)> Edges
+	{
+		get
+		{
+			for (int i = 0; i < VertexCount; i++)
+			{
+				foreach (int j in adjacents[i])
+				{
+					yield return (i, j);
+				}
+			}
+		}
+	}
+
 	/// <summary>
 	/// Checks if the graph contains an edge between from one vertex to another.
 	/// </summary>

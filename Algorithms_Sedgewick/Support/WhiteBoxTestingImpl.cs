@@ -18,6 +18,8 @@ public static partial class WhiteBoxTesting
 
 	public static partial void __AddSwap() => __Add("Swap");
 
+	public static partial void __AddIteration() => __Add("Iteration");
+
 	public static partial void __ClearWhiteBoxContainers()
 	{
 		Counter.Clear();
@@ -77,6 +79,11 @@ public static partial class WhiteBoxTesting
 	// ReSharper disable once UnusedParameterInPartialMethod
 	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	internal static partial void __Add(string name)
+	{
+	}
+	
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
+	public static partial void __AddIteration()
 	{
 	}
 }

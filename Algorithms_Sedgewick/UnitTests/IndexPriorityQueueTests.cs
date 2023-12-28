@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using AlgorithmsSW.PriorityQueue;
-using NUnit.Framework;
 
 [TestFixture, Parallelizable]
 public class IndexPriorityQueueTests

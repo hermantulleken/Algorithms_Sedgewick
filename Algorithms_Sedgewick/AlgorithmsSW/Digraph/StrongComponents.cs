@@ -49,7 +49,7 @@ public class StrongComponents
 	/// Gets the component ID of a given vertex.
 	/// </summary>
 	/// <param name="vertex">The vertex to get the component ID of.</param>
-	public int GetComponentId(int vertex) => componentIds[vertex];
+	public int GetComponentIndex(int vertex) => componentIds[vertex];
 	
 	/// <summary>
 	/// Gets a value indicating whether two vertices are strongly connected.

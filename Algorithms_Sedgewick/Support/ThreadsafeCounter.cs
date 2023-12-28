@@ -39,4 +39,7 @@ public class ThreadsafeCounter<T>
 	public int GetCount(T item) => counts.ContainsKey(item) ? counts[item] : 0;
 
 	public void Clear() => counts.Clear();
+
+	/// <inheritdoc/>
+	public override string ToString() => counts.Pretty();
 }

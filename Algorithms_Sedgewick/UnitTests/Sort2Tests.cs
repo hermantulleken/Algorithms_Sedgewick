@@ -1,8 +1,9 @@
-﻿using AlgorithmsSW.List;
-using AlgorithmsSW.Sort;
-using NUnit.Framework;
+﻿
 
 namespace UnitTests;
+
+using AlgorithmsSW.List;
+using AlgorithmsSW.Sort;
 
 [TestFixture]
 public class Sort2Tests

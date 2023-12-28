@@ -1,5 +1,8 @@
 ﻿namespace AlgorithmsSW.Digraph;
 
+using List;
+using static System.Diagnostics.Debug;
+
 public static class Algorithms
 {
 	/// <summary>
@@ -46,4 +49,63 @@ public static class Algorithms
 
 		return !outOfOrderVertices.Any();
 	}
+	
+	public static void ConnectComponents(this IDigraph graph)
+	{
+		var strongConnectivity = new StrongComponents(graph);
+
+		int numberOfVertices = graph.VertexCount;
+		int numberOfComponents = strongConnectivity.ComponentCount;
+
+		if (strongConnectivity.ComponentCount == 1)
+		{
+			return;
+		}
+
+		int[] componentRepresentatives = new int[numberOfComponents];
+		componentRepresentatives.Fill(-1);
+		int componentsFound = 0;
+
+		// Finding representatives for each strongly connected component
+		for (int vertex = 0; vertex < numberOfVertices; vertex++)
+		{
+			int componentIndex = strongConnectivity.GetComponentIndex(vertex);
+
+			if (componentRepresentatives[componentIndex] != -1)
+			{
+				continue; // We already have a representative for this component
+			}
+
+			componentRepresentatives[componentIndex] = vertex;
+			componentsFound++;
+
+			if (componentsFound == numberOfComponents)
+			{
+				break; // We have found all representatives
+			}
+		}
+
+		Assert(componentsFound == numberOfComponents);
+
+		// Connect the components in order
+		for (int i = 0; i < numberOfComponents - 1; i++)
+		{
+			int vertex0 = componentRepresentatives[i];
+			int vertex1 = componentRepresentatives[i + 1];
+
+			Assert(vertex0 != -1);
+			Assert(vertex1 != -1);
+			Assert(vertex0 != vertex1);
+
+			// Adding a directed edge from the representative of one component to the next
+			graph.AddEdge(vertex0, vertex1);
+			graph.AddEdge(vertex1, vertex0);
+		}
+
+#if DEBUG
+    strongConnectivity = new StrongComponents(graph);
+    Assert(strongConnectivity.ComponentCount == 1);
+#endif
+	}
+
 }

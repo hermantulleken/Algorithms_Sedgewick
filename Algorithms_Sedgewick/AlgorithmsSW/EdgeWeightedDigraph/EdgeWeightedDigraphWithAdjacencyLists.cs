@@ -25,7 +25,7 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 	public IComparer<TWeight> Comparer { get; }
 
 	/// <inheritdoc />
-	public IEnumerable<DirectedEdge<TWeight>> Edges => adjacencyLists.SelectMany(list => list);
+	public IEnumerable<DirectedEdge<TWeight>> WeightedEdges => adjacencyLists.SelectMany(list => list);
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="EdgeWeightedDigraphWithAdjacencyLists{TWeight}"/> class.
@@ -43,7 +43,7 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 	public EdgeWeightedDigraphWithAdjacencyLists(IReadOnlyEdgeWeightedGraph<TWeight> graph, IComparer<TWeight> comparer)
 		: this(graph.VertexCount, comparer)
 	{
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			AddEdge(new(edge.Vertex0, edge.Vertex1, edge.Weight));
 			AddEdge(new(edge.Vertex1, edge.Vertex0, edge.Weight));
@@ -68,12 +68,12 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 				
 			- We need to have code that looks if the graph is of the right type. 
 		*/
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			AddEdge(edge);
 		}
 	}
-
+	
 	/// <inheritdoc />
 	public IEnumerable<DirectedEdge<TWeight>> GetIncidentEdges(int vertex) => adjacencyLists[vertex];
 

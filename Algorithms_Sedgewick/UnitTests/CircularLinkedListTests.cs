@@ -1,7 +1,6 @@
-﻿using System.Linq;
+﻿namespace UnitTests;
 
-namespace UnitTests;
-
+using System.Linq;
 using AlgorithmsSW.List;
 using NUnit.Framework;
 

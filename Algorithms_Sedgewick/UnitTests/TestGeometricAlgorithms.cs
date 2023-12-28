@@ -1,13 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using static Support.Tools;
+﻿namespace UnitTests;
 
-namespace UnitTests;
-
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using AlgorithmsSW;
 using NUnit.Framework;
 using Support;
+using static Support.Tools;
 
 [Parallelizable]
 [SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = PerformanceOkForTesting)]

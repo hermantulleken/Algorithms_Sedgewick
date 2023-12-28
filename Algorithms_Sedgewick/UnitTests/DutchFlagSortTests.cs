@@ -1,8 +1,7 @@
-﻿using AlgorithmsSW.List;
-using AlgorithmsSW.Sort;
-using NUnit.Framework;
+﻿namespace UnitTests;
 
-namespace UnitTests;
+using AlgorithmsSW.List;
+using AlgorithmsSW.Sort;
 
 [TestFixture]
 public class DutchFlagSortTests

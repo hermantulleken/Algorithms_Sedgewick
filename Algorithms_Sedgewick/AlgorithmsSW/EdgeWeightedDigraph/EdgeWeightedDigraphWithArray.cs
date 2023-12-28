@@ -16,7 +16,7 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 	
 	public IComparer<TWeight> Comparer { get; }
 
-	public IEnumerable<DirectedEdge<TWeight>> Edges
+	public IEnumerable<DirectedEdge<TWeight>> WeightedEdges
 	{
 		get
 		{

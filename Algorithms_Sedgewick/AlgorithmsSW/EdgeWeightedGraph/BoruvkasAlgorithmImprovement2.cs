@@ -32,7 +32,7 @@ public class BoruvkasAlgorithmImprovement2<TWeight> : IMst<TWeight>
 
 			var minEdges = new Edge<TWeight>?[edgeWeightedGraph.VertexCount];
 
-			foreach (var edge in edgeWeightedGraph.Edges)
+			foreach (var edge in edgeWeightedGraph.WeightedEdges)
 			{
 				int vertex0 = edge.Vertex0;
 				int vertex1 = edge.Vertex1;

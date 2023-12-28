@@ -1,14 +1,14 @@
-﻿using System.Linq;
-using AlgorithmsSW;
-using AlgorithmsSW.List;
-using AlgorithmsSW.Object;
-using AlgorithmsSW.Pool;
-using AlgorithmsSW.Queue;
-using NUnit.Framework;
-using Support;
-using static AlgorithmsSW.Sort.Sort;
+﻿
 
 namespace UnitTests;
+
+using System.Linq;
+using AlgorithmsSW;
+using AlgorithmsSW.List;
+using AlgorithmsSW.Pool;
+using AlgorithmsSW.Queue;
+using Support;
+using static AlgorithmsSW.Sort.Sort;
 
 [Parallelizable]
 public class SortTests

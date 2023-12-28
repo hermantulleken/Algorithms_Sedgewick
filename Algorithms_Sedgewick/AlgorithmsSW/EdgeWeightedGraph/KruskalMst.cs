@@ -17,7 +17,7 @@ public class KruskalMst<T> : IMst<T>
 		
 		IPriorityQueue<Edge<T>> priorityQueue = new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));
 		
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			priorityQueue.Push(edge);
 		}
@@ -61,7 +61,7 @@ public class KruskalMst<T> : IMst<T>
 		IPriorityQueue<Edge<T>> priorityQueue 
 			= new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));
 		
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			if (!mst.Contains(edge))
 			{

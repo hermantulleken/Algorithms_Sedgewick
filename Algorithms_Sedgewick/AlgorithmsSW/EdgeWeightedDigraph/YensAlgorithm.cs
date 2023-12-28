@@ -11,6 +11,9 @@ using static System.Diagnostics.Debug;
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 // 4.4.7
+/*	Implementation note: This is an example of an algorithm that is too difficult (or obscure) for ChatGPT to implement,
+ 	as of Dec 2023.
+*/
 public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 {
 	private readonly DirectedPath<TWeight>?[] shortestPaths;
@@ -73,7 +76,7 @@ public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 		{
 			/*	Suppose we have a path from A to B via C.
 				We are looking for an alternative path from B to C; this is called the spur path. B is called the
-				spur vertext. (Spur in this context simply means alternative.)
+				spur vertex. (Spur in this context simply means alternative.)
 				The part between A and B is called the root path. 
 				The total path is the root path combined with the spur path. 
 			*/ 

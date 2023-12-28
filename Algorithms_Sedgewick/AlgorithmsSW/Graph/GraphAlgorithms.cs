@@ -170,4 +170,28 @@ public static class GraphAlgorithms
 		Assert(connectivity.IsConnected);
 		#endif
 	}
+
+	// This is a helper for a version of 4.4.33 (Combine with undirected graph version of ToEdgeWeightedDigraph). 
+	public static GridGraph GetFullGrid(int width, int height)
+	{
+		var graph = new GridGraph(width, height);
+
+		for (int j = 0; j < height; j++)
+		{
+			for (int i = 0; i < width - 1; i++)
+			{
+				graph.AddEdge((i, j), (i + 1, j));
+			}
+		}
+
+		for (int j = 0; j < height - 1; j++)
+		{
+			for (int i = 0; i < width; i++)
+			{
+				graph.AddEdge((i, j), (i, j + 1));
+			}
+		}
+
+		return graph;
+	}
 }

@@ -1,7 +1,6 @@
-﻿using AlgorithmsSW;
-using NUnit.Framework;
+﻿namespace UnitTests;
 
-namespace UnitTests;
+using AlgorithmsSW;
 
 [TestFixture]
 public class MedianTests

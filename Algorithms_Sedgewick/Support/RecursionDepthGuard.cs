@@ -44,12 +44,15 @@ public static class RecursionDepthGuard
 	/// <summary>
 	/// Increases the recursion depth counter.
 	/// </summary>
-	[Conditional(Diagnostics.DebugDefine)]
+	[Conditional(Diagnostics.DebugDefine), DebuggerHidden]
 	public static void Inc() => Guard.Inc();
 	
 	/// <summary>
 	/// Decreases the recursion depth counter.
 	/// </summary>
+	/*	Hidden from the debugger so that we get the breakpoint at the call site and not here or down the line. For this
+		to work Guard.Inc must also be hidden.
+	*/
 	[Conditional(Diagnostics.DebugDefine)]
 	public static void Dec() => Guard.Dec();
 }

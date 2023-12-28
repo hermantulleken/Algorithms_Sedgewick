@@ -10,6 +10,9 @@ public static partial class WhiteBoxTesting
 	public static partial void __AddPass();
 
 	public static partial void __AddSwap();
+	
+
+	public static partial void __AddIteration();
 
 	public static partial void __ClearWhiteBoxContainers();
 	

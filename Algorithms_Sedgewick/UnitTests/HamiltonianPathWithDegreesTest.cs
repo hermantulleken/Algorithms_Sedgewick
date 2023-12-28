@@ -1,8 +1,6 @@
-﻿using AlgorithmsSW.Digraph;
+﻿namespace UnitTests;
 
-using NUnit.Framework;
-
-namespace UnitTests;
+using AlgorithmsSW.Digraph;
 
 [TestFixture, Parallelizable]
 public class HamiltonianPathWithDegreesTest

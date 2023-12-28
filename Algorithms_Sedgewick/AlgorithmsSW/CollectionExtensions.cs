@@ -18,7 +18,7 @@ public static class CollectionExtensions
 		return copy;
 	}
 
-	public static ResizeableArray<T> Copy<T>(this ResizeableArray<T> array)
+	public static ResizeableArray<T> ToResizableArray<T>(this ResizeableArray<T> array)
 	{
 		var newArray = new ResizeableArray<T>(array.Capacity);
 		

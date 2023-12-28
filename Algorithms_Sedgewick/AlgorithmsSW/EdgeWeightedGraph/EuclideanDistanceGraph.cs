@@ -73,7 +73,7 @@ public class EuclideanDistanceGraph : IEdgeWeightedGraph<double>
 	public IComparer<double> Comparer => graph.Comparer;
 
 	/// <inheritdoc />
-	public IEnumerable<Edge<double>> Edges => graph.Edges;
+	public IEnumerable<Edge<double>> WeightedEdges => graph.WeightedEdges;
 
 	/// <inheritdoc />
 	public IEnumerable<Edge<double>> GetIncidentEdges(int vertex) => graph.GetIncidentEdges(vertex);

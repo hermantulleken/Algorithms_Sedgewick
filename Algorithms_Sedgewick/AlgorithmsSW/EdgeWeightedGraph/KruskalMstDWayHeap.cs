@@ -23,7 +23,7 @@ public class KruskalMstDWayHeap<TWeight> : IMst<TWeight>
 		minimumSpanningTree = new Queue<Edge<TWeight>>();
 		var priorityQueue = new FixedCapacityMinNHeap<Edge<TWeight>>(heapDegree, graph.EdgeCount, new EdgeComparer<TWeight>(graph.Comparer));
 
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			priorityQueue.Push(edge);
 		}

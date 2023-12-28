@@ -63,12 +63,12 @@ public static class EdgeWeightedDigraphExtensions
 		return edge;
 	}
 
-	// 4.4.22
+
 	public static IEnumerable<DirectedEdge<TWeight>> RemoveVertex<TWeight>(this IEdgeWeightedDigraph<TWeight> graph, int vertex)
 	{
 		var edgesToRemove = graph
 			.GetIncidentEdges(vertex)
-			.Concat(graph.Edges.Where(edge => edge.Target == vertex))
+			.Concat(graph.WeightedEdges.Where(edge => edge.Target == vertex))
 			.ToResizableArray();
 
 		foreach (var edge in edgesToRemove)
@@ -79,6 +79,7 @@ public static class EdgeWeightedDigraphExtensions
 		return edgesToRemove;
 	}
 
+	// 4.4.22
 	public static IEdgeWeightedDigraph<TWeight> ToEdgeWeightedDigraph<TWeight>(
 		this IReadOnlyDigraph graph, 
 		TWeight[] vertexWeights, 
@@ -116,7 +117,7 @@ public static class EdgeWeightedDigraphExtensions
 
 		var reversedGraph = DataStructures.EdgeWeightedDigraph(graph.VertexCount, graph.Comparer);
 
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			reversedGraph.AddEdge(edge.Target, edge.Source, edge.Weight);
 		}

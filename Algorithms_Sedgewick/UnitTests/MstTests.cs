@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿namespace UnitTests;
+
+using System.Collections.Generic;
 using System.Linq;
 using AlgorithmsSW.EdgeWeightedGraph;
-using NUnit.Framework;
-
-namespace UnitTests;
 
 [TestFixture]
 public class MstTests

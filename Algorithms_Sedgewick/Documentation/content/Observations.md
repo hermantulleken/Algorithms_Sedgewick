@@ -95,4 +95,9 @@ still the best option.
 There are many other ways to improve how weights are used, for example:
 - Define a custom type that puts everything together
 - Define an interface weights must implement (this is not ideal, since then typical types need to be wrapped)
-- Define a new WeoghtComparer type that holds the extra data (not ideal to have the add function there)
+- Define a new WeightComparer type that holds the extra data (not ideal to have the add function there)
+
+## 10. Benchmark Input Data
+- It is important to be able to generate test data quickly so that benchmarks can run quickly too. 
+- Test data needs to ne verified. It has happened more than once that generation has bugs in leading to degenerate test 
+cases. This skew benchmarks, and leads to a lot of looking for the issue in the algorithm rather than the data. 

@@ -279,7 +279,7 @@ internal static class Program
 				nameof(Sort.QuickSort),
 			};
 
-			var times = Timer.Time(sorters, () => items.Copy());
+			var times = Timer.Time(sorters, () => items.ToResizableArray());
 
 			foreach (var line in names.Zip(times))
 			{
@@ -354,7 +354,7 @@ internal static class Program
 			nameof(RingBuffer<float>),
 		};
 		
-		var times = Timer.Time(tests, () => sourceList.Copy());
+		var times = Timer.Time(tests, () => sourceList.ToResizableArray());
 		
 		foreach (var line in names.Zip(times))
 		{

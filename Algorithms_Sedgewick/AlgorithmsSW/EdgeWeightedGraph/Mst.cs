@@ -115,7 +115,7 @@ public class Mst
 	{
 		Edge<T>? minEdge = null;
 
-		foreach (var e in graph.Edges)
+		foreach (var e in graph.WeightedEdges)
 		{
 			if ((!component0.Contains(e.Vertex0) || !component1.Contains(e.Vertex1)) &&
 				(!component1.Contains(e.Vertex0) || !component0.Contains(e.Vertex1)))
@@ -149,7 +149,7 @@ public class Mst
 		var componentsAlgo = new Components<T>(graph);
 		var components = new EdgeWeightedGraphWithAdjacencyLists<T>?[componentsAlgo.ComponentCount];		
 		
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			int componentIndex = componentsAlgo.GetComponentId(edge.Vertex0);
 
@@ -165,7 +165,7 @@ public class Mst
 	{
 		var mstEdges = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
 		var unionFind = new UnionFind(graph.VertexCount);
-		var sortedEdges = graph.Edges.OrderBy(edge => edge.Weight);
+		var sortedEdges = graph.WeightedEdges.OrderBy(edge => edge.Weight);
 
 		foreach (var edge in sortedEdges)
 		{
@@ -246,7 +246,7 @@ public class Mst
 	{
 		var joiningEdges = DataStructures.Set(comparer);
 		
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			int vertex0 = edge.Vertex0;
 			int vertex1 = edge.Vertex1;

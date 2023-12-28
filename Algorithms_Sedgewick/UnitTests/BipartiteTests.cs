@@ -1,7 +1,6 @@
-﻿using AlgorithmsSW.Graph;
-using NUnit.Framework;
+﻿namespace UnitTests;
 
-namespace UnitTests;
+using AlgorithmsSW.Graph;
 
 [TestFixture]
 public class BipartiteTests
@@ -33,7 +32,7 @@ public class BipartiteTests
 	{
 		var emptyGraph = Graph.CreateEmptyGraph(Factory, 4);
 		var bipartite = Bipartite.Build(emptyGraph);
-		Assert.IsTrue(bipartite.IsBipartite);
+		Assert.That(bipartite.IsBipartite, Is.True);
 	}
 	
 	[Test]

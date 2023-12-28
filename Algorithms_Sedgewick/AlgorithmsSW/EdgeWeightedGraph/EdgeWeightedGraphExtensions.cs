@@ -48,7 +48,7 @@ public static class EdgeWeightedGraphExtensions
 	{
 		var digraph = DataStructures.EdgeWeightedDigraph(graph.VertexCount, graph.Comparer);
 		
-		foreach (var edge in graph.Edges)
+		foreach (var edge in graph.WeightedEdges)
 		{
 			var directedEdge = new DirectedEdge<TWeight>(edge.Vertex0, edge.Vertex1, edge.Weight);
 			var oppositeDirectedEdge = new DirectedEdge<TWeight>(edge.Vertex1, edge.Vertex0, edge.Weight);
