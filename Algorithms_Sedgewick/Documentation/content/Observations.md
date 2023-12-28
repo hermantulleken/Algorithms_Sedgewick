@@ -101,3 +101,36 @@ There are many other ways to improve how weights are used, for example:
 - It is important to be able to generate test data quickly so that benchmarks can run quickly too. 
 - Test data needs to ne verified. It has happened more than once that generation has bugs in leading to degenerate test 
 cases. This skew benchmarks, and leads to a lot of looking for the issue in the algorithm rather than the data. 
+
+## 11. Adapting algorithms from other sources
+There is almost always things you do not like about an algorithm implemented by someone else: maybe they start their 
+indexes at 1 or they use arrays instead of `IEnumerable`s. 
+
+However, it is important to not adapt and refactor at the same time; even small refactorings can introduce bugs, and
+you will waste a lot of time debugging wondering whether the original code is faulty or whether it's because of your
+changes.
+
+Here is my recommended procedure for adapting algorithms to your own system:
+
+1. If it is implemented in another language, and it is reasonably fast to get it up and running, run tests in the 
+algorithm without modification. Generate some tests, and make them easy to compare to similar tests in your target
+language (once you have them).
+
+2. Now convert it to your target language, making as few modification as possible. Do not change the types of data 
+structures used, or small math details. For example, do not change if(x < y) to if(y >= x). Now replicate the tests you 
+made in 1, and compare the results. 
+
+3. Now create proper unit tests for the algorithm, and run them against the translated code. For any tests that fail, 
+test whether the same results are in the original code, so that you can see if the bug s with the translation. 
+
+4. Once your tests pass, you can start the refactoring. Keep all the original code too; if it is defined in a class, 
+define a new class. Keeping the original code allows you to examine internals to make it easier to find where the
+refactored version deviates. It also allows you to run benchmarks in the next step.
+
+5. Once all the tests pass, run a benchmark comparing the two implementations and make sure you did not introduce any
+regressions. Comnfirm that the results match what you would expect from the time complexity of the algorithm. 
+
+6. Once you have things tested properly for correctness and performance, you may consider removing the implementation. 
+However, I would recommend keeping it (marking it as internal, obsolete), especially if it is a clear implementation. 
+You may discover some cases where the new implementation is not correct, and it is useful to have the old one to 
+compare.
