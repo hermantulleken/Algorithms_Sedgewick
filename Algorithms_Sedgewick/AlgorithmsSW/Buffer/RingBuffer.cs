@@ -3,6 +3,9 @@
 using System.Collections;
 using static System.Diagnostics.Debug;
 
+/// <summary>
+/// An implementation of <see cref="IBuffer{T}"/> that uses a fixed-size array in a circular way.
+/// </summary>
 public sealed class RingBuffer<T> : IBuffer<T>
 {
 	private readonly T[] items;
@@ -24,6 +27,12 @@ public sealed class RingBuffer<T> : IBuffer<T>
 			? this[0]
 			: throw ThrowHelper.ContainerEmptyException;
 
+	/// <summary>
+	/// Gets the element at the specified index, where 0 corresponds to the front of the buffer (that is, the oldest
+	/// element). 
+	/// </summary>
+	/* Design note: We need this to implement window operators. 
+	*/
 	public T this[int index]
 	{
 		get
@@ -31,12 +40,6 @@ public sealed class RingBuffer<T> : IBuffer<T>
 			ValidateIndex(index);
 			
 			return items[GetRealIndex(index)];
-		}
-		
-		set
-		{
-			ValidateIndex(index);
-			items[GetRealIndex(index)] = value;
 		}
 	}
 

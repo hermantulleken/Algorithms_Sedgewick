@@ -2,9 +2,14 @@
 
 using System.Collections;
 
-public class ResizeableBuffer<T> : IBuffer<T?>
+/// <summary>
+/// A buffer whose capacity can be changed.
+/// </summary>
+/// <typeparam name="T">The type of elements in the buffer.</typeparam>
+/// <param name="capacity">The number of elements the buffer can retain.</param>
+public class ResizeableBuffer<T>(int capacity) : IBuffer<T?>
 {
-	private IBuffer<T?> buffer;
+	private IBuffer<T?> buffer = CreateBuffer(capacity);
 
 	/// <inheritdoc />
 	public int Capacity => buffer.Capacity;
@@ -17,10 +22,6 @@ public class ResizeableBuffer<T> : IBuffer<T?>
 
 	/// <inheritdoc />
 	public T? Last => buffer.Last;
-
-	public ResizeableBuffer(int capacity) 
-	
-		=> buffer = CreateBuffer(capacity);
 
 	/// <inheritdoc />
 	public void Clear() => buffer.Clear();
@@ -55,5 +56,5 @@ public class ResizeableBuffer<T> : IBuffer<T?>
 	/// <inheritdoc/>
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-	private static IBuffer<T?> CreateBuffer(int capacity) => new RingBuffer<T?>(capacity);
+	private static RingBuffer<T?> CreateBuffer(int capacity) => new RingBuffer<T?>(capacity);
 }

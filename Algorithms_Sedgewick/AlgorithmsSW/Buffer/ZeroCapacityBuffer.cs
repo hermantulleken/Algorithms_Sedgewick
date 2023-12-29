@@ -9,6 +9,8 @@ using System.Collections.Generic;
 /// <typeparam name="T">The type of element that this buffer could contain.</typeparam>
 /// <remarks> This class is useful to use in algorithms where arbitrary capacity is
 /// required that includes 0 capacity.
+///
+/// Only one instance is maintained; get it with <see cref="Instance"/>.
 /// </remarks>
 public sealed class ZeroCapacityBuffer<T> : IBuffer<T>
 {
