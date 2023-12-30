@@ -12,6 +12,7 @@ using static System.Diagnostics.Debug;
 /// </summary>
 // Note: This is a min binary heap, so comparisons in sink and swim are inverted compared to text book
 // Note: The first element in the array is not used
+[AlgorithmReference(2, 6)]
 public sealed class FixedCapacityMinBinaryHeap<T> : IPriorityQueue<T> 
 {
 	private const string EmptyHeapPresentation = "()";

@@ -18,7 +18,7 @@ using Support;
 ///
 /// I do wonder if my implementation is correct. 
 /// </remarks>
-// 4.4.32
+[ExerciseReference(4, 4, 32)]
 public class BellmanFordWithParentCheckingHeuristic<TWeight>
 {
 	private readonly TWeight[] distanceTo;

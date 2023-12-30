@@ -4,6 +4,8 @@ using AlgorithmsSW.List;
 
 namespace AlgorithmsSW.Digraph;
 
+using Support;
+
 /// <summary>
 /// Represents a directed graph using an array of adjacency lists.
 /// </summary>
@@ -47,8 +49,8 @@ public sealed class DigraphWithAdjacentsLists : IDigraph, IEnumerable<(int verte
 			Add(edge);
 		}
 	}
-
-	// 4.2.3
+	
+	[ExerciseReference(4, 2, 3)]
 	public DigraphWithAdjacentsLists(IDigraph digraph)
 	{
 		VertexCount = digraph.VertexCount;
@@ -120,7 +122,7 @@ public sealed class DigraphWithAdjacentsLists : IDigraph, IEnumerable<(int verte
 	/// <param name="vertex0">The start of the edge.</param>
 	/// <param name="vertex1">The end of the edge.</param>
 	/// <returns><see langword="true"/> if the graph contains the edge, <see langword="false"/> otherwise.</returns>4
-	// 4.2.4
+	[ExerciseReference(4, 2, 3)]
 	public bool ContainsEdge(int vertex0, int vertex1) => adjacents[vertex0].Contains(vertex1);
 
 	public IEnumerator<(int vertex0, int vertex1)> GetEnumerator()

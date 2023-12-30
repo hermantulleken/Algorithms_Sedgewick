@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.Stack;
 
+[PageReference(121)]
 public interface IStack<T> : IEnumerable<T>
 {
 	public int Count { get; }

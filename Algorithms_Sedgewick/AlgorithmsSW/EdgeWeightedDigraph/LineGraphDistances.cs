@@ -2,8 +2,9 @@
 
 using Digraph;
 using List;
+using Support;
 
-// 4.4.31
+[ExerciseReference(4, 4, 31)]
 public class LineGraphDistances
 {
 	private readonly double[] distanceTo;

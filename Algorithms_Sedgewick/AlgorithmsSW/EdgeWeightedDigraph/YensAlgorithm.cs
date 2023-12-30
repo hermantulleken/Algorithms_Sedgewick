@@ -3,6 +3,7 @@
 using EdgeWeightedGraph;
 using List;
 using PriorityQueue;
+using Support;
 using static System.Diagnostics.Debug;
 
 /// <summary>
@@ -10,10 +11,10 @@ using static System.Diagnostics.Debug;
 /// graph.
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
-// 4.4.7
 /*	Implementation note: This is an example of an algorithm that is too difficult (or obscure) for ChatGPT to implement,
  	as of Dec 2023.
 */
+[ExerciseReference(4, 4, 7)]
 public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 {
 	private readonly DirectedPath<TWeight>?[] shortestPaths;

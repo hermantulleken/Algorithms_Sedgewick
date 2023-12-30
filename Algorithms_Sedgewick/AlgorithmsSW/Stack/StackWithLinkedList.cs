@@ -2,6 +2,7 @@
 
 using System.Collections;
 
+[AlgorithmReference(1, 2)]
 public sealed class StackWithLinkedList<T> : IStack<T>
 {
 	private readonly List.LinkedList<T> items = new();

@@ -1,6 +1,8 @@
 ﻿namespace AlgorithmsSW.Graph;
 
-// 4.1.36
+using Support;
+
+[ExerciseReference(4, 1, 36)]
 public class EdgeConnectivity
 {
 	public IEnumerable<(int vertex0, int vertex)> Bridges { get; private init; }

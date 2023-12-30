@@ -1,6 +1,8 @@
 ﻿namespace AlgorithmsSW.PriorityQueue;
 
-// 2.4.29
+using Support;
+
+[ExerciseReference(2, 4, 29)]
 // Note: This version does not quit have the performance characteristics desired. 
 // Getting all operations to be O (log n) may be quite tricky. 
 public class MinMaxPriorityQueue<T> (IComparer<T> comparer)

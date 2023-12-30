@@ -5,6 +5,8 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using Support;
+
 public class Mst
 {
 	/// <summary>
@@ -15,7 +17,7 @@ public class Mst
 	/// <param name="edge">The edge to delete.</param>
 	/// <typeparam name="T">The type of the weight.</typeparam>
 	/// <returns>A new MST.</returns>
-	// 4.3.14
+	[ExerciseReference(4, 3, 14)]
 	public EdgeWeightedGraphWithAdjacencyLists<T> DeleteEdge<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst, Edge<T> edge)
 	{
 		var newMst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, mst.Edges, graph.Comparer);
@@ -36,7 +38,7 @@ public class Mst
 	/// <param name="edge">The edge to delete.</param>
 	/// <typeparam name="T">The type of the weight.</typeparam>
 	/// <returns>A new MST.</returns>
-	// 4.3.15
+	[ExerciseReference(4, 3, 15)]
 	public EdgeWeightedGraphWithAdjacencyLists<T> AddEdge<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst, Edge<T> edge)
 	{
 		var mstGraph = new GraphWithAdjacentsLists(graph.VertexCount);
@@ -73,7 +75,7 @@ public class Mst
 	/// <param name="edge">The edge to delete.</param>
 	/// <typeparam name="T">The type of the weight.</typeparam>
 	/// <returns>A new MST.</returns>
-	// 4.3.16
+	[ExerciseReference(4, 3, 16)]
 	public T FindMaxWeightThat<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst, (int vertex0, int vertex1) edge)
 	{
 		var mstGraph = new GraphWithAdjacentsLists(graph.VertexCount);
@@ -143,7 +145,7 @@ public class Mst
 			.Select(edge => graph.GetUniqueEdge(edge[0], edge[1]))
 			.MaxBy(edge => edge.Weight)!;
 
-	// 4.3.22
+	[ExerciseReference(4, 3, 22)]
 	public static IEnumerable<IMst<T>> MstForest<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph)
 	{
 		var componentsAlgo = new Components<T>(graph);
@@ -220,7 +222,7 @@ public class Mst
 		return mst;
 	}
 
-	// 4.3.33
+	[ExerciseReference(4, 3, 33)]
 	private bool IsMst<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst)
 	{
 		var comparer = Comparer<int>.Default;

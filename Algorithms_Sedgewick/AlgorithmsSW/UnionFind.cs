@@ -2,9 +2,12 @@
 
 namespace AlgorithmsSW;
 
+using Support;
+
 /// <summary>
 /// An implementation of the union-find data structure.
 /// </summary>
+[AlgorithmReference(1, 5)]
 public class UnionFind
 {
 	private readonly int[] componentIndex; // access to component id (site indexed)

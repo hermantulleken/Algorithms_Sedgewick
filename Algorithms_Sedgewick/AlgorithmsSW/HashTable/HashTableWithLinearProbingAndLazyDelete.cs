@@ -1,6 +1,7 @@
 ﻿namespace AlgorithmsSW.HashTable;
 
 using System.Diagnostics.CodeAnalysis;
+using Support;
 using SymbolTable;
 
 /*
@@ -14,9 +15,8 @@ using SymbolTable;
 	However, this approach may lead to increased memory usage, as the marked entries still consume space in the table.
 	To address this issue, the table is resized and rehashed when the number of marked entries reaches a certain threshold,
 	clearing all marked entries in the process.
-	
-	Ex. 3.4.26
 */
+[ExerciseReference(3, 4, 26)]
 [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and non-generic versions.")]
 public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTable<TKey, TValue>
 {

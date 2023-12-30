@@ -1,5 +1,7 @@
 ﻿namespace AlgorithmsSW.Graph;
 
+using Support;
+
 public class GraphProperties
 {
 	private readonly int[] eccentricities;
@@ -62,7 +64,7 @@ public class GraphProperties
 		return longestDistance;
 	}
 	
-	// 4.1.16
+	[ExerciseReference(4, 1, 16)]
 	private void CalculateEccentricities(IGraph graph)
 	{
 		Radius = graph.VertexCount; // Note: Always bigger than maximum distance
@@ -87,7 +89,7 @@ public class GraphProperties
 		}
 	}
 
-	// 4.1.18
+	[ExerciseReference(4, 1, 18)]
 	private void CalculateGirth(IGraph graph)
 	{
 		Girth = FindCycleLength(graph, 0);

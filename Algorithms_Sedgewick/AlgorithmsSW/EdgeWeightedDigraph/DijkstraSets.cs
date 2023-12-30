@@ -12,7 +12,7 @@ using static System.Diagnostics.Debug;
 /// This implementation can be faster than vanilla Dijkstra since we can stop early once we found a sink.
 /// </remarks>
 // Note: only implemented for weights of type double.
-// 4.4.25
+[ExerciseReference(4, 4, 25)]
 public class DijkstraSets
 {
 	private readonly double distance;

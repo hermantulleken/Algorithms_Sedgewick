@@ -1,9 +1,11 @@
 ﻿namespace AlgorithmsSW.Queue;
 
+
 /// <summary>
 /// Represents a generic queue of items.
 /// </summary>
 /// <typeparam name="T">The type of items contained in the queue.</typeparam>
+[PageReference(121)]
 public interface IQueue<T> : IEnumerable<T>
 {
 	/// <summary>

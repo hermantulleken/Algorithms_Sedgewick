@@ -2,6 +2,8 @@
 
 namespace AlgorithmsSW.Graph;
 
+using Support;
+
 public class Bipartite
 {
 	private readonly bool[] color;
@@ -28,7 +30,8 @@ public class Bipartite
 	/// <summary>
 	/// Gets a value indicating whether the graph has odd cycles.
 	/// </summary>
-	public bool HasOddCycles => !IsBipartite; // 4.1.33
+	[ExerciseReference(4, 1, 33)]
+	public bool HasOddCycles => !IsBipartite;
 	
 	/// <summary>
 	/// Gets the color of the given vertex.

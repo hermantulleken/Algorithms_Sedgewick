@@ -1,11 +1,13 @@
 ﻿namespace AlgorithmsSW.Digraph;
 
+using Support;
+
 // Note: Kosaraju is a more efficient algorithm for finding strong components
 
 /// <summary>
 /// An algorithm that finds the strong components of a directed graph.
 /// </summary>
-// 4.2.23
+[ExerciseReference(4, 2, 23)]
 public class StrongComponents
 {
 	private readonly IDigraph reversedGraph;

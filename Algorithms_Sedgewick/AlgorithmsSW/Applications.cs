@@ -11,6 +11,7 @@ using Support;
 /// </summary>
 public static class Applications
 {
+	[ExerciseReference(1, 3, 4)]
 	public static bool AreDelimitersBalanced(string s)
 	{ 
 		char Match(char openBracket)

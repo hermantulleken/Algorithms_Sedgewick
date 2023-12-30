@@ -8,7 +8,7 @@ using static System.Diagnostics.Debug;
 /// A modified version of Dijkstra's algorithm that finds the shortest path from any source to any vertex.
 /// </summary>
 // Note: only implemented for weights of type double.
-// 4.4.24
+[ExerciseReference(4, 4, 24)]
 public class DijkstraMultiSource
 {
 	private readonly DirectedEdge<double>?[] edgeTo;

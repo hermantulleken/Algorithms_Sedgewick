@@ -1,6 +1,7 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
 using List;
+using Support;
 using static System.Diagnostics.Debug;
 
 /// <summary>
@@ -10,7 +11,7 @@ using static System.Diagnostics.Debug;
 /// This implementation can be faster than vanilla Dijkstra since we can stop early once we processed the sink.
 /// </remarks>
 // Note: only implemented for weights of type double.
-// 4.4.23
+[ExerciseReference(4, 4, 23)]
 public class DijkstraSourceSink
 {
 	private readonly double distance;

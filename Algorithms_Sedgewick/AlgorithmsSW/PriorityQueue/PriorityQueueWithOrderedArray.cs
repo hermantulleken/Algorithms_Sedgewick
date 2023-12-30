@@ -4,8 +4,9 @@ using static AlgorithmsSW.ThrowHelper;
 namespace AlgorithmsSW.PriorityQueue;
 
 using System.Collections;
+using Support;
 
-// Ex. 2.4.3
+[ExerciseReference(2, 4, 3)]
 public sealed class PriorityQueueWithOrderedArray<T> 
 	: IPriorityQueue<T>
 {

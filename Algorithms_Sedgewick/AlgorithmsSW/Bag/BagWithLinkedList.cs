@@ -6,6 +6,7 @@ using System.Collections;
 /// An implementation of <see cref="IBag{T}"/> that uses a <see cref="List.LinkedList{T}"/> for its implementation.
 /// </summary>
 /// <inheritdoc />
+[AlgorithmReference(1, 4)]
 public sealed class BagWithLinkedList<T> : IBag<T?>
 {
 	private readonly List.LinkedList<T?> items = new();

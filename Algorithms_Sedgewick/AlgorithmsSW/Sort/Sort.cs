@@ -461,6 +461,7 @@ public static class Sort
 		}
 	}
 
+	[AlgorithmReference(2, 7)]
 	public static void HeapSort<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
 	{
@@ -520,6 +521,7 @@ public static class Sort
 	/// <summary>
 	/// Performs insertion sort algorithm on a list.
 	/// </summary>
+	[AlgorithmReference(2, 2)]
 	public static void InsertionSort<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
 	{
@@ -661,7 +663,7 @@ public static class Sort
 	/// <summary>
 	/// Merge two sorted queues into a result queue.
 	/// </summary>
-	// Ex. 2.2.14
+	[ExerciseReference(2, 2, 14)]
 	public static void Merge<T>(IQueue<T> leftQueue, IQueue<T> rightQueue, IQueue<T> result) 
 		where T : IComparable<T>
 	{
@@ -689,7 +691,7 @@ public static class Sort
 		}
 	}
 
-	// Ex. 2.2.22
+	[ExerciseReference(2, 2, 22)]
 	public static void Merge3Sort<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
 	{
@@ -766,7 +768,7 @@ public static class Sort
 		}
 	}
 
-	// Ex. 2.2.22
+	[ExerciseReference(2, 2, 22)]
 	public static void MergeKSort<T>(IRandomAccessList<T> list, int k = 3) 
 		where T : IComparable<T>
 	{
@@ -847,8 +849,9 @@ public static class Sort
 	public static void MergeSort<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
 		=> MergeSort(list, default);
-
+	
 	#region RecursionDepthGuardExample
+	[AlgorithmReference(2, 4)]
 	public static void MergeSort<T>(IRandomAccessList<T> list, MergeSortConfig config) 
 		where T : IComparable<T>
 	{
@@ -895,7 +898,7 @@ public static class Sort
 	}
 	#endregion
 
-	// Ex. 2.2.15
+	[ExerciseReference(2, 2, 15)]
 	public static void MergeSortBottomsUpWithQueues<T>(
 		IRandomAccessList<T> list,
 		IFactory<IQueue<IQueue<T>>>? majorQueueFactory = null, 
@@ -1080,7 +1083,7 @@ public static class Sort
 		}
 	}
 
-	// Ex. 2.2.16
+	[ExerciseReference(2, 2, 16)]
 	public static void MergeSortNatural<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
 	{
@@ -1225,6 +1228,7 @@ public static class Sort
 		return j;
 	}
 
+	[AlgorithmReference(2, 5)]
 	public static void QuickSort<T>(IRandomAccessList<T> list, QuickSortConfig config) 
 		where T : IComparable<T>
 	{
@@ -1327,6 +1331,7 @@ public static class Sort
 		Case3(start, end);
 	}
 
+	[AlgorithmReference(2, 1)]
 	public static void SelectionSort<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
 	{
@@ -1377,6 +1382,7 @@ public static class Sort
 		}
 	}
 
+	[AlgorithmReference(2, 3)]
 	public static void ShellSortWithPrattSequence<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
 	{
@@ -1655,10 +1661,10 @@ public static class Sort
 				: LessAt(list, c, a)
 					? c
 					: a;
-
-	// p.271
+	
 	// I made changes to the end and mid points, so that this is roughly equivalent to their (list, start, middle, end + 1)
 	// rightStartIndex is also the leftEndIndex;
+	[PageReference(271)]
 	private static void Merge<T>(
 		IRandomAccessList<T> list, 
 		T[] helpList, 
@@ -1706,7 +1712,7 @@ public static class Sort
 		}
 	}
 	
-	// Ex. 2.2.22
+	[ExerciseReference(2, 2, 22)]
 	private static void Merge3<T>(
 		IRandomAccessList<T> list,
 		T[] helpList,

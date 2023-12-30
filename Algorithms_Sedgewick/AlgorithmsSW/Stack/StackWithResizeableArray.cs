@@ -3,6 +3,7 @@ using AlgorithmsSW.List;
 
 namespace AlgorithmsSW.Stack;
 
+[AlgorithmReference(1, 1)]
 public sealed class StackWithResizeableArray<T> : IStack<T>
 {
 	private readonly ResizeableArray<T> items;

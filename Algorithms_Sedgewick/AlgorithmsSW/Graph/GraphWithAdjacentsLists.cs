@@ -6,6 +6,8 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.Graph;
 
+using Support;
+
 public class GraphWithAdjacentsLists : IGraph
 {
 	private readonly ResizeableArray<int>[] adjacents;
@@ -14,7 +16,7 @@ public class GraphWithAdjacentsLists : IGraph
 	
 	public int EdgeCount { get; private set; }
 
-	// 4.1.3
+	[ExerciseReference(4, 1, 3)]
 	public GraphWithAdjacentsLists(GraphWithAdjacentsLists graph)
 		: this(graph.VertexCount)
 	{

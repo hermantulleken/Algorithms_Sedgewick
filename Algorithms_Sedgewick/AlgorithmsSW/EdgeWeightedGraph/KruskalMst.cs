@@ -2,6 +2,8 @@
 
 namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using Support;
+
 public class KruskalMst<T> : IMst<T>
 {
 	private readonly Set.ISet<Edge<T>> mst;
@@ -44,8 +46,8 @@ public class KruskalMst<T> : IMst<T>
 			mst.Add(edge);
 		}
 	}
-
-	// 4.3.32
+	
+	[ExerciseReference(4, 3, 32)]
 	public KruskalMst(EdgeWeightedGraphWithAdjacencyLists<T> graph, IEnumerable<Edge<T>> specifiedEdges)
 	{
 		IComparer<Edge<T>> comparer = new EdgeComparer<T>(graph.Comparer);

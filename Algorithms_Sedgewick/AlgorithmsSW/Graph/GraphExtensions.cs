@@ -3,10 +3,11 @@
 namespace AlgorithmsSW.Graph;
 
 using Digraph;
+using Support;
 
 public static class GraphExtensions
 {
-	// 4.1.4
+	[ExerciseReference(4, 1, 4)]
 	public static bool ContainsEdge(this IGraph graph, int vertex1, int vertex2)
 		=> graph.GetAdjacents(vertex1).Contains(vertex2);
 

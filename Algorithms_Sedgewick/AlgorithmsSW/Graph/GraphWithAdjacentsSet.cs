@@ -2,7 +2,9 @@
 
 namespace AlgorithmsSW.Graph;
 
-// 4.1.5
+using Support;
+
+[ExerciseReference(4, 1, 5)]
 public class GraphWithAdjacentsSet : IGraph
 {
 	private readonly Set.ISet<int>[] adjacents;
@@ -13,7 +15,7 @@ public class GraphWithAdjacentsSet : IGraph
 	/// <inheritdoc />
 	public int EdgeCount { get; private set; }
 
-	// 4.1.3
+	[ExerciseReference(4, 1, 3)]
 	public GraphWithAdjacentsSet(GraphWithAdjacentsSet graph)
 		: this(graph.VertexCount)
 	{

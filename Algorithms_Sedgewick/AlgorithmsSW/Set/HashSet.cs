@@ -6,9 +6,10 @@ namespace AlgorithmsSW.Set;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using List;
+using Support;
 using static System.Diagnostics.Debug;
 
-// Ex. 3.4.28
+[ExerciseReference(3, 4, 28)]
 /*
 	This class represents a hash table that uses linear probing to resolve collisions.
 	Linear probing is an open-addressing strategy where we look for the next available slot

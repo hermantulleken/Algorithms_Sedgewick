@@ -1,14 +1,16 @@
-﻿using AlgorithmsSW.SymbolTable;
-using AlgorithmsSW.Counter;
+﻿using AlgorithmsSW.Counter;
 using AlgorithmsSW.List;
 using AlgorithmsSW.Stack;
+using AlgorithmsSW.SymbolTable;
 using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.Graph;
 
+using Support;
+
 public static class GraphAlgorithms
 {
-	// 4.1.10
+	[ExerciseReference(4, 1, 10)]
 	public static int FindNodeSafeToDelete(IGraph graph)
 	{
 		graph.ThrowIfNull();
@@ -66,7 +68,7 @@ public static class GraphAlgorithms
 		return -1;
 	}
 
-	// 4.1.23
+	[ExerciseReference(4, 1, 23)]
 	public static Counter<int> DistanceHistogram<T>(this IGraph graph, int sourceVertex) 
 		=> BreadthFirstPathsSearch
 			.Build(graph, sourceVertex)
@@ -172,6 +174,7 @@ public static class GraphAlgorithms
 	}
 
 	// This is a helper for a version of 4.4.33 (Combine with undirected graph version of ToEdgeWeightedDigraph). 
+	[ExerciseReference(4, 4, 33)]
 	public static GridGraph GetFullGrid(int width, int height)
 	{
 		var graph = new GridGraph(width, height);

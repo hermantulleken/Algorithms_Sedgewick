@@ -3,10 +3,12 @@ using AlgorithmsSW.List;
 
 namespace AlgorithmsSW.PriorityQueue;
 
+using Support;
+
 /// <summary>
 /// Container that supports efficient insertions and retrieval and removal of the median element in the container.  
 /// </summary>
-// Ex. 2.4.30
+[ExerciseReference(2, 4, 30)]
 // This implementation uses a wrapper max heap that may npt be so performant. 
 public sealed class MedianDoubleHeap<T>
 {

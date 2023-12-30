@@ -1,6 +1,8 @@
 ﻿namespace AlgorithmsSW.PriorityQueue;
 
-// 2.4.21
+using Support;
+
+[ExerciseReference(2, 4, 21)]
 public class StackWithPriorityQueue<T>(IComparer<T> comparer)
 {
 	private readonly struct PriorityNode

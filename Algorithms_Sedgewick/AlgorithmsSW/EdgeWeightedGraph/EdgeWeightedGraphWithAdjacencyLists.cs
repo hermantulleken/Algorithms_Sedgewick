@@ -134,7 +134,7 @@ public class EdgeWeightedGraphWithAdjacencyLists<TWeight>
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 	/// <inheritdoc />
-	// 4.3.17
+	[ExerciseReference(4, 3, 17)]
 	public override string ToString() => WeightedEdges.AsText().Bracket();
 	
 	private void ValidateVertex(int vertex)

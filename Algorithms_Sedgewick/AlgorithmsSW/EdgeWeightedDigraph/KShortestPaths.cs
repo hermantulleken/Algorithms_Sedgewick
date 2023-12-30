@@ -13,7 +13,7 @@ using Support;
 /// <remarks>
 /// Reference: <see href="https://en.wikipedia.org/wiki/K_shortest_path_routing"/>.
 /// </remarks>
-// 4.4.7
+[ExerciseReference(4, 4, 7)]
 public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
 {
 	private readonly ResizeableArray<DirectedPath<TWeight>> shortestPaths;

@@ -2,12 +2,13 @@
 
 using System.Numerics;
 using List;
+using Support;
 
 /// <summary>
 /// A digraph where the weight of the edges is the euclidean distance between the vertexes, which are points in
 /// 3D space.
 /// </summary>
-// 4.4.27
+[ExerciseReference(4, 4, 27)]
 public class EuclideanDistanceDigraph : IEdgeWeightedDigraph<double>
 {
 	private readonly IReadonlyRandomAccessList<Vector3> vertexes;

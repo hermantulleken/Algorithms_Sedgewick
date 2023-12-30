@@ -1,8 +1,9 @@
 ﻿namespace AlgorithmsSW.SymbolTable;
 
 using List;
+using Support;
 
-// Ex. 3.1.2
+[ExerciseReference(3, 1, 2)]
 public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	// TODO: Should this rather be an equality comparer? 

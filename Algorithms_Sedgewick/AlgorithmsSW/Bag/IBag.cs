@@ -1,10 +1,12 @@
 ﻿namespace AlgorithmsSW.Bag;
 
+using Support;
+
 /// <summary>
 /// A collection that supports adding elements, and iterating over them. 
 /// </summary>
 /// <typeparam name="T">The type of the items in the bag.</typeparam>
-// p. 121
+[PageReference(121)]
 public interface IBag<T> : IEnumerable<T>
 {
 	/// <summary>

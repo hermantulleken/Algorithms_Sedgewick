@@ -7,7 +7,7 @@ namespace AlgorithmsSW.Stack;
 /// A stack with a fixed capacity.
 /// </summary>
 /// <typeparam name="T">The type of the stack's items.</typeparam>
-/// <remarks>From p. 132.</remarks>
+[PageReference(135)]
 public sealed class FixedCapacityStack<T> : IStack<T>
 {
 	private readonly T?[] items;
@@ -19,8 +19,10 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 	
 	public bool IsEmpty => Count == 0;
 	
+	[ExerciseReference(1, 3, 1)]
 	public bool IsFull => Count == Capacity;
 
+	[ExerciseReference(1, 3, 7)]
 	public T Peek
 	{
 		get

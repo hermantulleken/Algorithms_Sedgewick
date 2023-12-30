@@ -3,8 +3,9 @@
 namespace AlgorithmsSW.SymbolTable;
 
 using List;
+using Support;
 
-// Ex. 3.1.2
+[ExerciseReference(3, 1, 2)]
 public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	private readonly IComparer<TKey> comparer;

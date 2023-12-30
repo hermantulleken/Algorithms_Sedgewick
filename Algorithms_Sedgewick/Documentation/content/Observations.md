@@ -1,6 +1,6 @@
 ﻿# Observations on implementing algorithms
 
-## 1. IComparer vs. IComparable
+## IComparer vs. IComparable
 - It is better  to design a system of containers to use comparers than to make them take IComparables.
 - For a single container, using IComparable may be easier.
 - But using comparers makes it a lot easier to change the behaviour of a container by changing the comparer instead of 
@@ -10,13 +10,13 @@ the contents. For example:
 - I could easily made comparers optional by using Comparer<T>.Default, but I decided against it because it is forces me
 to always make them configurable. (If this was a real library, I would make them optional.)
 
-## 2. Generic math
+## Generic math
 - Similarly, there is a choice between implementing certain features using generic math or using `Func` to supply the 
 necessary operations. For example, weights in graphs can be implemented as either a IFloatingPoint type or as a general 
 type with `IComparer` and `Func<TWeight, TWeight, TWeight>` for addition where required. I opted to use the latter, partly
 to be consistent, but also because it allows for more flexibility (reinterpreting weights, for example).
 
-## 3.Graph APIs
+## Graph APIs
 - The Graph APIs used here are not very good.
 - The textbook prefer to keep algorithms in classes; the idea is the bulk of the algo is a preprocessing step that 
   results in a structure you can use to make quick queries (which does make sense).
@@ -28,7 +28,7 @@ difficult to reason about the execution time of algorithms in this way.
 Although, I can appreciate it would be difficult to design a API that is clearer, and still allows the user to separate
 once-off operations from the once that need to be performed many times.
 
-## 4. Running Benchmarks
+## Running Benchmarks
 - Running benchmarks is much more instructive than one would imagine.
 - Computers are very fast, and seeing how fast is a good reminder.
 - There are often surprising results.
@@ -38,20 +38,28 @@ once-off operations from the once that need to be performed many times.
 - It shows that optimizing code to solve artificial problems has limited value. Without a real application (that is, 
 data with real distributions and volumes), a lot of the theoretical results really are meaningless.
 
-## 5. Optimization
+## Optimization
 - Optimizing even relatively simple algorithms (such as merge sort) can be very challenging because how tricky it is to
 get reliable benchmarks when dealing with small variations of an algorithm. Do you copy the code and tweak? Or do you 
 make a configurable algorithm?
 
-## 6. SupportsX
+## Unsafe Containers
+Usually, you want to prevent users from invalidating your containers, and therefore you do not expose operations that
+allow them to do that. However, I often found that when using containers to implement other containers, 
+a unsafe container can be useful to get a more efficient implementation. For example, exposing LinkedList nodes
+allows the user to mess with the links and break the list; but it makes it a lot cleaner to implement 
+other containers on top of it. Although I have not done it in the code, sharing the resize functionality would
+similarly be useful (to implement for example stacks and queues).
+
+## SupportsX
 - Similar to the ReadOnly property of collections, it turns out to be convienient to have a SupportsX property for 
 graphs for certain features, such as whether the graph supports parallel edges, self-loops, etc. rather than rely 
 on types.
 
-## 7. Readonly data structures
+## Readonly data structures
 - For each container type, I find I need a read only version pretty soon. 
 
-## 8. Pseudocode
+## Pseudocode
 Pseudocode is not helpful when describing algorithms.
 Pseudocode often make small omissions that can take a fair amount of time to figure out. In partocular, it is not always clear
 what the range of a loop is:
@@ -80,7 +88,7 @@ https://en.wikipedia.org/wiki/K_shortest_path_routing) with the actual code.
 Although it is possible to make the pseudocode more precise, I think it is better to make an implementation read as 
 well as the pseudocode.
 
-## 9. Weight types
+## Weight types
 I really regret making the type of weights in graphs generic:
 - It is a lot more work to implement. 
 - Double is adequate for most applications.
@@ -97,12 +105,12 @@ There are many other ways to improve how weights are used, for example:
 - Define an interface weights must implement (this is not ideal, since then typical types need to be wrapped)
 - Define a new WeightComparer type that holds the extra data (not ideal to have the add function there)
 
-## 10. Benchmark Input Data
+## Benchmark Input Data
 - It is important to be able to generate test data quickly so that benchmarks can run quickly too. 
 - Test data needs to ne verified. It has happened more than once that generation has bugs in leading to degenerate test 
 cases. This skew benchmarks, and leads to a lot of looking for the issue in the algorithm rather than the data. 
 
-## 11. Adapting algorithms from other sources
+## Adapting algorithms from other sources
 There is almost always things you do not like about an algorithm implemented by someone else: maybe they start their 
 indexes at 1 or they use arrays instead of `IEnumerable`s. 
 

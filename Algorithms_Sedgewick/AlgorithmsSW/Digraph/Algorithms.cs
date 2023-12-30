@@ -1,6 +1,7 @@
 ﻿namespace AlgorithmsSW.Digraph;
 
 using List;
+using Support;
 using static System.Diagnostics.Debug;
 
 public static class Algorithms
@@ -26,7 +27,7 @@ public static class Algorithms
 		return reversed;
 	}
 	
-	// 4.2.9
+	[ExerciseReference(4, 2, 9)]
 	public static bool IsTopologicalOrder(this IDigraph digraph, IEnumerable<int> order)
 	{
 		digraph.ThrowIfNull();

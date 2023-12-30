@@ -6,7 +6,8 @@ namespace AlgorithmsSW.Queue;
 /// <summary>
 /// Queue implementation using a linked list.
 /// </summary>
-/// <typeparam name="T">The type of elements that can be inserted into the queue.</typeparam>s
+/// <typeparam name="T">The type of elements that can be inserted into the queue.</typeparam>
+[AlgorithmReference(1, 3)]
 public sealed class QueueWithLinkedList<T> : IQueue<T>
 {
 	private const bool ToStringShowsContents = false;

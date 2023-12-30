@@ -972,7 +972,7 @@ public static class Algorithms
 	/// </summary>
 	/// <param name="list">The list to sort.</param>
 	/// <typeparam name="T">The type of items in the list.</typeparam>
-	// Ex. 2.5.4
+	[ExerciseReference(2, 5, 4)]
 	public static void SortAndRemoveDuplicates<T>(this ResizeableArray<T> list) 
 		where T : IComparable<T>
 	{

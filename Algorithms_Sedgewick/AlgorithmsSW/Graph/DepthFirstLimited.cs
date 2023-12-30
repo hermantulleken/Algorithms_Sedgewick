@@ -1,6 +1,8 @@
 ﻿namespace AlgorithmsSW.Graph;
 
-// 4.1.26
+using Support;
+
+[ExerciseReference(4, 1, 26)]
 public class DepthFirstLimited
 {
 	private bool[] marked;

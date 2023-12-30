@@ -4,10 +4,12 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.Digraph;
 
+using Support;
+
 /// <summary>
 /// Algorithm to find a Hamiltonian cycle in a directed graph.
 /// </summary>
-// 4.2.24
+[ExerciseReference(4, 2, 24)]
 public class HamiltonianPathWithDegrees : IHamiltonianPath
 {
 	/// <inheritdoc/>

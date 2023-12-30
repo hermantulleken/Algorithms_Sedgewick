@@ -2,6 +2,7 @@
 
 namespace AlgorithmsSW.Queue;
 
+[ExerciseReference(1, 3, 14)]
 public class QueueWithResizeableArray<T> : IQueue<T>
 {
 	private const int DefaultCapacity = 4;

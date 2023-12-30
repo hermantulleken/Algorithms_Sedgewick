@@ -1,6 +1,7 @@
 ﻿namespace AlgorithmsSW.HashTable;
 
 using System.Diagnostics.CodeAnalysis;
+using Support;
 using SymbolTable;
 
 public class HashTableWithSeparateChaining2<TKey, TValue> : ISymbolTable<TKey, TValue>
@@ -42,7 +43,7 @@ public class HashTableWithSeparateChaining2<TKey, TValue> : ISymbolTable<TKey, T
 	}
 	
 #if WITH_INSTRUMENTATION
-	// 3.4.30
+	[ExerciseReference(3, 4, 30)]
 	public double ChiSquare()
 	{
 		double Sqr(double x) => x * x;

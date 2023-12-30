@@ -5,6 +5,7 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.HashTable;
 
+using Support;
 using SymbolTable;
 
 /// <summary>
@@ -12,7 +13,7 @@ using SymbolTable;
 /// </summary>
 /// <typeparam name="TKey">The type of keys in the hash table.</typeparam>
 /// <typeparam name="TValue">The type of values in the hash table.</typeparam>
-// Ex. 3.4.28
+[ExerciseReference(3, 4, 28)]
 /*
 	This class represents a hash table that uses linear probing to resolve collisions.
 	Linear probing is an open-addressing strategy where we look for the next available slot

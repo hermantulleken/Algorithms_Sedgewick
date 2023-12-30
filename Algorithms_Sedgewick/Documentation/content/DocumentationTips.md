@@ -17,6 +17,11 @@ Here is how to link to a page in the content folder of the documentation project
 ```
 
 You can link to API documentation using this syntax:
-```
+```md
 @AlgorithmsSW.Algorithms
+```
+
+And this works for methods (it links to all overloads of a method; you can link to a specific method, but the syntax for this is very complex for generic methods)
+```md
+@AlgorithmsSW.Sort.Sort.Merge*
 ```
