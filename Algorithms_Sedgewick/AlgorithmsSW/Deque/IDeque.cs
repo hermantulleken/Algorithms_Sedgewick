@@ -1,5 +1,6 @@
 namespace AlgorithmsSW.Deque;
 
+
 public interface IDeque<T> : IEnumerable<T>
 {
 	int Count { get; }

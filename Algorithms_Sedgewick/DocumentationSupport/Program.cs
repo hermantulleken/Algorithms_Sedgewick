@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
 using AlgorithmsSW;
-using Support;
+using Support.Reference;
 
-int[] chapterPage = new int[]
-{
+int[] chapterPage =
+[
 	3,
 	243,
 	361,
@@ -11,7 +11,7 @@ int[] chapterPage = new int[]
 	695,
 	853, 
 	1000
-};
+];
 
 var assembly = Assembly.GetAssembly(typeof(Algorithms));
 var references = GetReferences();
@@ -29,7 +29,6 @@ void ProcessReferences(List<(ReferenceAttribute, object)> references)
 	{
 		int chapter = i + 1;
 		writer.WriteLine($"### Chapter {chapter}");
-		writer.WriteLine();
 		
 		var pages = GetPages(references, i);
 		if (pages.Any())
@@ -54,8 +53,6 @@ void ProcessReferences(List<(ReferenceAttribute, object)> references)
 			if(!examples.Any()) continue;
 			
 			writer.WriteLine($"#### Section {section}");
-			writer.WriteLine();
-			
 			WriteReferences(examples, writer);
 		}
 	}
@@ -141,22 +138,33 @@ List<(ReferenceAttribute, object)> GetReferences()
 				references.Add((attribute, (type, method)));
 			}
 		}
+
+		foreach (var property in type.GetProperties())
+		{
+			attribute = property.GetCustomAttribute<ReferenceAttribute>();
+			if (attribute != null)
+			{
+				references.Add((attribute, (type, property)));
+			}
+		}
 	}
 
 	return references;
 }
 
 static string GetClassLink(ReferenceAttribute reference, Type type) 
-	=> $"- {reference}: @{type.FullName}";
+	=> $"- {reference}: Class @{type.FullName}";
 
 static string GetMethodLink(ReferenceAttribute reference, Type type, MethodInfo methodInfo) 
-	=> $"- {reference}: {GetMethodSignature(type, methodInfo)}";
+	=> $"- {reference}: Method {GetMethodSignature(type, methodInfo)}";
+
+static string GetPropertyLink(ReferenceAttribute reference, Type type, MemberInfo property) 
+	=> $"- {reference}: Property @{type.FullName}.{property.Name}";
 
 static string GetMethodSignature(Type type, MethodInfo method)
 {
 	return $"@{type.FullName}.{method.Name}*";
 }
-
 
 void WriteReferences<TReference>(IEnumerable<(TReference, object)> valueTuples, StreamWriter streamWriter)
 	where TReference : ReferenceAttribute
@@ -170,6 +178,9 @@ void WriteReferences<TReference>(IEnumerable<(TReference, object)> valueTuples, 
 				break;
 			case (Type type, MethodInfo methodInfo):
 				streamWriter.WriteLine(GetMethodLink(reference, type, methodInfo));
+				break;
+			case (Type type, PropertyInfo propertyInfo):
+				streamWriter.WriteLine(GetPropertyLink(reference, type, propertyInfo));
 				break;
 			default:
 				throw new NotSupportedException();

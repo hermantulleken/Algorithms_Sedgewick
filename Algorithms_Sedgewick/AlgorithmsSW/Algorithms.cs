@@ -746,6 +746,7 @@ public static class Algorithms
 		}
 	}
 
+	[ExerciseReference(1, 3, 37)]
 	public static IEnumerable<T> JosephusSequence<T>(this IEnumerable<T> list, int m)
 	{
 		var queue = new QueueWithLinkedList<T>();

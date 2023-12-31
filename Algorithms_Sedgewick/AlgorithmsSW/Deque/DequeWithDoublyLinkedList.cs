@@ -4,6 +4,7 @@ using Support;
 
 namespace AlgorithmsSW.Deque;
 
+[ExerciseReference(1, 3, 33)]
 public class DequeWithDoublyLinkedList<T> : IDeque<T>
 {
 	private readonly DoublyLinkedList<T> items = new();

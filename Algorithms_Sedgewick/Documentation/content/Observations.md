@@ -16,6 +16,15 @@ necessary operations. For example, weights in graphs can be implemented as eithe
 type with `IComparer` and `Func<TWeight, TWeight, TWeight>` for addition where required. I opted to use the latter, partly
 to be consistent, but also because it allows for more flexibility (reinterpreting weights, for example).
 
+## Sort methods
+Sorting parts of lists are very useful, so in general provide a method to sort a list between specified indexes, and 
+then use that to implement the method to implement the full list.
+
+## Symbol Tables and Sets
+- It is annoying that sets and symbol tables cannot share their implementation in some way without overhead. The central
+question here is realy whether to implement a set of KEyValuePairs, or a separate Symbol table that do not construct new
+objects.
+
 ## Graph APIs
 - The Graph APIs used here are not very good.
 - The textbook prefer to keep algorithms in classes; the idea is the bulk of the algo is a preprocessing step that 
@@ -37,6 +46,11 @@ once-off operations from the once that need to be performed many times.
 - It is satisfying to remove some bad code and get a nice performance increase.
 - It shows that optimizing code to solve artificial problems has limited value. Without a real application (that is, 
 data with real distributions and volumes), a lot of the theoretical results really are meaningless.
+
+## Benchmark mysteries
+- For small lists, shell or insert is faster than merge sort. However, a merge sort that uses insertion sort for small
+lists is as part of its implementation does not get a speed benefit. I suspect this is probably a bug, however, I have
+thoroughly tested the code and have not uncovered any bugs.
 
 ## Optimization
 - Optimizing even relatively simple algorithms (such as merge sort) can be very challenging because how tricky it is to

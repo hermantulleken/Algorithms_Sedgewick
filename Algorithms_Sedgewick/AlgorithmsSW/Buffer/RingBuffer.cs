@@ -6,6 +6,7 @@ using static System.Diagnostics.Debug;
 /// <summary>
 /// An implementation of <see cref="IBuffer{T}"/> that uses a fixed-size array in a circular way.
 /// </summary>
+[ExerciseReference(1, 3, 39)]
 public sealed class RingBuffer<T> : IBuffer<T>
 {
 	private readonly T[] items;

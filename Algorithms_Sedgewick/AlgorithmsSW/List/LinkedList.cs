@@ -41,6 +41,8 @@ public sealed class LinkedList<T> : IEnumerable<T>
 		/// </summary>
 		public Node? NextNode;
 		
+		public bool HasNext => NextNode != null;
+		
 		private string ItemString => Item.AsText();
 		
 #if WITH_INSTRUMENTATION
@@ -87,7 +89,6 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	/// <summary>
 	/// Gets a value indicating whether the linked list is empty.
 	/// </summary>
-	[MemberNotNullWhen(false, nameof(front), nameof(back))]
 	[MemberNotNullWhen(false, nameof(front), nameof(back))]
 	public bool IsEmpty => front == null;
 
@@ -184,6 +185,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	/// <param name="node">The node after which to insert the new item.</param>
 	/// <param name="item">The item to insert.</param>
 	/// <returns>The newly created node containing the inserted item.</returns>
+	[ExerciseReference(1, 3, 25)]
 	public Node InsertAfter(Node node, T item)
 	{
 		node.ThrowIfNull();
@@ -257,6 +259,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	/// <returns>The removed node.</returns>
 	/// <exception cref="System.ArgumentNullException">Thrown when the input node is null.</exception>
 	/// <exception cref="System.InvalidOperationException">Thrown when the input node does not have a successor to remove.</exception>
+	[ExerciseReference(1, 3, 24)]
 	public Node RemoveAfter(Node node)
 	{
 		node.ThrowIfNull();

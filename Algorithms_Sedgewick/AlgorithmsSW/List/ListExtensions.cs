@@ -1,13 +1,12 @@
-using System.Runtime.CompilerServices;
-using AlgorithmsSW.Buffer;
-using static System.Diagnostics.Debug;
-using static Support.WhiteBoxTesting;
-
 namespace AlgorithmsSW.List;
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Buffer;
 using Support;
+using static System.Diagnostics.Debug;
+using static WhiteBoxTesting;
 
 public static class ListExtensions
 {
@@ -88,6 +87,28 @@ public static class ListExtensions
 		for (int i = start; i < start + count; i++)
 		{
 			list[i] = value;
+		}
+	}
+	
+	// Note: Extension method because it is not effieicnt, and will clutter up the LisnkedList class.
+	[ExerciseReference(1, 3, 19)]
+	public static void RemoveLast<T>(this LinkedList<T> list)
+	{
+		if (list.First.NextNode == null)
+		{
+			list.Clear();
+		}
+		
+		foreach (var (node, nextNode) in list.Nodes.SlidingWindow2())
+		{
+			Assert(node != null);
+			Assert(nextNode != null);
+			
+			if (nextNode.NextNode == null)
+			{
+				// We have the last node
+				list.RemoveAfter(node);
+			}
 		}
 	}
 	
