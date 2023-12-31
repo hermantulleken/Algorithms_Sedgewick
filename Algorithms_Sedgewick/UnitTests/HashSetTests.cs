@@ -156,7 +156,9 @@ public class HashSetTests
 		
 		hashSet.Add(obj1);
 		hashSet.Add(obj2);
-		hashSet.Remove(obj1);
+		bool wasRemove = hashSet.Remove(obj1);
+		
+		Assert.That(wasRemove, Is.True);
 		Assert.That(hashSet.Contains(obj1), Is.False);
 		Assert.That(hashSet.Contains(obj2), Is.True);
 	}
@@ -293,6 +295,4 @@ public class HashSetTests
 		var hashSet = new AlgorithmsSW.Set.HashSet<ObjectWithId>(IdComparer.Instance);
 		Assert.That(() => hashSet.Add(null), Throws.ArgumentNullException);
 	}
-
-	
 }

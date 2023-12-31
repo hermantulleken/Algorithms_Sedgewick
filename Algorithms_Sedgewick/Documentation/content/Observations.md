@@ -25,6 +25,12 @@ then use that to implement the method to implement the full list.
 question here is realy whether to implement a set of KEyValuePairs, or a separate Symbol table that do not construct new
 objects.
 
+## Hash codes
+Algorithms that use hash codes need to check that they work when there are collisions. (I have not :/)
+Since collisions are rare, unit tests with small number of elements will not test this code. I discovered a mystifying 
+bug that would only manifest if I ran three specific tests together. Turns out in that case the hashcodes in the failing 
+test were different, and happen to collide, exposing the faulty code. 
+
 ## Graph APIs
 - The Graph APIs used here are not very good.
 - The textbook prefer to keep algorithms in classes; the idea is the bulk of the algo is a preprocessing step that 

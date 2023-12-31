@@ -2,8 +2,6 @@
 
 namespace AlgorithmsSW.Graph;
 
-using Support;
-
 public class Bipartite
 {
 	private readonly bool[] color;

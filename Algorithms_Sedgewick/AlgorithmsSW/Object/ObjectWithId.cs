@@ -11,4 +11,6 @@ public class ObjectWithId : IIdeable
 	private static readonly IdGenerator IdGenerator = new();
 		
 	public int Id { get; } = IdGenerator.GetNextId();
+
+	public override string ToString() => $"{Id}";
 }

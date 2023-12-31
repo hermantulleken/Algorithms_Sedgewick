@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using AlgorithmsSW.HashTable;
+﻿namespace AlgorithmsSW.Set;
 
-namespace AlgorithmsSW.Set;
-
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using HashTable;
 using List;
 using static System.Diagnostics.Debug;
 
@@ -95,7 +94,10 @@ public class HashSet<T> : ISet<T>
 		/*
 			Reinsert all the keys in the same cluster as the removed key.
 			This is necessary because their positions might have been affected by the removal of the key.
+			
+			We go to the next index, since there is no key at the current index.
 		*/
+		GetNextIndex(key, ref index); 
 		for (GetNextIndex(key, ref index); keyPresent[index]; GetNextIndex(key, ref index))
 		{
 			ReinsertAt(index);
@@ -186,5 +188,11 @@ public class HashSet<T> : ISet<T>
 	{
 		keys[index] = key;
 		keyPresent[index] = present;
+	}
+
+	internal void LogDetail()
+	{
+		Console.WriteLine(keyPresent.Pretty());
+		Console.WriteLine(keys.Pretty());
 	}
 }

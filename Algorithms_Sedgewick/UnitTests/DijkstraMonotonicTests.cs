@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿namespace UnitTests;
+
+using System.Collections.Generic;
 using AlgorithmsSW;
 using AlgorithmsSW.EdgeWeightedDigraph;
 
@@ -37,10 +39,10 @@ public class DijkstraMonotonicTests
 	public void TestSimpleGraph3()
 	{
 		/*
-			0--(3)--1--(5)----------\	// Ascending
-			\--(4)--3--(3)----------\	// Descending
-			\--(2)--4--(1)--5--(1)--2	// Shorter but not monotonic
-		*/
+		0--(3)--1--(5)----------\	// Ascending
+		\--(4)--3--(3)----------\	// Descending
+		\--(2)--4--(1)--5--(1)--2	// Shorter but not monotonic
+	*/
 		var graph = DataStructures.EdgeWeightedDigraph(6, Comparer<double>.Default);
 		graph.AddEdge(0, 1, 3.0);
 		graph.AddEdge(1, 2, 5.0);
@@ -60,11 +62,11 @@ public class DijkstraMonotonicTests
 		var graph = DataStructures.EdgeWeightedDigraph(7, Comparer<double>.Default);
 		
 		/*	0--(1)--1--(2)--2--(3)--3--(4)--4
-			\--(3)--5--(2)-/\--(1)--6--(0)-/
-			
-			The shortest monotonic path to 2 is 0->1->2 with weight 3.
-			The shortest monotonic path to 4 is 0->5->6->4 with weight 6.
-		*/
+		\--(3)--5--(2)-/\--(1)--6--(0)-/
+
+		The shortest monotonic path to 2 is 0->1->2 with weight 3.
+		The shortest monotonic path to 4 is 0->5->6->4 with weight 6.
+	*/
 		
 		graph.AddEdge(0, 1, 1.0);
 		graph.AddEdge(1, 2, 2.0);
@@ -86,11 +88,11 @@ public class DijkstraMonotonicTests
 		var graph = DataStructures.EdgeWeightedDigraph(5, Comparer<double>.Default);
 		
 		/*	0--(1)--1--(7)--2--(6)--3
-			\--(4)--4--(5)-/
+		\--(4)--4--(5)-/
 
-			The shortest monotonic path to 2 is 0->1->2 with weight 8.
-			The shortest monotonic path to 3 is 0->4->5->3 with weight 9.
-		*/
+		The shortest monotonic path to 2 is 0->1->2 with weight 8.
+		The shortest monotonic path to 3 is 0->4->5->3 with weight 9.
+	*/
 		
 		graph.AddEdge(0, 1, 1.0);
 		graph.AddEdge(1, 2, 7.0);
