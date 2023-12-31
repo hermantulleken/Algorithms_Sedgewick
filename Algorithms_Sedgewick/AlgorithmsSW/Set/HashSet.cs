@@ -6,7 +6,6 @@ namespace AlgorithmsSW.Set;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using List;
-using Support;
 using static System.Diagnostics.Debug;
 
 [ExerciseReference(3, 4, 28)]

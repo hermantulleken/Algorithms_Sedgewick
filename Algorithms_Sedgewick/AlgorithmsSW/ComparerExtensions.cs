@@ -1,5 +1,7 @@
 ﻿namespace AlgorithmsSW;
 
+using System.Runtime.CompilerServices;
+
 /// <summary>
 /// Provides extension methods related to <see cref="IComparer{T}"/>.
 /// </summary>
@@ -53,12 +55,15 @@ public static class ComparerExtensions
 		return comparer.LessOrEqual(left, add(right, tolerance)) && comparer.LessOrEqual(right, add(left, tolerance));
 	}
 	
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool Equal<T>(this IComparer<T> comparer, T left, T right) 
 		=> comparer.Compare(left, right) == 0;
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool Less<T>(this IComparer<T> comparer, T left, T right) 
 		=> comparer.Compare(left, right) < 0;
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool LessOrEqual<T>(this IComparer<T> comparer, T left, T right) 
 		=> comparer.Compare(left, right) <= 0;
 	

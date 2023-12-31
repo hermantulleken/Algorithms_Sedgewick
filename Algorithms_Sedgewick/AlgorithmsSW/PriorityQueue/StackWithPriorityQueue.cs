@@ -1,7 +1,5 @@
 ﻿namespace AlgorithmsSW.PriorityQueue;
 
-using Support;
-
 [ExerciseReference(2, 4, 21)]
 public class StackWithPriorityQueue<T>(IComparer<T> comparer)
 {

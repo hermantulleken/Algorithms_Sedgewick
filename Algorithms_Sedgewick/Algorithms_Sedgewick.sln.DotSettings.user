@@ -231,25 +231,16 @@ $EXPR$.ThrowIfNull();</s:String>
   &lt;/TypePattern&gt;&#xD;
 &lt;/Patterns&gt;</s:String>
 	<s:String x:Key="/Default/Environment/ExternalSources/IlViewer/CodeType/@EntryValue">IL</s:String>
-	<s:Int64 x:Key="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue">2023</s:Int64>
+	<s:Int64 x:Key="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue">2041</s:Int64>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EAlwaysTreatStructAsNotReorderableMigration/@EntryIndexedValue">True</s:Boolean>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=831eb438_002D6ec2_002D41e7_002D944a_002D9513f4f16f72/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=322cf734_002Ddd39_002D4df9_002D8b0f_002Dd9e7953d0244/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
+	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8df2c6e3_002Da0d8_002D4309_002Da21f_002D3b95183232f5/@EntryIndexedValue"></s:String>
 	<s:Boolean x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8df2c6e3_002Da0d8_002D4309_002Da21f_002D3b95183232f5/@EntryIndexRemoved">True</s:Boolean>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=faae471a_002Dc21f_002D4b6b_002D98c5_002D7dd6a0e92f87/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestShortestPathCalculation" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net8.0::UnitTests.BellmanFordTests.TestShortestPathCalculation&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net8.0::UnitTests.BellmanFordTests.TestNoPathScenario&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net8.0::UnitTests.BellmanFordTests.TestNegativeCycleDetection&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net8.0::UnitTests.BellmanFordTests.TestShortestPathWithCycle&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net8.0::UnitTests.BellmanFordTests.TestShortestPathWithCycle2&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net8.0::UnitTests.BellmanFordTests.SimpleTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::05069449-BDB9-410C-AA87-136951174F09::net8.0::DijkstraMonotonicTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
+	
 	
 	
 	<s:String x:Key="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue">EditorBehavior</s:String></wpf:ResourceDictionary>

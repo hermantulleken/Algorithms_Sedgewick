@@ -371,7 +371,7 @@ public static class ListExtensions
 			Less(list[i], list[j]);
 	
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static bool LessAt<T>(T[] list, int i, int j, IComparer<T> comparer) 
+	internal static bool LessAt<T>(this T[] list, int i, int j, IComparer<T> comparer) 
 		=> comparer.Less(list[i], list[j]);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

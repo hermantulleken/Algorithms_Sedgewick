@@ -1,6 +1,7 @@
 ﻿namespace UnitTests;
 
 using System.Collections.Generic;
+using System.Reflection;
 using AlgorithmsSW.PriorityQueue;
 using NUnit.Framework;
 using Support;
@@ -166,6 +167,27 @@ public class HeapTests
 		Assert.That(queue.PopMin(), Is.EqualTo(5));
 	}
 
+	[Test]
+	public void TestGrow()
+	{
+		var priorityQueue = new ResizeableMinBinaryHeap<int>(10, Comparer<int>.Default);
+
+		const int itemCount = 10;
+		
+		for (int i = itemCount; i >= 0; i--)
+		{
+			priorityQueue.Push(i);
+		}
+
+		for (int i = 0; i < itemCount; i++)
+		{
+			int item = priorityQueue.PeekMin;
+			Assert.That(item, Is.EqualTo(i));
+			item = priorityQueue.PopMin();
+			Assert.That(item, Is.EqualTo(i));
+		}
+	}
+
 	private static Func<IPriorityQueue<int>>[] intPriorityQueueFactories = 
 	{
 		() => new FixedCapacityMinBinaryHeap<int>(10, Comparer<int>.Default),
@@ -176,6 +198,7 @@ public class HeapTests
 		() => new PriorityQueueWithUnorderedArray<int>(Comparer<int>.Default),
 		() => new PriorityQueueWithOrderedLinkedList<int>(Comparer<int>.Default),
 		() => new PriorityQueueWithUnorderedLinkedList<int>(Comparer<int>.Default),
+		() => new ResizeableMinBinaryHeap<int>(10, Comparer<int>.Default),
 	};
 
 	private static Func<IPriorityQueue<Person>>[] personPriorityQueueFactories = 
@@ -188,5 +211,6 @@ public class HeapTests
 		() => new PriorityQueueWithUnorderedArray<Person>(Comparer<Person>.Default),
 		() => new PriorityQueueWithOrderedLinkedList<Person>(Comparer<Person>.Default),
 		() => new PriorityQueueWithUnorderedLinkedList<Person>(Comparer<Person>.Default),
+		() => new ResizeableMinBinaryHeap<Person>(10, Comparer<Person>.Default),
 	};
 }

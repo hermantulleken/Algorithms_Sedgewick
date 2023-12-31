@@ -6,6 +6,8 @@ using Stack;
 /// A gap buffer implemented with two stacks. 
 /// </summary>
 /// <inheritdoc cref="IGapBuffer{T}"/>
+// This is called simply a Buffer in the textbook.
+[ExerciseReference(1, 3, 44)]
 public class GapBufferWithStacks<T> : IGapBuffer<T>
 {
 	private readonly IStack<T> itemsAfterCursor;
