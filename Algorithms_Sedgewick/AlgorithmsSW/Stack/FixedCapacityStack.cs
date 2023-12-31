@@ -52,8 +52,10 @@ public sealed class FixedCapacityStack<T> : IStack<T>
 		}
 
 		Count = 0;
+		version++;
 	}
 
+	[ExerciseReference(1, 3, 50)]
 	public IEnumerator<T> GetEnumerator()
 	{
 		int versionAtStartOfIteration = version;

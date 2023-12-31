@@ -5,6 +5,7 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.List;
 
+[ExerciseReference(1, 3, 31)]
 public sealed class DoublyLinkedList<T> : IEnumerable<T>
 {
 	/*

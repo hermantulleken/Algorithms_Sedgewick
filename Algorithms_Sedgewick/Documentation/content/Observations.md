@@ -22,14 +22,17 @@ then use that to implement the method to implement the full list.
 
 ## Symbol Tables and Sets
 - It is annoying that sets and symbol tables cannot share their implementation in some way without overhead. The central
-question here is realy whether to implement a set of KEyValuePairs, or a separate Symbol table that do not construct new
+question here is really whether to implement a set of KEyValuePairs, or a separate Symbol table that do not construct new
 objects.
 
 ## Hash codes
 Algorithms that use hash codes need to check that they work when there are collisions. (I have not :/)
 Since collisions are rare, unit tests with small number of elements will not test this code. I discovered a mystifying 
-bug that would only manifest if I ran three specific tests together. Turns out in that case the hashcodes in the failing 
-test were different, and happen to collide, exposing the faulty code. 
+bug that would only manifest if I ran three specific tests together. Turns out in that case the hash codes in the failing 
+test were different, and happen to collide, exposing the faulty code.
+
+It is also good to know that object hashes can also depend on external factors and therefor they are not stable across 
+different runs. Algorithms that use hash codes should really be tested with objects that have stable hash codes. 
 
 ## Graph APIs
 - The Graph APIs used here are not very good.

@@ -1,10 +1,10 @@
-﻿using AlgorithmsSW.Object;
-
-namespace AlgorithmsSW;
+﻿namespace AlgorithmsSW.Object;
 
 /// <summary>
-/// Wrapper that adds an ID to an object.
+/// An object with an ID. Useful for doing tests where objects are required to be distinguishable. 
 /// </summary>
+// TODO: This probably should move to Support. 
+// TODO: We also need objects where hash functions can be given. 
 public class ObjectWithId : IIdeable
 {
 	// ReSharper disable once StaticMemberInGenericType

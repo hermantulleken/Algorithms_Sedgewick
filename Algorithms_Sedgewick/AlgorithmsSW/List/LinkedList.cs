@@ -315,6 +315,7 @@ public sealed class LinkedList<T> : IEnumerable<T>
 	/// <summary>
 	/// Reverses the order of the nodes in the linked list.
 	/// </summary>
+	[ExerciseReference(1, 3, 30)]
 	public void Reverse()
 	{
 		if (IsEmpty || IsSingleton)

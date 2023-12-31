@@ -310,6 +310,7 @@ public static class ListExtensions
 	/// </summary>
 	/// <typeparam name="T">The type of elements in the input sequence.</typeparam>
 	/// <param name="list">The input sequence from which sliding windows are generated.</param>
+	/// <remarks>If the list has fewer than 2 elements, the resulting sequence will be empty.</remarks>
 	public static IEnumerable<(T? first, T? last)> SlidingWindow2<T>(this IEnumerable<T?> list)
 	{
 		var buffer = new OptimizedCapacity2Buffer<T>();

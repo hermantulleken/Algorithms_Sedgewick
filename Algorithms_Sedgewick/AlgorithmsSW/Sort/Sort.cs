@@ -297,9 +297,9 @@ public static class Sort
 
 		return true;
 	}
-
-	// Implements Ex 2.1.14 in Sedgewick
+	
 	// This seems to be a  version of gnome sort
+	[ExerciseReference(2, 1, 14)]
 	public static void DequeueSortWithDeque<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
 	{
@@ -329,9 +329,9 @@ public static class Sort
 			list[i] = deque.PopLeft();
 		}
 	}
-
-	// Implements Ex 2.1.14 in Sedgewick
+	
 	// This seems to be a  version of gnome sort
+	[ExerciseReference(2, 1, 14)]
 	public static void DequeueSortWithDeque<T>(IDeque<T> deque) 
 		where T : IComparable<T>
 	{
@@ -403,9 +403,9 @@ public static class Sort
 		CheckIsSorted(deque);
 #endif
 	}
-
-	// Implements Ex 2.1.14 in Sedgewick
+	
 	// This seems to be a  version of gnome sort
+	[ExerciseReference(2, 1, 14)]
 	public static void DequeueSortWithQueue<T>(IRandomAccessList<T> list) 
 		where T : IComparable<T>
 	{
@@ -718,7 +718,7 @@ public static class Sort
 		Sort(0, list.Count);
 	}
 
-	// Ex. 2.25
+	[ExerciseReference(2, 2, 25)]
 	public static void MergeK<T>(
 		IRandomAccessList<T> list,
 		T[] helpList,
@@ -1594,7 +1594,7 @@ public static class Sort
 		}
 	}
 	
-	// Ex 2.2.10
+	[ExerciseReference(2, 2, 10)]
 	private static void FastMerge<T>(
 		IRandomAccessList<T> list, 
 		T[] helpList, 

@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using AlgorithmsSW.Object;
-using Support;
 
 namespace AlgorithmsSW.Queue;
 
@@ -63,6 +62,7 @@ public sealed class FixedCapacityQueue<T>(int capacity)
 		}
 
 		Count = 0;
+		version++;
 		head = 0;
 		tail = 0;
 	}
