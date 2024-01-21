@@ -1,12 +1,11 @@
-﻿using static Support.Diagnostics;
-
-namespace AlgorithmsSW.SearchTrees;
+﻿namespace AlgorithmsSW.SearchTrees;
 
 using System.Diagnostics.CodeAnalysis;
 using Queue;
 using Stack;
 using static System.Diagnostics.Debug;
-using static Support.Tools;
+using static Diagnostics;
+using static Tools;
 
 public class RedBlackTree<T> : IBinarySearchTree<T>
 {
@@ -230,7 +229,7 @@ public class RedBlackTree<T> : IBinarySearchTree<T>
 
 			int versionAtStartOfIteration = version;
 
-			Stack<Node> stack = new Stack<Node>();
+			var stack = new Stack<Node>();
 			stack.Push(root!);
 
 			while (stack.Count > 0)
@@ -268,12 +267,11 @@ public class RedBlackTree<T> : IBinarySearchTree<T>
 
 	public int CountNodesSmallerThan(T item)
 	{
-		bool SmallerThanItem(Node node) =>
-			comparer.Less(node.Item, item);
-				
 		return NodesInOrder
 			.TakeWhile(SmallerThanItem)
 			.Count();
+
+		bool SmallerThanItem(Node node) => comparer.Less(node.Item, item);
 	}
 
 	public void Remove(T key) 
@@ -537,27 +535,27 @@ public class RedBlackTree<T> : IBinarySearchTree<T>
 		return node;
 	}
 
-	private Node RestoreRedBlackTreeInvariant(Node h) 
+	private Node RestoreRedBlackTreeInvariant(Node node) 
 	{
-		// assert (h != null);
+		// assert (node != null);
 
-		if (Node.IsNotNullAndRed(h.RightChild) && !Node.IsNotNullAndRed(h.LeftChild))
+		if (Node.IsNotNullAndRed(node.RightChild) && !Node.IsNotNullAndRed(node.LeftChild))
 		{
-			h = h.RotateLeft();
+			node = node.RotateLeft();
 		}
 
-		if (Node.IsNotNullAndRed(h.LeftChild) && Node.IsNotNullAndRed(h.LeftChild?.LeftChild))
+		if (Node.IsNotNullAndRed(node.LeftChild) && Node.IsNotNullAndRed(node.LeftChild?.LeftChild))
 		{
-			h = h.RotateRight();
+			node = node.RotateRight();
 		}
 
-		if (Node.IsNotNullAndRed(h.LeftChild) && Node.IsNotNullAndRed(h.RightChild))
+		if (Node.IsNotNullAndRed(node.LeftChild) && Node.IsNotNullAndRed(node.RightChild))
 		{
-			h.SetRedAndChildrenBlack();
+			node.SetRedAndChildrenBlack();
 		}
 
-		h.Count = Node.GetCount(h.LeftChild) + Node.GetCount(h.RightChild) + 1;
-		return h;
+		node.Count = Node.GetCount(node.LeftChild) + Node.GetCount(node.RightChild) + 1;
+		return node;
 	}
 
 	// delete the key-value pair with the given key rooted at h
@@ -645,7 +643,7 @@ public class RedBlackTree<T> : IBinarySearchTree<T>
 
 	// delete the key-value pair with the minimum key rooted at h
 	private Node? RemoveMinNode(Node node)
-    {
+	{
 		if (node.LeftChild == null)
 		{
 			return null;

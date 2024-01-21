@@ -52,7 +52,11 @@ public sealed class ResizeableMinBinaryHeap<T> : IPriorityQueue<T>
 #if WITH_INSTRUMENTATION
 	private bool IsReferenceType { get; }
 #endif
-	
+	public ResizeableMinBinaryHeap(IComparer<T> comparer)
+		: this(Collection.DefaultCapacity, comparer)
+	{
+	}
+		
 	public ResizeableMinBinaryHeap(int initialCapacity, IComparer<T> comparer)
 	{
 		Capacity = initialCapacity;

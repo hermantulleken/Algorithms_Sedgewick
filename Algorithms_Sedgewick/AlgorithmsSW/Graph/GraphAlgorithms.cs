@@ -6,10 +6,28 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.Graph;
 
-using Support;
+using Set;
 
 public static class GraphAlgorithms
 {
+	/// <summary>
+	/// Checks whether two paths share an edge.
+	/// </summary>
+	/// <param name="path0">The first path.</param>
+	/// <param name="path1">The second path.</param>
+	/// <returns><see langword="true"/> if the paths share an edge; otherwise, <see langword="false"/>.</returns>
+	public static bool ShareEdge(IEnumerable<(int, int)> path0, IEnumerable<(int, int)> path1)
+	{
+		var set = new HashSet<(int, int)>(Comparer<(int, int)>.Default);
+
+		foreach (var edge in path0)
+		{
+			set.Add(edge);
+		}
+
+		return path1.Any(edge => set.Contains(edge));
+	}
+	
 	[ExerciseReference(4, 1, 10)]
 	public static int FindNodeSafeToDelete(IGraph graph)
 	{

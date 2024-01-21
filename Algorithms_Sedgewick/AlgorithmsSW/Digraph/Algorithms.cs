@@ -1,7 +1,6 @@
 ﻿namespace AlgorithmsSW.Digraph;
 
 using List;
-using Support;
 using static System.Diagnostics.Debug;
 
 public static class Algorithms
@@ -51,6 +50,10 @@ public static class Algorithms
 		return !outOfOrderVertices.Any();
 	}
 	
+	/// <summary>
+	/// Add edges to a directed graph to make it strongly connected.
+	/// </summary>
+	/// <param name="graph">The graph to make strongly connected.</param>
 	public static void ConnectComponents(this IDigraph graph)
 	{
 		var strongConnectivity = new StrongComponents(graph);
@@ -104,8 +107,8 @@ public static class Algorithms
 		}
 
 #if DEBUG
-    strongConnectivity = new StrongComponents(graph);
-    Assert(strongConnectivity.ComponentCount == 1);
+	strongConnectivity = new StrongComponents(graph);
+	Assert(strongConnectivity.ComponentCount == 1);
 #endif
 	}
 

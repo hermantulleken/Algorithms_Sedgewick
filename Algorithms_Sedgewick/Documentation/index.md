@@ -40,10 +40,14 @@ nk readability is important at writing correct code.
 - Exercise 1.3.19: Method @AlgorithmsSW.List.ListExtensions.RemoveLast*
 - Exercise 1.3.24: Method @AlgorithmsSW.List.LinkedList`1.RemoveAfter*
 - Exercise 1.3.25: Method @AlgorithmsSW.List.LinkedList`1.InsertAfter*
+- Exercise 1.3.30: Method @AlgorithmsSW.List.LinkedList`1.Reverse*
+- Exercise 1.3.31: Class @AlgorithmsSW.List.DoublyLinkedList`1
 - Exercise 1.3.32: Class @AlgorithmsSW.Steque`1
 - Exercise 1.3.33: Class @AlgorithmsSW.Deque.DequeWithDoublyLinkedList`1
 - Exercise 1.3.37: Method @AlgorithmsSW.Algorithms.JosephusSequence*
 - Exercise 1.3.39: Class @AlgorithmsSW.Buffer.RingBuffer`1
+- Exercise 1.3.44: Class @AlgorithmsSW.GapBuffer.GapBufferWithStacks`1
+- Exercise 1.3.50: Method @AlgorithmsSW.Stack.FixedCapacityStack`1.GetEnumerator*
 ### Chapter 2
 #### Page References
 - Page 309: Class @AlgorithmsSW.PriorityQueue.IPriorityQueue`1
@@ -55,12 +59,17 @@ nk readability is important at writing correct code.
 - Algorithm 2.5: Method @AlgorithmsSW.Sort.Sort.QuickSort*
 - Algorithm 2.6: Class @AlgorithmsSW.PriorityQueue.FixedCapacityMinBinaryHeap`1
 - Algorithm 2.7: Method @AlgorithmsSW.Sort.Sort.HeapSort*
+#### Section 1
+- Exercise 2.1.14: Method @AlgorithmsSW.Sort.Sort.DequeueSortWithDeque*
+- Exercise 2.1.14: Method @AlgorithmsSW.Sort.Sort.DequeueSortWithDeque*
+- Exercise 2.1.14: Method @AlgorithmsSW.Sort.Sort.DequeueSortWithQueue*
 #### Section 2
 - Exercise 2.2.14: Method @AlgorithmsSW.Sort.Sort.Merge*
 - Exercise 2.2.15: Method @AlgorithmsSW.Sort.Sort.MergeSortBottomsUpWithQueues*
 - Exercise 2.2.16: Method @AlgorithmsSW.Sort.Sort.MergeSortNatural*
 - Exercise 2.2.22: Method @AlgorithmsSW.Sort.Sort.Merge3Sort*
 - Exercise 2.2.22: Method @AlgorithmsSW.Sort.Sort.MergeKSort*
+- Exercise 2.2.25: Method @AlgorithmsSW.Sort.Sort.MergeK*
 #### Section 4
 - Exercise 2.4.3: Class @AlgorithmsSW.PriorityQueue.PriorityQueueWithOrderedArray`1
 - Exercise 2.4.3: Class @AlgorithmsSW.PriorityQueue.PriorityQueueWithOrderedLinkedList`1

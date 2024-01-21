@@ -3,37 +3,51 @@
 using EdgeWeightedGraph;
 using List;
 using PriorityQueue;
+using Set;
+using ValueSnapshot;
 using static System.Diagnostics.Debug;
 
 /// <summary>
-/// An implementation of Yen's algorithm of finding the k shortest paths between vertices in a directed edge weighted
-/// graph.
+/// This is like <see cref="YensAlgorithm{TWeight}"/>, but instead of looking for a fixed number of shortest paths, it
+/// looks for shortest paths until the intersection among all paths found is empty. This particular
+/// version is used to implement a more efficient version of finding critical edges. 
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
-/*	Implementation note: This is an example of an algorithm that is too difficult (or obscure) for ChatGPT to implement,
- 	as of Dec 2023.
+/*	Question: Can we unify this with the original? Should we?
+	One potential way to do this is to provide the shortest paths lazily. So the user can look for k paths or stop when 
+	some other condition is met.
+	
+	TODO: Do this ^.
 */
 [ExerciseReference(4, 4, 7)]
-public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
+public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 {
-	private readonly DirectedPath<TWeight>?[] shortestPaths;
+	private readonly ResizeableArray<DirectedPath<TWeight>> shortestPaths;
 	
-	/// <inheritdoc/>
-	public bool HasPath(int k) => k >= 0 && k < shortestPaths.Length && shortestPaths[k] != null;
+	// Null when there are no paths between the target and source node.
+	public ISet<(int, int)>? Intersection { get; private set; }
 
+	/// <inheritdoc/>
+	public bool HasPath(int k) => k >= 0 && k < shortestPaths.Count;
+	
 	/// <summary>
-	/// Initializes a new instance of the <see cref="YensAlgorithm{TWeight}"/> class.
+	/// Initializes a new instance of the <see cref="OverlappingYensAlgorithm{TWeight}"/> class.
 	/// </summary>
 	/// <param name="digraph">The directed graph in which to find the paths.</param>
 	/// <param name="source">The source vertex from where paths originate.</param>
 	/// <param name="target">The target vertex to which paths should lead.</param>
-	/// <param name="shortestPathCount">The number of shortest paths to find.</param>
 	/// <param name="zero">The zero value for the weight type, used in calculations.</param>
 	/// <param name="maxValue">The maximum value for the weight type, used in calculations.</param>
 	/// <param name="add">A function to add two weight values.</param>
-	public YensAlgorithm(IEdgeWeightedDigraph<TWeight> digraph, int source, int target, int shortestPathCount, TWeight zero, TWeight maxValue, Func<TWeight, TWeight, TWeight> add)
+	public OverlappingYensAlgorithm(
+		IEdgeWeightedDigraph<TWeight> digraph, 
+		int source, 
+		int target,
+		TWeight zero, 
+		TWeight maxValue, 
+		Func<TWeight, TWeight, TWeight> add)
 	{
-		shortestPaths = new DirectedPath<TWeight>[shortestPathCount];
+		shortestPaths = [];
 		var dijkstra = new Dijkstra<TWeight>(digraph, source, add, zero, maxValue);
 		
 		if (!dijkstra.HasPathTo(target))
@@ -43,13 +57,18 @@ public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 		
 		var path = dijkstra.GetPathTo(target);
 		ResizeableArray<DirectedEdge<TWeight>> removedEdges = [];
-		shortestPaths[0] = path;
+		shortestPaths.Add(path);
 		var queue = DataStructures.PriorityQueue(100, new DirectedPathComparer<TWeight>(digraph.Comparer));
+		int shortestPathIndex = 1;
+
+		ISet<(int, int)> set = new HashSet<(int, int)>(Comparer<(int, int)>.Default);
+		set.AddRange(path.WeightlessEdges);
+		ValueSnapshot<ISet<(int, int)>> intersection = new(set);
 		
-		for (int shortestPathIndex = 1; shortestPathIndex < shortestPathCount; shortestPathIndex++)
+		do
 		{
 			FindPotentialShortestPaths(shortestPathIndex);
-
+				
 			if (queue.IsEmpty())
 			{
 				// This handles the case of there being no spur paths, or no spur paths left.
@@ -60,9 +79,22 @@ public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 				break;
 			}
 
-			shortestPaths[shortestPathIndex] = queue.PopMin();
-		}
+			var newPath = queue.PopMin();
+			shortestPaths[shortestPathIndex] = newPath;
+			
+			Assert(intersection.Value != null);
+			intersection.Value = intersection.Value.Intersection(newPath.WeightlessEdges);
+			
+			shortestPathIndex++;
+		} while (intersection.Value.Any());
 
+		if (intersection.HasPreviousValue)
+		{
+			Intersection = intersection.PreviousValue;
+		}
+		
+		Assert((shortestPaths.Count > 0) == intersection.HasPreviousValue);
+		
 		return;
 
 		void RestoreGraph()
@@ -96,13 +128,13 @@ public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 				queue.Push(new(totalPath.Edges, add));
 			}
 		}
-
-		void RemoveOverlappingEdges(DirectedPath<TWeight> rootPath, int shortestPathIndex, int previousPathVertexIndex)
+		
+		void RemoveOverlappingEdges(DirectedPath<TWeight> rootPath, int pathIndex, int previousPathVertexIndex)
 		{
-			foreach (var shortestPath in shortestPaths.Take(shortestPathIndex))
+			foreach (var shortestPath in shortestPaths.Take(pathIndex))
 			{
 				Assert(shortestPath != null);
-				Assert(shortestPathIndex >= shortestPaths.Length - 1 || shortestPaths[shortestPathIndex + 1] == null);
+				Assert(pathIndex >= shortestPaths.Count - 1 || shortestPaths[pathIndex + 1] == null);
 
 				if (rootPath.HasEqualVertices(shortestPath.Take(previousPathVertexIndex, zero, add)))
 				{
@@ -115,15 +147,15 @@ public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 		
 		void RemoveRootPathVertices(DirectedPath<TWeight> rootPath)
 		{
-			foreach (int rootPahvertex in rootPath.Vertexes.SkipLast(1))
+			foreach (int rootPathVertex in rootPath.Vertexes.SkipLast(1))
 			{
-				removedEdges.AddRange(digraph.RemoveVertex(rootPahvertex));
+				removedEdges.AddRange(digraph.RemoveVertex(rootPathVertex));
 			}
 		}
 
-		void FindPotentialShortestPaths(int shortestPathIndex)
+		void FindPotentialShortestPaths(int pathIndex)
 		{
-			var previousPath = shortestPaths[shortestPathIndex - 1];
+			var previousPath = shortestPaths[pathIndex - 1];
 			Assert(previousPath != null);
 			
 			/*	Why do we skip the last two?
@@ -140,7 +172,7 @@ public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 				Assert(rootPath.Vertexes.Count() == previousPathVertexIndex + 1);
 				Assert(rootPath.Vertexes.Last() == spurVertex);
 
-				RemoveOverlappingEdges(rootPath, shortestPathIndex, previousPathVertexIndex);
+				RemoveOverlappingEdges(rootPath, pathIndex, previousPathVertexIndex);
 				RemoveRootPathVertices(rootPath);
 				
 				dijkstra = new(digraph, spurVertex, add, zero, maxValue);
@@ -155,6 +187,13 @@ public class YensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 		}
 	}
 
+	/// <summary>
+	/// Gets the kth shortest path, if it exist, starting from 0, among all shortest paths that have a non-zero
+	/// intersection. 
+	/// </summary>
+	/// <param name="rank">The rank (lowest rank 0 is the shortest) of the path to get. </param>
+	/// <returns>The path with the given rank.</returns>
+	/// <exception cref="InvalidOperationException">A path of the given rank does not exist.</exception>
 	public DirectedPath<TWeight> GetPath(int rank)
 	{
 		if (!HasPath(rank))

@@ -6,5 +6,5 @@ public interface IKShortestPaths<TWeight>
 {
 	bool HasPath(int k);
 	
-	DirectedPath<TWeight> GetPath(int i);
+	DirectedPath<TWeight> GetPath(int rank);
 }

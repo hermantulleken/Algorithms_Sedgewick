@@ -13,15 +13,18 @@ int[] chapterPage =
 	1000
 ];
 
-var assembly = Assembly.GetAssembly(typeof(Algorithms));
+var assembly = 
+	Assembly.GetAssembly(typeof(Algorithms)) 
+	?? throw new ($"Assembly {nameof(Algorithms)}not found.");
+
 var references = GetReferences();
-ProcessReferences(references);
+ProcessReferences();
 
 Console.WriteLine("Markdown file generated.");
 
 return;
 
-void ProcessReferences(List<(ReferenceAttribute, object)> references)
+void ProcessReferences()
 {
 	using var writer = new StreamWriter("output.md");
 	
@@ -30,7 +33,7 @@ void ProcessReferences(List<(ReferenceAttribute, object)> references)
 		int chapter = i + 1;
 		writer.WriteLine($"### Chapter {chapter}");
 		
-		var pages = GetPages(references, i);
+		var pages = GetPages(i);
 		if (pages.Any())
 		{
 			writer.WriteLine($"#### Page References");
@@ -38,7 +41,7 @@ void ProcessReferences(List<(ReferenceAttribute, object)> references)
 		}
 		
 		
-		var algorithms = GetAlgorithms(references, chapter);
+		var algorithms = GetAlgorithms(chapter);
 		if (algorithms.Any())
 		{
 			writer.WriteLine($"#### Algorithms");
@@ -48,7 +51,7 @@ void ProcessReferences(List<(ReferenceAttribute, object)> references)
 		for(int j = 0; j < 5; j++)
 		{
 			int section = j + 1;
-			var examples = GetExamples(references, chapter, section);
+			var examples = GetExamples(chapter, section);
 			
 			if(!examples.Any()) continue;
 			
@@ -58,12 +61,13 @@ void ProcessReferences(List<(ReferenceAttribute, object)> references)
 	}
 }
 
-IEnumerable<(PageReferenceAttribute, object)> GetPages(List<(ReferenceAttribute, object)> references, int chapter)
+List<(PageReferenceAttribute, object)> GetPages(int chapter)
 {
 	return references
 		.Where(Match)
 		.Select(CastReference)
-		.OrderBy(GetNumber);
+		.OrderBy(GetNumber)
+		.ToList();
 	
 	int GetNumber((PageReferenceAttribute pageReference, object _) reference)
 		=> reference.pageReference.PageNumber;
@@ -81,12 +85,13 @@ IEnumerable<(PageReferenceAttribute, object)> GetPages(List<(ReferenceAttribute,
 	}
 }
 
-IEnumerable<(ExerciseReferenceAttribute, object)> GetExamples(List<(ReferenceAttribute, object)> references, int chapter, int section)
+List<(ExerciseReferenceAttribute, object)> GetExamples(int chapter, int section)
 {
 	return references
 		.Where(Match)
 		.Select(CastReference)
-		.OrderBy(GetNumber);
+		.OrderBy(GetNumber)
+		.ToList();
 	
 	int GetNumber((ExerciseReferenceAttribute exerciseReference, object _) reference)
 		=> reference.exerciseReference.ExerciseNumber;
@@ -100,12 +105,13 @@ IEnumerable<(ExerciseReferenceAttribute, object)> GetExamples(List<(ReferenceAtt
 			&& exerciseReference.SectionNumber == section;
 }
 
-IEnumerable<(AlgorithmReferenceAttribute, object)> GetAlgorithms(List<(ReferenceAttribute, object)> references, int chapter)
+List<(AlgorithmReferenceAttribute, object)> GetAlgorithms(int chapter)
 {
 	return references
 		.Where(Match)
 		.Select(CastReference)
-		.OrderBy(GetNumber);
+		.OrderBy(GetNumber)
+		.ToList();
 	
 	int GetNumber((AlgorithmReferenceAttribute algorithmReference, object _) reference)
 		=> reference.algorithmReference.AlgorithmNumber;
@@ -120,22 +126,22 @@ IEnumerable<(AlgorithmReferenceAttribute, object)> GetAlgorithms(List<(Reference
 
 List<(ReferenceAttribute, object)> GetReferences()
 {
-	List<(ReferenceAttribute, object)> references = [];
+	List<(ReferenceAttribute, object)> newReferences = [];
 
 	foreach (var type in assembly.GetTypes())
 	{
 		var attribute = type.GetCustomAttribute<ReferenceAttribute>();
 		if (attribute != null)
 		{
-			references.Add((attribute, type));
+			newReferences.Add((attribute, type));
 		}
 
 		foreach (var method in type.GetMethods())
 		{
 			attribute = method.GetCustomAttribute<ReferenceAttribute>();
-			if (method.GetCustomAttribute<ReferenceAttribute>() != null)
+			if (attribute != null)
 			{
-				references.Add((attribute, (type, method)));
+				newReferences.Add((attribute, (type, method)));
 			}
 		}
 
@@ -144,12 +150,12 @@ List<(ReferenceAttribute, object)> GetReferences()
 			attribute = property.GetCustomAttribute<ReferenceAttribute>();
 			if (attribute != null)
 			{
-				references.Add((attribute, (type, property)));
+				newReferences.Add((attribute, (type, property)));
 			}
 		}
 	}
 
-	return references;
+	return newReferences;
 }
 
 static string GetClassLink(ReferenceAttribute reference, Type type) 
@@ -161,10 +167,8 @@ static string GetMethodLink(ReferenceAttribute reference, Type type, MethodInfo 
 static string GetPropertyLink(ReferenceAttribute reference, Type type, MemberInfo property) 
 	=> $"- {reference}: Property @{type.FullName}.{property.Name}";
 
-static string GetMethodSignature(Type type, MethodInfo method)
-{
-	return $"@{type.FullName}.{method.Name}*";
-}
+static string GetMethodSignature(Type type, MethodInfo method) 
+	=> $"@{type.FullName}.{method.Name}*";
 
 void WriteReferences<TReference>(IEnumerable<(TReference, object)> valueTuples, StreamWriter streamWriter)
 	where TReference : ReferenceAttribute

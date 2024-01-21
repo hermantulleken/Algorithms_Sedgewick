@@ -4,6 +4,7 @@ using Support;
 
 namespace AlgorithmsSW.ValueSnapshot;
 
+using System.Diagnostics.CodeAnalysis;
 using Buffer;
 
 /// <summary>
@@ -42,11 +43,13 @@ public class ValueSnapshot<T>
 	/// <summary>
 	/// Gets a value indicating whether the <see cref="Value"/> has been set.
 	/// </summary>
+	[MemberNotNullWhen(true, nameof(Value))]
 	public bool HasValue => buffer.Count > 0;
 
 	/// <summary>
 	/// Gets a value indicating whether the <see cref="Value"/> has been set more than once, and thus has a <see cref="PreviousValue"/>.
 	/// </summary>
+	[MemberNotNullWhen(true, nameof(PreviousValue))]
 	public bool HasPreviousValue => buffer.Count > 1;
 
 	/// <summary>

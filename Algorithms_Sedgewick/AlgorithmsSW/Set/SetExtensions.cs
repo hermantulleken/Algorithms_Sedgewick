@@ -41,13 +41,13 @@ public static class SetExtensions
 	/// <param name="set2">The second set.</param>
 	/// <returns>A new set containing all elements that are in both <paramref name="set1"/> and
 	/// <paramref name="set2"/>.</returns>
-	public static ISet<T> Intersection<T>(ISet<T> set1, ISet<T> set2)
+	public static ISet<T> Intersection<T>(this ISet<T> set1, IEnumerable<T> set2)
 	{
 		var intersection = new HashSet<T>(set1.Comparer);
 		
-		foreach (var item in set1)
+		foreach (var item in set2)
 		{
-			if (set2.Contains(item))
+			if (set1.Contains(item))
 			{
 				intersection.Add(item);
 			}
@@ -63,7 +63,6 @@ public static class SetExtensions
 	/// <param name="set2">The second set (subtrahend).</param>
 	/// <returns>A new set containing all elements that are in <paramref name="set1"/> but not in
 	/// <paramref name="set2"/>.</returns>
-
 	public static ISet<T> Difference<T>(this ISet<T> set1, ISet<T> set2)
 	{
 		var except = new HashSet<T>(set1.Comparer);
@@ -107,5 +106,19 @@ public static class SetExtensions
 		}
 
 		return symmetricExcept;
+	}
+	
+	/// <summary>
+	/// Adds a list of items to a set.
+	/// </summary>
+	/// <param name="set">The set to add the items to.</param>
+	/// <param name="items">The items to add.</param>
+	/// <typeparam name="T">The type of the items in the set.</typeparam>
+	public static void AddRange<T>(this ISet<T> set, IEnumerable<T> items)
+	{
+		foreach (var item in items)
+		{
+			set.Add(item);
+		}
 	}
 }

@@ -6,6 +6,8 @@ using Support;
 public record DirectedPath<TWeight>
 {
 	public ResizeableArray<DirectedEdge<TWeight>> Edges { get; }
+	
+	public IEnumerable<(int, int)> WeightlessEdges => Edges.Select(edge => (edge.Source, edge.Target));
 
 	public int SourceVertex { get; }
 	

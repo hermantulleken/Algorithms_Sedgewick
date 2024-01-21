@@ -29,7 +29,7 @@ public static class DataStructures
 	
 	public static IQueue<T> Queue<T>(int capacity) => new QueueWithResizeableArray<T>(capacity);
 	
-	public static ResizeableArray<T> List<T>() => new ResizeableArray<T>();
+	public static IRandomAccessList<T> List<T>() => new ResizeableArray<T>();
 	
 	public static IRandomAccessList<T> List<T>(int capacity) => new ResizeableArray<T>(capacity);
 	
@@ -45,15 +45,16 @@ public static class DataStructures
 	
 	public static IDigraph Digraph(int vertexCount) => new DigraphWithAdjacentsLists(vertexCount);
 	
-	// This is actually not a good default, we need a dynamic container. 
 	public static IPriorityQueue<T> PriorityQueue<T>(int capacity, IComparer<T> comparer)
-		=> new FixedCapacityMinBinaryHeap<T>(capacity, comparer);
+		=> new ResizeableMinBinaryHeap<T>(capacity, comparer);
+	
+	public static IPriorityQueue<T> PriorityQueue<T>(IComparer<T> comparer)
+		=> new ResizeableMinBinaryHeap<T>(comparer);
 	
 	public static IndexPriorityQueue<T> IndexedPriorityQueue<T>(int capacity, IComparer<T> comparer) => new(capacity, comparer);
 
 	public static IEdgeWeightedGraph<T> EdgeWeightedGraph<T>(int vertexCount, IComparer<T> comparer) 
 		=> new EdgeWeightedGraphWithAdjacencyLists<T>(vertexCount, comparer);
-	
 	
 	public static IEdgeWeightedDigraph<T> EdgeWeightedDigraph<T>(int vertexCount, IComparer<T> comparer) 
 		=> new EdgeWeightedDigraphWithAdjacencyLists<T>(vertexCount, comparer);

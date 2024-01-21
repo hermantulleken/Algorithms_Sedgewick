@@ -7,14 +7,17 @@ using HashTable;
 using List;
 using static System.Diagnostics.Debug;
 
+/// <summary>
+/// Represents a hash table that uses linear probing to resolve collisions.
+/// </summary>
+/// <typeparam name="T">The type of the keys in the hash table.</typeparam>
+/// <remarks>
+/// Linear probing is an open-addressing strategy where we look for the next available slot
+/// in the array when a collision occurs.
+///
+/// This version always have a prime table size, so the table hashing mechanism can work as expected.
+/// </remarks>
 [ExerciseReference(3, 4, 28)]
-/*
-	This class represents a hash table that uses linear probing to resolve collisions.
-	Linear probing is an open-addressing strategy where we look for the next available slot
-	in the array when a collision occurs.
-	
-	This version always have a prime table size, so the table hashing mechanism can work as expected. 
-*/
 [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and non-generic versions.")]
 public class HashSet<T> : ISet<T>
 {
@@ -22,16 +25,27 @@ public class HashSet<T> : ISet<T>
 	private T[] keys;
 	private int log2TableSize;
 	private int tableSize;
-	
+
+	/// <inheritdoc />
 	public int Count { get; private set; }
 
+	/// <inheritdoc />
 	public IComparer<T> Comparer { get; }
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="HashSet{T}"/> class.
+	/// </summary>
+	/// <param name="comparer">The comparer used to compare keys.</param>
 	public HashSet(IComparer<T> comparer)
 		: this(ResizeableArray.DefaultCapacity, comparer)
 	{
 	}
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="HashSet{T}"/> class.
+	/// </summary>
+	/// <param name="initialCapacity">The initial capacity of the hash table.</param>
+	/// <param name="comparer">The comparer used to compare keys.</param>
 	public HashSet(int initialCapacity, IComparer<T> comparer)
 	{
 		(log2TableSize, tableSize) = HashTableWithLinearProbing.GetTableSize(initialCapacity);
@@ -41,6 +55,7 @@ public class HashSet<T> : ISet<T>
 		keyPresent = new bool[tableSize];
 	}
 
+	/// <inheritdoc />
 	public void Add(T key)
 	{
 		key.ThrowIfNull();
@@ -61,6 +76,7 @@ public class HashSet<T> : ISet<T>
 		// else already there
 	}
 
+	/// <inheritdoc />
 	public bool Contains(T key)
 	{
 		key.ThrowIfNull();
@@ -71,6 +87,7 @@ public class HashSet<T> : ISet<T>
 		return found;
 	}
 
+	/// <inheritdoc />
 	public bool Remove(T key)
 	{
 		key.ThrowIfNull();
@@ -98,6 +115,7 @@ public class HashSet<T> : ISet<T>
 			We go to the next index, since there is no key at the current index.
 		*/
 		GetNextIndex(key, ref index); 
+		
 		for (GetNextIndex(key, ref index); keyPresent[index]; GetNextIndex(key, ref index))
 		{
 			ReinsertAt(index);
@@ -111,11 +129,18 @@ public class HashSet<T> : ISet<T>
 		return true;
 	}
 
+	/// <inheritdoc />
 	public IEnumerator<T> GetEnumerator() => keyPresent
 		.IndexWhere(Algorithms.Identity)
 		.Select(index => keys[index]).GetEnumerator();
-
+	
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+	
+	internal void LogDetail()
+	{
+		Console.WriteLine(keyPresent.Pretty());
+		Console.WriteLine(keys.Pretty());
+	}
 	
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private int GetHash([DisallowNull] T key)
@@ -188,11 +213,5 @@ public class HashSet<T> : ISet<T>
 	{
 		keys[index] = key;
 		keyPresent[index] = present;
-	}
-
-	internal void LogDetail()
-	{
-		Console.WriteLine(keyPresent.Pretty());
-		Console.WriteLine(keys.Pretty());
 	}
 }

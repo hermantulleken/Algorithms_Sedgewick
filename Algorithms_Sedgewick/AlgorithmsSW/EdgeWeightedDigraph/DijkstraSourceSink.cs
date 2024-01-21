@@ -1,7 +1,7 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Diagnostics.CodeAnalysis;
 using List;
-using Support;
 using static System.Diagnostics.Debug;
 
 /// <summary>
@@ -12,59 +12,66 @@ using static System.Diagnostics.Debug;
 /// </remarks>
 // Note: only implemented for weights of type double.
 [ExerciseReference(4, 4, 23)]
-public class DijkstraSourceSink
+public class DijkstraSourceSink<TWeight>
 {
-	private readonly double distance;
+	private readonly TWeight distance;
 
-	private readonly IReadonlyRandomAccessList<DirectedEdge<double>>? path;
+	private readonly IReadonlyRandomAccessList<DirectedEdge<TWeight>>? path;
 	
 	/// <summary>
 	/// Gets a value indicating whether a path exists from the source to the sink.
 	/// </summary>
+	[MemberNotNullWhen(true, nameof(path))]
+	[MemberNotNullWhen(true, nameof(Path))]
 	public bool PathExists { get; }
 
 	/// <summary>
 	/// Gets the path from the source to the sink.
 	/// </summary>
 	/// <exception cref="InvalidOperationException"><see cref="PathExists"/> is <see langword="false"/>.</exception>
-	public IReadonlyRandomAccessList<DirectedEdge<double>>? Path
+	public IReadonlyRandomAccessList<DirectedEdge<TWeight>>? Path
 		=> PathExists ? path : throw new InvalidOperationException("No path exists.");
 
 	/// <summary>
 	/// Gets the distance from the source to the sink.
 	/// </summary>
 	/// <exception cref="InvalidOperationException"><see cref="PathExists"/> is <see langword="false"/>.</exception>
-	public double Distance => PathExists ? distance : throw new InvalidOperationException("No path exists.");
+	public TWeight Distance => PathExists ? distance : throw new InvalidOperationException("No path exists.");
 	
 	/// <summary>
-	/// Initializes a new instance of the <see cref="DijkstraSourceSink"/> class.
+	/// Initializes a new instance of the <see cref="DijkstraSourceSink{TWeight}"/> class.
 	/// </summary>
 	/// <param name="graph">The graph to find the shortest path in.</param>
 	/// <param name="source">The source vertex to find the shortest path from.</param>
 	/// <param name="sink">The sink vertex to find the shortest path to.</param>
 	/// <exception cref="ArgumentException"><paramref name="graph"/> contains negative weights.</exception>
-	public DijkstraSourceSink(IEdgeWeightedDigraph<double> graph, int source, int sink)
+	public DijkstraSourceSink(
+		IEdgeWeightedDigraph<TWeight> graph,
+		int source, 
+		int sink, 
+		Func<TWeight, TWeight, TWeight> add, 
+		TWeight zero, 
+		TWeight maxValue)
 	{
-		double[] distanceTo = new double[graph.VertexCount];
-		DirectedEdge<double>?[] edgeTo = new DirectedEdge<double>?[graph.VertexCount];
+		var distanceTo = new TWeight[graph.VertexCount];
+		var edgeTo = new DirectedEdge<TWeight>?[graph.VertexCount];
 		
-		distanceTo.Fill(double.MaxValue);
-		
-		distanceTo[source] = 0;
+		distanceTo.Fill(maxValue);
+		distanceTo[source] = zero;
 		edgeTo[source] = null;
 		
-		var queue = DataStructures.IndexedPriorityQueue(graph.VertexCount, Comparer<double>.Default);
-		queue.Insert(source, 0);
+		var queue = DataStructures.IndexedPriorityQueue(graph.VertexCount, Comparer<TWeight>.Default);
+		queue.Insert(source, zero);
 		
 		while (!queue.IsEmpty && !PathExists)
 		{
-			(int nextNode, double distanceToSource) = queue.PopMin();
+			(int nextNode, TWeight distanceToSource) = queue.PopMin();
 			
 			foreach (var edge in graph.GetIncidentEdges(nextNode))
 			{
 				Assert(edge.Target != source); // Because of the priority queue, this should never happen.
 				
-				if (edge.Weight < 0)
+				if (graph.Comparer.Less(edge.Weight, zero))
 				{
 					throw new ArgumentException("Negative weights are not allowed.", nameof(graph));
 				}
@@ -73,14 +80,14 @@ public class DijkstraSourceSink
 				if (edgeTo[edge.Target] == null) 
 				{
 					edgeTo[edge.Target] = edge;
-					distanceTo[edge.Target] = distanceToSource + edge.Weight;
+					distanceTo[edge.Target] = add(distanceToSource, edge.Weight);
 					queue.Insert(edge.Target, distanceTo[edge.Target]);
 				}
 				// Found a shorter path.
-				else if (distanceTo[edge.Target] > distanceToSource + edge.Weight) 
+				else if (graph.Comparer.Less(add(distanceToSource, edge.Weight), distanceTo[edge.Target]))
 				{
 					edgeTo[edge.Target] = edge;
-					distanceTo[edge.Target] = distanceToSource + edge.Weight;
+					distanceTo[edge.Target] = add(distanceToSource, edge.Weight);
 					queue.UpdateValue(edge.Target, distanceTo[edge.Target]);
 				}
 
@@ -95,11 +102,11 @@ public class DijkstraSourceSink
 		}
 	}
 
-	private IReadonlyRandomAccessList<DirectedEdge<double>>? GetPath(DirectedEdge<double>?[] edgeTo, int source, int sink)
+	private IReadonlyRandomAccessList<DirectedEdge<TWeight>>? GetPath(DirectedEdge<TWeight>?[] edgeTo, int source, int sink)
 	{
 		Assert(PathExists);
 		
-		var stack = new Stack<DirectedEdge<double>>();
+		var stack = new Stack<DirectedEdge<TWeight>>();
 		
 		for (var edge = edgeTo[sink]; edge != null; edge = edgeTo[edge.Source])
 		{

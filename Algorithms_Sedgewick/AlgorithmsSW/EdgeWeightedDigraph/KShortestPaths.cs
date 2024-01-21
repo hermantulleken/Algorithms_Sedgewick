@@ -83,17 +83,17 @@ public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
 	/// <summary>
 	/// Gets the kth shortest path between the source and target.
 	/// </summary>
-	/// <param name="k">The rank of the path to get.</param>
+	/// <param name="rank">The rank of the path to get.</param>
 	/// <exception cref="InvalidOperationException">No path exists with the given rank.</exception>
 	/// <returns>The kth shortest path.</returns>
-	public DirectedPath<TWeight> GetPath(int k)
+	public DirectedPath<TWeight> GetPath(int rank)
 	{
-		if (!HasPath(k))
+		if (!HasPath(rank))
 		{
 			throw new InvalidOperationException($"There are only {shortestPaths.Count} paths between the source and target.");
 		}
 		
-		return shortestPaths[k];
+		return shortestPaths[rank];
 	}
 
 	/// <summary>

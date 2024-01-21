@@ -1,6 +1,7 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
 using Digraph;
+using System.Linq;
 
 public static class RandomGraph
 {
@@ -40,4 +41,19 @@ public static class RandomGraph
 		IComparer<TWeight> comparer,
 		IEnumerable<TWeight> generator) 
 		=> AddRandomWeights(Digraph.RandomGraph.RandomSimple, vertexCount, edgeCount, comparer, generator);
+	
+	public static IEdgeWeightedDigraph<TWeight> AssignWeights<TWeight>(
+		IReadOnlyDigraph graph, 
+		IEnumerable<TWeight> weights, 
+		IComparer<TWeight> comparer)
+	{
+		var newGraph = new EdgeWeightedDigraphWithAdjacencyLists<TWeight>(graph.VertexCount, comparer);
+		
+		foreach (((int vertex0, int vertex1), var weight) in graph.Edges.Zip(weights))
+		{
+			newGraph.AddEdge(vertex0, vertex1, weight);
+		}
+
+		return newGraph;
+	}
 }
