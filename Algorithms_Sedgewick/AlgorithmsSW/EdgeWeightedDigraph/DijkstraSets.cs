@@ -103,6 +103,6 @@ public class DijkstraSets
 			stack.Push(edge);
 		}
 
-		return new(stack.ToResizableArray(), (a, b) => a + b);
+		return new(stack.ToResizableArray());
 	}
 }

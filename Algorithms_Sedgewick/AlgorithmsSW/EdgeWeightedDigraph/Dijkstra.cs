@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Numerics;
 using PriorityQueue;
 
 /// <summary>
@@ -8,15 +9,12 @@ using PriorityQueue;
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 // Algorithm 4.9
 public class Dijkstra<TWeight> : IShortestPath<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly IReadOnlyEdgeWeightedDigraph<TWeight> graph;
 	private readonly DirectedEdge<TWeight>?[] edgeTo;
 	private readonly TWeight[] distTo;
 	private readonly IndexPriorityQueue<TWeight> priorityQueue;
-
-	private readonly Func<TWeight, TWeight, TWeight> add;
-	private readonly TWeight zero;
-	private readonly TWeight maxValue;
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Dijkstra{T}"/> class.
@@ -28,26 +26,20 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 	/// <param name="maxValue">The maximum value for the weights.</param>
 	public Dijkstra(
 		IReadOnlyEdgeWeightedDigraph<TWeight> graph, 
-		int source,
-		Func<TWeight, TWeight, TWeight> add, 
-		TWeight zero,
-		TWeight maxValue)
+		int source)
 	{
 		this.graph = graph;
 		edgeTo = new DirectedEdge<TWeight>[graph.VertexCount];
 		distTo = new TWeight[graph.VertexCount];
 		priorityQueue = new(graph.VertexCount, graph.Comparer);
-		this.add = add;
-		this.zero = zero;
-		this.maxValue = maxValue;
 		
 		for (int i = 0; i < graph.VertexCount; i++)
 		{
-			distTo[i] = maxValue;
+			distTo[i] = TWeight.MaxValue;
 		}
 		
-		distTo[source] = zero;
-		priorityQueue.Insert(source, zero);
+		distTo[source] = TWeight.Zero;
+		priorityQueue.Insert(source, TWeight.Zero);
 		
 		while (!priorityQueue.IsEmpty)
 		{
@@ -60,7 +52,7 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 	
 	/// <inheritdoc />
 	// TODO: this is not a robust test!
-	public bool HasPathTo(int vertex) => graph.Comparer.Compare(distTo[vertex], maxValue) != 0;
+	public bool HasPathTo(int vertex) => graph.Comparer.Compare(distTo[vertex], TWeight.MaxValue) != 0;
 	
 	/// <inheritdoc />
 	public IEnumerable<DirectedEdge<TWeight>> GetEdgesOfPathTo(int target)
@@ -84,7 +76,7 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 	{
 		var path = GetEdgesOfPathTo(target).ToResizableArray();
 		
-		return new(path, add);
+		return new(path);
 	}
 	
 	private void Relax(IReadOnlyEdgeWeightedDigraph<TWeight> graph, int vertex)
@@ -93,12 +85,12 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 		{
 			int target = edge.Target;
 
-			if (graph.Comparer.Compare(distTo[target], add(distTo[vertex], edge.Weight)) <= 0)
+			if (graph.Comparer.Compare(distTo[target], distTo[vertex] + edge.Weight) <= 0)
 			{
 				continue;
 			}
 
-			distTo[target] = add(distTo[vertex], edge.Weight);
+			distTo[target] = distTo[vertex] + edge.Weight;
 			edgeTo[target] = edge;
 				
 			if (priorityQueue.Contains(target))

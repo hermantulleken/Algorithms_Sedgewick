@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Numerics;
 using EdgeWeightedGraph;
 using List;
 using PriorityQueue;
@@ -15,6 +16,7 @@ using Support;
 /// </remarks>
 [ExerciseReference(4, 4, 7)]
 public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
+	where TWeight : IFloatingPoint<TWeight>
 {
 	private readonly ResizeableArray<DirectedPath<TWeight>> shortestPaths;
 
@@ -31,9 +33,7 @@ public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
 		IReadOnlyEdgeWeightedDigraph<TWeight> graph,
 		int source,
 		int target,
-		int k,
-		TWeight zero,
-		Func<TWeight, TWeight, TWeight> add)
+		int k)
 	{
 		#region PseudoCodeExample
 		shortestPaths = [];
@@ -72,7 +72,7 @@ public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
 
 			foreach (var edge in graph.GetIncidentEdges(lastVertex))
 			{
-				var newPath = shortestPath.Combine(edge, add);
+				var newPath = shortestPath.Combine(edge);
 					
 				queue.Push(newPath);
 			}

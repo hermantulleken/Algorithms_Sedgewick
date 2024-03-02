@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Numerics;
 using EdgeWeightedGraph;
 using List;
 using PriorityQueue;
@@ -21,6 +22,7 @@ using static System.Diagnostics.Debug;
 */
 [ExerciseReference(4, 4, 7)]
 public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly ResizeableArray<DirectedPath<TWeight>> shortestPaths;
 	
@@ -36,19 +38,13 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 	/// <param name="digraph">The directed graph in which to find the paths.</param>
 	/// <param name="source">The source vertex from where paths originate.</param>
 	/// <param name="target">The target vertex to which paths should lead.</param>
-	/// <param name="zero">The zero value for the weight type, used in calculations.</param>
-	/// <param name="maxValue">The maximum value for the weight type, used in calculations.</param>
-	/// <param name="add">A function to add two weight values.</param>
 	public OverlappingYensAlgorithm(
 		IEdgeWeightedDigraph<TWeight> digraph, 
 		int source, 
-		int target,
-		TWeight zero, 
-		TWeight maxValue, 
-		Func<TWeight, TWeight, TWeight> add)
+		int target)
 	{
 		shortestPaths = [];
-		var dijkstra = new Dijkstra<TWeight>(digraph, source, add, zero, maxValue);
+		var dijkstra = new Dijkstra<TWeight>(digraph, source);
 		
 		if (!dijkstra.HasPathTo(target))
 		{
@@ -121,11 +117,11 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 			Assert(rootPath.Vertexes.Last() == spurPath.Vertexes.First());
 			Assert(rootPath.Vertexes.Last() != spurPath.Vertexes.Skip(1).First());
 					
-			var totalPath = rootPath.Combine(spurPath, add);
+			var totalPath = rootPath.Combine(spurPath);
 
 			if (!queue.Any(p => p.HasEqualVertices(totalPath)))
 			{
-				queue.Push(new(totalPath.Edges, add));
+				queue.Push(new(totalPath.Edges));
 			}
 		}
 		
@@ -136,7 +132,7 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 				Assert(shortestPath != null);
 				Assert(pathIndex >= shortestPaths.Count - 1 || shortestPaths[pathIndex + 1] == null);
 
-				if (rootPath.HasEqualVertices(shortestPath.Take(previousPathVertexIndex, zero, add)))
+				if (rootPath.HasEqualVertices(shortestPath.Take(previousPathVertexIndex)))
 				{
 					var edge = shortestPath.Edges[previousPathVertexIndex];
 					digraph.RemoveEdge(edge);
@@ -167,7 +163,7 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 			for (int previousPathVertexIndex = 0; previousPathVertexIndex < previousPath.Vertexes.Count() - 2; previousPathVertexIndex++)
 			{
 				int spurVertex = previousPath.Vertexes[previousPathVertexIndex];
-				var rootPath = previousPath.Take(previousPathVertexIndex, zero, add);
+				var rootPath = previousPath.Take(previousPathVertexIndex);
 				
 				Assert(rootPath.Vertexes.Count() == previousPathVertexIndex + 1);
 				Assert(rootPath.Vertexes.Last() == spurVertex);
@@ -175,7 +171,7 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 				RemoveOverlappingEdges(rootPath, pathIndex, previousPathVertexIndex);
 				RemoveRootPathVertices(rootPath);
 				
-				dijkstra = new(digraph, spurVertex, add, zero, maxValue);
+				dijkstra = new(digraph, spurVertex);
 				
 				if (dijkstra.HasPathTo(target))
 				{

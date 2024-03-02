@@ -15,7 +15,7 @@ public class DijkstraMonotonicTests
 		graph.AddEdge(1, 2, 5.0);
 		graph.AddEdge(2, 3, 7.0);
 
-		var algorithm = new DijkstraMonotonic(graph, 0);//, int.MaxValue, (x, y) => x + y, 0);
+		var algorithm = new DijkstraMonotonic<double>(graph, 0);//, int.MaxValue, (x, y) => x + y, 0);
 		Assert.That(algorithm.DistTo(0), Is.EqualTo(0));
 		Assert.That(algorithm.DistTo(1), Is.EqualTo(3));
 		Assert.That(algorithm.DistTo(2), Is.EqualTo(8));
@@ -31,7 +31,7 @@ public class DijkstraMonotonicTests
 		graph.AddEdge(0, 3, 4.0);
 		graph.AddEdge(3, 2, 3.0);
 
-		var algorithm = new DijkstraMonotonic(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
+		var algorithm = new DijkstraMonotonic<double>(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
 		Assert.That(algorithm.DistTo(2), Is.EqualTo(7));
 	}
 	
@@ -52,7 +52,7 @@ public class DijkstraMonotonicTests
 		graph.AddEdge(4, 5, 2.0);
 		graph.AddEdge(5, 2, 1.0);
 		
-		var algorithm = new DijkstraMonotonic(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
+		var algorithm = new DijkstraMonotonic<double>(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
 		Assert.That(algorithm.DistTo(2), Is.EqualTo(7));
 	}
 
@@ -77,7 +77,7 @@ public class DijkstraMonotonicTests
 		graph.AddEdge(2, 6, 1.0);
 		graph.AddEdge(6, 4, 0.0);
 		
-		var algorithm = new DijkstraMonotonic(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
+		var algorithm = new DijkstraMonotonic<double>(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
 		Assert.That(algorithm.DistTo(2), Is.EqualTo(3.0));
 		Assert.That(algorithm.DistTo(4), Is.EqualTo(6.0));
 	}
@@ -100,7 +100,7 @@ public class DijkstraMonotonicTests
 		graph.AddEdge(0, 4, 4.0);
 		graph.AddEdge(4, 2, 5.0);
 		
-		var algorithm = new DijkstraMonotonic(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
+		var algorithm = new DijkstraMonotonic<double>(graph, 0); // int.MaxValue, (x, y) => x + y, 0);
 		Assert.That(algorithm.DistTo(2), Is.EqualTo(8.0));
 		Assert.That(algorithm.DistTo(3), Is.EqualTo(15.0));
 	}
@@ -108,7 +108,7 @@ public class DijkstraMonotonicTests
 	[Test]
 	public void TestWebExample()
 	{
-		//https://github.com/reneargento/algorithms-sedgewick-wayne/blob/master/src/chapter4/section4/Exercise34_MonotonicShortestPath.java#L5
+		// https://github.com/reneargento/algorithms-sedgewick-wayne/blob/master/src/chapter4/section4/Exercise34_MonotonicShortestPath.java#L5
 		
 		var graph = DataStructures.EdgeWeightedDigraph(8, Comparer<double>.Default);
 		
@@ -123,7 +123,7 @@ public class DijkstraMonotonicTests
 		graph.AddEdge(new(1, 3, 0));
 		graph.AddEdge(new(2, 7, 1));
 		
-		var algorithm = new DijkstraMonotonic(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
+		var algorithm = new DijkstraMonotonic<double>(graph, 0); // int.MaxValue, (x, y) => x + y, 0);
 		
 		for (int vertex = 0; vertex < graph.VertexCount; vertex++) {
 			Console.Write("\nPath from vertex 0 to vertex " + vertex + ": ");

@@ -74,7 +74,7 @@ public class KShortestPathsTests
 
 	private static IEnumerable<Func<EdgeWeightedDigraphWithAdjacencyLists<double>, int, int, int, IKShortestPaths<double>>> GetAlgorithms()
 	{
-		yield return (graph, source, target, k) => new KShortestPaths<double>(graph, source, target, k, 0.0, (x, y) => x + y);
+		yield return (graph, source, target, k) => new KShortestPaths<double>(graph, source, target, k);
 		yield return (graph, source, target, k) => new YensAlgorithm<double>(graph, source, target, k, 0.0, double.MaxValue, (x, y) => x + y);
 	}
 }

@@ -1,31 +1,28 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Numerics;
+
 /// <summary>
 /// A class for finding the shortest path from a source vertex to all other vertices in a directed edge weighted graph.
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 public class DijkstraAllPairs<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
-	private Dijkstra<TWeight>[] shortestPaths;
+	private readonly Dijkstra<TWeight>[] shortestPaths;
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="DijkstraAllPairs{T}"/> class.
 	/// </summary>
 	/// <param name="graph">The graph to find the shortest paths in.</param>
-	/// <param name="add">The function to add two weights.</param>
-	/// <param name="zero">The zero value for the weights.</param>
-	/// <param name="maxValue">The maximum value for the weights.</param>
 	public DijkstraAllPairs(
-		IReadOnlyEdgeWeightedDigraph<TWeight> graph, 
-		Func<TWeight, TWeight, TWeight> add,
-		TWeight zero, 
-		TWeight maxValue)
+		IReadOnlyEdgeWeightedDigraph<TWeight> graph)
 	{
 		shortestPaths = new Dijkstra<TWeight>[graph.VertexCount];
 		
 		for (int i = 0; i < graph.VertexCount; i++)
 		{
-			shortestPaths[i] = new(graph, i, add, zero, maxValue);
+			shortestPaths[i] = new(graph, i);
 		}
 	}
 	

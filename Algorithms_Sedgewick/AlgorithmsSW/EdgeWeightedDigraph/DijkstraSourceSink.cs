@@ -1,6 +1,7 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using List;
 using static System.Diagnostics.Debug;
 
@@ -13,9 +14,9 @@ using static System.Diagnostics.Debug;
 // Note: only implemented for weights of type double.
 [ExerciseReference(4, 4, 23)]
 public class DijkstraSourceSink<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly TWeight distance;
-
 	private readonly IReadonlyRandomAccessList<DirectedEdge<TWeight>>? path;
 	
 	/// <summary>
@@ -48,20 +49,17 @@ public class DijkstraSourceSink<TWeight>
 	public DijkstraSourceSink(
 		IEdgeWeightedDigraph<TWeight> graph,
 		int source, 
-		int sink, 
-		Func<TWeight, TWeight, TWeight> add, 
-		TWeight zero, 
-		TWeight maxValue)
+		int sink)
 	{
 		var distanceTo = new TWeight[graph.VertexCount];
 		var edgeTo = new DirectedEdge<TWeight>?[graph.VertexCount];
 		
-		distanceTo.Fill(maxValue);
-		distanceTo[source] = zero;
+		distanceTo.Fill(TWeight.MaxValue);
+		distanceTo[source] = TWeight.Zero;
 		edgeTo[source] = null;
 		
 		var queue = DataStructures.IndexedPriorityQueue(graph.VertexCount, Comparer<TWeight>.Default);
-		queue.Insert(source, zero);
+		queue.Insert(source, TWeight.Zero);
 		
 		while (!queue.IsEmpty && !PathExists)
 		{
@@ -71,7 +69,7 @@ public class DijkstraSourceSink<TWeight>
 			{
 				Assert(edge.Target != source); // Because of the priority queue, this should never happen.
 				
-				if (graph.Comparer.Less(edge.Weight, zero))
+				if (graph.Comparer.Less(edge.Weight, TWeight.Zero))
 				{
 					throw new ArgumentException("Negative weights are not allowed.", nameof(graph));
 				}
@@ -80,14 +78,14 @@ public class DijkstraSourceSink<TWeight>
 				if (edgeTo[edge.Target] == null) 
 				{
 					edgeTo[edge.Target] = edge;
-					distanceTo[edge.Target] = add(distanceToSource, edge.Weight);
+					distanceTo[edge.Target] = distanceToSource + edge.Weight;
 					queue.Insert(edge.Target, distanceTo[edge.Target]);
 				}
 				// Found a shorter path.
-				else if (graph.Comparer.Less(add(distanceToSource, edge.Weight), distanceTo[edge.Target]))
+				else if (graph.Comparer.Less(distanceToSource + edge.Weight, distanceTo[edge.Target]))
 				{
 					edgeTo[edge.Target] = edge;
-					distanceTo[edge.Target] = add(distanceToSource, edge.Weight);
+					distanceTo[edge.Target] = distanceToSource + edge.Weight;
 					queue.UpdateValue(edge.Target, distanceTo[edge.Target]);
 				}
 

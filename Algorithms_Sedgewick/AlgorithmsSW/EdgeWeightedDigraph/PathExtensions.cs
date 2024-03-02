@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Numerics;
 using List;
 
 public static class PathExtensions
@@ -33,6 +34,7 @@ public static class PathExtensions
 		TWeight zero,
 		Func<TWeight, TWeight, TWeight> add,
 		out DirectedPath<TWeight>? cycle)
+	where TWeight : IFloatingPoint<TWeight>
 	{
 		// Indexes:        0 1 2 3 4 5 6 7 8
 		// Path:           0 1 2 3 4 5 6 3 8
@@ -45,7 +47,7 @@ public static class PathExtensions
 		
 		if (hasCycle)
 		{
-			cycle = path.Skip(startIndex, add).Take(endIndex - startIndex, zero, add);
+			cycle = path.Skip(startIndex).Take(endIndex - startIndex);
 			return true;
 		}
 
@@ -56,8 +58,8 @@ public static class PathExtensions
 	public static bool TryGetPath<TWeight>(
 		IEdgeWeightedDigraph<TWeight> graph, 
 		IEnumerable<int> vertexPath,
-		Func<TWeight, TWeight, TWeight> add,
 		out DirectedPath<TWeight>? path)
+		where TWeight : IFloatingPoint<TWeight>
 	{
 		var edges = new ResizeableArray<DirectedEdge<TWeight>>();
 		foreach (var pair in vertexPath.SlidingWindow2())
@@ -73,7 +75,7 @@ public static class PathExtensions
 			edges.Add(edge);
 		}
 		
-		path = new(edges, add);
+		path = new(edges);
 
 		return true;
 	}

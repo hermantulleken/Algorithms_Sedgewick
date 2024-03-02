@@ -1,6 +1,6 @@
 namespace AlgorithmsSW.EdgeWeightedDigraph;
 
-using Digraph;
+using System.Numerics;
 
 /// <summary>
 /// Represents a directed edge weighted graph data structure.
@@ -8,6 +8,7 @@ using Digraph;
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 public interface IEdgeWeightedDigraph<TWeight>
 	: IReadOnlyEdgeWeightedDigraph<TWeight>
+	//where TWeight : IComparable<TWeight>, IFloatingPoint<TWeight>
 {
 	/// <summary>
 	/// Adds an edge to the graph.

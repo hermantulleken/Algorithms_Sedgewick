@@ -105,6 +105,6 @@ public class DijkstraMultiSource
 			stack.Push(edge);
 		}
 
-		return new(stack.ToResizableArray(), (a, b) => a + b);
+		return new(stack.ToResizableArray());
 	}
 }

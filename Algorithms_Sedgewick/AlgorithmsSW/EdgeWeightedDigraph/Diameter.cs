@@ -1,6 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
-using Support;
+using System.Numerics;
 using PathTerminals = (int source, int target);
 
 /// <summary>
@@ -9,6 +9,7 @@ using PathTerminals = (int source, int target);
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 [ExerciseReference(4, 4, 8)]
 public class Diameter<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
 	/// <summary>
 	///  This class allow us to find the maximum of an item by some metric, while keeping both together.
@@ -40,15 +41,9 @@ public class Diameter<TWeight>
 	/// Initializes a new instance of the <see cref="Diameter{TWeight}"/> class.
 	/// </summary>
 	/// <param name="graph">The graph to find the diameter of.</param>
-	/// <param name="add">The function to add two weights.</param>
-	/// <param name="zero">The zero element of the weight.</param>
-	/// <param name="maxValue">The maximum value of the weight.</param>
-	public Diameter(IReadOnlyEdgeWeightedDigraph<TWeight> graph,
-		Func<TWeight, TWeight, TWeight> add,
-		TWeight zero, 
-		TWeight maxValue)
+	public Diameter(IReadOnlyEdgeWeightedDigraph<TWeight> graph)
 	{
-		var allPairs = new DijkstraAllPairs<TWeight>(graph, add, zero, maxValue);
+		var allPairs = new DijkstraAllPairs<TWeight>(graph);
 		
 		(PathTerminals edge, TWeight distance) AugmentWithDistance(PathTerminals pair)
 			=> (pair, allPairs.GetDistance(pair.source, pair.target));

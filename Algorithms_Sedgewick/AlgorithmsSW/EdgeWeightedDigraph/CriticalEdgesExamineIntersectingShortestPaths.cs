@@ -1,10 +1,13 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Numerics;
+
 /// <summary>
 /// Given two nodes, the edge that when removed will increases the shortest path between them the most. 
 /// </summary>
 [ExerciseReference(4, 4, 37)]
 public class CriticalEdgesExamineIntersectingShortestPaths<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
 	/// <summary>
 	/// Gets a value indicating whether whether the graph has a critical edge.
@@ -29,28 +32,19 @@ public class CriticalEdgesExamineIntersectingShortestPaths<TWeight>
 	/// <param name="graph">The graph to find the critical edge in.</param>
 	/// <param name="source">The source vertex.</param>
 	/// <param name="destination">The destination vertex.</param>
-	/// <param name="add">The function to add two weights.</param>
-	/// <param name="zero">The zero element for the weight.</param>
-	/// <param name="maxValue">The maximum value for the weight.</param>
 	public CriticalEdgesExamineIntersectingShortestPaths(
 		IEdgeWeightedDigraph<TWeight> graph,
 		int source, 
-		int destination,
-		Func<TWeight, TWeight, TWeight> add, 
-		TWeight zero, 
-		TWeight maxValue)
+		int destination)
 	{
-		var maxDistance = zero;
+		var maxDistance = TWeight.Zero;
 		DirectedEdge<TWeight>? maxEdge = null;
 		
 		// We only need to check the edges on the path
 		OverlappingYensAlgorithm<TWeight> algorithm = new OverlappingYensAlgorithm<TWeight>(
 			graph, 
 			source, 
-			destination, 
-			zero,
-			maxValue,
-			add);
+			destination);
 
 		var edges = algorithm.Intersection;
 
@@ -58,7 +52,7 @@ public class CriticalEdgesExamineIntersectingShortestPaths<TWeight>
 		{
 			var edge = graph.GetUniqueEdge(weightlessEdge.Item1, weightlessEdge.Item2);
 			graph.RemoveEdge(edge);
-			var dijkstra = new DijkstraSourceSink<TWeight>(graph, source, destination, add, zero, maxValue);
+			var dijkstra = new DijkstraSourceSink<TWeight>(graph, source, destination);
 
 			if (graph.Comparer.Less(maxDistance, dijkstra.Distance))
 			{

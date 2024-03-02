@@ -1,14 +1,19 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
+
 /// <summary>
 /// Given two nodes, the edge that when removed will increases the shortest path between them the most. 
 /// </summary>
 [ExerciseReference(4, 4, 37)]
 public class CriticalEdgesExamineShortestPath<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
 	/// <summary>
 	/// Gets a value indicating whether whether the graph has a critical edge.
 	/// </summary>
+	[MemberNotNullWhen(true, nameof(CriticalEdge))]
 	public bool HasCriticalEdge => CriticalEdge != null;
 	
 	/// <summary>
@@ -44,7 +49,7 @@ public class CriticalEdgesExamineShortestPath<TWeight>
 		DirectedEdge<TWeight>? maxEdge = null;
 		
 		// We only need to check the edges on the path
-		DijkstraSourceSink<TWeight> dijkstra = new(graph, source, destination, add, zero, maxValue);
+		DijkstraSourceSink<TWeight> dijkstra = new(graph, source, destination);
 
 		if (dijkstra.PathExists)
 		{
@@ -57,7 +62,7 @@ public class CriticalEdgesExamineShortestPath<TWeight>
 		foreach (var edge in shortestPathEdges)
 		{
 			graph.RemoveEdge(edge);
-			dijkstra = new(graph, source, destination, add, zero, maxValue);
+			dijkstra = new(graph, source, destination);
 
 			if (graph.Comparer.Less(maxDistance, dijkstra.Distance))
 			{

@@ -6,7 +6,7 @@ using BenchmarkDotNet.Running;
 using Benchmarks;
 
 #if DEBUG
-_ = BenchmarkRunner.Run<BellmanFordBenchmarks>(new DebugInProcessConfig());
+_ = BenchmarkRunner.Run<CriticalEdgesBenchmarks>(new DebugInProcessConfig());
 #else
-_ = BenchmarkRunner.Run<BellmanFordBenchmarks>();
+_ = BenchmarkRunner.Run<CriticalEdgesBenchmarks>();
 #endif

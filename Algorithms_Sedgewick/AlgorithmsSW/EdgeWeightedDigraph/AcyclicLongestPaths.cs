@@ -1,7 +1,5 @@
 namespace AlgorithmsSW.EdgeWeightedDigraph;
 
-using Support;
-
 [ExerciseReference(4, 4, 28)]
 public class AcyclicLongestPaths<TWeight> : IShortestPath<TWeight>
 {

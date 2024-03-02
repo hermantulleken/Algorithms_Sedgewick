@@ -1,9 +1,11 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Numerics;
 using List;
 using Support;
 
 public record DirectedPath<TWeight>
+	where TWeight : IFloatingPoint<TWeight>
 {
 	public ResizeableArray<DirectedEdge<TWeight>> Edges { get; }
 	
@@ -17,32 +19,32 @@ public record DirectedPath<TWeight>
 
 	public TWeight Distance { get; }
 
-	private DirectedPath(ResizeableArray<DirectedEdge<TWeight>> Edges, TWeight Distance, int sourceNode, int targetNode)
+	private DirectedPath(ResizeableArray<DirectedEdge<TWeight>> edges, TWeight distance, int sourceNode, int targetNode)
 	{
-		this.Edges = Edges;
+		Edges = edges;
 		SourceVertex = sourceNode;
 		TargetVertex = targetNode;
-		this.Distance = Distance;
+		Distance = distance;
 		
-		Vertexes = Edges
+		Vertexes = edges
 			.Select(edge => edge.Source)
 			.Append(TargetVertex)
 			.ToResizableArray();
 	}
 	
-	public DirectedPath(int singleVertex, TWeight zero)
-		: this([], zero, singleVertex, singleVertex)
+	public DirectedPath(int singleVertex)
+		: this([], TWeight.Zero, singleVertex, singleVertex)
 	{
 	}
 	
-	public DirectedPath(ResizeableArray<DirectedEdge<TWeight>> Edges, TWeight Distance)
+	public DirectedPath(ResizeableArray<DirectedEdge<TWeight>> edges, TWeight distance)
 	{
-		this.Edges = Edges;
-		SourceVertex = Edges[0].Source;
-		TargetVertex = Edges[^1].Target;
-		this.Distance = Distance;
+		Edges = edges;
+		SourceVertex = edges[0].Source;
+		TargetVertex = edges[^1].Target;
+		Distance = distance;
 		
-		Vertexes = Edges
+		Vertexes = edges
 			.Select(edge => edge.Source)
 			.Append(TargetVertex)
 			.ToResizableArray();
@@ -51,10 +53,9 @@ public record DirectedPath<TWeight>
 	/// <summary>
 	/// Initializes a new instance of the <see cref="DirectedPath{TWeight}"/> class from a list of edges.
 	/// </summary>
-	/// <param name="Edges">The edges to initialize the path with.</param>
-	/// <param name="add">The function to add two weights.</param>
-	public DirectedPath(ResizeableArray<DirectedEdge<TWeight>> Edges, Func<TWeight, TWeight, TWeight> add)
-		: this(Edges, Edges.Select(edge => edge.Weight).Aggregate(add))
+	/// <param name="edges">The edges to initialize the path with.</param>
+	public DirectedPath(ResizeableArray<DirectedEdge<TWeight>> edges)
+		: this(edges, edges.Select(edge => edge.Weight).Aggregate(Add))
 	{
 	}
 	
@@ -72,13 +73,12 @@ public record DirectedPath<TWeight>
 	/// </summary>
 	/// <param name="other">The path to combine with this path. The <see cref="TargetVertex"/> of this path must
 	/// equal the <see cref="SourceVertex"/> of the other path.</param>
-	/// <param name="add">A function to add two weights.</param>
 	/// <returns>A new path that is the combination of this path and the other path.</returns>
 	/// <exception cref="ArgumentException">The target vertex of this path is not the source vertex of the other path.</exception>
 	/// <remarks>
 	/// This path is not modified.
 	/// </remarks>
-	public DirectedPath<TWeight> Combine(DirectedPath<TWeight> other, Func<TWeight, TWeight, TWeight> add)
+	public DirectedPath<TWeight> Combine(DirectedPath<TWeight> other)
 	{
 		if (TargetVertex != other.SourceVertex)
 		{
@@ -86,7 +86,7 @@ public record DirectedPath<TWeight>
 		}
 		
 		ResizeableArray<DirectedEdge<TWeight>> newEdges = [..Edges, ..other.Edges];
-		var newDistance = add(Distance, other.Distance);
+		var newDistance = Distance + other.Distance;
 		
 		return new(newEdges, newDistance);
 	}
@@ -103,7 +103,7 @@ public record DirectedPath<TWeight>
 	/// <remarks>
 	/// This path is not modified.
 	/// </remarks>
-	public DirectedPath<TWeight> Combine(DirectedEdge<TWeight> edge, Func<TWeight, TWeight, TWeight> add)
+	public DirectedPath<TWeight> Combine(DirectedEdge<TWeight> edge)
 	{
 		if (TargetVertex != edge.Source)
 		{
@@ -111,7 +111,7 @@ public record DirectedPath<TWeight>
 		}
 		
 		ResizeableArray<DirectedEdge<TWeight>> newEdges = [..Edges, edge];
-		var newDistance = add(Distance, edge.Weight);
+		var newDistance = Distance + edge.Weight;
 		
 		return new(newEdges, newDistance);
 	}
@@ -119,23 +119,25 @@ public record DirectedPath<TWeight>
 	/// <inheritdoc/>
 	public override string ToString() => Edges.Pretty();
 	
-	public DirectedPath<TWeight> Take(int count, TWeight zero, Func<TWeight, TWeight, TWeight> add)
+	public DirectedPath<TWeight> Take(int count)
 	{
 		var edges = Edges.Take(count).ToResizableArray();
 		
 		return edges.IsEmpty 
-			? new(Edges[0].Source, zero) 
-			: new(edges, add);
+			? new(Edges[0].Source) 
+			: new(edges);
 	}
 
-	public DirectedPath<TWeight> Skip(int count, Func<TWeight, TWeight, TWeight> add)
+	public DirectedPath<TWeight> Skip(int count)
 	{
 		var edges = Edges.Skip(count).ToResizableArray();
 		// TODO: write code if we skip beyond one vertex
 		return edges.IsEmpty 
-			? new(Edges[^1].Target, Distance) 
-			: new(edges, add);
+			? new(Edges[^1].Target) 
+			: new(edges);
 	}
 	
 	public bool HasEqualVertices(DirectedPath<TWeight> other) => Vertexes.SequenceEqual(other.Vertexes);
+	
+	private static TFloat Add<TFloat>(TFloat x, TFloat y) where TFloat : IFloatingPoint<TFloat> => x + y;
 }

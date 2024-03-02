@@ -1,8 +1,9 @@
-﻿namespace AlgorithmsSW.EdgeWeightedGraph;
+﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
-using EdgeWeightedDigraph;
+using System.Numerics;
 
 public interface IKShortestPaths<TWeight>
+	where TWeight : IFloatingPoint<TWeight>
 {
 	bool HasPath(int k);
 	
