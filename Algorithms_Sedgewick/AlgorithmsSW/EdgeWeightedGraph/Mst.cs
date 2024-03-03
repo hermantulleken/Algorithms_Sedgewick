@@ -5,7 +5,7 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.EdgeWeightedGraph;
 
-using Support;
+using System.Numerics;
 
 public class Mst
 {
@@ -19,8 +19,9 @@ public class Mst
 	/// <returns>A new MST.</returns>
 	[ExerciseReference(4, 3, 14)]
 	public EdgeWeightedGraphWithAdjacencyLists<T> DeleteEdge<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst, Edge<T> edge)
+		where T : IFloatingPoint<T>
 	{
-		var newMst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, mst.Edges, graph.Comparer);
+		var newMst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, mst.Edges);
 		graph.RemoveEdge(edge);
 
 		var (component0, component1) = GetComponents(newMst);
@@ -40,6 +41,7 @@ public class Mst
 	/// <returns>A new MST.</returns>
 	[ExerciseReference(4, 3, 15)]
 	public EdgeWeightedGraphWithAdjacencyLists<T> AddEdge<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst, Edge<T> edge)
+		where T : IFloatingPoint<T>
 	{
 		var mstGraph = new GraphWithAdjacentsLists(graph.VertexCount);
 		foreach (var e in mst.Edges)
@@ -55,13 +57,13 @@ public class Mst
 
 		if (maxEdge == edge)
 		{
-			var newMst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, mst.Edges, graph.Comparer);
+			var newMst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, mst.Edges);
 			return newMst;
 		}
 		else
 		{
 			var newEdges = mst.Edges.Where(e => e != maxEdge).Append(edge);
-			var newMst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, newEdges, graph.Comparer);
+			var newMst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, newEdges);
 			
 			return newMst;
 		}
@@ -77,6 +79,7 @@ public class Mst
 	/// <returns>A new MST.</returns>
 	[ExerciseReference(4, 3, 16)]
 	public T FindMaxWeightThat<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst, (int vertex0, int vertex1) edge)
+		where T : IFloatingPoint<T>
 	{
 		var mstGraph = new GraphWithAdjacentsLists(graph.VertexCount);
 		foreach (var e in mst.Edges)
@@ -114,6 +117,7 @@ public class Mst
 	}
 	
 	private Edge<T> FindMinimumEdgeThatConnectTwoComponents<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, Set.ISet<int> component0, Set.ISet<int> component1)
+		where T : IComparisonOperators<T, T, bool>
 	{
 		Edge<T>? minEdge = null;
 
@@ -125,7 +129,7 @@ public class Mst
 				continue;
 			}
 
-			if (minEdge != null && graph.Comparer.Compare(e.Weight, minEdge.Weight) >= 0)
+			if (minEdge != null && e.Weight >= minEdge.Weight)
 			{
 				continue;
 			}
@@ -147,6 +151,7 @@ public class Mst
 
 	[ExerciseReference(4, 3, 22)]
 	public static IEnumerable<IMst<T>> MstForest<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph)
+		where T : IFloatingPoint<T>
 	{
 		var componentsAlgo = new Components<T>(graph);
 		var components = new EdgeWeightedGraphWithAdjacencyLists<T>?[componentsAlgo.ComponentCount];		
@@ -155,7 +160,7 @@ public class Mst
 		{
 			int componentIndex = componentsAlgo.GetComponentId(edge.Vertex0);
 
-			components[componentIndex] ??= new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
+			components[componentIndex] ??= new(graph.VertexCount);
 			components[componentIndex]!.AddEdge(edge);
 		}
 		
@@ -165,7 +170,7 @@ public class Mst
 	// May not work art all.
 	public static EdgeWeightedGraphWithAdjacencyLists<T> MysteryMst<T>(IEdgeWeightedGraph<T> graph)
 	{
-		var mstEdges = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
+		var mstEdges = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount);
 		var unionFind = new UnionFind(graph.VertexCount);
 		var sortedEdges = graph.WeightedEdges.OrderBy(edge => edge.Weight);
 
@@ -205,9 +210,10 @@ public class Mst
 	}
 	
 	public EdgeWeightedGraphWithAdjacencyLists<T> Mst_ReverseDelete<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph)
+		where T : IComparisonOperators<T, T, bool>
 	{
-		var mst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
-		var priorityQueue = DataStructures.PriorityQueue(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));
+		var mst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount);
+		var priorityQueue = DataStructures.PriorityQueue(graph.EdgeCount, new EdgeComparer<T>());
 		
 		while (priorityQueue.IsEmpty())
 		{
@@ -224,9 +230,10 @@ public class Mst
 
 	[ExerciseReference(4, 3, 33)]
 	private bool IsMst<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst)
+		where T : IFloatingPoint<T>
 	{
 		var comparer = Comparer<int>.Default;
-		var edgeComparer = new EdgeComparer<T>(graph.Comparer);
+		var edgeComparer = new EdgeComparer<T>();
 
 		var consistentPartitions =
 			from subset in Algorithms.PowerSet(graph.Vertexes)
@@ -245,6 +252,7 @@ public class Mst
 		Set.ISet<int> partition0,
 		Set.ISet<int> partition1,
 		EdgeComparer<T> comparer) 
+		where T : IFloatingPoint<T>
 	{
 		var joiningEdges = DataStructures.Set(comparer);
 		

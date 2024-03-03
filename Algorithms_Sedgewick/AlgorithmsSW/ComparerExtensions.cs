@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW;
 
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 /// <summary>
@@ -45,14 +46,14 @@ public static class ComparerExtensions
 		return new ComparerToEqualityComparerAdapter<T>(comparer, getHashCode);
 	}
 	
-	public static bool ApproximatelyEqual<T>(this IComparer<T> comparer, T left, T right, T tolerance, Func<T, T, T> add)
+	public static bool ApproximatelyEqual<T>(this IComparer<T> comparer, T left, T right, T tolerance)
+		where T : IFloatingPoint<T>
 	{
 		comparer.ThrowIfNull();
 		tolerance.ThrowIfNull();
-		add.ThrowIfNull();
 		
 		// left <= right + tolerance or right <= left + tolerance
-		return comparer.LessOrEqual(left, add(right, tolerance)) && comparer.LessOrEqual(right, add(left, tolerance));
+		return comparer.LessOrEqual(left, right + tolerance) && comparer.LessOrEqual(right, left + tolerance);
 	}
 	
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

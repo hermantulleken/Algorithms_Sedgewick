@@ -96,7 +96,6 @@ public record DirectedPath<TWeight>
 	/// </summary>
 	/// <param name="edge">The edge to combine with this path. The <see cref="DirectedEdge{TWeight}.Source"/>
 	/// of the edge must equal the <see cref="TargetVertex"/> of this path.</param>
-	/// <param name="add">The function to add two weights.</param>
 	/// <returns>A new path that is the combination of this path and the edge.</returns>
 	/// <exception cref="ArgumentException">The target vertex of this path is not the source vertex of the edge.
 	/// </exception>

@@ -3,7 +3,10 @@ using AlgorithmsSW.Queue;
 
 namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using System.Numerics;
+
 public class LazyPrimMst<T> : IMst<T>
+	where T : IFloatingPoint<T>
 {
 	private readonly bool[] marked;
 	private readonly IQueue<Edge<T>> mst = DataStructures.Queue<Edge<T>>();
@@ -16,7 +19,7 @@ public class LazyPrimMst<T> : IMst<T>
 	public LazyPrimMst(IEdgeWeightedGraph<T> graph)
 	{
 		marked = new bool[graph.VertexCount];
-		priorityQueue = new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));
+		priorityQueue = new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>());
 		
 		Visit(graph, 0);
 		

@@ -32,16 +32,15 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 	/// </summary>
 	/// <param name="vertexCount">The number of vertices in the graph.</param>
 	/// <param name="comparer">The comparer to use when comparing edge weights.</param>
-	public EdgeWeightedDigraphWithAdjacencyLists(int vertexCount, IComparer<TWeight> comparer)
+	public EdgeWeightedDigraphWithAdjacencyLists(int vertexCount)
 	{
 		VertexCount = vertexCount;
-		Comparer = comparer;
 		adjacencyLists = new ResizeableArray<DirectedEdge<TWeight>>[vertexCount];
 		adjacencyLists.Fill(() => []);
 	}
 	
-	public EdgeWeightedDigraphWithAdjacencyLists(IReadOnlyEdgeWeightedGraph<TWeight> graph, IComparer<TWeight> comparer)
-		: this(graph.VertexCount, comparer)
+	public EdgeWeightedDigraphWithAdjacencyLists(IReadOnlyEdgeWeightedGraph<TWeight> graph)
+		: this(graph.VertexCount)
 	{
 		foreach (var edge in graph.WeightedEdges)
 		{
@@ -56,8 +55,8 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 	/// </summary>
 	/// <param name="graph">The graph to construct the new graph from.</param>
 	/// <param name="comparer">The comparer to use when comparing edge weights.</param>
-	public EdgeWeightedDigraphWithAdjacencyLists(IReadOnlyEdgeWeightedDigraph<TWeight> graph, IComparer<TWeight> comparer)
-		: this(graph.VertexCount, comparer)
+	public EdgeWeightedDigraphWithAdjacencyLists(IReadOnlyEdgeWeightedDigraph<TWeight> graph)
+		: this(graph.VertexCount)
 	{
 		/*
 			TODO: It would be nice to share the edge data. To do so we need two things:

@@ -27,8 +27,6 @@ public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
 	/// <param name="source">The source vertex.</param>
 	/// <param name="target">The target vertex.</param>
 	/// <param name="k">The number of shortest paths to find.</param>
-	/// <param name="zero">The additive identity of the weight type.</param>
-	/// <param name="add">The addition operation of the weight type.</param>
 	public KShortestPaths(
 		IReadOnlyEdgeWeightedDigraph<TWeight> graph,
 		int source,
@@ -39,7 +37,7 @@ public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
 		shortestPaths = [];
 		var paths = new DirectedPath<TWeight>[graph.VertexCount];
 		int[] count = new int[graph.VertexCount];
-		var queue = DataStructures.PriorityQueue(graph.VertexCount, new DirectedPathComparer<TWeight>(graph.Comparer));
+		var queue = DataStructures.PriorityQueue(graph.VertexCount, new DirectedPathComparer<TWeight>(Comparer<TWeight>.Default));
 		
 		//queue.Push(new([source], zero));
 

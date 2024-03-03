@@ -21,9 +21,6 @@ public class EuclideanDistanceDigraph : IEdgeWeightedDigraph<double>
 	public int EdgeCount => graph.EdgeCount;
 
 	/// <inheritdoc/>
-	public IComparer<double> Comparer => graph.Comparer;
-
-	/// <inheritdoc/>
 	public IEnumerable<DirectedEdge<double>> WeightedEdges => graph.WeightedEdges;
 
 	/// <summary>
@@ -33,7 +30,7 @@ public class EuclideanDistanceDigraph : IEdgeWeightedDigraph<double>
 	public EuclideanDistanceDigraph(IEnumerable<Vector3> vertexes)
 	{
 		this.vertexes = vertexes.ToRandomAccessList();
-		graph = DataStructures.EdgeWeightedDigraph(this.vertexes.Count, Comparer<double>.Default);
+		graph = DataStructures.EdgeWeightedDigraph<double>(this.vertexes.Count);
 	}
 
 	/// <inheritdoc/>
@@ -45,7 +42,7 @@ public class EuclideanDistanceDigraph : IEdgeWeightedDigraph<double>
 	/// <inheritdoc/>
 	public void AddEdge(DirectedEdge<double> edge)
 	{
-		if (!graph.Comparer.ApproximatelyEqual(edge.Weight, GetDistance(edge.Source, edge.Target), 0.000_000_1, (x, y) => x + y))
+		if (!MathX.ApproximatelyEqual(edge.Weight, GetDistance(edge.Source, edge.Target), 0.000_000_1))
 		{
 			throw new ArgumentException(
 				"The edge weight does not match the euclidean distance between the vertexes. Use AddEdge(int, int) instead.",

@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Numerics;
 using Digraph;
 
 /// <summary>
@@ -7,58 +8,51 @@ using Digraph;
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 public class AcyclicShortestPaths<TWeight> : IShortestPath<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly DirectedEdge<TWeight>[] edgeTo;
 	private readonly TWeight[] distTo;
 	private readonly IReadOnlyEdgeWeightedDigraph<TWeight> graph;
-	private readonly TWeight maxValue;
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="AcyclicShortestPaths{T}"/> class.
 	/// </summary>
 	/// <param name="graph">The graph to find the shortest paths in.</param>
 	/// <param name="source">The source vertex to find the shortest paths from.</param>
-	/// <param name="add">The function to add two weights.</param>
-	/// <param name="zero">The zero value for the weights.</param>
-	/// <param name="maxValue">The maximum value for the weights.</param>
 	public AcyclicShortestPaths(
 		IReadOnlyEdgeWeightedDigraph<TWeight> graph, 
-		int source, 
-		Func<TWeight, TWeight, TWeight> add,
-		TWeight zero,
-		TWeight maxValue)
+		int source)
 	{
 		this.graph = graph;
-		this.maxValue = maxValue;
 		edgeTo = new DirectedEdge<TWeight>[graph.VertexCount];
 		distTo = new TWeight[graph.VertexCount];
 		
 		for (int i = 0; i < graph.VertexCount; i++)
 		{
-			distTo[i] = maxValue;
+			distTo[i] = TWeight.MaxValue;
 		}
 		
-		distTo[source] = zero;
+		distTo[source] = TWeight.Zero;
 		var topological = new Topological(graph);
 		
 		foreach (var vertex in topological.Order)
 		{
-			Relax(vertex, add);
+			Relax(vertex);
 		}
 	}
 	
-	private void Relax(int vertex, Func<TWeight, TWeight, TWeight> add)
+	private void Relax(int vertex)
 	{
 		foreach (var edge in graph.GetIncidentEdges(vertex))
 		{
 			int target = edge.Target;
 
-			if (graph.Comparer.Compare(distTo[target], add(distTo[vertex], edge.Weight)) <= 0)
+			if (distTo[target] <= distTo[vertex] + edge.Weight)
 			{
 				continue;
 			}
 
-			distTo[target] = add(distTo[vertex], edge.Weight);
+			distTo[target] = distTo[vertex] + edge.Weight;
 			edgeTo[target] = edge;
 		}
 	}
@@ -67,7 +61,7 @@ public class AcyclicShortestPaths<TWeight> : IShortestPath<TWeight>
 	public TWeight GetDistanceTo(int vertex) => distTo[vertex];
 
 	/// <inheritdoc />
-	public bool HasPathTo(int vertex) => graph.Comparer.Compare(distTo[vertex], maxValue) != 0;
+	public bool HasPathTo(int vertex) => distTo[vertex] != TWeight.MaxValue;
 
 	/// <inheritdoc />
 	public IEnumerable<DirectedEdge<TWeight>> GetEdgesOfPathTo(int target)

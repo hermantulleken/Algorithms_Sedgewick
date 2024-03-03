@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using System.Numerics;
 using List;
 
 /// <summary>
@@ -8,6 +9,7 @@ using List;
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 public class BoruvkasAlgorithmImprovement2<TWeight> : IMst<TWeight>
+	where TWeight : IFloatingPoint<TWeight>
 {
 	private readonly Queue<Edge<TWeight>> minimumSpanningTree;
 
@@ -21,8 +23,6 @@ public class BoruvkasAlgorithmImprovement2<TWeight> : IMst<TWeight>
 			forest[i] = [i];
 		}
 			
-		var comparer = edgeWeightedGraph.Comparer;
-
 		for (int stage = 1; stage < edgeWeightedGraph.VertexCount; stage += stage)
 		{
 			if (minimumSpanningTree.Count == edgeWeightedGraph.VertexCount - 1)
@@ -45,12 +45,12 @@ public class BoruvkasAlgorithmImprovement2<TWeight> : IMst<TWeight>
 					continue;
 				}
 
-				if (minEdges[component0] == null || comparer.Compare(edge.Weight, minEdges[component0].Weight) < 0)
+				if (minEdges[component0] == null || edge.Weight < minEdges[component0].Weight)
 				{
 					minEdges[component0] = edge;
 				}
 
-				if (minEdges[component1] == null || comparer.Compare(edge.Weight, minEdges[component1].Weight) < 0)
+				if (minEdges[component1] == null || edge.Weight < minEdges[component1].Weight)
 				{
 					minEdges[component1] = edge;
 				}

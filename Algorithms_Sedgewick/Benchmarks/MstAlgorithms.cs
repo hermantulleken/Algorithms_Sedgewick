@@ -67,7 +67,7 @@ public class MstAlgorithms
 		graph.ConnectComponents();
 		
 		var weights = weightGenerators[index];
-		return AlgorithmsSW.EdgeWeightedGraph.RandomGraph.AssignWeights(graph, weights, Comparer);
+		return AlgorithmsSW.EdgeWeightedGraph.RandomGraph.AssignWeights(graph, weights);
 	}
 
 	[Benchmark]

@@ -12,7 +12,6 @@ public static class RandomGraph
 	/// </summary>
 	/// <param name="graph">The graph to assign weights to.</param>
 	/// <param name="weights">The weights to assign to the edges of the graph.</param>
-	/// <param name="comparer">The comparer to use for the weights.</param>
 	/// <typeparam name="TWeight">The type of the weights.</typeparam>
 	/// <example>
 	/// You can use a <see cref="IEnumerable{T}"/> such as the following to assign random weights:
@@ -21,10 +20,9 @@ public static class RandomGraph
 	/// <see cref="AlgorithmsSW.Graph.RandomGraph"/>
 	public static IEdgeWeightedGraph<TWeight> AssignWeights<TWeight>(
 		IReadOnlyGraph graph, 
-		IEnumerable<TWeight> weights, 
-		IComparer<TWeight> comparer)
+		IEnumerable<TWeight> weights)
 	{
-		var newGraph = new EdgeWeightedGraphWithAdjacencyLists<TWeight>(graph.VertexCount, comparer);
+		var newGraph = new EdgeWeightedGraphWithAdjacencyLists<TWeight>(graph.VertexCount);
 		
 		foreach (((int vertex0, int vertex1), var weight) in graph.Zip(weights))
 		{

@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using System.Numerics;
 using List;
 using Support;
 
@@ -11,8 +12,8 @@ using static System.Diagnostics.Debug;
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 /// <remarks>This algorithm is not really better than <see cref="BoruvkasAlgorithm{TWeight}"/>.</remarks>
-public class BoruvkasAlgorithmImproved<TWeight>
-	: IMst<TWeight>
+public class BoruvkasAlgorithmImproved<TWeight> : IMst<TWeight>
+	where TWeight : IFloatingPoint<TWeight>
 {
 	private readonly int[] component;
 	private readonly ResizeableArray<Edge<TWeight>> mstEdges;
@@ -23,7 +24,6 @@ public class BoruvkasAlgorithmImproved<TWeight>
 		component = new int[graph.VertexCount];
 		mstEdges = new(graph.EdgeCount);
 		
-		var comparer = graph.Comparer;
 		var forest = new DoublyLinkedList<int>[graph.VertexCount];
 		int componentCount = graph.VertexCount;
 		
@@ -47,12 +47,12 @@ public class BoruvkasAlgorithmImproved<TWeight>
 					continue;
 				}
 				
-				if (minEdge[component0] == null || comparer.Compare(edge.Weight, minEdge[component0]!.Weight) < 0)
+				if (minEdge[component0] == null || edge.Weight < minEdge[component0]!.Weight)
 				{
 					minEdge[component0] = edge;
 				}
 
-				if (minEdge[component1] == null || comparer.Compare(edge.Weight, minEdge[component1]!.Weight) < 0)
+				if (minEdge[component1] == null || edge.Weight < minEdge[component1]!.Weight)
 				{
 					minEdge[component1] = edge;
 				}

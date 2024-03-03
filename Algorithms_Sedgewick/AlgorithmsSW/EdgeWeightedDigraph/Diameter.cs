@@ -52,7 +52,7 @@ public class Diameter<TWeight>
 			.Vertexes
 			.GenerateDistinctPairs()
 			.Select(AugmentWithDistance)
-			.Max(new ItemMetricComparer<PathTerminals, TWeight>(graph.Comparer));
+			.Max(new ItemMetricComparer<PathTerminals, TWeight>(Comparer<TWeight>.Default));
 
 		Path = allPairs.GetPath(TerminalVertices.source, TerminalVertices.target);
 	}

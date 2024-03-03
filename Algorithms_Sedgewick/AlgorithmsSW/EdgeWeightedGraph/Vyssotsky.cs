@@ -2,7 +2,10 @@
 
 namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using System.Numerics;
+
 public class Vyssotsky<T> : IMst<T>
+	where T : IFloatingPoint<T>
 {
 	private readonly IQueue<Edge<T>> minimumSpanningTree;
 
@@ -12,7 +15,7 @@ public class Vyssotsky<T> : IMst<T>
 	// O(E * (V + E)) = O(E^2)
 	public Vyssotsky(IEdgeWeightedGraph<T> graph, T minValue) 
 	{
-		var putativeTree = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, graph.Comparer);
+		var putativeTree = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount);
 
 		foreach (var edge in graph.WeightedEdges)
 		{
@@ -33,7 +36,7 @@ public class Vyssotsky<T> : IMst<T>
 
 			foreach (var edgeInCycle in cycle) 
 			{
-				if (graph.Comparer.Compare(edgeInCycle.Weight, maxWeight) > 0)
+				if (edgeInCycle.Weight > maxWeight)
 				{
 					maxWeight = edgeInCycle.Weight;
 					maxWeightEdge = edgeInCycle;

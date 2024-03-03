@@ -7,10 +7,9 @@ public static class RandomGraph
 {
 	public static IEdgeWeightedDigraph<TWeight> AddRandomWeights<TWeight>(
 		this IDigraph digraph, 
-		IComparer<TWeight> comparer,
 		IEnumerable<TWeight> generator) // TODO: introduce proper generators
 	{
-		var newGraph = DataStructures.EdgeWeightedDigraph(digraph.VertexCount, comparer);
+		var newGraph = DataStructures.EdgeWeightedDigraph<TWeight>(digraph.VertexCount);
 
 		foreach (var (edge, weight) in digraph.Edges.Zip(generator))
 		{
@@ -24,30 +23,26 @@ public static class RandomGraph
 		Func<int, int, IDigraph> graphFactory, 
 		int vertexCount,
 		int edgeCount,
-		IComparer<TWeight> comparer,
 		IEnumerable<TWeight> generator)
-		=> graphFactory(vertexCount, edgeCount).AddRandomWeights(comparer, generator);
+		=> graphFactory(vertexCount, edgeCount).AddRandomWeights(generator);
 	
 	public static IEdgeWeightedDigraph<TWeight> ErdosRenyiGraph<TWeight>(
 		int vertexCount, 
 		int edgeCount,
-		IComparer<TWeight> comparer,
 		IEnumerable<TWeight> generator) 
-		=> AddRandomWeights(Digraph.RandomGraph.ErdosRenyiGraph, vertexCount, edgeCount, comparer, generator);
+		=> AddRandomWeights(Digraph.RandomGraph.ErdosRenyiGraph, vertexCount, edgeCount, generator);
 	
 	public static IEdgeWeightedDigraph<TWeight> SimpleGraph<TWeight>(
 		int vertexCount, 
 		int edgeCount,
-		IComparer<TWeight> comparer,
 		IEnumerable<TWeight> generator) 
-		=> AddRandomWeights(Digraph.RandomGraph.RandomSimple, vertexCount, edgeCount, comparer, generator);
+		=> AddRandomWeights(Digraph.RandomGraph.RandomSimple, vertexCount, edgeCount, generator);
 	
 	public static IEdgeWeightedDigraph<TWeight> AssignWeights<TWeight>(
 		IReadOnlyDigraph graph, 
-		IEnumerable<TWeight> weights, 
-		IComparer<TWeight> comparer)
+		IEnumerable<TWeight> weights)
 	{
-		var newGraph = new EdgeWeightedDigraphWithAdjacencyLists<TWeight>(graph.VertexCount, comparer);
+		var newGraph = new EdgeWeightedDigraphWithAdjacencyLists<TWeight>(graph.VertexCount);
 		
 		foreach (((int vertex0, int vertex1), var weight) in graph.Edges.Zip(weights))
 		{

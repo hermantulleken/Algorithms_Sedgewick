@@ -46,7 +46,7 @@ public static class EdgeWeightedGraphExtensions
 	/// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 	public static IEdgeWeightedDigraph<TWeight> ToEdgeWeightedDigraph<TWeight>(this IEdgeWeightedGraph<TWeight> graph)
 	{
-		var digraph = DataStructures.EdgeWeightedDigraph(graph.VertexCount, graph.Comparer);
+		var digraph = DataStructures.EdgeWeightedDigraph<TWeight>(graph.VertexCount);
 		
 		foreach (var edge in graph.WeightedEdges)
 		{

@@ -1,21 +1,27 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using System.Numerics;
+
 /// <summary>
 /// A comparer for weighted edges.
 /// </summary>
-/// <param name="comparer">The comparer to use for the weights.</param>
-/// <typeparam name="TWeights">The type of the weights.</typeparam>
-public class EdgeComparer<TWeights>(IComparer<TWeights> comparer) : IComparer<Edge<TWeights>>
+/// <typeparam name="TWeight">The type of the weights.</typeparam>
+public class EdgeComparer<TWeight>() : IComparer<Edge<TWeight>>
+	where TWeight : IComparisonOperators<TWeight, TWeight, bool>
 {
 	/// <summary>
-	/// Compares two edges by their weight.
+	/// Compares two edges by their weights.
 	/// </summary>
-	public int Compare(Edge<TWeights>? x, Edge<TWeights>? y) 
+	public int Compare(Edge<TWeight>? x, Edge<TWeight>? y)
 		=> x == null && y == null
-			? 0 
+			? 0
 			: x == null
-				? -1 
-				: y == null 
-					? 1 
-					: comparer.Compare(x.Weight, y.Weight);
+				? -1
+				: y == null
+					? 1
+					: x.Weight < y.Weight
+						? -1
+							: x.Weight > y.Weight
+							? 1
+							: 0;
 }

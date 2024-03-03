@@ -13,14 +13,14 @@ public class BellmanFordTests
 	public void TestShortestPathCalculation()
 	{
 		// Arrange
-		var graph = DataStructures.EdgeWeightedDigraph(5, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(5);
 		graph.AddEdge(0, 1, 1.0);
 		graph.AddEdge(1, 2, 3.0);
 		graph.AddEdge(0, 3, 6.0);
 		graph.AddEdge(3, 2, 2.0);
 		graph.AddEdge(2, 4, 5.0);
 
-		var bellmanFord = new BellmanFord<double>(graph, 0, (a, b) => a + b, 0.0, double.MaxValue);
+		var bellmanFord = new BellmanFord<double>(graph, 0);
 
 		// Act
 		var distanceTo2 = bellmanFord.GetDistanceTo(2);
@@ -35,14 +35,14 @@ public class BellmanFordTests
 	public void TestShortestPathWithCycle1()
 	{
 		// Arrange
-		var graph = DataStructures.EdgeWeightedDigraph(5, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(5);
 		graph.AddEdge(0, 1, 1.0);
 		graph.AddEdge(1, 2, 2.0);
 		graph.AddEdge(2, 3, 3.0);
 		graph.AddEdge(3, 4, 4.0);
 		graph.AddEdge(4, 0, 5.0);
 
-		var bellmanFord = new BellmanFord<double>(graph, 0, (a, b) => a + b, 0.0, double.MaxValue);
+		var bellmanFord = new BellmanFord<double>(graph, 0);
 
 		// Act
 		var distanceTo2 = bellmanFord.GetDistanceTo(2);
@@ -57,7 +57,7 @@ public class BellmanFordTests
 	public void TestShortestPathWithCycle2()
 	{
 		// Arrange
-		var graph = DataStructures.EdgeWeightedDigraph(5, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(5);
 		graph.AddEdge(0, 1, 1.0);
 		graph.AddEdge(1, 2, 2.0);
 		graph.AddEdge(2, 3, 3.0);
@@ -66,7 +66,7 @@ public class BellmanFordTests
 		graph.AddEdge(0, 4, 6.0);
 		graph.AddEdge(4, 3, 7.0);
 
-		var bellmanFord = new BellmanFord<double>(graph, 0, (a, b) => a + b, 0.0, double.MaxValue);
+		var bellmanFord = new BellmanFord<double>(graph, 0);
 
 		// Act
 		var distanceTo3 = bellmanFord.GetDistanceTo(3);
@@ -81,11 +81,11 @@ public class BellmanFordTests
 	public void TestNoPathScenario()
 	{
 		// Arrange
-		var graph = new EdgeWeightedDigraphWithAdjacencyLists<double>(3, Comparer<double>.Default);
+		var graph = new EdgeWeightedDigraphWithAdjacencyLists<double>(3);
 		graph.AddEdge(0, 1, 1.0);
 		// No edge from 1 to 2 or 0 to 2
 
-		var bellmanFord = new BellmanFord<double>(graph, 0, (a, b) => a + b, 0.0, double.MaxValue);
+		var bellmanFord = new BellmanFord<double>(graph, 0);
 
 		// Act & Assert
 		Assert.That(bellmanFord.HasPathTo(2), Is.False);
@@ -95,12 +95,12 @@ public class BellmanFordTests
 	public void TestNegativeCycleDetection()
 	{
 		// Arrange
-		var graph = new EdgeWeightedDigraphWithAdjacencyLists<double>(3, Comparer<double>.Default);
+		var graph = new EdgeWeightedDigraphWithAdjacencyLists<double>(3);
 		graph.AddEdge(0, 1, 1.0);
 		graph.AddEdge(1, 2, 1.0);
 		graph.AddEdge(2, 0, -3.0); // Negative cycle
 
-		var bellmanFord = new BellmanFord<double>(graph, 0, (a, b) => a + b, 0.0, double.MaxValue);
+		var bellmanFord = new BellmanFord<double>(graph, 0);
 
 		// Act
 		var hasNegativeCycle = bellmanFord.HasNegativeCycle();

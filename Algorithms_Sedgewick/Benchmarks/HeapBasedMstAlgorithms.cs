@@ -56,6 +56,6 @@ public class HeapBasedMstAlgorithms
 		
 		graph.ConnectComponents();
 		var weights = Generator.UniformRandomDouble(1.0, 10.0);
-		return AlgorithmsSW.EdgeWeightedGraph.RandomGraph.AssignWeights(graph, weights, Comparer);
+		return AlgorithmsSW.EdgeWeightedGraph.RandomGraph.AssignWeights(graph, weights);
 	}
 }

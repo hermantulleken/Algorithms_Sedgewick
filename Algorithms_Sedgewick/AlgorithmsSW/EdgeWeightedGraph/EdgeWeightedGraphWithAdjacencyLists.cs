@@ -16,9 +16,6 @@ public class EdgeWeightedGraphWithAdjacencyLists<TWeight>
 	private readonly ResizeableArray<Edge<TWeight>>[] adjacents;
 	
 	/// <inheritdoc />
-	public IComparer<TWeight> Comparer { get;  }
-
-	/// <inheritdoc />
 	public IEnumerable<int> Vertexes => Enumerable.Range(0, VertexCount);
 
 	/// <inheritdoc />
@@ -44,16 +41,15 @@ public class EdgeWeightedGraphWithAdjacencyLists<TWeight>
 	public IEnumerable<int> GetAdjacents(int vertex)
 		=> adjacents[vertex].Select(edge => edge.OtherVertex(vertex));
 
-	public EdgeWeightedGraphWithAdjacencyLists(int vertexCount, IComparer<TWeight> comparer)
+	public EdgeWeightedGraphWithAdjacencyLists(int vertexCount)
 	{
 		VertexCount = vertexCount;
-		Comparer = comparer;
 		adjacents = new ResizeableArray<Edge<TWeight>>[vertexCount];
 		adjacents.Fill(() => []);
 	}
 	
-	public EdgeWeightedGraphWithAdjacencyLists(int vertexCount, IEnumerable<Edge<TWeight>> edges, IComparer<TWeight> comparer)
-		: this(vertexCount, comparer)
+	public EdgeWeightedGraphWithAdjacencyLists(int vertexCount, IEnumerable<Edge<TWeight>> edges)
+		: this(vertexCount)
 	{
 		foreach (var edge in edges)
 		{
@@ -62,7 +58,7 @@ public class EdgeWeightedGraphWithAdjacencyLists<TWeight>
 	}
 
 	public EdgeWeightedGraphWithAdjacencyLists(EdgeWeightedGraphWithAdjacencyLists<TWeight> graph)
-		: this(graph.VertexCount, graph.WeightedEdges, graph.Comparer)
+		: this(graph.VertexCount, graph.WeightedEdges)
 	{
 	}
 

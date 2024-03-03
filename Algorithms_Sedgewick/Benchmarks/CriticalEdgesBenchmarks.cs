@@ -20,7 +20,7 @@ public class CriticalEdgesBenchmarks
 	public object? CriticalEdgesExamineShortestPath()
 	{
 		var graph = MakeGraph((VertexCount, EdgeFraction));
-		CriticalEdgesExamineShortestPath<double> algorithm = new(graph, 0, 1, (x, y) => x + y, 0, double.PositiveInfinity);
+		CriticalEdgesExamineShortestPath<double> algorithm = new(graph, 0, 1);
 		
 		return algorithm.HasCriticalEdge ? algorithm.CriticalEdge : null;
 	}
@@ -41,6 +41,6 @@ public class CriticalEdgesBenchmarks
 		
 		graph.ConnectComponents();
 		var weights = Generator.UniformRandomDouble(1.0, 10.0);
-		return RandomGraph.AssignWeights(graph, weights, Comparer);
+		return RandomGraph.AssignWeights(graph, weights);
 	}
 }

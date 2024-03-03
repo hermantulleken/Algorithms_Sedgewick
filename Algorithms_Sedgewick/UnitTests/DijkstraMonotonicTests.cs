@@ -10,12 +10,12 @@ public class DijkstraMonotonicTests
 	[Test]
 	public void TestSimpleGraph1()
 	{
-		var graph = DataStructures.EdgeWeightedDigraph(4, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(4);
 		graph.AddEdge(0, 1, 3.0);
 		graph.AddEdge(1, 2, 5.0);
 		graph.AddEdge(2, 3, 7.0);
 
-		var algorithm = new DijkstraMonotonic<double>(graph, 0);//, int.MaxValue, (x, y) => x + y, 0);
+		var algorithm = new DijkstraMonotonic<double>(graph, 0); //, int.MaxValue, (x, y) => x + y, 0);
 		Assert.That(algorithm.DistTo(0), Is.EqualTo(0));
 		Assert.That(algorithm.DistTo(1), Is.EqualTo(3));
 		Assert.That(algorithm.DistTo(2), Is.EqualTo(8));
@@ -25,7 +25,7 @@ public class DijkstraMonotonicTests
 	[Test]
 	public void TestSimpleGraph2()
 	{
-		var graph = DataStructures.EdgeWeightedDigraph(4, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(4);
 		graph.AddEdge(0, 1, 3.0);
 		graph.AddEdge(1, 2, 5.0);
 		graph.AddEdge(0, 3, 4.0);
@@ -43,7 +43,7 @@ public class DijkstraMonotonicTests
 		\--(4)--3--(3)----------\	// Descending
 		\--(2)--4--(1)--5--(1)--2	// Shorter but not monotonic
 	*/
-		var graph = DataStructures.EdgeWeightedDigraph(6, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(6);
 		graph.AddEdge(0, 1, 3.0);
 		graph.AddEdge(1, 2, 5.0);
 		graph.AddEdge(0, 3, 4.0);
@@ -59,7 +59,7 @@ public class DijkstraMonotonicTests
 	[Test]
 	public void TestSwitchingAscending()
 	{
-		var graph = DataStructures.EdgeWeightedDigraph(7, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(7);
 		
 		/*	0--(1)--1--(2)--2--(3)--3--(4)--4
 		\--(3)--5--(2)-/\--(1)--6--(0)-/
@@ -85,7 +85,7 @@ public class DijkstraMonotonicTests
 	[Test]
 	public void TestSubpathsNotShared()
 	{
-		var graph = DataStructures.EdgeWeightedDigraph(5, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(5);
 		
 		/*	0--(1)--1--(7)--2--(6)--3
 		\--(4)--4--(5)-/
@@ -110,7 +110,7 @@ public class DijkstraMonotonicTests
 	{
 		// https://github.com/reneargento/algorithms-sedgewick-wayne/blob/master/src/chapter4/section4/Exercise34_MonotonicShortestPath.java#L5
 		
-		var graph = DataStructures.EdgeWeightedDigraph(8, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(8);
 		
 		graph.AddEdge(new(0, 1, 1));
 		graph.AddEdge(new(0, 4, 3));

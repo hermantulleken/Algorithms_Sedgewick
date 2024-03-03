@@ -8,8 +8,6 @@ using System.Runtime.CompilerServices;
 /// </summary>
 public static class MathX
 {
-	private const double Epsilon = 0.00001;
-	
 	/// <summary>
 	/// Computes the floor of the base-2 logarithm of a number.
 	/// </summary>
@@ -40,9 +38,18 @@ public static class MathX
 	/// Checks whether two numbers are approximately equal.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static bool ApproximatelyEqual(double a, double b) 
-		=> Math.Abs(a - b) < Epsilon;
-
+	public static bool ApproximatelyEqual<T>(T a, T b)
+		where T : IFloatingPointIeee754<T>
+		=> ApproximatelyEqual(a, b, T.Epsilon);
+	
+	/// <summary>
+	/// Checks whether two numbers are approximately equal.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool ApproximatelyEqual<T>(T a, T b, T tolerance)
+		where T : IFloatingPoint<T>
+		=> T.Abs(a - b) < tolerance;
+			
 	/// <summary>
 	/// Returns the given numbers as a tuple where the smallest one is first.
 	/// </summary>

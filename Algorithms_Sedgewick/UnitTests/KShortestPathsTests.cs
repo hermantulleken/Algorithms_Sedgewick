@@ -15,7 +15,7 @@ public class KShortestPathsTests
 	public void Setup()
 	{
 		// Initialize your graph here
-		graph = new(5, Comparer<double>.Default);
+		graph = new(5);
 		graph.AddEdge(new(0, 1, 1.0));
 		graph.AddEdge(new(0, 2, 2.5));
 		graph.AddEdge(new(1, 2, 1.0));
@@ -75,6 +75,6 @@ public class KShortestPathsTests
 	private static IEnumerable<Func<EdgeWeightedDigraphWithAdjacencyLists<double>, int, int, int, IKShortestPaths<double>>> GetAlgorithms()
 	{
 		yield return (graph, source, target, k) => new KShortestPaths<double>(graph, source, target, k);
-		yield return (graph, source, target, k) => new YensAlgorithm<double>(graph, source, target, k, 0.0, double.MaxValue, (x, y) => x + y);
+		yield return (graph, source, target, k) => new YensAlgorithm<double>(graph, source, target, k);
 	}
 }

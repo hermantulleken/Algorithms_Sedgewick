@@ -11,7 +11,7 @@ public class DijkstraMultiSourceTests
 	[Test]
 	public void TestTwoSourcesOneSink()
 	{
-		var graph = DataStructures.EdgeWeightedDigraph(3, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(3);
 		graph.AddEdge(0, 2, 1.0);
 		graph.AddEdge(1, 2, 2.0);
 

@@ -2,9 +2,10 @@
 
 namespace AlgorithmsSW.EdgeWeightedGraph;
 
-using Support;
+using System.Numerics;
 
 public class KruskalMst<T> : IMst<T>
+	where T : IFloatingPoint<T>
 {
 	private readonly Set.ISet<Edge<T>> mst;
 	
@@ -14,10 +15,10 @@ public class KruskalMst<T> : IMst<T>
 
 	public KruskalMst(IEdgeWeightedGraph<T> graph)
 	{
-		IComparer<Edge<T>> comparer = new EdgeComparer<T>(graph.Comparer);
-		mst = DataStructures.Set<Edge<T>>(comparer);
+		IComparer<Edge<T>> comparer = new EdgeComparer<T>();
+		mst = DataStructures.Set(comparer);
 		
-		IPriorityQueue<Edge<T>> priorityQueue = new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));
+		IPriorityQueue<Edge<T>> priorityQueue = new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>());
 		
 		foreach (var edge in graph.WeightedEdges)
 		{
@@ -50,7 +51,7 @@ public class KruskalMst<T> : IMst<T>
 	[ExerciseReference(4, 3, 32)]
 	public KruskalMst(EdgeWeightedGraphWithAdjacencyLists<T> graph, IEnumerable<Edge<T>> specifiedEdges)
 	{
-		IComparer<Edge<T>> comparer = new EdgeComparer<T>(graph.Comparer);
+		IComparer<Edge<T>> comparer = new EdgeComparer<T>();
 		mst = DataStructures.Set(comparer);
 		var unionFind = new UnionFind(graph.VertexCount);
 		
@@ -61,7 +62,7 @@ public class KruskalMst<T> : IMst<T>
 		}
 		
 		IPriorityQueue<Edge<T>> priorityQueue 
-			= new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>(graph.Comparer));
+			= new FixedCapacityMinBinaryHeap<Edge<T>>(graph.EdgeCount, new EdgeComparer<T>());
 		
 		foreach (var edge in graph.WeightedEdges)
 		{

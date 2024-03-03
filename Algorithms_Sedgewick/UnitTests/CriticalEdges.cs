@@ -8,13 +8,13 @@ public class CriticalEdges
 {
 	public void TestSimpleCase()
 	{
-		var graph = DataStructures.EdgeWeightedDigraph(3, Comparer<double>.Default);
+		var graph = DataStructures.EdgeWeightedDigraph<double>(3);
 		
 		graph.AddEdge(0, 1, 6.0);
 		graph.AddEdge(1, 2, 4.0);
 		graph.AddEdge(1, 2, 5.0);
 
-		var algorithm = new CriticalEdgesExamineShortestPath<double>(graph, 0, 2, (x, y) => x + y, 0.0, double.PositiveInfinity);
+		var algorithm = new CriticalEdgesExamineShortestPath<double>(graph, 0, 2);
 		
 		Assert.That(algorithm.HasCriticalEdge, Is.True);
 		Assert.That(algorithm.CriticalEdge!.Source, Is.EqualTo(1));

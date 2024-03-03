@@ -102,7 +102,7 @@ public class MstTests
 		IEnumerable<int> edgeIndexesInMst,
 		IEnumerable<int> edgeIndexesNotInMst)
 	{
-		var graph = new EdgeWeightedGraphWithAdjacencyLists<double>(vertexCount, Comparer<double>.Default);
+		var graph = new EdgeWeightedGraphWithAdjacencyLists<double>(vertexCount);
 
 		foreach (var edge in edges)
 		{

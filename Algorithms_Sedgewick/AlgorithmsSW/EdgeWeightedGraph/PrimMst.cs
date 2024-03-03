@@ -3,7 +3,10 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.EdgeWeightedGraph;
 
-public class PrimMst<T> : IMst<T> where T : IComparable<T>
+using System.Numerics;
+
+public class PrimMst<T> : IMst<T> 
+	where T : IComparable<T>, IFloatingPoint<T>
 {
 	private readonly Edge<T>[] edgeTo;
 	private readonly T[] distTo;
@@ -21,7 +24,7 @@ public class PrimMst<T> : IMst<T> where T : IComparable<T>
 		edgeTo = new Edge<T>[graph.VertexCount];
 		distTo = new T[graph.VertexCount];
 		marked = new bool[graph.VertexCount];
-		priorityQueue = new IndexPriorityQueue<T>(graph.VertexCount, graph.Comparer);
+		priorityQueue = new(graph.VertexCount, Comparer<T>.Default);
 
 		// Initialize distTo with maxValue
 		for (int vertex = 0; vertex < graph.VertexCount; vertex++)
@@ -34,8 +37,8 @@ public class PrimMst<T> : IMst<T> where T : IComparable<T>
 		priorityQueue.Insert(0, distTo[0]);
 
 		// Assert correct initialization
-		Assert(graph.Comparer.Compare(distTo[0], minValue) == 0, "distTo[0] should be initialized to minValue");
-		Assert(distTo.Skip(1).All(d => graph.Comparer.Compare(d, maxValue) == 0), "All distTo values should be initialized to maxValue");
+		Assert(distTo[0] == minValue, "distTo[0] should be initialized to minValue");
+		Assert(distTo.Skip(1).All(d => d == maxValue), "All distTo values should be initialized to maxValue");
 
 		while (!priorityQueue.IsEmpty)
 		{
@@ -60,7 +63,7 @@ public class PrimMst<T> : IMst<T> where T : IComparable<T>
 				continue;
 			}
 
-			if (graph.Comparer.Compare(edge.Weight, distTo[otherVertex]) >= 0)
+			if (edge.Weight >= distTo[otherVertex])
 			{
 				continue;
 			}
@@ -69,7 +72,7 @@ public class PrimMst<T> : IMst<T> where T : IComparable<T>
 			edgeTo[otherVertex] = edge;
 
 			// Assert the edge is the minimum for the vertex
-			Assert(edgeTo[otherVertex] != null && graph.Comparer.Compare(edgeTo[otherVertex].Weight, distTo[otherVertex]) == 0, "Edge should be the minimum for the vertex");
+			Assert(edgeTo[otherVertex] != null && edgeTo[otherVertex].Weight == distTo[otherVertex], "Edge should be the minimum for the vertex");
 
 			if (priorityQueue.Contains(otherVertex))
 			{

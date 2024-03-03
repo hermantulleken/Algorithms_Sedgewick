@@ -31,10 +31,7 @@ public class YensAlgorithm<TWeight>
 	/// <param name="source">The source vertex from where paths originate.</param>
 	/// <param name="target">The target vertex to which paths should lead.</param>
 	/// <param name="shortestPathCount">The number of shortest paths to find.</param>
-	/// <param name="zero">The zero value for the weight type, used in calculations.</param>
-	/// <param name="maxValue">The maximum value for the weight type, used in calculations.</param>
-	/// <param name="add">A function to add two weight values.</param>
-	public YensAlgorithm(IEdgeWeightedDigraph<TWeight> digraph, int source, int target, int shortestPathCount, TWeight zero, TWeight maxValue, Func<TWeight, TWeight, TWeight> add)
+	public YensAlgorithm(IEdgeWeightedDigraph<TWeight> digraph, int source, int target, int shortestPathCount)
 	{
 		shortestPaths = new DirectedPath<TWeight>[shortestPathCount];
 		var dijkstra = new Dijkstra<TWeight>(digraph, source);
@@ -47,7 +44,7 @@ public class YensAlgorithm<TWeight>
 		var path = dijkstra.GetPathTo(target);
 		ResizeableArray<DirectedEdge<TWeight>> removedEdges = [];
 		shortestPaths[0] = path;
-		var queue = DataStructures.PriorityQueue(100, new DirectedPathComparer<TWeight>(digraph.Comparer));
+		var queue = DataStructures.PriorityQueue(100, new DirectedPathComparer<TWeight>(Comparer<TWeight>.Default));
 		
 		for (int shortestPathIndex = 1; shortestPathIndex < shortestPathCount; shortestPathIndex++)
 		{

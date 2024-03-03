@@ -1,10 +1,13 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using System.Numerics;
+
 /// <summary>
 /// A lazy implementation of Prim's algorithm for finding the minimum spanning tree of a weighted graph, using a N-heap.
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 public class LazyPrimMstDWayHeap<TWeight> : IMst<TWeight>
+	where TWeight : IFloatingPoint<TWeight>
 {
 	private readonly bool[] marked;
 	private readonly Queue<Edge<TWeight>> minimumSpanningTree;
@@ -20,7 +23,7 @@ public class LazyPrimMstDWayHeap<TWeight> : IMst<TWeight>
 	/// <param name="heapDegree">The degree of the heap to use.</param>
 	public LazyPrimMstDWayHeap(IReadOnlyEdgeWeightedGraph<TWeight> graph, int heapDegree)
 	{
-		priorityQueue = new(heapDegree, graph.EdgeCount, new EdgeComparer<TWeight>(graph.Comparer));
+		priorityQueue = new(heapDegree, graph.EdgeCount, new EdgeComparer<TWeight>());
 		marked = new bool[graph.VertexCount];
 		minimumSpanningTree = new();
 

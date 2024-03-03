@@ -54,7 +54,7 @@ public class CriticalEdgesExamineIntersectingShortestPaths<TWeight>
 			graph.RemoveEdge(edge);
 			var dijkstra = new DijkstraSourceSink<TWeight>(graph, source, destination);
 
-			if (graph.Comparer.Less(maxDistance, dijkstra.Distance))
+			if (maxDistance < dijkstra.Distance)
 			{
 				maxDistance = dijkstra.Distance;
 				maxEdge = edge;

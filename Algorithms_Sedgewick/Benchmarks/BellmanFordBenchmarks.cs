@@ -34,7 +34,6 @@ public class BellmanFordBenchmarks
 			MakeConnected(AlgorithmsSW.Digraph.RandomGraph.RandomSimple),
 			VertexCount, 
 			edgeCount, 
-			Comparer<double>.Default, 
 			Generator.UniformRandomDouble(1, 10));
 	}
 	
@@ -54,7 +53,7 @@ public class BellmanFordBenchmarks
 		Write(nameof(BellmanFord));
 		
 		// Since the graph is randomly generated, we can simply use vertex 0 and 1 each time. 
-		var algorithm = new BellmanFord<double>(graph, 0, Add, 0, double.MaxValue);
+		var algorithm = new BellmanFord<double>(graph, 0);
 		return algorithm.HasPathTo(1);
 	}
 
@@ -63,7 +62,7 @@ public class BellmanFordBenchmarks
 	{
 		Write(nameof(BellmanFordWithParentCheckingHeuristic));
 		
-		var algorithm = new BellmanFordWithParentCheckingHeuristic<double>(graph, 0, Add, 0, double.MaxValue);
+		var algorithm = new BellmanFordWithParentCheckingHeuristic<double>(graph, 0);
 		return algorithm.HasPathTo(1);
 	}
 	

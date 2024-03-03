@@ -1,6 +1,7 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Digraph;
 using List;
 using Queue;
@@ -20,26 +21,22 @@ using Support;
 /// </remarks>
 [ExerciseReference(4, 4, 32)]
 public class BellmanFordWithParentCheckingHeuristic<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly TWeight[] distanceTo;
 	private readonly DirectedEdge<TWeight>?[] edgeTo;
 	private readonly bool[] onQueue;
 	private readonly IQueue<int> queue;
 	private readonly IReadOnlyEdgeWeightedDigraph<TWeight> graph;
-	private readonly TWeight maxValue;
 	
 	private int cost = 0;
 	private IEnumerable<DirectedEdge<TWeight>>? cycle;
 	
 	public BellmanFordWithParentCheckingHeuristic(
 		IReadOnlyEdgeWeightedDigraph<TWeight> graph, 
-		int sourceVertex, 
-		Func<TWeight, TWeight, TWeight> add,
-		TWeight zero, 
-		TWeight maxValue)
+		int sourceVertex)
 	{
 		this.graph = graph;
-		this.maxValue = maxValue;
 		distanceTo = new TWeight[graph.VertexCount];
 		edgeTo = new DirectedEdge<TWeight>[graph.VertexCount];
 		onQueue = new bool[graph.VertexCount];
@@ -47,10 +44,10 @@ public class BellmanFordWithParentCheckingHeuristic<TWeight>
 
 		foreach (int vertex in graph.Vertexes)
 		{
-			distanceTo[vertex] = maxValue;
+			distanceTo[vertex] = TWeight.MaxValue;
 		}
 		
-		distanceTo[sourceVertex] = zero;
+		distanceTo[sourceVertex] = TWeight.Zero;
 		queue.Enqueue(sourceVertex);
 		onQueue[sourceVertex] = true;
 		
@@ -70,7 +67,7 @@ public class BellmanFordWithParentCheckingHeuristic<TWeight>
 				continue;
 			}
 			
-			Relax(vertex, add);
+			Relax(vertex);
 			Tracer.Trace(nameof(distanceTo), distanceTo.Pretty());
 			Tracer.Trace(nameof(edgeTo), edgeTo.Pretty());
 		}
@@ -80,7 +77,7 @@ public class BellmanFordWithParentCheckingHeuristic<TWeight>
 	
 	public TWeight GetDistanceTo(int vertex) => distanceTo[vertex];
 	
-	public bool HasPathTo(int vertex) => graph.Comparer.Compare(distanceTo[vertex], maxValue) < 0;
+	public bool HasPathTo(int vertex) => distanceTo[vertex] < TWeight.MaxValue;
 
 	public IEnumerable<DirectedEdge<TWeight>> GetEdgesOfPathTo(int target)
 	{
@@ -102,15 +99,15 @@ public class BellmanFordWithParentCheckingHeuristic<TWeight>
 	public IEnumerable<DirectedEdge<TWeight>> NegativeCycle() 
 		=> HasNegativeCycle() ? cycle : throw new InvalidOperationException("No negative cycle.");
 	
-	private void Relax(int vertex, Func<TWeight, TWeight, TWeight> add)
+	private void Relax(int vertex)
 	{
 		foreach (var edge in graph.GetIncidentEdges(vertex))
 		{
 			int target = edge.Target;
 			
-			if (graph.Comparer.Compare(distanceTo[target], add(distanceTo[vertex], edge.Weight)) > 0)
+			if (distanceTo[target] > distanceTo[vertex] + edge.Weight)
 			{
-				distanceTo[target] = add(distanceTo[vertex], edge.Weight);
+				distanceTo[target] = distanceTo[vertex] + edge.Weight;
 				edgeTo[target] = edge; 
 
 				if (!onQueue[target])
@@ -130,7 +127,7 @@ public class BellmanFordWithParentCheckingHeuristic<TWeight>
 	private void FindNegativeCycle()
 	{
 		int vertexCount = edgeTo.Length;
-		var shortestPathTree = new EdgeWeightedDigraphWithAdjacencyLists<TWeight>(vertexCount, graph.Comparer);
+		var shortestPathTree = new EdgeWeightedDigraphWithAdjacencyLists<TWeight>(vertexCount);
 		
 		for (int vertex = 0; vertex < vertexCount; vertex++)
 		{

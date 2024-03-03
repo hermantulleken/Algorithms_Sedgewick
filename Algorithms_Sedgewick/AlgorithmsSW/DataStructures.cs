@@ -21,8 +21,48 @@ using EdgeWeightedDigraph;
 /// </remarks>
 public static class DataStructures
 {
+	/// <summary>
+	/// Creates a new array of a specified type and size.
+	/// </summary>
+	/// <typeparam name="T">The type of the elements in the array.</typeparam>
+	/// <param name="count">The number of elements in the array.</param>
+	/// <returns>A new array of the specified type and size.</returns>
+	public static T[] Array<T>(int count) => new T[count];
+
+	/// <summary>
+	/// Creates a new array of a specified type and size, and fills it with a specified initial element. 
+	/// </summary>
+	/// <typeparam name="T">The type of the elements in the array.</typeparam>
+	/// <param name="count">The number of elements in the array.</param>
+	/// <param name="initialElement">The initial element to fill the array with. Be careful when the supplied value is a
+	/// reference type; the same reference will be added to every cell. 
+	/// <code>
+	/// <![CDATA[
+	/// var grid = DataStructures.Array<int[]>(10,  DataStructures.Array<int>(20));
+	/// grid[0][0] = 1;
+	/// Console.WriteLine($"Value at grid[0][1] is {grid[0][1]}"); // Prints 1, not 0, since the same array is in each cell. 
+	/// ]]>
+	/// </code>
+	///
+	/// </param>
+	/// <returns>A new array of the specified type and size.</returns>
+	public static T[] Array<T>(int count, T initialElement)
+	{
+		var array = new T[count];
+		array.Fill(initialElement);
+		return array;
+	}
+
+	/// <summary>
+	/// Creates a new <see cref="IStack{T}"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the stack.</typeparam>
 	public static IStack<T> Stack<T>() => new StackWithResizeableArray<T>();
-	
+
+	/// <summary>
+	/// Creates a new <see cref="IStack{T}"/> with the given capacity. 
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the stack.</typeparam>
 	public static IStack<T> Stack<T>(int capacity) => new StackWithResizeableArray<T>(capacity);
 	
 	public static IQueue<T> Queue<T>() => new QueueWithResizeableArray<T>();
@@ -30,8 +70,40 @@ public static class DataStructures
 	public static IQueue<T> Queue<T>(int capacity) => new QueueWithResizeableArray<T>(capacity);
 	
 	public static IRandomAccessList<T> List<T>() => new ResizeableArray<T>();
-	
+
+
+	/// <summary>
+	/// Creates a new <see cref="IRandomAccessList{T}"/> list with the specified capacity. 
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the list.</typeparam>
+	/// <returns>A new instance of an empty random access list.</returns>
 	public static IRandomAccessList<T> List<T>(int capacity) => new ResizeableArray<T>(capacity);
+
+	// Note: There may be confusion between count and capacity in the overloads...
+	/// <summary>
+	/// Creates a new <see cref="IRandomAccessList{T}"/> list with the specified count and initial element.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the list.</typeparam>
+	/// <param name="count">The initial count of the list.</param>
+	/// <param name="initialElement">The initial element to fill the list with. Be careful when the supplied value is a
+	/// reference type; the same reference will be added to every cell. 
+	/// <code>
+	/// <![CDATA[
+	/// var grid = DataStructures.List<int[]>(10,  DataStructures.List<int>(20));
+	/// grid[0][0] = 1;
+	/// Console.WriteLine($"Value at grid[0][1] is {grid[0][1]}"); // Prints 1, not 0, since the same array is in each cell. 
+	/// ]]>
+	/// </code>
+	///
+	/// </param>
+	/// <returns>A new instance of the <see cref="IRandomAccessList{T}"/> interface.</returns>
+	public static IRandomAccessList<T?> List<T>(int count, T? initialElement)
+	{
+		var list = new ResizeableArray<T?>(count);
+		list.SetCount(count);
+		list.Fill(initialElement);
+		return list; 
+	}
 	
 	public static Set.ISet<T> Set<T>(IComparer<T> comparer) => new Set.HashSet<T>(comparer);
 	
@@ -53,9 +125,9 @@ public static class DataStructures
 	
 	public static IndexPriorityQueue<T> IndexedPriorityQueue<T>(int capacity, IComparer<T> comparer) => new(capacity, comparer);
 
-	public static IEdgeWeightedGraph<T> EdgeWeightedGraph<T>(int vertexCount, IComparer<T> comparer) 
-		=> new EdgeWeightedGraphWithAdjacencyLists<T>(vertexCount, comparer);
+	public static IEdgeWeightedGraph<T> EdgeWeightedGraph<T>(int vertexCount) 
+		=> new EdgeWeightedGraphWithAdjacencyLists<T>(vertexCount);
 	
-	public static IEdgeWeightedDigraph<T> EdgeWeightedDigraph<T>(int vertexCount, IComparer<T> comparer) 
-		=> new EdgeWeightedDigraphWithAdjacencyLists<T>(vertexCount, comparer);
+	public static IEdgeWeightedDigraph<T> EdgeWeightedDigraph<T>(int vertexCount) 
+		=> new EdgeWeightedDigraphWithAdjacencyLists<T>(vertexCount);
 }

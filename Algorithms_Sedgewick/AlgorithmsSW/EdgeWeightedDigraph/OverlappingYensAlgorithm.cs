@@ -54,7 +54,7 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 		var path = dijkstra.GetPathTo(target);
 		ResizeableArray<DirectedEdge<TWeight>> removedEdges = [];
 		shortestPaths.Add(path);
-		var queue = DataStructures.PriorityQueue(100, new DirectedPathComparer<TWeight>(digraph.Comparer));
+		var queue = DataStructures.PriorityQueue(100, new DirectedPathComparer<TWeight>(Comparer<TWeight>.Default));
 		int shortestPathIndex = 1;
 
 		ISet<(int, int)> set = new HashSet<(int, int)>(Comparer<(int, int)>.Default);

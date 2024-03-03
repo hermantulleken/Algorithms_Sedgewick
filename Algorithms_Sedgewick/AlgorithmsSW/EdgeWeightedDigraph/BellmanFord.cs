@@ -1,6 +1,7 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
 using System.Diagnostics;
+using System.Numerics;
 using Counter;
 using Digraph;
 using List;
@@ -9,6 +10,7 @@ using Support;
 using static System.Diagnostics.Debug;
 
 public class BellmanFord<TWeight> : IShortestPath<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly TWeight[] distanceTo;
 	private readonly DirectedEdge<TWeight>?[] edgeTo;
@@ -16,7 +18,6 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 	private readonly IQueue<int> queue;
 	private int cost = 0;
 	private readonly IReadOnlyEdgeWeightedDigraph<TWeight> graph;
-	private readonly TWeight maxValue;
 	private IEnumerable<DirectedEdge<TWeight>>? cycle;
 
 	#if DEBUG
@@ -25,16 +26,11 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 	
 	public BellmanFord(
 		IReadOnlyEdgeWeightedDigraph<TWeight> graph, 
-		int sourceVertex, 
-		Func<TWeight, TWeight, TWeight> add,
-		TWeight zero, 
-		TWeight maxValue)
+		int sourceVertex)
 	{
 		graph.ThrowIfNull();
-		add.ThrowIfNull();
 		
 		this.graph = graph;
-		this.maxValue = maxValue;
 		distanceTo = new TWeight[graph.VertexCount];
 		edgeTo = new DirectedEdge<TWeight>[graph.VertexCount];
 		onQueue = new bool[graph.VertexCount];
@@ -42,10 +38,10 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 
 		foreach (int vertex in graph.Vertexes)
 		{
-			distanceTo[vertex] = maxValue;
+			distanceTo[vertex] = TWeight.MaxValue;
 		}
 		
-		distanceTo[sourceVertex] = zero;
+		distanceTo[sourceVertex] = TWeight.Zero;
 		queue.Enqueue(sourceVertex);
 		onQueue[sourceVertex] = true;
 
@@ -57,31 +53,31 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 			IterationGuard.Inc();
 			int vertex = queue.Dequeue();
 			onQueue[vertex] = false;
-			Relax(vertex, add, zero);
+			Relax(vertex);
 		}
 		
 		WhiteBoxTesting.__WriteCounts();
 		WhiteBoxTesting.__ClearWhiteBoxContainers();
-		AssertConsistency(sourceVertex, zero, add);
+		AssertConsistency(sourceVertex);
 	}
 	
 	[Conditional(Diagnostics.DebugDefine)]
-	private void AssertConsistency(int sourceVertex, TWeight zero, Func<TWeight, TWeight, TWeight> add)
+	private void AssertConsistency(int sourceVertex)
 	{
-		ValidatePositiveWeights(zero);
+		ValidatePositiveWeights();
 
 		if (HasNegativeCycle())
 		{
 			return;
 		}
 		
-		Assert(graph.Comparer.Equal(distanceTo[sourceVertex], zero));
-		Assert(IsDistanceConsistent(add));
+		Assert(distanceTo[sourceVertex] == TWeight.Zero);
+		Assert(IsDistanceConsistent());
 		Assert(AreEdgesConsistent(sourceVertex));
 	}
 
 	[Conditional(Diagnostics.DebugDefine)]
-	private void ValidatePositiveWeights(TWeight zero)
+	private void ValidatePositiveWeights()
 	{
 #if DEBUG
 		if (hasNegativeEdges)
@@ -90,23 +86,23 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 		}
 #endif
 		
-		foreach (var vertex in graph.Vertexes)
+		foreach (int vertex in graph.Vertexes)
 		{
-			Assert(graph.Comparer.LessOrEqual(zero, distanceTo[vertex]));
+			Assert(!TWeight.IsNegative(distanceTo[vertex]));
 		}
 	}
 
-	private void Relax(int vertex, Func<TWeight, TWeight, TWeight> add, TWeight zero)
+	private void Relax(int vertex)
 	{
 		foreach (var edge in graph.GetIncidentEdges(vertex))
 		{
-			CheckIsNegative(edge, zero);
+			CheckIsNegative(edge);
 			
 			int target = edge.Target;
 			
-			if (graph.Comparer.Less(add(distanceTo[vertex], edge.Weight), distanceTo[target]))
+			if (distanceTo[vertex] + edge.Weight < distanceTo[target])
 			{
-				distanceTo[target] = add(distanceTo[vertex], edge.Weight);
+				distanceTo[target] = distanceTo[vertex] + edge.Weight;
 				edgeTo[target] = edge; 
 
 				if (!onQueue[target])
@@ -124,9 +120,9 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 	}
 
 	[Conditional(Diagnostics.DebugDefine)]
-	private void CheckIsNegative(DirectedEdge<TWeight> edge, TWeight zero)
+	private void CheckIsNegative(DirectedEdge<TWeight> edge)
 	{
-		if (graph.Comparer.Less(edge.Weight, zero))
+		if (TWeight.IsNegative(edge.Weight))
 		{
 #if DEBUG
 			hasNegativeEdges = true;
@@ -136,7 +132,7 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 
 	public TWeight GetDistanceTo(int vertex) => distanceTo[vertex];
 	
-	public bool HasPathTo(int vertex) => graph.Comparer.Compare(distanceTo[vertex], maxValue) < 0;
+	public bool HasPathTo(int vertex) => distanceTo[vertex] < TWeight.MaxValue;
 
 	public IEnumerable<DirectedEdge<TWeight>> GetEdgesOfPathTo(int target)
 	{
@@ -158,7 +154,7 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 	private void FindNegativeCycle()
 	{
 		int vertexCount = edgeTo.Length;
-		var spt = new EdgeWeightedDigraphWithAdjacencyLists<TWeight>(vertexCount, graph.Comparer);
+		var spt = new EdgeWeightedDigraphWithAdjacencyLists<TWeight>(vertexCount);
 		
 		for (int vertex = 0; vertex < vertexCount; vertex++)
 		{
@@ -183,11 +179,11 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 	public IEnumerable<DirectedEdge<TWeight>> NegativeCycle() 
 		=> HasNegativeCycle() ? cycle : throw new InvalidOperationException("No negative cycle.");
 	
-	private bool IsDistanceConsistent(Func<TWeight, TWeight, TWeight> add)
+	private bool IsDistanceConsistent()
 	{
 		foreach (var edge in graph.WeightedEdges)
 		{
-			if (graph.Comparer.Compare(distanceTo[edge.Target], add(distanceTo[edge.Source], edge.Weight)) > 0)
+			if (distanceTo[edge.Target] > distanceTo[edge.Source] + edge.Weight)
 			{
 				return false;
 			}
@@ -203,7 +199,7 @@ public class BellmanFord<TWeight> : IShortestPath<TWeight>
 			{
 				continue;
 			}
-			if (graph.Comparer.Less(distanceTo[v], maxValue) && edgeTo[v] == null)
+			if (distanceTo[v] < TWeight.MaxValue && edgeTo[v] == null)
 			{
 				return false;
 			}

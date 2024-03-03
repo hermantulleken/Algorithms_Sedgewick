@@ -19,7 +19,7 @@ public class EuclideanDistanceGraph : IEdgeWeightedGraph<double>
 	public EuclideanDistanceGraph(IEnumerable<Vector3> vertexes)
 	{
 		this.vertexes = vertexes.ToResizableArray(vertexes.Count());
-		graph = new EdgeWeightedGraphWithAdjacencyLists<double>(this.vertexes.Count, Comparer<double>.Default);	
+		graph = new(this.vertexes.Count);	
 	}
 	
 	/// <summary>
@@ -68,9 +68,6 @@ public class EuclideanDistanceGraph : IEdgeWeightedGraph<double>
 
 	/// <inheritdoc cref="IEdgeWeightedGraph{TWeight}" />
 	public bool RemoveEdge(Edge<double> edge) => graph.RemoveEdge(edge);
-
-	/// <inheritdoc />
-	public IComparer<double> Comparer => graph.Comparer;
 
 	/// <inheritdoc />
 	public IEnumerable<Edge<double>> WeightedEdges => graph.WeightedEdges;

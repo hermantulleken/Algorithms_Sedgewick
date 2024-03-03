@@ -10,11 +10,6 @@ public interface IReadOnlyEdgeWeightedDigraph<TWeight>
 	: IReadOnlyDigraph
 {
 	/// <summary>
-	/// Gets the comparer this <see cref="IReadOnlyEdgeWeightedDigraph{T}"/> use to compare edge weights.
-	/// </summary>
-	IComparer<TWeight> Comparer { get; }
-	
-	/// <summary>
 	/// Gets the edges that is part of this <see cref="IReadOnlyEdgeWeightedDigraph{T}"/>.
 	/// </summary>
 	IEnumerable<DirectedEdge<TWeight>> WeightedEdges { get; }

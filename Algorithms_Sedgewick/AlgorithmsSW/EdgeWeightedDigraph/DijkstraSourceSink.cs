@@ -69,7 +69,7 @@ public class DijkstraSourceSink<TWeight>
 			{
 				Assert(edge.Target != source); // Because of the priority queue, this should never happen.
 				
-				if (graph.Comparer.Less(edge.Weight, TWeight.Zero))
+				if (edge.Weight < TWeight.Zero)
 				{
 					throw new ArgumentException("Negative weights are not allowed.", nameof(graph));
 				}
@@ -82,7 +82,7 @@ public class DijkstraSourceSink<TWeight>
 					queue.Insert(edge.Target, distanceTo[edge.Target]);
 				}
 				// Found a shorter path.
-				else if (graph.Comparer.Less(distanceToSource + edge.Weight, distanceTo[edge.Target]))
+				else if (distanceToSource + edge.Weight < distanceTo[edge.Target])
 				{
 					edgeTo[edge.Target] = edge;
 					distanceTo[edge.Target] = distanceToSource + edge.Weight;

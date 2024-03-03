@@ -34,18 +34,12 @@ public class CriticalEdgesExamineShortestPath<TWeight>
 	/// <param name="graph">The graph to find the critical edge in.</param>
 	/// <param name="source">The source vertex.</param>
 	/// <param name="destination">The destination vertex.</param>
-	/// <param name="add">The function to add two weights.</param>
-	/// <param name="zero">The zero element for the weight.</param>
-	/// <param name="maxValue">The maximum value for the weight.</param>
 	public CriticalEdgesExamineShortestPath(
 		IEdgeWeightedDigraph<TWeight> graph,
 		int source, 
-		int destination,
-		Func<TWeight, TWeight, TWeight> add, 
-		TWeight zero, 
-		TWeight maxValue)
+		int destination)
 	{
-		var maxDistance = zero;
+		var maxDistance = TWeight.Zero;
 		DirectedEdge<TWeight>? maxEdge = null;
 		
 		// We only need to check the edges on the path
@@ -64,7 +58,7 @@ public class CriticalEdgesExamineShortestPath<TWeight>
 			graph.RemoveEdge(edge);
 			dijkstra = new(graph, source, destination);
 
-			if (graph.Comparer.Less(maxDistance, dijkstra.Distance))
+			if (maxDistance < dijkstra.Distance)
 			{
 				maxDistance = dijkstra.Distance;
 				maxEdge = edge;

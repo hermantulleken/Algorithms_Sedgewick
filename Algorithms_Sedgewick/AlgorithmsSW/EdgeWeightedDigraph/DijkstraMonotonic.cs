@@ -13,20 +13,9 @@ using PriorityQueue;
 
 	An example of an algorithm to obscure or difficult for Chat GPT (Dec 2023).
 */
-public class DijkstraMonotonic<TWeight>
+public sealed class DijkstraMonotonic<TWeight>
 	where TWeight : IFloatingPointIeee754<TWeight>
 {
-	private class VertexInformation(DirectedEdge<TWeight>[] edges)
-	{
-		private int currentEdgeIteratorPosition = 0;
-
-		public DirectedEdge<TWeight>[] Edges { get; } = edges;
-
-		public int CurrentEdgeIteratorPosition => currentEdgeIteratorPosition;
-
-		public void IncEdgeIteratorPosition() => currentEdgeIteratorPosition++;
-	}
-	
 	private class Path(TWeight weight, DirectedEdge<TWeight> lastEdge)
 	{
 		private readonly Path? previousPath;
@@ -44,7 +33,7 @@ public class DijkstraMonotonic<TWeight>
 		public IEnumerable<DirectedEdge<TWeight>> GetPath() 
 		{
 			Stack<DirectedEdge<TWeight>> path = new();
-			path.Push(lastEdge);
+			path.Push(LastEdge);
 			var iterator = previousPath;
 
 			while (iterator != null)
@@ -56,35 +45,35 @@ public class DijkstraMonotonic<TWeight>
 			return path;
 		}
 	}
-
-	private readonly TWeight[] distTo;
-	private readonly Path[] pathTo;
-
-
+	
+	private readonly IRandomAccessList<TWeight> distTo;
+	private readonly IRandomAccessList<Path?> pathTo;
 	private readonly int source;
 
 	// O(E lg E)
 	// If negative edge weights are present, still works but becomes O(2^V)
-	public DijkstraMonotonic(IEdgeWeightedDigraph<TWeight> edgeWeightedDigraph, int source)
+	/// <summary>
+	/// Initializes a new instance of the <see cref="DijkstraMonotonic{TWeight}"/> class.
+	/// </summary>
+	/// <param name="edgeWeightedDigraph">The edge-weighted directed graph on which the Dijkstra's algorithm will be executed.</param>
+	/// <param name="source">The source vertex from which distances to all other vertices in the graph will be calculated.</param>
+	public DijkstraMonotonic(IReadOnlyEdgeWeightedDigraph<TWeight> edgeWeightedDigraph, int source)
 	{
 		this.source = source;
+		int vertexCount = edgeWeightedDigraph.VertexCount;
 
-		var distToMonotonicAscending = new TWeight[edgeWeightedDigraph.VertexCount];
-		var distToMonotonicDescending = new TWeight[edgeWeightedDigraph.VertexCount];
-		distTo = new TWeight[edgeWeightedDigraph.VertexCount];
+		var distToMonotonicAscending = DataStructures.List(vertexCount, TWeight.PositiveInfinity);
+		var distToMonotonicDescending = DataStructures.List(vertexCount, TWeight.PositiveInfinity);
+		distTo = DataStructures.List(vertexCount, TWeight.PositiveInfinity);
 		
-		distToMonotonicAscending.Fill(TWeight.PositiveInfinity);
-		distToMonotonicDescending.Fill(TWeight.PositiveInfinity);
-		distTo.Fill(TWeight.PositiveInfinity);
-
-		var pathMonotonicAscending = new Path[edgeWeightedDigraph.VertexCount];
-		var pathMonotonicDescending = new Path[edgeWeightedDigraph.VertexCount];
-		pathTo = new Path[edgeWeightedDigraph.VertexCount];
+		var pathMonotonicAscending = DataStructures.List<Path?>(vertexCount, null);
+		var pathMonotonicDescending = DataStructures.List<Path?>(vertexCount, null);
+		pathTo = DataStructures.List<Path?>(vertexCount, null);
 
 		// 1- Relax edges in ascending order to get a monotonic increasing shortest path
 		var edgesComparatorAscending = Comparer<DirectedEdge<TWeight>>.Create((edge1, edge2) => -edge1.Weight.CompareTo(edge2.Weight));
 
-		relaxAllEdgesInSpecificOrder(
+		RelaxAllEdgesInSpecificOrder(
 			edgeWeightedDigraph, 
 			edgesComparatorAscending, 
 			distToMonotonicAscending,
@@ -94,7 +83,7 @@ public class DijkstraMonotonic<TWeight>
 		// 2- Relax edges in descending order to get a monotonic decreasing shortest path
 		var edgesComparatorDescending = Comparer<DirectedEdge<TWeight>>.Create((edge1, edge2) => edge1.Weight.CompareTo(edge2.Weight));
 
-		relaxAllEdgesInSpecificOrder(
+		RelaxAllEdgesInSpecificOrder(
 			edgeWeightedDigraph, 
 			edgesComparatorDescending,
 			distToMonotonicDescending,
@@ -108,44 +97,74 @@ public class DijkstraMonotonic<TWeight>
 			distToMonotonicDescending, 
 			pathMonotonicDescending);
 	}
+	
+	/// <summary>
+	/// Gets the shortest path distance from the source vertex to the specified vertex.
+	/// </summary>
+	/// <param name="vertex">The vertex to which the shortest path distance should be retrieved.</param>
+	/// <returns>The shortest path distance from the source vertex to the specified vertex.</returns>
+	public TWeight DistTo(int vertex) => distTo[vertex];
 
-	private void relaxAllEdgesInSpecificOrder(
-		IEdgeWeightedDigraph<TWeight> edgeWeightedDigraph, 
-		Comparer<DirectedEdge<TWeight>> edgesComparator, 
-		TWeight[] distToVertex,
-		Path[] pathToVertex, bool isAscendingOrder)
+	/// <summary>
+	/// Determines whether a path exists from the source vertex to the specified vertex.
+	/// </summary>
+	/// <param name="vertex">The vertex to which the presence of a path should be checked.</param>
+	/// <returns><see langword="true"/> if there is a path from the source vertex to the specified vertex; otherwise, <see langword="false"/>.</returns>
+	public bool HasPathTo(int vertex) => distTo[vertex] != TWeight.PositiveInfinity;
+
+	/// <summary>
+	/// Gets the shortest path from the source vertex to the specified vertex.
+	/// </summary>
+	/// <param name="vertex">The vertex to which the shortest path should be retrieved.</param>
+	/// <returns>The shortest path from the source vertex to the specified vertex.</returns>
+	public IEnumerable<DirectedEdge<TWeight>>? PathTo(int vertex) 
+		=> !HasPathTo(vertex) ? null : source == vertex ? Array.Empty<DirectedEdge<TWeight>>() : pathTo[vertex]!.GetPath();
+
+	private static void AddEdgesOnMonotonicPaths(
+		IReadOnlyEdgeWeightedDigraph<TWeight> edgeWeightedDigraph,
+		DirectedEdge<TWeight> currentEdge,
+		int nextVertexInPath,
+		Path currentShortestPath,
+		IComparer<DirectedEdge<TWeight>> edgesComparator,
+		bool isAscendingOrder,
+		IPriorityQueue<Path> priorityQueue)
 	{
-		// Create a map with vertices as keys and sorted outgoing edges as values
-		var verticesInformation = DataStructures.HashTable<int, VertexInformation>(Comparer<int>.Default);
-		
-		for (int vertex = 0; vertex < edgeWeightedDigraph.VertexCount; vertex++) 
-		{
-			var edges = edgeWeightedDigraph.GetIncidentEdges(vertex).ToArray();
-			Array.Sort(edges, edgesComparator);
-			verticesInformation[vertex] = new(edges);
-		}
+		var weightInPreviousEdge = currentEdge.Weight;
+		var edges = edgeWeightedDigraph.GetIncidentEdges(nextVertexInPath).ToArray();
+		Array.Sort(edges, edgesComparator);
 
+		foreach (var edge in edges)
+		{
+			if ((isAscendingOrder && edge.Weight <= weightInPreviousEdge)
+				|| (!isAscendingOrder && edge.Weight >= weightInPreviousEdge))
+			{
+				break;
+			}
+
+			var path = new Path(currentShortestPath.Weight + edge.Weight, edge, currentShortestPath);
+			priorityQueue.Push(path);
+		}
+	}
+	
+	private void RelaxAllEdgesInSpecificOrder(
+		IReadOnlyEdgeWeightedDigraph<TWeight> edgeWeightedDigraph, 
+		IComparer<DirectedEdge<TWeight>> edgesComparator, 
+		IRandomAccessList<TWeight> distToVertex,
+		IRandomAccessList<Path?> pathToVertex, 
+		bool isAscendingOrder)
+	{
+		pathToVertex.ThrowIfNull();
 		var pathComparer = Comparer<Path>.Create((x, y) => x.Weight.CompareTo(y.Weight));
 		var priorityQueue = DataStructures.PriorityQueue(pathComparer);
 		distToVertex[source] = TWeight.Zero;
 
-		var sourceVertexInformation = verticesInformation[source];
-		while (sourceVertexInformation.CurrentEdgeIteratorPosition < sourceVertexInformation.Edges.Length)
-		{
-			var edge = sourceVertexInformation.Edges[sourceVertexInformation.CurrentEdgeIteratorPosition];
-			sourceVertexInformation.IncEdgeIteratorPosition();
-
-			var path = new Path(edge.Weight, edge);
-			priorityQueue.Push(path);
-		}
+		AddInitialEdges(edgeWeightedDigraph, edgesComparator, priorityQueue);
 
 		while (!priorityQueue.IsEmpty()) {
 			var currentShortestPath = priorityQueue.PopMin();
 			var currentEdge = currentShortestPath.LastEdge;
-
 			int nextVertexInPath = currentEdge.Target;
-			var nextVertexInformation = verticesInformation[nextVertexInPath];
-
+			
 			if (pathToVertex[nextVertexInPath] == null
 				|| currentShortestPath.Weight < distToVertex[nextVertexInPath])
 			{
@@ -153,52 +172,47 @@ public class DijkstraMonotonic<TWeight>
 				pathToVertex[nextVertexInPath] = currentShortestPath;
 			}
 
-			TWeight weightInPreviousEdge = currentEdge.Weight;
+			AddEdgesOnMonotonicPaths(
+				edgeWeightedDigraph, 
+				currentEdge,
+				nextVertexInPath, 
+				currentShortestPath, 
+				edgesComparator,
+				isAscendingOrder, 
+				priorityQueue);
+		}
+	}
 
-			while (nextVertexInformation.CurrentEdgeIteratorPosition < nextVertexInformation.Edges.Length)
-			{
-				var edge =
-					verticesInformation[nextVertexInPath].Edges[nextVertexInformation.CurrentEdgeIteratorPosition];
-
-				if ((isAscendingOrder && edge.Weight <= weightInPreviousEdge)
-					|| (!isAscendingOrder && edge.Weight >= weightInPreviousEdge)) {
-					break;
-				}
-
-				nextVertexInformation.IncEdgeIteratorPosition();
-				var path = new Path(currentShortestPath.Weight + edge.Weight, edge, currentShortestPath);
-				priorityQueue.Push(path);
-			}
+	private void AddInitialEdges(IReadOnlyEdgeWeightedDigraph<TWeight> edgeWeightedDigraph, IComparer<DirectedEdge<TWeight>> edgesComparator, IPriorityQueue<Path> priorityQueue)
+	{
+		var edges = edgeWeightedDigraph.GetIncidentEdges(source).ToArray();
+		Array.Sort(edges, edgesComparator);
+		
+		foreach (var edge in edges)
+		{
+			var path = new Path(edge.Weight, edge);
+			priorityQueue.Push(path);
 		}
 	}
 
 	private void CompareMonotonicPathsAndComputeShortest(
-		TWeight[] distToMonotonicAscending, 
-		Path[] pathMonotonicAscending,
-		TWeight[] distToMonotonicDescending,
-		Path[] pathMonotonicDescending) 
+		IRandomAccessList<TWeight> distToMonotonicAscending, 
+		IRandomAccessList<Path?> pathMonotonicAscending,
+		IRandomAccessList<TWeight> distToMonotonicDescending,
+		IRandomAccessList<Path?> pathMonotonicDescending)
 	{
-		for (int vertex = 0; vertex < distTo.Length; vertex++) {
-			if (distToMonotonicAscending[vertex] <= distToMonotonicDescending[vertex]) {
+		for (int vertex = 0; vertex < distTo.Count; vertex++) 
+		{
+			if (distToMonotonicAscending[vertex] <= distToMonotonicDescending[vertex]) 
+			{
 				distTo[vertex] = distToMonotonicAscending[vertex];
 				pathTo[vertex] = pathMonotonicAscending[vertex];
-			} else {
+			}
+			else
+			{
 				distTo[vertex] = distToMonotonicDescending[vertex];
 				pathTo[vertex] = pathMonotonicDescending[vertex];
 			}
 		}
-	}
-
-	public TWeight DistTo(int vertex) {
-		return distTo[vertex];
-	}
-
-	public bool HasPathTo(int vertex) {
-		return distTo[vertex] != TWeight.PositiveInfinity;
-	}
-
-	public IEnumerable<DirectedEdge<TWeight>>? PathTo(int vertex)
-	{
-		return !HasPathTo(vertex) ? null : source == vertex ? Array.Empty<DirectedEdge<TWeight>>() : pathTo[vertex].GetPath();
 	}
 }

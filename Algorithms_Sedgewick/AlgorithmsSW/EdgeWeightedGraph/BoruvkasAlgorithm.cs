@@ -1,10 +1,11 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using System.Numerics;
 using List;
 using Support;
 
-public class BoruvkasAlgorithm<TWeight> 
-	: IMst<TWeight>
+public class BoruvkasAlgorithm<TWeight> : IMst<TWeight>
+	where TWeight : IFloatingPoint<TWeight>
 {
 	private readonly ResizeableArray<Edge<TWeight>> mstEdges = new();
 	
@@ -14,14 +15,13 @@ public class BoruvkasAlgorithm<TWeight>
 	public BoruvkasAlgorithm(IReadOnlyEdgeWeightedGraph<TWeight> graph)
 	{
 		var unionFind = new UnionFind(graph.VertexCount);
-		var comparer = graph.Comparer;
 		
 		IterationGuard.Reset();
 		while (unionFind.ComponentCount > 1)
 		{
 			IterationGuard.Inc();
 			
-			var minEdge = FindMinimumEdges(graph, unionFind, comparer);
+			var minEdge = FindMinimumEdges(graph, unionFind);
 			AddMinimumEdgesToMst(minEdge, unionFind);
 		}
 	}
@@ -45,7 +45,7 @@ public class BoruvkasAlgorithm<TWeight>
 		}
 	}
 
-	private static Edge<TWeight>?[] FindMinimumEdges(IReadOnlyEdgeWeightedGraph<TWeight> graph, UnionFind unionFind, IComparer<TWeight> comparer)
+	private static Edge<TWeight>?[] FindMinimumEdges(IReadOnlyEdgeWeightedGraph<TWeight> graph, UnionFind unionFind)
 	{
 		Edge<TWeight>?[] minEdge = new Edge<TWeight>[graph.VertexCount];
 
@@ -59,12 +59,12 @@ public class BoruvkasAlgorithm<TWeight>
 				continue;
 			}
 				
-			if (minEdge[component1] == null || comparer.Compare(edge.Weight, minEdge[component1].Weight) < 0)
+			if (minEdge[component1] == null || edge.Weight < minEdge[component1].Weight)
 			{
 				minEdge[component1] = edge;
 			}
 
-			if (minEdge[component2] == null || comparer.Compare(edge.Weight, minEdge[component2].Weight) < 0)
+			if (minEdge[component2] == null || edge.Weight < minEdge[component2].Weight)
 			{
 				minEdge[component2] = edge;
 			}

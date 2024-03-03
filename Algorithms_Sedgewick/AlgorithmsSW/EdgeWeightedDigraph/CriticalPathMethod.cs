@@ -1,9 +1,11 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Numerics;
 using List;
 using static System.Diagnostics.Debug;
 
 public class CriticalPathMethod<TWeight>
+	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
 {
 	public IRandomAccessList<IRandomAccessList<DirectedEdge<TWeight>>> CriticalPaths { get; }
 	
@@ -11,18 +13,14 @@ public class CriticalPathMethod<TWeight>
 
 	public CriticalPathMethod(
 		IReadonlyRandomAccessList<Job<TWeight>> jobs, 
-		IComparer<TWeight> comparer, 
-		Func<TWeight, TWeight, TWeight> add, 
-		TWeight zero, 
-		TWeight tolerance,
-		TWeight minValue)
+		TWeight tolerance)
 	{
 		/*
 			Note: In the textbook they use a different indexing scheme. I don't think it matters much. 
 			However, I DO think it is necessary to have helper methods and not do the calculations inline to avoid 
 			mistakes.  
 		*/
-		var graph = DataStructures.EdgeWeightedDigraph(jobs.Count * 2 + 2, comparer);
+		var graph = DataStructures.EdgeWeightedDigraph<TWeight>(jobs.Count * 2 + 2);
 		int source = 0;
 		int sink = jobs.Count * 2 + 1;
 		
@@ -32,33 +30,29 @@ public class CriticalPathMethod<TWeight>
 			
 			foreach (int dependency in jobs[jobIndex].Dependencies)
 			{
-				graph.AddEdge(JobEnd(dependency), JobStart(jobIndex), zero);
+				graph.AddEdge(JobEnd(dependency), JobStart(jobIndex), TWeight.Zero);
 			}
 			
-			graph.AddEdge(source, JobStart(jobIndex), zero);
-			graph.AddEdge(JobEnd(jobIndex), sink, zero);
+			graph.AddEdge(source, JobStart(jobIndex), TWeight.Zero);
+			graph.AddEdge(JobEnd(jobIndex), sink, TWeight.Zero);
 		}
 		
-		AcyclicLongestPaths<TWeight> longestPaths = new(graph, source, add, zero, minValue);
+		AcyclicLongestPaths<TWeight> longestPaths = new(graph, source);
 		
 		CriticalDistance = longestPaths.GetDistanceTo(sink);
 
-		CriticalPaths = BackTrack(graph, source, sink, zero, tolerance, add);
+		CriticalPaths = BackTrack(graph, source, sink, tolerance);
 	}
 
 	private ResizeableArray<IRandomAccessList<DirectedEdge<TWeight>>> BackTrack(IEdgeWeightedDigraph<TWeight> graph,
 		int source,
 		int sink,
-		TWeight zero,
-		TWeight tolerance, 
-		Func<TWeight, TWeight, TWeight> add)
+		TWeight tolerance)
 	{
 		var currentPath = DataStructures.Stack<DirectedEdge<TWeight>>();
 		ResizeableArray<IRandomAccessList<DirectedEdge<TWeight>>> paths = [];
 		
-		Backtrack(
-			source, 
-			zero);
+		Backtrack(source, TWeight.Zero);
 
 		return paths;
 		
@@ -68,17 +62,17 @@ public class CriticalPathMethod<TWeight>
 		{
 			foreach (var nextEdge in graph.GetIncidentEdges(currentVertex))
 			{
-				var newDistance = add(currentDistance, nextEdge.Weight);
-				Assert(graph.Comparer.Compare(newDistance, CriticalDistance) <= 0);
+				TWeight newDistance = currentDistance + nextEdge.Weight;
+				Assert(newDistance <= CriticalDistance);
 				currentPath.Push(nextEdge);
 			
-				if (nextEdge.Target == sink && graph.Comparer.ApproximatelyEqual(newDistance, CriticalDistance, tolerance, add))
+				if (nextEdge.Target == sink && MathX.ApproximatelyEqual(newDistance, CriticalDistance, tolerance))
 				{
 					paths.Add(currentPath.ToResizableArray());
 				}
 				else
 				{
-					Assert(graph.Comparer.Compare(newDistance, CriticalDistance) < 0);
+					Assert(newDistance < CriticalDistance);
 					Backtrack(nextEdge.Target, newDistance);
 				}
 				

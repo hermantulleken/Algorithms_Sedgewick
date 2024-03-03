@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedGraph;
 
+using System.Numerics;
 using PriorityQueue;
 
 /// <summary>
@@ -7,6 +8,7 @@ using PriorityQueue;
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 public class KruskalMstDWayHeap<TWeight> : IMst<TWeight>
+	where TWeight : IFloatingPoint<TWeight>
 {
 	private readonly Queue<Edge<TWeight>> minimumSpanningTree;
 
@@ -21,7 +23,7 @@ public class KruskalMstDWayHeap<TWeight> : IMst<TWeight>
 	public KruskalMstDWayHeap(IEdgeWeightedGraph<TWeight> graph, int heapDegree)
 	{
 		minimumSpanningTree = new Queue<Edge<TWeight>>();
-		var priorityQueue = new FixedCapacityMinNHeap<Edge<TWeight>>(heapDegree, graph.EdgeCount, new EdgeComparer<TWeight>(graph.Comparer));
+		var priorityQueue = new FixedCapacityMinNHeap<Edge<TWeight>>(heapDegree, graph.EdgeCount, new EdgeComparer<TWeight>());
 
 		foreach (var edge in graph.WeightedEdges)
 		{

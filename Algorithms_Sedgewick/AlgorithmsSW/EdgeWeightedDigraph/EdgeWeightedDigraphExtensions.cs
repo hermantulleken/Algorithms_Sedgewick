@@ -92,7 +92,7 @@ public static class EdgeWeightedDigraphExtensions
 			begging of the corresponding target vertex edge
 		*/
 
-		var newGraph = DataStructures.EdgeWeightedDigraph(graph.VertexCount * 2, comparer);
+		var newGraph = DataStructures.EdgeWeightedDigraph<TWeight>(graph.VertexCount * 2);
 		foreach (int vertex in graph.Vertexes)
 		{
 			newGraph.AddEdge(new(StartVertex(vertex), EndVertex(vertex), vertexWeights[vertex]));
@@ -116,7 +116,7 @@ public static class EdgeWeightedDigraphExtensions
 	{
 		graph.ThrowIfNull();
 
-		var reversedGraph = DataStructures.EdgeWeightedDigraph(graph.VertexCount, graph.Comparer);
+		var reversedGraph = DataStructures.EdgeWeightedDigraph<TWeight>(graph.VertexCount);
 
 		foreach (var edge in graph.WeightedEdges)
 		{
