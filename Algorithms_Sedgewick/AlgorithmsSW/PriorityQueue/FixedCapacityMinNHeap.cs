@@ -9,14 +9,13 @@ using static System.Diagnostics.Debug;
 
 public class FixedCapacityMinNHeap<T> : IPriorityQueue<T>
 {
-	
 	private const string EmptyHeapPresentation = "()";
 
 #if WITH_INSTRUMENTATION
 	private const string InvalidStateMarker = "~";
 #endif
 	
-	private int Base = 3;
+	private readonly int Base = 3;
 	
 	private readonly T[] items;
 	private readonly IComparer<T> comparer;
@@ -210,52 +209,36 @@ public class FixedCapacityMinNHeap<T> : IPriorityQueue<T>
 			leftChild = GetChildIndex(k);
 		}
 	}
+	
+	// This op is O(n) 
+	public T PopMax()
+	{
+		if (IsEmpty)
+		{
+			ThrowHelper.ThrowContainerEmpty();
+		}
+
+		if (IsSingleton)
+		{
+			return PopMin();
+		}
+
+		int firstLeaf = GetFirstLeaveIndex();
+		int maxIndex = items.FindIndexOfMax(firstLeaf, Count + 1, comparer);
+
+		var max = items[maxIndex];
+		items[maxIndex] = items[Count];
+		Swim(maxIndex);
+		Count--;
+		items[Count] = default;
+		
+		return max;
+	}
 
 	public string ToPrettyString()
 	{
-		if (IsEmpty)
-			return EmptyHeapPresentation;
-
-		return ToPrettyString(0);
+		return IsEmpty ? EmptyHeapPresentation : ToPrettyString(0);
 	}
-
-	private string ToPrettyString(int k)
-	{
-		// Base case: if the current index is out of bounds
-		if (k >= Count)
-		{
-			return string.Empty;
-		}
-
-		// Start with the current node's value
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.Append(items[k].AsText());
-
-		// Check if there are children
-		int firstChild = GetChildIndex(k);
-		
-		if (firstChild >= Count)
-		{
-			return stringBuilder.ToString();
-		}
-
-		// Add each child's pretty string
-		stringBuilder.Append(Formatter.CommaSpace);
-		stringBuilder.Append("[");
-		for (int i = 0; i < Base; i++)
-		{
-			int childIndex = firstChild + i;
-			if (childIndex < Count)
-			{
-				if (i > 0) stringBuilder.Append(Formatter.CommaSpace);
-				stringBuilder.Append(ToPrettyString(childIndex));
-			}
-		}
-		stringBuilder.Append("]");
-
-		return stringBuilder.ToString();
-	}
-
 
 	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	public void AssertSatisfyHeapProperty()
@@ -346,32 +329,7 @@ public class FixedCapacityMinNHeap<T> : IPriorityQueue<T>
 		isStateValid = false;
 #endif
 	}
-
-	// This op is O(n) 
-	public T PopMax()
-	{
-		if (IsEmpty)
-		{
-			ThrowHelper.ThrowContainerEmpty();
-		}
-
-		if (IsSingleton)
-		{
-			return PopMin();
-		}
-
-		int firstLeaf = GetFirstLeaveIndex();
-		int maxIndex = items.FindIndexOfMax(firstLeaf, Count + 1, comparer);
-
-		var max = items[maxIndex];
-		items[maxIndex] = items[Count];
-		Swim(maxIndex);
-		Count--;
-		items[Count] = default;
-		
-		return max;
-	}
-
+	
 	private int GetFirstLeaveIndex()
 	{
 		Assert(!IsEmpty);
@@ -384,4 +342,48 @@ public class FixedCapacityMinNHeap<T> : IPriorityQueue<T>
 
 	// 1 -> 0, 2-> 0, 3 -> 0
 	private int GetParentIndex(int index) => (index - 1) / Base;
+	
+	private string ToPrettyString(int k)
+	{
+		// Base case: if the current index is out of bounds
+		if (k >= Count)
+		{
+			return string.Empty;
+		}
+
+		// Start with the current node's value
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.Append(items[k].AsText());
+
+		// Check if there are children
+		int firstChild = GetChildIndex(k);
+		
+		if (firstChild >= Count)
+		{
+			return stringBuilder.ToString();
+		}
+
+		// Add each child's pretty string
+		stringBuilder.Append(Formatter.CommaSpace);
+		stringBuilder.Append("[");
+		
+		for (int i = 0; i < Base; i++)
+		{
+			int childIndex = firstChild + i;
+			
+			if (childIndex < Count)
+			{
+				if (i > 0)
+				{
+					stringBuilder.Append(Formatter.CommaSpace);
+				}
+				
+				stringBuilder.Append(ToPrettyString(childIndex));
+			}
+		}
+		
+		stringBuilder.Append("]");
+
+		return stringBuilder.ToString();
+	}
 }

@@ -1,6 +1,5 @@
 ﻿namespace AlgorithmsSW.Queue;
 
-
 /// <summary>
 /// Represents a generic queue of items.
 /// </summary>

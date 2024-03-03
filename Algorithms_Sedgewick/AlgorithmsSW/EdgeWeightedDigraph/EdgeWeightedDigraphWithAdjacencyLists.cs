@@ -22,16 +22,12 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 	public IEnumerable<int> GetAdjacents(int vertex) => GetIncidentEdges(vertex).Select(edge => edge.Target);
 
 	/// <inheritdoc />
-	public IComparer<TWeight> Comparer { get; }
-
-	/// <inheritdoc />
 	public IEnumerable<DirectedEdge<TWeight>> WeightedEdges => adjacencyLists.SelectMany(list => list);
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="EdgeWeightedDigraphWithAdjacencyLists{TWeight}"/> class.
 	/// </summary>
 	/// <param name="vertexCount">The number of vertices in the graph.</param>
-	/// <param name="comparer">The comparer to use when comparing edge weights.</param>
 	public EdgeWeightedDigraphWithAdjacencyLists(int vertexCount)
 	{
 		VertexCount = vertexCount;
@@ -54,7 +50,6 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 	/// specified graph, but with a different comparer.
 	/// </summary>
 	/// <param name="graph">The graph to construct the new graph from.</param>
-	/// <param name="comparer">The comparer to use when comparing edge weights.</param>
 	public EdgeWeightedDigraphWithAdjacencyLists(IReadOnlyEdgeWeightedDigraph<TWeight> graph)
 		: this(graph.VertexCount)
 	{

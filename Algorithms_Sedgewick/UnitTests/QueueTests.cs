@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using AlgorithmsSW.Queue;
-using NUnit.Framework;
 
 namespace UnitTests
 {

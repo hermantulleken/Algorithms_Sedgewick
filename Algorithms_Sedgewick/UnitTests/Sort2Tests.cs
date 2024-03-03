@@ -1,6 +1,4 @@
-﻿
-
-namespace UnitTests;
+﻿namespace UnitTests;
 
 using AlgorithmsSW.List;
 using AlgorithmsSW.Sort;
@@ -77,7 +75,7 @@ public class Sort2Tests
 	[Test]
 	public void Test10Elements()
 	{
-		IRandomAccessList<int> list = new ResizeableArray<int> { 1, 0, 1, 0, 0, 1, 0, 1, 1, 0};
+		ResizeableArray<int> list = [1, 0, 1, 0, 0, 1, 0, 1, 1, 0];
 		Sort.Sort2(list);
 		Assert.That(list, Is.EqualTo(new[] { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1 }));
 	}

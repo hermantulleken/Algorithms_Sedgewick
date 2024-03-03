@@ -8,11 +8,12 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 		efficiently).
 	*/
 	
-	private DirectedEdge<TWeight>?[,] edges;
+	private readonly DirectedEdge<TWeight>?[,] edges;
 
 	public int VertexCount { get; }
-	
-	public int EdgeCount { get; }
+
+	/// <inheritdoc/>
+	public int EdgeCount { get; private set; }
 	
 	public IComparer<TWeight> Comparer { get; }
 
@@ -20,9 +21,9 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 	{
 		get
 		{
-			for(int i = 0; i < VertexCount; i++)
+			for (int i = 0; i < VertexCount; i++)
 			{
-				for(int j = 0; j < VertexCount; j++)
+				for (int j = 0; j < VertexCount; j++)
 				{
 					if (edges[i, j] != null)
 					{
@@ -33,16 +34,17 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 		}
 	}
 	
-	EdgeWeightedDigraphWithArray(int vertexCount, IComparer<TWeight> comparer)
+	public EdgeWeightedDigraphWithArray(int vertexCount, IComparer<TWeight> comparer)
 	{
 		VertexCount = vertexCount;
 		Comparer = comparer;
 		edges = new DirectedEdge<TWeight>[vertexCount, vertexCount];
+		EdgeCount = 0;
 	}
 	
 	public IEnumerable<int> GetAdjacents(int vertex)
 	{
-		for(int i = 0; i < VertexCount; i++)
+		for (int i = 0; i < VertexCount; i++)
 		{
 			if (edges[vertex, i] != null)
 			{
@@ -50,7 +52,6 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 			}
 		}
 	}
-
 	
 	public IEnumerable<DirectedEdge<TWeight>> GetIncidentEdges(int vertex)
 	{
@@ -65,22 +66,24 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 
 	public void AddEdge(DirectedEdge<TWeight> edge)
 	{
-		if(edges[edge.Source, edge.Target] != null)
+		if (edges[edge.Source, edge.Target] != null)
 		{
 			throw new ArgumentException("Edge already exists.");
 		}
 
 		edges[edge.Source, edge.Target] = edge;
+		EdgeCount++;
 	}
 
-	//IS this correct? should we check it is the same edge??
+	// IS this correct? should we check it is the same edge??
 	public void RemoveEdge(DirectedEdge<TWeight> edge)
 	{
-		if(edges[edge.Source, edge.Target] == null)
+		if (edges[edge.Source, edge.Target] == null)
 		{
 			throw new ArgumentException("Edge does not exists.");
 		}
 
 		edges[edge.Source, edge.Target] = null;
+		EdgeCount--;
 	}
 }

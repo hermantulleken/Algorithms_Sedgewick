@@ -4,8 +4,6 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.Digraph;
 
-using Support;
-
 /// <summary>
 /// Algorithm to find a Hamiltonian cycle in a directed graph.
 /// </summary>

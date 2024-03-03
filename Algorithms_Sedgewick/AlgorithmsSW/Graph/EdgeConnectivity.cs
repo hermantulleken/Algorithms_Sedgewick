@@ -1,7 +1,5 @@
 ﻿namespace AlgorithmsSW.Graph;
 
-using Support;
-
 [ExerciseReference(4, 1, 36)]
 public class EdgeConnectivity
 {

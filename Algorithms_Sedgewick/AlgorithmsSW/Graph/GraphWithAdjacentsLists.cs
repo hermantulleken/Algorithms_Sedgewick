@@ -1,12 +1,8 @@
 ﻿using System.Collections;
-using System.Numerics;
-using System.Runtime.Intrinsics;
 using AlgorithmsSW.List;
 using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.Graph;
-
-using Support;
 
 public class GraphWithAdjacentsLists : IGraph
 {
@@ -58,7 +54,7 @@ public class GraphWithAdjacentsLists : IGraph
 	
 	public bool RemoveEdge(int vertex0, int vertex1)
 	{
-		void RemoveEdge(int v0, int v1)
+		void Remove(int v0, int v1)
 		{
 			int indexToRemove = adjacents[v0].IndexWhere(vertex => vertex == v1).First();
 			adjacents[v0].RemoveAt(indexToRemove);

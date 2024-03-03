@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using AlgorithmsSW.List;
+﻿using AlgorithmsSW.List;
 
 namespace AlgorithmsSW.Digraph;
 
@@ -12,7 +11,6 @@ public class LowestCommonAncestor
 		var degrees = new Degrees(digraph);
 		var roots = degrees.Sources.ToResizableArray(digraph.VertexCount);
 		var paths = CreatePaths(digraph);
-		
 		int GetHeight(int vertex) => roots.Select(root => paths[vertex].PathTo(root).Count()).Max();
 		
 		int[,] heights = new int[digraph.VertexCount, digraph.VertexCount];

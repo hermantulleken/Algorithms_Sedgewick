@@ -5,7 +5,6 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.HashTable;
 
-using Support;
 using SymbolTable;
 
 /// <summary>

@@ -2,8 +2,6 @@
 
 namespace AlgorithmsSW;
 
-using Support;
-
 /// <summary>
 /// An implementation of the union-find data structure.
 /// </summary>
@@ -11,6 +9,7 @@ using Support;
 public class UnionFind
 {
 	private readonly int[] componentIndex; // access to component id (site indexed)
+
 	public int ComponentCount { get; private set; }
 	
 	public UnionFind(int vertexCount)

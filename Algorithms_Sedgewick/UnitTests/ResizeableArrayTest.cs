@@ -32,7 +32,6 @@ public class ResizeableArrayTest
 		Assert.AreEqual(10, arr.Capacity);
 	}
 
-	///
 	[Test]
 	public void Count_EmptyArray_ReturnsZero()
 	{
@@ -185,10 +184,10 @@ public class ResizeableArrayTest
 	[Test]
 	public void TestIndexOutOfRangeThrows()
 	{
-		var list = new ResizeableArray<int>{0, 1, 2 };
+		ResizeableArray<int> list = [0, 1, 2];
 		// ReSharper disable once NotAccessedVariable
 		int n = 0;
-		Assert.That(() => { n = list[4];}, Throws.Exception);
+		Assert.That(() => { n = list[4]; }, Throws.Exception);
 	}
 
 	[Test]
@@ -216,14 +215,14 @@ public class ResizeableArrayTest
 	{
 		var list = new ResizeableArray<int>();
 		
-		Assert.That(() => { list.RemoveLast();}, Throws.InvalidOperationException);
+		Assert.That(() => { list.RemoveLast(); }, Throws.InvalidOperationException);
 	}
 
 	[Test]
 	public void TestToString()
 	{
-		var list = new ResizeableArray<int>{0, 1, 2};
-		var str = list.ToString();
+		ResizeableArray<int> list = [0, 1, 2];
+		string str = list.ToString();
 		Assert.That(str, Is.EqualTo("[0, 1, 2]"));
 	}
 }

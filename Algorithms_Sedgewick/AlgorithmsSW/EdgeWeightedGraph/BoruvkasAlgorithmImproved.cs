@@ -24,7 +24,7 @@ public class BoruvkasAlgorithmImproved<TWeight> : IMst<TWeight>
 		component = new int[graph.VertexCount];
 		mstEdges = new(graph.EdgeCount);
 		
-		var forest = new DoublyLinkedList<int>[graph.VertexCount];
+		DoublyLinkedList<int>?[] forest = new DoublyLinkedList<int>[graph.VertexCount];
 		int componentCount = graph.VertexCount;
 		
 		forest.Fill(index => [index]);
@@ -35,7 +35,7 @@ public class BoruvkasAlgorithmImproved<TWeight> : IMst<TWeight>
 		while (componentCount > 1)
 		{
 			IterationGuard.Inc();
-			minEdge.Fill((Edge<TWeight>?) null);
+			minEdge.Fill((Edge<TWeight>?)null);
 			
 			foreach (var edge in graph.WeightedEdges)
 			{
@@ -83,7 +83,7 @@ public class BoruvkasAlgorithmImproved<TWeight> : IMst<TWeight>
 				}
 				
 				Assert(forest[component0] != null);
-				
+
 				forest[component0].Concat(forest[component1]);
 				forest[component1] = null;
 				componentCount--;

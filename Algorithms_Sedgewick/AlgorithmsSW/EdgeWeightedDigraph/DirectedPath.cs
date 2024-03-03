@@ -138,5 +138,7 @@ public record DirectedPath<TWeight>
 	
 	public bool HasEqualVertices(DirectedPath<TWeight> other) => Vertexes.SequenceEqual(other.Vertexes);
 	
-	private static TFloat Add<TFloat>(TFloat x, TFloat y) where TFloat : IFloatingPoint<TFloat> => x + y;
+	private static TFloat Add<TFloat>(TFloat x, TFloat y) 
+		where TFloat : IFloatingPoint<TFloat> 
+		=> x + y;
 }

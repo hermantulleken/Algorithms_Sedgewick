@@ -16,6 +16,4 @@ public class IdComparer : Comparer<IIdeable>
 			: y == null
 				? 1
 				: x.Id.CompareTo(y.Id);
-	
-	//public override int Compare(IIdeable? x, IIdeable? y) => x.Id - y.Id;
 }

@@ -24,7 +24,7 @@ public class StackWithPriorityQueue<T>(IComparer<T> comparer)
 			this.comparer = comparer;
 		}
 
-		public int Compare(PriorityNode x, PriorityNode y) =>  comparer.Compare(x.Item, y.Item);
+		public int Compare(PriorityNode x, PriorityNode y) => comparer.Compare(x.Item, y.Item);
 	}
 
 	private const int Capacity = 1000;

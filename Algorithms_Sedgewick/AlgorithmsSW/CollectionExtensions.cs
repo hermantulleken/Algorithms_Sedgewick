@@ -48,7 +48,7 @@ public static class CollectionExtensions
 		return array;
 	}
 	
-	// TODO: add other collection types
+	// TODO: Add other collection types
 	public static ResizeableArray<T> ToResizableArray<T>(this IEnumerable<T> items) =>
 		items switch
 		{
@@ -75,11 +75,6 @@ public static class CollectionExtensions
 	/// <summary>
 	/// Groups the elements of a sequence into fixed-size chunks.
 	/// </summary>
-	/// <param name="source"></param>
-	/// <param name="size"></param>
-	/// <typeparam name="T"></typeparam>
-	/// <returns></returns>
-	/// <exception cref="ArgumentException"></exception>
 	public static IEnumerable<IEnumerable<T>> Group<T>(this IEnumerable<T> source, int size)
 	{
 		if (size <= 0)
@@ -93,15 +88,6 @@ public static class CollectionExtensions
 		{
 			yield return GetNextGroup(enumerator, size);
 		}
-	}
-
-	private static IEnumerable<T> GetNextGroup<T>(IEnumerator<T> enumerator, int size)
-	{
-		do
-		{
-			yield return enumerator.Current;
-		}
-		while (--size > 0 && enumerator.MoveNext());
 	}
 	
 	public static IEnumerable<(T, T)> GenerateAllPairs<T>(this IEnumerable<T> source)
@@ -133,5 +119,12 @@ public static class CollectionExtensions
 		}
 	}
 	
-
+	private static IEnumerable<T> GetNextGroup<T>(IEnumerator<T> enumerator, int size)
+	{
+		do
+		{
+			yield return enumerator.Current;
+		}
+		while (--size > 0 && enumerator.MoveNext());
+	}
 }

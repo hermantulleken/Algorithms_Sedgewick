@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Support;
 
 namespace AlgorithmsSW.Stack;
 

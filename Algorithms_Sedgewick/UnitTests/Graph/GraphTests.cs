@@ -1,34 +1,7 @@
 ﻿using System.Linq;
 using AlgorithmsSW.Graph;
-using NUnit.Framework;
 
 namespace UnitTests;
-
-public static class GraphTestFixtureSource
-{
-	private static IGraph MakeDynamicGraph(int vertCount)
-	{
-		var graph = new DynamicGraph();
-
-		for (int i = 0; i < vertCount; i++)
-		{
-			graph.AddVertexes(i);
-		}
-
-		return graph;
-	}
-	
-	public static Func<int, IGraph>[] TestCases = 
-	{
-		vertexCount => new GraphWithAdjacentsIntArray(vertexCount),
-		vertexCount => new GraphWithAdjacentsBoolArray(vertexCount),
-		vertexCount => new GraphWithAdjacentsLists(vertexCount),
-		vertexCount => new GraphWithAdjacentsSet(vertexCount),
-		vertexCount => new GraphWithAdjacentsCounters(vertexCount),
-		vertexCount => new GraphWtihNoSelfLoops(() => new GraphWithAdjacentsLists(vertexCount)),
-		MakeDynamicGraph,
-	};
-}
 
 [TestFixtureSource(typeof(GraphTestFixtureSource), nameof(GraphTestFixtureSource.TestCases))]
 public class GraphTests(Func<int, IGraph> graphFactory)
@@ -108,7 +81,7 @@ public class GraphTests(Func<int, IGraph> graphFactory)
 	{
 		var graph = graphFactory(5);
 		
-		if(graph.SupportsSelfLoops)
+		if (graph.SupportsSelfLoops)
 		{
 			graph.AddEdge(0, 0);
 

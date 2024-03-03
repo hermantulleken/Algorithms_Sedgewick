@@ -1,7 +1,6 @@
 ﻿namespace AlgorithmsSW.HashTable;
 
 using System.Diagnostics.CodeAnalysis;
-using Support;
 using SymbolTable;
 
 public class HashTableWithSeparateChaining2<TKey, TValue> : ISymbolTable<TKey, TValue>

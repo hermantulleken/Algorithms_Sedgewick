@@ -1,7 +1,6 @@
 namespace AlgorithmsSW.EdgeWeightedDigraph;
 
 using Digraph;
-using Support;
 
 public enum EdgeExistance
 {
@@ -63,7 +62,6 @@ public static class EdgeWeightedDigraphExtensions
 		digraph.RemoveEdge(edge);
 		return edge;
 	}
-
 
 	public static IEnumerable<DirectedEdge<TWeight>> RemoveVertex<TWeight>(this IEdgeWeightedDigraph<TWeight> graph, int vertex)
 	{

@@ -2,7 +2,6 @@
 
 using System.Numerics;
 using List;
-using Support;
 
 /// <summary>
 /// A digraph where the weight of the edges is the euclidean distance between the vertexes, which are points in

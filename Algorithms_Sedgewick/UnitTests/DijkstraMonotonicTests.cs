@@ -1,6 +1,5 @@
 ﻿namespace UnitTests;
 
-using System.Collections.Generic;
 using AlgorithmsSW;
 using AlgorithmsSW.EdgeWeightedDigraph;
 
@@ -31,7 +30,7 @@ public class DijkstraMonotonicTests
 		graph.AddEdge(0, 3, 4.0);
 		graph.AddEdge(3, 2, 3.0);
 
-		var algorithm = new DijkstraMonotonic<double>(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
+		var algorithm = new DijkstraMonotonic<double>(graph, 0); // int.MaxValue, (x, y) => x + y, 0);
 		Assert.That(algorithm.DistTo(2), Is.EqualTo(7));
 	}
 	
@@ -52,7 +51,7 @@ public class DijkstraMonotonicTests
 		graph.AddEdge(4, 5, 2.0);
 		graph.AddEdge(5, 2, 1.0);
 		
-		var algorithm = new DijkstraMonotonic<double>(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
+		var algorithm = new DijkstraMonotonic<double>(graph, 0); // int.MaxValue, (x, y) => x + y, 0);
 		Assert.That(algorithm.DistTo(2), Is.EqualTo(7));
 	}
 
@@ -77,7 +76,7 @@ public class DijkstraMonotonicTests
 		graph.AddEdge(2, 6, 1.0);
 		graph.AddEdge(6, 4, 0.0);
 		
-		var algorithm = new DijkstraMonotonic<double>(graph, 0);// int.MaxValue, (x, y) => x + y, 0);
+		var algorithm = new DijkstraMonotonic<double>(graph, 0); // int.MaxValue, (x, y) => x + y, 0);
 		Assert.That(algorithm.DistTo(2), Is.EqualTo(3.0));
 		Assert.That(algorithm.DistTo(4), Is.EqualTo(6.0));
 	}
@@ -125,14 +124,19 @@ public class DijkstraMonotonicTests
 		
 		var algorithm = new DijkstraMonotonic<double>(graph, 0); // int.MaxValue, (x, y) => x + y, 0);
 		
-		for (int vertex = 0; vertex < graph.VertexCount; vertex++) {
+		for (int vertex = 0; vertex < graph.VertexCount; vertex++) 
+		{
 			Console.Write("\nPath from vertex 0 to vertex " + vertex + ": ");
 
-			if (algorithm.HasPathTo(vertex)) {
-				foreach (var edge in algorithm.PathTo(vertex)) {
+			if (algorithm.HasPathTo(vertex)) 
+			{
+				foreach (var edge in algorithm.PathTo(vertex)) 
+				{
 					Console.Write(edge.Source + "->" + edge.Target + " (" + edge.Weight + ") ");
 				}
-			} else {
+			} 
+			else
+			{
 				Console.Write("There is no monotonic path to vertex " + vertex);
 			}
 		}

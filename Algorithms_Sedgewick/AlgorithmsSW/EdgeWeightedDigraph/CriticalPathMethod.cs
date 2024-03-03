@@ -44,7 +44,8 @@ public class CriticalPathMethod<TWeight>
 		CriticalPaths = BackTrack(graph, source, sink, tolerance);
 	}
 
-	private ResizeableArray<IRandomAccessList<DirectedEdge<TWeight>>> BackTrack(IEdgeWeightedDigraph<TWeight> graph,
+	private ResizeableArray<IRandomAccessList<DirectedEdge<TWeight>>> BackTrack(
+		IReadOnlyEdgeWeightedDigraph<TWeight> graph,
 		int source,
 		int sink,
 		TWeight tolerance)

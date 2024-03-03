@@ -2,8 +2,6 @@
 
 namespace AlgorithmsSW.Graph;
 
-using Support;
-
 [ExerciseReference(4, 1, 5)]
 public class GraphWithAdjacentsSet : IGraph
 {

@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using AlgorithmsSW.Stack;
-using Support;
 using static System.Diagnostics.Debug;
 using static Support.Tools;
 
@@ -27,7 +26,7 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		public T? Item;
 		public Node? NextNode;
 
-		private string? ItemString => Item.AsText();
+		private string ItemString => Item.AsText();
 		
 #if WITH_INSTRUMENTATION
 		public override string ToString() => ToDebugString();
@@ -165,11 +164,7 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 
 		// newNode has node's NextNode
-		var newNode = node with
-		{
-			Item = item,
-			NextNode = null,
-		};
+		var newNode = new Node { Item = item, NextNode = null };
 
 		node.NextNode = newNode;
 		
@@ -206,11 +201,7 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 			return InsertFirstItem(item);
 		}
 
-		var newHead = pool.Pop() with
-		{
-			Item = item, 
-			NextNode = front,
-		};
+		var newHead = new Node { Item = item, NextNode = front };
 
 		front = newHead;
 
@@ -318,11 +309,7 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 	private Node InsertFirstItem(T item)
 	{
 		Count++;
-		front = back = pool.Pop() with
-		{
-			Item = item,
-			NextNode = null,
-		};
+		front = back = new() { Item = item, NextNode = null };
 		
 		UpdateVersion();
 		

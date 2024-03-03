@@ -14,7 +14,7 @@ public static class RandomGraph
 	/// <param name="edgeCount">How many edges the graph should have.</param>
 	/// <returns>A random graph.</returns>
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="vertexCount"/> or <paramref name="edgeCount"/> is
-	/// not positive</exception>
+	/// not positive.</exception>
 	public static IDigraph ErdosRenyiGraph(int vertexCount, int edgeCount)
 	{
 		vertexCount.ThrowIfNotPositive();
@@ -39,7 +39,7 @@ public static class RandomGraph
 	/// <param name="edgeCount">How many edges the graph should have.</param>
 	/// <returns>A random graph.</returns>
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="vertexCount"/> or <paramref name="edgeCount"/> is
-	/// not positive</exception>
+	/// not positive.</exception>
 	public static IDigraph RandomSimple(int vertexCount, int edgeCount)
 	{
 		vertexCount.ThrowIfNotPositive();

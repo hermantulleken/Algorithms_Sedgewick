@@ -1,7 +1,7 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
-using Digraph;
 using System.Linq;
+using Digraph;
 
 public static class RandomGraph
 {

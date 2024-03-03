@@ -107,9 +107,8 @@ public static class Algorithms
 		}
 
 #if DEBUG
-	strongConnectivity = new StrongComponents(graph);
-	Assert(strongConnectivity.ComponentCount == 1);
+		strongConnectivity = new(graph);
+		Assert(strongConnectivity.ComponentCount == 1);
 #endif
 	}
-
 }

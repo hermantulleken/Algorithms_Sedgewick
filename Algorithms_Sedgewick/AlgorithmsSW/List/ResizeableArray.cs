@@ -53,7 +53,7 @@ public sealed class ResizeableArray<T>(int capacity = ResizeableArray.DefaultCap
 	};
 
 	private int version = 0;
-	
+
 	/// <summary>
 	/// Gets the capacity for this instance, that is the maximum number of items it can hold without resizing.
 	/// </summary>
@@ -142,7 +142,6 @@ public sealed class ResizeableArray<T>(int capacity = ResizeableArray.DefaultCap
 		return false;
 	}
 
-
 	/// <summary>
 	/// Sets the <see cref="Count"/> to the specified value, growing the <see cref="ResizeableArray{T}"/> if necessary.
 	/// </summary>
@@ -156,7 +155,7 @@ public sealed class ResizeableArray<T>(int capacity = ResizeableArray.DefaultCap
 	{
 		Assert(newCount < ResizeableArray.MaxCapacity);
 		
-		if (newCount > capacity)
+		if (newCount > Capacity)
 		{
 			/*
 				I am not sure if this should not rather be newCount * 2 to avoid further resizes for some time. 

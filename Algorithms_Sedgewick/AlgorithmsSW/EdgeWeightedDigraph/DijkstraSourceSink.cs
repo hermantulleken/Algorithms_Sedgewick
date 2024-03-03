@@ -93,14 +93,14 @@ public class DijkstraSourceSink<TWeight>
 				{
 					distance = distanceTo[edge.Target];
 					PathExists = true;
-					path = GetPath(edgeTo, source, sink);
+					path = GetPath(edgeTo, sink);
 					break;
 				}
 			}
 		}
 	}
 
-	private IReadonlyRandomAccessList<DirectedEdge<TWeight>>? GetPath(DirectedEdge<TWeight>?[] edgeTo, int source, int sink)
+	private IReadonlyRandomAccessList<DirectedEdge<TWeight>> GetPath(DirectedEdge<TWeight>?[] edgeTo, int sink)
 	{
 		Assert(PathExists);
 		

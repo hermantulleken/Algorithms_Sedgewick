@@ -3,7 +3,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using static System.Diagnostics.Debug;
-using static Support.Tools;
+using static Tools;
 
 public sealed class CircularLinkedList<T> : IEnumerable<T>
 {

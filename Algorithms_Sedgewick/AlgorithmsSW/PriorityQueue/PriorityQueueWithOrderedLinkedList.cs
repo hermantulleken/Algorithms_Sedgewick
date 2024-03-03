@@ -3,10 +3,9 @@
 namespace AlgorithmsSW.PriorityQueue;
 
 using System.Collections;
-using Support;
 
 [ExerciseReference(2, 4, 3)]
-public sealed class PriorityQueueWithOrderedLinkedList<T> (IComparer<T> comparer)
+public sealed class PriorityQueueWithOrderedLinkedList<T>(IComparer<T> comparer)
 	: IPriorityQueue<T> 
 {
 	private readonly List.LinkedList<T> items = new();

@@ -3,13 +3,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using AlgorithmsSW.EdgeWeightedDigraph;
-using AlgorithmsSW.EdgeWeightedGraph;
-
 
 [TestFixture]
 public class KShortestPathsTests
 {
-	private EdgeWeightedDigraphWithAdjacencyLists<double> graph;
+	private EdgeWeightedDigraphWithAdjacencyLists<double> graph = null!;
 
 	[SetUp]
 	public void Setup()

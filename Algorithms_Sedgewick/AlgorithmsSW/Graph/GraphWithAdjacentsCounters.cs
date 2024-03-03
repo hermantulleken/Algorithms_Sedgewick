@@ -12,7 +12,6 @@ public class GraphWithAdjacentsCounters : IGraph
 
 	/// <inheritdoc />
 	public int EdgeCount { get; private set; }
-	
 
 	public GraphWithAdjacentsCounters(int vertexCount)	
 	{

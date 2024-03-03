@@ -1,7 +1,5 @@
 ﻿namespace AlgorithmsSW.Digraph;
 
-using Support;
-
 // Note: Kosaraju is a more efficient algorithm for finding strong components
 
 /// <summary>

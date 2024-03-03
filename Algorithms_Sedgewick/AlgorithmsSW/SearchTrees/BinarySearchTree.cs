@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using Queue;
 using Stack;
 using static System.Diagnostics.Debug;
-using static Support.Tools;
+using static Tools;
 
 public static class BinarySearchTree
 {

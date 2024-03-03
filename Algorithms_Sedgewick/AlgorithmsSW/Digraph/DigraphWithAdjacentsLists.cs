@@ -4,8 +4,6 @@ using AlgorithmsSW.List;
 
 namespace AlgorithmsSW.Digraph;
 
-using Support;
-
 /// <summary>
 /// Represents a directed graph using an array of adjacency lists.
 /// </summary>

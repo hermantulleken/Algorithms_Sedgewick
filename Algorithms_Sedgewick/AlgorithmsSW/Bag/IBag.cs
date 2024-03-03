@@ -1,7 +1,5 @@
 ﻿namespace AlgorithmsSW.Bag;
 
-using Support;
-
 /// <summary>
 /// A collection that supports adding elements, and iterating over them. 
 /// </summary>

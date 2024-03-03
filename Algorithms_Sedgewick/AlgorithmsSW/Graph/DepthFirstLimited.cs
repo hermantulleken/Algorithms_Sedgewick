@@ -1,15 +1,11 @@
 ﻿namespace AlgorithmsSW.Graph;
 
-using Support;
-
 [ExerciseReference(4, 1, 26)]
 public class DepthFirstLimited
 {
-	private bool[] marked;
-	private int[] distanceTo;
 	private readonly int[] sourceNodes;
 	
-	private IEnumerable<int> GetPath(int targetVertex)
+	public IEnumerable<int> GetPath(int targetVertex)
 	{
 		var path = new Stack<int>();
 		
@@ -23,8 +19,8 @@ public class DepthFirstLimited
 
 	public DepthFirstLimited(IGraph graph, int sourceVertex, int maxDistance)
 	{
-		marked = new bool[graph.VertexCount];
-		distanceTo = new int[graph.VertexCount];
+		bool[] marked = new bool[graph.VertexCount];
+		int[] distanceTo = new int[graph.VertexCount];
 		sourceNodes = new int[graph.VertexCount];
 		
 		distanceTo[sourceVertex] = 0;

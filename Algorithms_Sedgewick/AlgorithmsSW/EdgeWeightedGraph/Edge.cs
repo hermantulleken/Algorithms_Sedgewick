@@ -12,9 +12,6 @@ public record Edge<TWeight>(int Vertex0, int Vertex1, TWeight Weight)
 	/// <summary>
 	/// Given one vertex of the edge, returns the other vertex.
 	/// </summary>
-	/// <param name="vertex"></param>
-	/// <returns></returns>
-	/// <exception cref="ArgumentException"></exception>
 	public int OtherVertex(int vertex) 
 		=> vertex == Vertex1 
 			? Vertex0 

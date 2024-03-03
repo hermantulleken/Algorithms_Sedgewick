@@ -223,9 +223,9 @@ public class PriorityTree<T>
 	}
 
 	private readonly QueueWithLinkedList<Node> searchQueue;
-
-	private Node? root;
 	private readonly IComparer<T> comparer;
+	
+	private Node? root;
 
 	public int Count { get; private set; }
 

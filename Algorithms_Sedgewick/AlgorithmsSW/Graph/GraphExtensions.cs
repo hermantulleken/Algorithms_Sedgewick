@@ -3,7 +3,6 @@
 namespace AlgorithmsSW.Graph;
 
 using Digraph;
-using Support;
 
 public static class GraphExtensions
 {

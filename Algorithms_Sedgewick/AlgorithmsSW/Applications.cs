@@ -200,13 +200,13 @@ public static class Applications
 		while (true)
 		{
 			bool didRewrite = false;
+			
 			foreach (var rule in rules)
 			{
-
 				if (!Equals(buffer[buffer.CursorIndex], rule.input))
-                {
+				{
 					continue;
-                }
+				}
 
 				buffer.RemoveAfter();
 

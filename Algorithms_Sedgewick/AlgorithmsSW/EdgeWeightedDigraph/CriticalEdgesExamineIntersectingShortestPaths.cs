@@ -27,7 +27,8 @@ public class CriticalEdgesExamineIntersectingShortestPaths<TWeight>
 	public TWeight DistanceWithoutCriticalEdge { get; }
 	
 	/// <summary>
-	/// Initializes a new instance of the <see cref="CriticalEdgesExamineShortestPath{TWeight}"/> class.
+	/// Initializes a new instance of the
+	/// <see cref="CriticalEdgesExamineIntersectingShortestPaths{TWeight}"/> class.
 	/// </summary>
 	/// <param name="graph">The graph to find the critical edge in.</param>
 	/// <param name="source">The source vertex.</param>

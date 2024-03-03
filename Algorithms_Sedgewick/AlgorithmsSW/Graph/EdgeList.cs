@@ -21,7 +21,9 @@ public class EdgeList : IEnumerable<(int, int)>
 		return list;
 	}
 
-	public EdgeList() { }
+	public EdgeList()
+	{
+	}
 
 	public void Add((int, int) edge) => edges.Add(edge);
 

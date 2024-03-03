@@ -71,7 +71,6 @@ public static class DataStructures
 	
 	public static IRandomAccessList<T> List<T>() => new ResizeableArray<T>();
 
-
 	/// <summary>
 	/// Creates a new <see cref="IRandomAccessList{T}"/> list with the specified capacity. 
 	/// </summary>
@@ -97,9 +96,9 @@ public static class DataStructures
 	///
 	/// </param>
 	/// <returns>A new instance of the <see cref="IRandomAccessList{T}"/> interface.</returns>
-	public static IRandomAccessList<T?> List<T>(int count, T? initialElement)
+	public static IRandomAccessList<T> List<T>(int count, T initialElement)
 	{
-		var list = new ResizeableArray<T?>(count);
+		var list = new ResizeableArray<T>(count);
 		list.SetCount(count);
 		list.Fill(initialElement);
 		return list; 

@@ -1,7 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
 using System.Numerics;
-using EdgeWeightedGraph;
 using List;
 using PriorityQueue;
 using Set;
@@ -197,6 +196,6 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 			throw new InvalidOperationException("No path exists");
 		}
 		
-		return shortestPaths[rank]!;
+		return shortestPaths[rank];
 	}
 }

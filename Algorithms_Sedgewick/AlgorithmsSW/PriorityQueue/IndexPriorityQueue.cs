@@ -9,7 +9,6 @@ namespace AlgorithmsSW.PriorityQueue;
 /// This implementation of a priority queue uses an array-based binary heap. It associates each value with an index, allowing for efficient updates of the queue based on index.
 /// </remarks>
 /// <typeparam name="T">The type of elements in the priority queue.</typeparam>
-
 public class IndexPriorityQueue<T> 
 {
 	private const int NotInQueue = -1;

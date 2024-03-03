@@ -11,15 +11,10 @@ using System.Collections.Generic;
 public interface IReadOnlyEdgeWeightedGraph<TWeight> : IReadOnlyGraph
 {
 	/// <summary>
-	/// Gets the comparer this <see cref="IReadOnlyEdgeWeightedGraph{T}"/> use to compare edge weights. 
-	/// </summary>
-	//IComparer<TWeight> Comparer { get; }
-	
-	/// <summary>
 	/// Gets the edges that is part of this <see cref="IReadOnlyEdgeWeightedGraph{T}"/>.
 	/// </summary>
 	IEnumerable<Edge<TWeight>> WeightedEdges { get; }
-	
+
 	/// <summary>
 	/// Gets the edges that is incident to the given vertex.
 	/// </summary>

@@ -6,7 +6,7 @@ public class EdgeWeightedCycle<T>
 {
 	private bool[] marked;
 	private Edge<T>[] edgeTo;
-	private Stack<Edge<T>> cycle; // Edges on a cycle (if one exists)
+	private Stack<Edge<T>>? cycle; // Edges on a cycle (if one exists)
 	private bool[] onStack; // Vertices on recursive call stack
 	private HashSet<Edge<T>> visitedEdges;
 	private bool cycleFound;
@@ -100,11 +100,8 @@ public class EdgeWeightedCycle<T>
 
 		onStack[vertex] = false;
 	}
-
-	public bool HasCycle()
-	{
-		return cycle != null;
-	}
+	
+	public bool HasCycle() => cycle != null;
 
 	public Stack<Edge<T>> Cycle()
 	{

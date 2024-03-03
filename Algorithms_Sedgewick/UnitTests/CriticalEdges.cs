@@ -1,6 +1,5 @@
 ﻿namespace UnitTests;
 
-using System.Collections.Generic;
 using AlgorithmsSW;
 using AlgorithmsSW.EdgeWeightedDigraph;
 

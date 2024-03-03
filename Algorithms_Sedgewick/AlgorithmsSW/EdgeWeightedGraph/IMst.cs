@@ -17,7 +17,6 @@ public interface IMst<TWeight>
 	/// <summary>
 	/// Gets the total weight of the minimum spanning tree.
 	/// </summary>
-	/// <param name="add">The function to add two weights.</param>
 	/// <returns>The total weight of the minimum spanning tree.</returns>
 	public TWeight GetTotalWeight() 
 		=> Edges

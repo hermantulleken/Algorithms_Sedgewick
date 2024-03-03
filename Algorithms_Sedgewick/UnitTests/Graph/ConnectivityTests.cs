@@ -1,8 +1,6 @@
-﻿using AlgorithmsSW.Graph;
-using NUnit.Framework;
+﻿namespace UnitTests;
 
-namespace UnitTests;
-
+using AlgorithmsSW.Graph;
 using NUnit.Framework.Legacy;
 
 [TestFixture]

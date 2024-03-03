@@ -53,7 +53,7 @@ public sealed class DepthFirstPathsSearch : GraphPathsSearch
 		}
 	}
 
-    [Conditional(Diagnostics.WithInstrumentationDefine)]
+	[Conditional(Diagnostics.WithInstrumentationDefine)]
 	private void ReferenceRecursiveSearch(IReadOnlyGraph graph, int vertex)
 	{
 		Marked[vertex] = true;

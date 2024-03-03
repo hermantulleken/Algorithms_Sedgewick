@@ -127,7 +127,6 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 	private bool TryFindKey(TKey key, out int index)
 	{
 		index = arrays.Keys.BinarySearch(key, comparer);
-
 		return index != -1;
 	}
 }

@@ -1,11 +1,9 @@
 ﻿using AlgorithmsSW.List;
-using static AlgorithmsSW.List.ListExtensions;
 using static AlgorithmsSW.ThrowHelper;
 
 namespace AlgorithmsSW.PriorityQueue;
 
 using System.Collections;
-using Support;
 
 [ExerciseReference(2, 4, 3)]
 // Note: We maintain the minimum object in the last position, as it is the cheapest to delete from.

@@ -93,7 +93,7 @@ public class LinkedListWithPooledNodes
 	public void TestRemoveAfter()
 	{
 		var list = new LinkedListWithPooledNodes<int>(10);
-		var node1 = list.InsertAtFront(1);
+		_ = list.InsertAtFront(1);
 		var node2 = list.InsertAtFront(2);
 		var node3 = list.InsertAtFront(3);
 

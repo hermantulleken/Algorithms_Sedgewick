@@ -96,7 +96,8 @@ public class MstTests
 		Test(factory, 5, edges, edgeIndexesInMst, edgeIndexesNotInMst);
 	}
 
-	public void Test(Func<IEdgeWeightedGraph<double>, IMst<double>> factory,
+	public void Test(
+		Func<IEdgeWeightedGraph<double>, IMst<double>> factory,
 		int vertexCount,
 		Edge<double>[] edges,
 		IEnumerable<int> edgeIndexesInMst,

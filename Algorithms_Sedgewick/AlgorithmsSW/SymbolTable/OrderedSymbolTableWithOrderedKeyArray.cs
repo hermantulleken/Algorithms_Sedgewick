@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using List;
-using Support;
 
 [ExerciseReference(3, 1, 12)]
 public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>

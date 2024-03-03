@@ -1,7 +1,5 @@
 ﻿namespace AlgorithmsSW.Graph;
 
-using Support;
-
 public class GraphProperties
 {
 	private readonly int[] eccentricities;

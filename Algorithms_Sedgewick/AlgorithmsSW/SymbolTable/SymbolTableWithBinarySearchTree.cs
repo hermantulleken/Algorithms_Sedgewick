@@ -1,6 +1,4 @@
-﻿using Support;
-
-namespace AlgorithmsSW.SymbolTable;
+﻿namespace AlgorithmsSW.SymbolTable;
 
 using SearchTrees;
 

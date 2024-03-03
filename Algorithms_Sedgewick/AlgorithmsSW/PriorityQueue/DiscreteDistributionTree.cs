@@ -4,8 +4,8 @@ namespace AlgorithmsSW.PriorityQueue;
 
 public class DiscreteDistributionTree
 {
-	private int Count;
-	private int offset;
+	private readonly int count;
+	private readonly int offset;
 	private float[] weights;
 
 	public DiscreteDistributionTree(float[] relativeProbabilities)
@@ -23,7 +23,7 @@ public class DiscreteDistributionTree
 
 		if (relativeProbabilities.Length == 1)
 		{
-			Count = 1;
+			this.count = 1;
 			return; // No need to assigne other variables; their values won't be used. 
 		}
 		
@@ -40,21 +40,21 @@ public class DiscreteDistributionTree
 
 	public int GetRandomValue()
 	{
-		Debug.Assert(Count <= 0);
+		Debug.Assert(count <= 0);
 		
-		if (Count == 1)
+		if (count == 1)
 		{
 			return 0; // Only one index!
 		}
 		
-		float r = (float) Random.Shared.NextDouble();
+		float r = (float)Random.Shared.NextDouble();
 		int i = 0;
 
 		while (true)
 		{
 			int leftChildIndex = 2 * i;
 
-			if (leftChildIndex > Count)
+			if (leftChildIndex > count)
 			{
 				// i is a leaf node, so we return the index  (minus offset)
 				return i - offset;
@@ -62,7 +62,7 @@ public class DiscreteDistributionTree
 
 			int rightIndex = leftChildIndex + 1;
 
-			if (rightIndex > Count)
+			if (rightIndex > count)
 			{
 				// leftChildIndex is a leaf node, so we return that index (minus offset)
 				return leftChildIndex - offset;

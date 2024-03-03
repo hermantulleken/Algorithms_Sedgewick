@@ -73,7 +73,8 @@ public class DynamicGraph // Supports removing vertices
 		adjacents.RemoveKey(vertex);
 		EdgeCount -= edgesToRemove;
 		
-		foreach (int vertex1 in Vertexes) // TODO what can we call vertex1
+		// TODO what can we call vertex1
+		foreach (int vertex1 in Vertexes) 
 		{
 			adjacents[vertex1].RemoveAll(vertex);
 		}

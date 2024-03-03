@@ -1,7 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
 using System.Numerics;
-using EdgeWeightedGraph;
 using List;
 using PriorityQueue;
 using Support;
@@ -39,8 +38,6 @@ public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
 		int[] count = new int[graph.VertexCount];
 		var queue = DataStructures.PriorityQueue(graph.VertexCount, new DirectedPathComparer<TWeight>(Comparer<TWeight>.Default));
 		
-		//queue.Push(new([source], zero));
-
 		foreach (var edge in graph.GetIncidentEdges(source))
 		{
 			queue.Push(new(edge));

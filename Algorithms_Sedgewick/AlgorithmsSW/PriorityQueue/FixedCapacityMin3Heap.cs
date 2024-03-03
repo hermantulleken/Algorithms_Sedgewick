@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using AlgorithmsSW.List;
-using Support;
 using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.PriorityQueue;
@@ -254,7 +253,32 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T>
 #if WITH_INSTRUMENTATION
 		Assert(SatisfyHeapProperty());
 #endif
-	}	
+	}
+	
+	// This op is O(n) 
+	public T PopMax()
+	{
+		if (IsEmpty)
+		{
+			ThrowHelper.ThrowContainerEmpty();
+		}
+
+		if (IsSingleton)
+		{
+			return PopMin();
+		}
+
+		int firstLeaf = GetFirstLeaveIndex();
+		int maxIndex = items.FindIndexOfMax(firstLeaf, Count + 1, comparer);
+
+		var max = items[maxIndex];
+		items[maxIndex] = items[Count];
+		Swim(maxIndex);
+		Count--;
+		items[Count] = default;
+		
+		return max;
+	}
 	
 #if WITH_INSTRUMENTATION
 	private bool SatisfyHeapProperty(int k)
@@ -342,31 +366,6 @@ public class FixedCapacityMin3Heap<T> : IPriorityQueue<T>
 #if WITH_INSTRUMENTATION
 		isStateValid = false;
 #endif
-	}
-
-	// This op is O(n) 
-	public T PopMax()
-	{
-		if (IsEmpty)
-		{
-			ThrowHelper.ThrowContainerEmpty();
-		}
-
-		if (IsSingleton)
-		{
-			return PopMin();
-		}
-
-		int firstLeaf = GetFirstLeaveIndex();
-		int maxIndex = items.FindIndexOfMax(firstLeaf, Count + 1, comparer);
-
-		var max = items[maxIndex];
-		items[maxIndex] = items[Count];
-		Swim(maxIndex);
-		Count--;
-		items[Count] = default;
-		
-		return max;
 	}
 
 	private int GetFirstLeaveIndex()

@@ -1,5 +1,4 @@
 ﻿using AlgorithmsSW.Graph;
-using NUnit.Framework;
 
 namespace UnitTests;
 
@@ -10,7 +9,7 @@ public class GraphAlgorithmsTests
 	[Test]
 	public void FindNodeSafeToDelete_NullGraph_ThrowsException()
 	{
-		IGraph nullGraph = null;
+		IGraph nullGraph = null!;
 		Assert.Throws<ArgumentNullException>(() => GraphAlgorithms.FindNodeSafeToDelete(nullGraph));
 	}
 

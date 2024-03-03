@@ -1,6 +1,5 @@
 ﻿namespace UnitTests;
 
-using System.Collections.Generic;
 using System.Linq;
 using AlgorithmsSW;
 using AlgorithmsSW.EdgeWeightedDigraph;
@@ -18,6 +17,6 @@ public class DijkstraMultiSourceTests
 		var algorithm = new DijkstraMultiSource(graph, [0, 1]);
 		
 		Assert.That(algorithm.PathExists(2));
-		Assert.That(algorithm.GetPath(2)!.Vertexes.SequenceEqual([0, 2]));
+		Assert.That(algorithm.GetPath(2).Vertexes.SequenceEqual([0, 2]));
 	}
 }

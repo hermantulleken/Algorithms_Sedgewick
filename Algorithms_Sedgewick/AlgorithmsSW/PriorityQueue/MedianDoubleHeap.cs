@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics;
-using AlgorithmsSW.List;
 
 namespace AlgorithmsSW.PriorityQueue;
-
-using Support;
 
 /// <summary>
 /// Container that supports efficient insertions and retrieval and removal of the median element in the container.  

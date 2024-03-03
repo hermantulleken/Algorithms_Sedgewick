@@ -1,7 +1,6 @@
 ﻿namespace AlgorithmsSW.SymbolTable;
 
 using List;
-using Support;
 
 [ExerciseReference(3, 1, 2)]
 public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>

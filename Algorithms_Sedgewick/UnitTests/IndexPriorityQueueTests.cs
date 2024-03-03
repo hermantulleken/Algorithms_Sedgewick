@@ -2,12 +2,13 @@
 
 using System.Collections.Generic;
 using AlgorithmsSW.PriorityQueue;
+using NUnit.Framework.Legacy;
 
 [TestFixture, Parallelizable]
 public class IndexPriorityQueueTests
 {
-	private IndexPriorityQueue<int> queue;
-	private IComparer<int> comparer;
+	private IndexPriorityQueue<int> queue = null!;
+	private IComparer<int> comparer = null!;
 
 	[SetUp]
 	public void Setup()
@@ -23,9 +24,9 @@ public class IndexPriorityQueueTests
 		queue.Insert(1, 3);
 		queue.Insert(2, 4);
 
-		Assert.AreEqual((1, 3), queue.PopMin());
-		Assert.AreEqual((2, 4), queue.PopMin());
-		Assert.AreEqual((0, 5), queue.PopMin());
+		ClassicAssert.AreEqual((1, 3), queue.PopMin());
+		ClassicAssert.AreEqual((2, 4), queue.PopMin());
+		ClassicAssert.AreEqual((0, 5), queue.PopMin());
 	}
 	
 	[Test]
@@ -34,14 +35,14 @@ public class IndexPriorityQueueTests
 		queue.Insert(0, 5);
 		queue.Insert(1, 3);
 		
-		Assert.AreEqual((1, 3), queue.PeekMin());
+		ClassicAssert.AreEqual((1, 3), queue.PeekMin());
 		
 		queue.UpdateValue(0, 2); // Change priority of index 0 to be higher
 
-		Assert.AreEqual((0, 2), queue.PeekMin());
+		ClassicAssert.AreEqual((0, 2), queue.PeekMin());
 		
-		Assert.AreEqual((0, 2), queue.PopMin());
-		Assert.AreEqual((1, 3), queue.PopMin());
+		ClassicAssert.AreEqual((0, 2), queue.PopMin());
+		ClassicAssert.AreEqual((1, 3), queue.PopMin());
 	}
 	
 	[Test]
@@ -50,19 +51,19 @@ public class IndexPriorityQueueTests
 		queue.Insert(0, 5);
 		queue.Insert(1, 3);
 
-		Assert.IsTrue(queue.Contains(0));
-		Assert.IsTrue(queue.Contains(1));
-		Assert.IsFalse(queue.Contains(2));
+		ClassicAssert.IsTrue(queue.Contains(0));
+		ClassicAssert.IsTrue(queue.Contains(1));
+		ClassicAssert.IsFalse(queue.Contains(2));
 	}
 	
 	[Test]
 	public void IsEmpty_Should_ReturnTrueWhenQueueIsEmpty()
 	{
-		Assert.IsTrue(queue.IsEmpty);
+		ClassicAssert.IsTrue(queue.IsEmpty);
 
 		queue.Insert(0, 5);
 		queue.PopMin();
 
-		Assert.IsTrue(queue.IsEmpty);
+		ClassicAssert.IsTrue(queue.IsEmpty);
 	}
 }

@@ -10,10 +10,8 @@ using static WhiteBoxTesting;
 
 public static class ListExtensions
 {
-	private sealed class ListWrapper<T> : IRandomAccessList<T>
+	private sealed class ListWrapper<T>(IList<T> list) : IRandomAccessList<T>
 	{
-		private readonly IList<T> list;
-
 		public int Count => list.Count;
 
 		public bool IsEmpty => list.Count == 0;
@@ -22,11 +20,6 @@ public static class ListExtensions
 		{
 			get => list[index];
 			set => list[index] = value;
-		}
-
-		public ListWrapper(IList<T> list)
-		{
-			this.list = list;
 		}
 
 		public static implicit operator ListWrapper<T>(T[] list) => new(list);
@@ -80,9 +73,9 @@ public static class ListExtensions
 		};
 	}
 	
-	public static void Fill<T>(this IRandomAccessList<T?> list, T? value) => list.FillRange(0, list.Count, value);
+	public static void Fill<T>(this IRandomAccessList<T> list, T value) => list.FillRange(0, list.Count, value);
 	
-	public static void FillRange<T>(this IRandomAccessList<T?> list, int start, int count, T? value)
+	public static void FillRange<T>(this IRandomAccessList<T> list, int start, int count, T value)
 	{
 		for (int i = start; i < start + count; i++)
 		{

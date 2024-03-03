@@ -15,14 +15,13 @@ using System.Diagnostics;
 
 using static System.Diagnostics.Debug;
 using static List.ListExtensions;
-using static Support.WhiteBoxTesting;
+using static WhiteBoxTesting;
 
 /// <summary>
 /// Provides a variety of sorting algorithms. 
 /// </summary>
 public static class Sort
 {
-	
 	/// <summary>
 	/// Represents variations on a merge sort algorithm.
 	/// </summary>
@@ -74,12 +73,12 @@ public static class Sort
 		public enum PivotSelectionAlgorithm
 		{
 			First,
-			MedianOfThreeFirst
+			MedianOfThreeFirst,
 		}
 
 		public static readonly QuickSortConfig Vanilla = new()
 		{
-			PivotSelection = PivotSelectionAlgorithm.First
+			PivotSelection = PivotSelectionAlgorithm.First,
 		};
 		
 		public PivotSelectionAlgorithm PivotSelection;
@@ -607,7 +606,6 @@ public static class Sort
 		where T : IComparable<T> 
 		=> IsSortedDescending(array, 0, array.Count);
 
-
 	public static bool IsSortedDescending<T>(IReadonlyRandomAccessList<T> array, int start, int end) 
 		where T : IComparable<T>
 	{
@@ -755,7 +753,10 @@ public static class Sort
 			// Find the smallest element from the lists
 			for (int i = smallestElementIndex + 1; i < indexes.Length; i++)
 			{
-				if (indexes[i] >= startIndices[i + 1]) continue;
+				if (indexes[i] >= startIndices[i + 1])
+				{
+					continue;
+				}
 
 				if (LessAt(helpList, indexes[i], indexes[smallestElementIndex]))
 				{
@@ -880,7 +881,10 @@ public static class Sort
 			Sort(middle, end);
 
 			// list[middle] > list[middle + 1]
-			if (config.SkipMergeWhenSorted && list.LessOrEqualAt(middle - 1, middle)) return;
+			if (config.SkipMergeWhenSorted && list.LessOrEqualAt(middle - 1, middle))
+			{
+				return;
+			}
 			
 			if (config.UseFastMerge)
 			{
@@ -1035,7 +1039,6 @@ public static class Sort
 		where T : IComparable<T>
 	{
 		var helpList = new T[list.Count];
-		
 		Sort();
 
 		void Sort()
@@ -1067,7 +1070,10 @@ public static class Sort
 					int rightListStart = leftListStart + leftListSize;
 					int rightListEnd = Math.Min(leftListStart + mergedListSize, length);
 
-					if (config.SkipMergeWhenSorted && list.LessOrEqualAt(rightListStart - 1, rightListStart)) continue;
+					if (config.SkipMergeWhenSorted && list.LessOrEqualAt(rightListStart - 1, rightListStart))
+					{
+						continue;
+					}
 					
 					if (config.UseFastMerge)
 					{
@@ -1354,7 +1360,6 @@ public static class Sort
 		}
 	}
 
-
 	// Note: This changes the order of the elements in the array.
 	public static IComparable<T> SelectNthLowest<T>(IRandomAccessList<T> list, int n, QuickSortConfig config)
 		where T : IComparable<T>
@@ -1417,12 +1422,15 @@ public static class Sort
 		{
 			case <= 1:
 				return;
+			
 			case <= 5:
 				InsertionSort(list);
 				break;
+			
 			case < 12:
 				ShellSort(list, SmallArrayGaps[length-6]);
 				break;
+			
 			default:
 				ShellSortWithPrattSequence(list);
 				break;
@@ -1434,7 +1442,7 @@ public static class Sort
 		where T : IComparable<T>
 	{
 		var labelledList = list
-			.Select((item, i) => new LabeledItem<T>(){Item = item, Label = i})
+			.Select((item, i) => new LabeledItem<T> { Item = item, Label = i })
 			.ToResizableArray(list.Count);
 		
 		QuickSort(labelledList, QuickSortConfig.Vanilla);

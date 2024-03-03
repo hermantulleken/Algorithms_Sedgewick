@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace AlgorithmsSW.Graph;
 
-public class GraphWtihNoSelfLoops(Func<IGraph> graphFactory) : IGraph
+public class GraphWithNoSelfLoops(Func<IGraph> graphFactory) : IGraph
 {
 	private readonly IGraph graph = graphFactory();
 
@@ -18,11 +18,11 @@ public class GraphWtihNoSelfLoops(Func<IGraph> graphFactory) : IGraph
 	/// <inheritdoc />
 	public int EdgeCount => graph.EdgeCount;
 
-    /// <inheritdoc/>
-    bool IReadOnlyGraph.SupportsParallelEdges => graph.SupportsParallelEdges;
+	/// <inheritdoc/>
+	bool IReadOnlyGraph.SupportsParallelEdges => graph.SupportsParallelEdges;
 
-    /// <inheritdoc/>
-    bool IReadOnlyGraph.SupportsSelfLoops => false;
+	/// <inheritdoc/>
+	bool IReadOnlyGraph.SupportsSelfLoops => false;
 
 	/// <inheritdoc />
 	public void AddEdge(int vertex0, int vertex1)

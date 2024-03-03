@@ -1,6 +1,4 @@
-﻿using Support;
-
-namespace AlgorithmsSW.Graph;
+﻿namespace AlgorithmsSW.Graph;
 
 /// <summary>
 /// Represents a graph data structure.

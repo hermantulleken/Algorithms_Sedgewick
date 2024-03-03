@@ -19,11 +19,9 @@ using System.Collections;
 */
 public class GridGraph : IGraph
 {
-	public readonly int Width;
-
-	public readonly int Height;
-
-	private IGraph graph;
+	private readonly int width;
+	private readonly int height;
+	private readonly IGraph graph;
 	
 	public int VertexCount { get; }
 	
@@ -37,10 +35,10 @@ public class GridGraph : IGraph
 	
 	public GridGraph(int width, int height)
 	{
-		Width = width;
-		Height = height;
-		VertexCount = Width * Height;
-		EdgeCount = 2 * Width * Height - Height - Width; // (h - 1) * w + (w - 1) * h
+		this.width = width;
+		this.height = height;
+		VertexCount = this.width * this.height;
+		EdgeCount = 2 * this.width * this.height - this.height - this.width; // (h - 1) * w + (w - 1) * h
 		
 		graph = DataStructures.Graph(VertexCount);
 	}
@@ -71,7 +69,7 @@ public class GridGraph : IGraph
 	public bool RemoveEdge((int x, int y) cell0, (int x, int y) cell1) 
 		=> graph.RemoveEdge(GetVertexIndex(cell0), GetVertexIndex(cell1));
 	
-	private int GetVertexIndex((int x, int y) cell) => cell.y * Width + cell.x;
+	private int GetVertexIndex((int x, int y) cell) => cell.y * width + cell.x;
 	
-	private (int x, int y) GetCoordinates(int index) => (index % Width, index / Width);
+	private (int x, int y) GetCoordinates(int index) => (index % width, index / width);
 }

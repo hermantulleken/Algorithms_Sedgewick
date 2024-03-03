@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using AlgorithmsSW.List;
-using Support;
 
 namespace AlgorithmsSW.Deque;
 

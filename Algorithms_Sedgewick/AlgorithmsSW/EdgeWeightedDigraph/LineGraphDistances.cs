@@ -2,7 +2,6 @@
 
 using Digraph;
 using List;
-using Support;
 
 [ExerciseReference(4, 4, 31)]
 public class LineGraphDistances
@@ -19,7 +18,7 @@ public class LineGraphDistances
 			throw new ArgumentException("Not a line graph.", nameof(graph));
 		}
 		
-		if(degrees.SinksCount != 1)
+		if (degrees.SinksCount != 1)
 		{
 			throw new ArgumentException("Not a line graph.", nameof(graph));
 		}

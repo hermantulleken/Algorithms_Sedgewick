@@ -1,6 +1,4 @@
-﻿
-
-namespace UnitTests;
+﻿namespace UnitTests;
 
 using System.Linq;
 using AlgorithmsSW;
@@ -39,12 +37,10 @@ public class SortTests
 			count << 1);
 	}
 
-	private static FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool1(int count)
-	{
-		return new FixedPreInitializedPool<IQueue<int>>( 
+	private static FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool1(int count) 
+		=> new(
 			Factory.Create<IQueue<int>>(() => new QueueWithLinkedListAndNodePool<int>(count), queue => queue.Clear()),
 			count << 1);
-	}
 
 	[DatapointSource]
 	private static readonly Action<IRandomAccessList<int>>[] SortFunctions = 
@@ -58,13 +54,13 @@ public class SortTests
 		GnomeSort,
 		HeapSort,
 		MergeSort,
-		list => MergeSort(list, MergeSortConfig.Vanilla with { SkipMergeWhenSorted = true}),
-		list => MergeSort(list, MergeSortConfig.Vanilla with {UseFastMerge = true}),
-		list => MergeSort(list, MergeSortConfig.Vanilla with {SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
+		list => MergeSort(list, MergeSortConfig.Vanilla with { SkipMergeWhenSorted = true }),
+		list => MergeSort(list, MergeSortConfig.Vanilla with { UseFastMerge = true}),
+		list => MergeSort(list, MergeSortConfig.Vanilla with { SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
 		MergeSortBottomUp,
-		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{SkipMergeWhenSorted = true}),
-		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{UseFastMerge = true}),
-		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with{SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
+		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with { SkipMergeWhenSorted = true}),
+		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with { UseFastMerge = true}),
+		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with { SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
 		list => MergeSortBottomsUpWithQueues(list),
 		
 		list => MergeSortBottomsUpWithQueues(
@@ -82,7 +78,7 @@ public class SortTests
 		list => MergeKSortBottomUp(list, 4),
 		MergeSortNatural,
 		list => QuickSort(list, QuickSortConfig.Vanilla),
-		list => QuickSort(list, QuickSortConfig.Vanilla with {PivotSelection = QuickSortConfig.PivotSelectionAlgorithm.MedianOfThreeFirst}),
+		list => QuickSort(list, new() { PivotSelection = QuickSortConfig.PivotSelectionAlgorithm.MedianOfThreeFirst }),
 	};
 
 	private static readonly IReadonlyRandomAccessList<int> TestArray = new[] { 5, 9, 1, 23, 6, 2, 6, 18, 2, 3, 7, 6, 11, 71, 8, 4, 19 }.ToRandomAccessList();
@@ -102,7 +98,7 @@ public class SortTests
 		sortFunction(list1);
 		Assert.That(list1, Is.Empty);
 		
-		var list2 = new[]{1}.ToRandomAccessList();
+		var list2 = new[] { 1 }.ToRandomAccessList();
 		sortFunction(list2);
 		Assert.That(list2.Count, Is.EqualTo(1));
 		Assert.That(list2[0], Is.EqualTo(1));
@@ -160,20 +156,16 @@ public class SortTests
 	{
 		int count = 1 << 8;
 		
-		FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool1()
-		{
-			return new FixedPreInitializedPool<IQueue<IQueue<int>>>(
+		FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool1() 
+			=> new(
 				Factory.Create<IQueue<IQueue<int>>>(() => new QueueWithLinkedListAndNodePool<IQueue<int>>(count), queue => queue.Clear()),
 				count << 1);
-		}
 
-		FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool1()
-		{
-			return new FixedPreInitializedPool<IQueue<int>>(
+		FixedPreInitializedPool<IQueue<int>> CreateMinorQueuePool1() 
+			=> new(
 				Factory.Create<IQueue<int>>(() => new QueueWithLinkedListAndNodePool<int>(count), queue => queue.Clear()),
 				count << 1);
-		}
-		
+
 		var list = Generator.UniformRandomInt(int.MaxValue)
 			.Take(count)
 			.ToResizableArray(count);
@@ -182,6 +174,5 @@ public class SortTests
 			list, 
 			CreateMajorQueuePool1(),
 			CreateMinorQueuePool1());
-
 	}
 }

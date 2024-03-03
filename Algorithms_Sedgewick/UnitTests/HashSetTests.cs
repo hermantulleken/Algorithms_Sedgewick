@@ -1,7 +1,6 @@
 ﻿namespace UnitTests;
 
 using System.Collections.Generic;
-using AlgorithmsSW;
 using AlgorithmsSW.Object;
 
 [TestFixture]
@@ -79,7 +78,9 @@ public class HashSetTests
 		// This depends on the internal details of HashSet resizing mechanism.
 
 		var hashSet = new AlgorithmsSW.Set.HashSet<int>(10, Comparer<int>.Default);
-		for (int i = 0; i < 16; i++) // table size for 10 is 31, so we need to go more than half that
+		
+		// table size for 10 is 31, so we need to go more than half that
+		for (int i = 0; i < 16; i++)
 		{
 			hashSet.Add(i);
 		}
@@ -293,6 +294,6 @@ public class HashSetTests
 		// #24
 		
 		var hashSet = new AlgorithmsSW.Set.HashSet<ObjectWithId>(IdComparer.Instance);
-		Assert.That(() => hashSet.Add(null), Throws.ArgumentNullException);
+		Assert.That(() => hashSet.Add(null!), Throws.ArgumentNullException);
 	}
 }

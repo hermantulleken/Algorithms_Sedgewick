@@ -133,7 +133,6 @@ public static class GraphAlgorithms
 		graph.AddEdge(vertex0, vertex1);
 		
 		return !connected;
-
 	}
 	
 	public static void ConnectComponents(this IGraph graph)

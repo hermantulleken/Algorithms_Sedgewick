@@ -6,7 +6,7 @@ using System.Numerics;
 /// A comparer for weighted edges.
 /// </summary>
 /// <typeparam name="TWeight">The type of the weights.</typeparam>
-public class EdgeComparer<TWeight>() : IComparer<Edge<TWeight>>
+public class EdgeComparer<TWeight> : IComparer<Edge<TWeight>>
 	where TWeight : IComparisonOperators<TWeight, TWeight, bool>
 {
 	/// <summary>

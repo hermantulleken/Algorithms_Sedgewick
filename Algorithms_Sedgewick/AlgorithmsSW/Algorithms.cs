@@ -7,9 +7,9 @@ using Queue;
 using Support;
 
 using static System.Diagnostics.Debug;
-using static AlgorithmsSW.List.ListExtensions;
+using static List.ListExtensions;
 using static Sort.Sort;
-using static Support.WhiteBoxTesting;
+using static WhiteBoxTesting;
 
 /// <summary>
 /// Provides algorithms for various tasks, especially for operating on lists. 
@@ -213,52 +213,6 @@ public static class Algorithms
 	}
 	
 	public static float Median(float[] list) => Median(list, 0, list.Length - 1);
-		
-	private static float Median(float[] list, int start, int end)
-	{
-		if (start >= end)
-		{
-			return list[start];
-		}
-			
-		while (true)
-		{
-			int centerIndex = (start + end) / 2;
-
-			list.SwapAt(start, centerIndex);
-			int pivotIndex = start;
-
-			for (int i = start + 1; i <= end; i++)
-			{
-				if (!(list[i] < list[pivotIndex]))
-                {
-                    continue;
-                }
-				
-				// Move the item to the right of the pivot
-				list.SwapAt(i, pivotIndex + 1);
-
-				// Swap item with pivot
-				list.SwapAt(pivotIndex + 1, pivotIndex);
-
-				// Now the pivot is here
-				pivotIndex++;
-			}
-
-			if (pivotIndex < centerIndex)
-			{
-				start = pivotIndex + 1;
-			}
-			else if (pivotIndex > centerIndex)
-			{
-				end = pivotIndex - 1;
-			}
-			else
-			{
-				return list[pivotIndex];
-			}
-		}
-	}
 
 	public static int FindIndexOfMax<T>(this IReadonlyRandomAccessList<T> list) 
 		where T : IComparable<T>
@@ -1039,5 +993,51 @@ public static class Algorithms
 		}
 		
 		list.RemoveLast(list.Count - sorted.Length);
+	}
+	
+	private static float Median(float[] list, int start, int end)
+	{
+		if (start >= end)
+		{
+			return list[start];
+		}
+			
+		while (true)
+		{
+			int centerIndex = (start + end) / 2;
+
+			list.SwapAt(start, centerIndex);
+			int pivotIndex = start;
+
+			for (int i = start + 1; i <= end; i++)
+			{
+				if (!(list[i] < list[pivotIndex]))
+				{
+					continue;
+				}
+				
+				// Move the item to the right of the pivot
+				list.SwapAt(i, pivotIndex + 1);
+
+				// Swap item with pivot
+				list.SwapAt(pivotIndex + 1, pivotIndex);
+
+				// Now the pivot is here
+				pivotIndex++;
+			}
+
+			if (pivotIndex < centerIndex)
+			{
+				start = pivotIndex + 1;
+			}
+			else if (pivotIndex > centerIndex)
+			{
+				end = pivotIndex - 1;
+			}
+			else
+			{
+				return list[pivotIndex];
+			}
+		}
 	}
 }

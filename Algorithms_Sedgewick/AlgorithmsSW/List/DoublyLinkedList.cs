@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using Support;
 using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.List;

@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using AlgorithmsSW.Stack;
-using Support;
 using static System.Diagnostics.Debug;
 using static Support.Tools;
 
@@ -27,7 +26,7 @@ public class LinkedListWithPooledClassNodes<T> : IEnumerable<T?>
 		public T? Item;
 		public Node? NextNode;
 
-		private string? ItemString => Item.AsText();
+		private string ItemString => Item.AsText();
 		
 #if WITH_INSTRUMENTATION
 		public override string ToString() => ToDebugString();

@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
-using AlgorithmsSW.List;
-using static AlgorithmsSW.ThrowHelper;
+﻿
 
 namespace AlgorithmsSW.PriorityQueue;
 
 using System.Collections;
-using Support;
+using System.Diagnostics;
+using static ThrowHelper;
 
 [ExerciseReference(2, 4, 3)]
 public sealed class PriorityQueueWithUnorderedLinkedList<T>(IComparer<T> comparer) : IPriorityQueue<T> 
