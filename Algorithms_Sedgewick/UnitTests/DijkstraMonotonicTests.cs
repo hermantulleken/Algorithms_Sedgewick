@@ -97,12 +97,12 @@ public class DijkstraMonotonicTests
 		graph.AddEdge(0, 1, 1.0);
 		graph.AddEdge(1, 2, 7.0);
 		graph.AddEdge(2, 3, 6.0);
-		graph.AddEdge(0, 4, 4.0);
+		graph.AddEdge(0, 4, 4.1);
 		graph.AddEdge(4, 2, 5.0);
 		
 		var algorithm = new DijkstraMonotonic<double>(graph, 0); // int.MaxValue, (x, y) => x + y, 0);
 		Assert.That(algorithm.DistTo(2), Is.EqualTo(8.0));
-		Assert.That(algorithm.DistTo(3), Is.EqualTo(15.0));
+		Assert.That(algorithm.DistTo(3), Is.EqualTo(15.1));
 	}
 
 	[Test]
