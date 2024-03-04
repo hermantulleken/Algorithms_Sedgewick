@@ -129,4 +129,91 @@ public static class DataStructures
 	
 	public static IEdgeWeightedDigraph<T> EdgeWeightedDigraph<T>(int vertexCount) 
 		=> new EdgeWeightedDigraphWithAdjacencyLists<T>(vertexCount);
+
+	public static IEdgeWeightedDigraph<T> ToDigraph<T>(this IEnumerable<(int source, int target, T weight)> edges)
+	{
+		int maxVertexIndex = edges.Max(edge => Math.Max(edge.source, edge.target));
+		var graph = EdgeWeightedDigraph<T>(maxVertexIndex + 1);
+
+		foreach (var edge in edges)
+		{
+			graph.AddEdge(edge.source, edge.target, edge.weight);
+		}
+
+		return graph;
+	}
+	
+	public static IDigraph ToDigraph(this IEnumerable<(int source, int target)> edges)
+	{
+		int maxVertexIndex = edges.Max(edge => Math.Max(edge.source, edge.target));
+		var graph = Digraph(maxVertexIndex + 1);
+
+		foreach (var edge in edges)
+		{
+			graph.AddEdge(edge.source, edge.target);
+		}
+
+		return graph;
+	}
+	
+	public static IEdgeWeightedGraph<T> ToGraph<T>(this IEnumerable<(int source, int target, T weight)> edges)
+	{
+		int maxVertexIndex = edges.Max(edge => Math.Max(edge.source, edge.target));
+		var graph = EdgeWeightedGraph<T>(maxVertexIndex + 1);
+
+		foreach (var edge in edges)
+		{
+			graph.AddEdge(edge.source, edge.target, edge.weight);
+		}
+
+		return graph;
+	}
+	
+	public static IGraph ToGraph(this IEnumerable<(int source, int target)> edges)
+	{
+		int maxVertexIndex = edges.Max(edge => Math.Max(edge.source, edge.target));
+		var graph = Graph(maxVertexIndex + 1);
+
+		foreach (var edge in edges)
+		{
+			graph.AddEdge(edge.source, edge.target);
+		}
+
+		return graph;
+	}
+
+	public static IEdgeWeightedDigraph<T> ToDigraph<T>(this string edges)
+		where T : IParsable<T> 
+		=> edges.ParseEdges<T>().ToDigraph();
+	
+	public static IEdgeWeightedGraph<T> ToGraph<T>(this string edges)
+		where T : IParsable<T> 
+		=> edges.ParseEdges<T>().ToGraph();
+	
+	public static IDigraph ToDigraph(this string edges)
+		=> edges.ParseEdges().ToDigraph();
+	
+	public static IGraph ToGraph(this string edges)
+		=> edges.ParseEdges().ToGraph();
+
+	public static (int source, int target, T weight)[] ParseEdges<T>(this string edgeString, IFormatProvider? provider = null)
+		where T : IParsable<T>
+	{ 
+		var tuples = 
+			from edge in edgeString.Split(';')
+			let parts = edge.Split(',')
+			select (int.Parse(parts[0]), int.Parse(parts[1]), T.Parse(parts[2], provider));
+
+		return tuples.ToArray();
+	}
+	
+	public static (int source, int target)[] ParseEdges(this string edgeString)
+	{ 
+		var tuples = 
+			from edge in edgeString.Split(';')
+			let parts = edge.Split(',')
+			select (int.Parse(parts[0]), int.Parse(parts[1]));
+
+		return tuples.ToArray();
+	}
 }

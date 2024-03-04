@@ -164,7 +164,11 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 		}
 
 		// newNode has node's NextNode
-		var newNode = new Node { Item = item, NextNode = null };
+		var newNode = node with
+		{
+			Item = item,
+			NextNode = null,
+		};
 
 		node.NextNode = newNode;
 		
@@ -201,7 +205,11 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 			return InsertFirstItem(item);
 		}
 
-		var newHead = new Node { Item = item, NextNode = front };
+		var newHead = pool.Pop() with
+		{
+			Item = item, 
+			NextNode = front,
+		};
 
 		front = newHead;
 
@@ -309,7 +317,11 @@ public class LinkedListWithPooledNodes<T> : IEnumerable<T?>
 	private Node InsertFirstItem(T item)
 	{
 		Count++;
-		front = back = new() { Item = item, NextNode = null };
+		front = back = pool.Pop() with
+		{
+			Item = item,
+			NextNode = null,
+		};
 		
 		UpdateVersion();
 		

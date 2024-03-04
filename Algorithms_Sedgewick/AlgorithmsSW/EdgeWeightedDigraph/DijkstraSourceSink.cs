@@ -61,7 +61,7 @@ public class DijkstraSourceSink<TWeight>
 		var queue = DataStructures.IndexedPriorityQueue(graph.VertexCount, Comparer<TWeight>.Default);
 		queue.Insert(source, TWeight.Zero);
 		
-		while (!queue.IsEmpty && !PathExists)
+		while (!queue.IsEmpty)
 		{
 			(int nextNode, TWeight distanceToSource) = queue.PopMin();
 			
@@ -86,7 +86,12 @@ public class DijkstraSourceSink<TWeight>
 				{
 					edgeTo[edge.Target] = edge;
 					distanceTo[edge.Target] = distanceToSource + edge.Weight;
-					queue.UpdateValue(edge.Target, distanceTo[edge.Target]);
+
+					// Not sure if this check is correct
+					if (queue.Contains(edge.Target))
+					{
+						queue.UpdateValue(edge.Target, distanceTo[edge.Target]);
+					}
 				}
 
 				if (edge.Target == sink)
@@ -94,7 +99,7 @@ public class DijkstraSourceSink<TWeight>
 					distance = distanceTo[edge.Target];
 					PathExists = true;
 					path = GetPath(edgeTo, sink);
-					break;
+					//break;
 				}
 			}
 		}
