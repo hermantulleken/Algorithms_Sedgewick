@@ -1,17 +1,15 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Diagnostics;
 using System.Numerics;
+using List;
 
 /// <inheritdoc />
 [ExerciseReference(4, 4, 37)]
 public class CriticalEdgesExamineIntersectingShortestPaths<TWeight> : ICriticalEdge<TWeight>
 	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
-	/// <inheritdoc />
-	public bool HasCriticalEdge => CriticalEdge != null;
-	
-	/// <inheritdoc />
-	public DirectedEdge<TWeight>? CriticalEdge { get; }
+	public IEnumerable<DirectedEdge<TWeight>> CriticalEdges { get; }
 
 	/// <inheritdoc />
 	public TWeight DistanceWithoutCriticalEdge { get; }
@@ -28,7 +26,6 @@ public class CriticalEdgesExamineIntersectingShortestPaths<TWeight> : ICriticalE
 		int source, 
 		int destination)
 	{
-		var maxDistance = TWeight.Zero;
 		DirectedEdge<TWeight>? maxEdge = null;
 		
 		// We only need to check the edges on the path
@@ -36,25 +33,18 @@ public class CriticalEdgesExamineIntersectingShortestPaths<TWeight> : ICriticalE
 			graph, 
 			source, 
 			destination);
+		
+		var edges = algorithm.CriticalEdges; // TODO: can be null, what do we do then?
 
-		var edges = algorithm.Intersection; // TODO: can be null, what do we do then?
-
-		foreach (var weightlessEdge in edges)
+		if (edges != null && edges.Any())
 		{
-			var edge = graph.GetUniqueEdge(weightlessEdge.Item1, weightlessEdge.Item2);
-			graph.RemoveEdge(edge);
-			var dijkstra = new DijkstraSourceSink<TWeight>(graph, source, destination);
-
-			if (maxDistance < dijkstra.Distance)
-			{
-				maxDistance = dijkstra.Distance;
-				maxEdge = edge;
-			}
-			
-			graph.AddEdge(edge);
+			CriticalEdges = edges.Select(edge => graph.GetUniqueEdge(edge.Item1, edge.Item2));
+			Debug.Assert(algorithm.PathRank >= 1);
+			DistanceWithoutCriticalEdge = algorithm.GetPath(algorithm.PathRank - 1).Distance;
 		}
-
-		CriticalEdge = maxEdge;
-		DistanceWithoutCriticalEdge = maxDistance;
+		else
+		{
+			CriticalEdges = Array.Empty<DirectedEdge<TWeight>>();
+		}
 	}
 }

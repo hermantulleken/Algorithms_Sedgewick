@@ -7,7 +7,7 @@ namespace AlgorithmsSW.Digraph;
 /// <summary>
 /// Represents a directed graph using an array of adjacency lists.
 /// </summary>
-public sealed class DigraphWithAdjacentsLists : IDigraph, IEnumerable<(int vertex0, int vertex1)>
+public sealed class DigraphWithAdjacentsLists : IDigraph
 {
 	private readonly ResizeableArray<int>[] adjacents;
 
@@ -113,6 +113,12 @@ public sealed class DigraphWithAdjacentsLists : IDigraph, IEnumerable<(int verte
 			}
 		}
 	}
+
+	/// <inheritdoc/>
+	public bool SupportsParallelEdges => true;
+	
+	/// <inheritdoc/>
+	public bool SupportsSelfLoops => true;
 
 	/// <summary>
 	/// Checks if the graph contains an edge between from one vertex to another.

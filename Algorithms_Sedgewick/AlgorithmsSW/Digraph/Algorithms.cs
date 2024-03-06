@@ -1,5 +1,7 @@
 ﻿namespace AlgorithmsSW.Digraph;
 
+using System.Collections;
+using Graph;
 using List;
 using static System.Diagnostics.Debug;
 
@@ -12,7 +14,6 @@ public static class Algorithms
 	public static IDigraph Reverse(this IDigraph digraph)
 	{
 		digraph.ThrowIfNull();
-		
 		var reversed = new DigraphWithAdjacentsLists(digraph.VertexCount);
 		
 		for (int vertex = 0; vertex < digraph.VertexCount; vertex++)
@@ -110,5 +111,39 @@ public static class Algorithms
 		strongConnectivity = new(graph);
 		Assert(strongConnectivity.ComponentCount == 1);
 #endif
+	}
+
+	public static IReadOnlyGraph AsGraph(this IReadOnlyDigraph graph) => new DigraphToGraphAdapter(graph);
+
+	/// <summary>
+	/// Represents a <see cref="IReadOnlyDigraph"/> as a <see cref="IReadOnlyGraph"/>.
+	/// </summary>
+	/*	Question: Is this the neatest way to use Graph algorithms on Digraphs?
+	*/
+	internal class DigraphToGraphAdapter(IReadOnlyDigraph graph) : IReadOnlyGraph
+	{
+		/// <inheritdoc/>
+		public IEnumerator<(int vertex0, int vertex1)> GetEnumerator() => graph.GetEnumerator();
+
+		/// <inheritdoc/>
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		/// <inheritdoc/>
+		public int VertexCount => graph.VertexCount;
+		
+		/// <inheritdoc/>
+		public int EdgeCount => graph.EdgeCount;
+		
+		/// <inheritdoc/>
+		public bool SupportsParallelEdges => graph.SupportsParallelEdges;
+		
+		/// <inheritdoc/>
+		public bool SupportsSelfLoops => graph.SupportsSelfLoops;
+
+		/// <inheritdoc/>
+		public IEnumerable<int> GetAdjacents(int vertex) => graph.GetAdjacents(vertex);
+
+		/// <inheritdoc/>
+		public bool ContainsEdge(int vertex0, int vertex1) => graph.AreAdjacent(vertex0, vertex1);
 	}
 }

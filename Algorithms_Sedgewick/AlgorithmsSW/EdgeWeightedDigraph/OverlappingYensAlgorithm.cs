@@ -1,10 +1,12 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using Digraph;
+using Graph;
 using List;
 using PriorityQueue;
 using Set;
-using ValueSnapshot;
 using static System.Diagnostics.Debug;
 
 /// <summary>
@@ -26,7 +28,9 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 	private readonly ResizeableArray<DirectedPath<TWeight>> shortestPaths;
 	
 	// Null when there are no paths between the target and source node.
-	public ISet<(int, int)>? Intersection { get; private set; }
+	public ISet<(int, int)>? CriticalEdges { get; private set; }
+	
+	public int PathRank { get; private set; } = -1;
 
 	/// <inheritdoc/>
 	public bool HasPath(int k) => k >= 0 && k < shortestPaths.Count;
@@ -42,7 +46,13 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 		int source, 
 		int target)
 	{
+		ValidateGraph(digraph);
+		
+		digraph.ValidateVertex(source);
+		digraph.ValidateVertex(target);
+		
 		shortestPaths = [];
+		
 		var dijkstra = new Dijkstra<TWeight>(digraph, source);
 		
 		if (!dijkstra.HasPathTo(target))
@@ -51,16 +61,14 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 		}
 		
 		var path = dijkstra.GetPathTo(target);
+		var intersection = path.WeightlessEdges.ToSet(Comparer<(int, int)>.Default);
+
 		ResizeableArray<DirectedEdge<TWeight>> removedEdges = [];
 		shortestPaths.Add(path);
 		var queue = DataStructures.PriorityQueue(100, new DirectedPathComparer<TWeight>(Comparer<TWeight>.Default));
 		int shortestPathIndex = 1;
-
-		ISet<(int, int)> set = new HashSet<(int, int)>(Comparer<(int, int)>.Default);
-		set.AddRange(path.WeightlessEdges);
-		ValueSnapshot<ISet<(int, int)>> intersection = new(set);
 		
-		do
+		while (true)
 		{
 			FindPotentialShortestPaths(shortestPathIndex);
 				
@@ -75,21 +83,21 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 			}
 
 			var newPath = queue.PopMin();
-			shortestPaths[shortestPathIndex] = newPath;
-			
-			Assert(intersection.Value != null);
-			intersection.Value = intersection.Value.Intersection(newPath.WeightlessEdges);
+			shortestPaths.Add(newPath);
+
+			var potentialEdges = intersection.Difference(newPath.WeightlessEdges.ToSet(Comparer<(int, int)>.Default));
+
+			if (potentialEdges.Count == 0)
+			{
+				break;
+			}
+
+			CriticalEdges = potentialEdges;
+			PathRank = shortestPathIndex;
+			intersection = intersection.Intersection(newPath.WeightlessEdges);
 			
 			shortestPathIndex++;
-		} while (intersection.Value.Any());
-
-		if (intersection.HasPreviousValue)
-		{
-			Intersection = intersection.PreviousValue;
 		}
-		
-		// TODO: This fails sometimes. Bug or misconception?
-		Assert((shortestPaths.Count > 0) == intersection.HasPreviousValue);
 		
 		return;
 
@@ -135,8 +143,12 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 				if (rootPath.HasEqualVertices(shortestPath.Take(previousPathVertexIndex)))
 				{
 					var edge = shortestPath.Edges[previousPathVertexIndex];
-					digraph.RemoveEdge(edge);
-					removedEdges.Add(edge);
+					bool wasRemoved = digraph.RemoveEdge(edge);
+					
+					if (wasRemoved)
+					{
+						removedEdges.Add(edge);
+					}
 				}
 			}
 		}
@@ -180,6 +192,23 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 				
 				RestoreGraph();
 			}
+		}
+	}
+
+	private void ValidateGraph(
+		IReadOnlyDigraph digraph, 
+		[CallerArgumentExpression(nameof(digraph))] string? digraphArgName = null)
+	{
+		var graph = digraph.AsGraph();
+
+		if (graph.HasParallelEdges())
+		{
+			throw new ArgumentException("Algorithm does not support parallel edges.");
+		}
+
+		if (graph.HasSelfLoops())
+		{
+			throw new ArgumentException("Algorithm does not support self loops.");
 		}
 	}
 

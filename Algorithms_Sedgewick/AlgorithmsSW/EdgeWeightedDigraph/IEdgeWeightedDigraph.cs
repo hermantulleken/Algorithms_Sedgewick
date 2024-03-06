@@ -17,5 +17,6 @@ public interface IEdgeWeightedDigraph<TWeight>
 	/// Removes an edge from the graph.
 	/// </summary>
 	/// <param name="edge">The edge to remove.</param>
-	void RemoveEdge(DirectedEdge<TWeight> edge);
+	/// <returns><see langword="true" /> if the edge was removed, <see langword="false"/> otherwise.</returns>
+	bool RemoveEdge(DirectedEdge<TWeight> edge);
 }

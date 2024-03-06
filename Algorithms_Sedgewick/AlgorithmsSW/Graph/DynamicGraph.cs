@@ -190,7 +190,7 @@ public class DynamicGraph // Supports removing vertices
 				since all the other ones throw IndexOutOfRangeException. The other containers need to change but we will
 				keep this for now. 
 			*/
-			throw new IndexOutOfRangeException($"Vertex {vertex} does not exist.");
+			throw new IndexOutOfRangeException($"Vertex {vertex} does not exist. Argument: {vertexName}.");
 		}
 	}
 	

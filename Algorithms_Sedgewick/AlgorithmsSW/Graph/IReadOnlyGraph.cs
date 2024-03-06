@@ -32,11 +32,17 @@ public interface IReadOnlyGraph : IEnumerable<(int vertex0, int vertex1)>
 	/// <summary>
 	/// Gets a value indicating whether the graph supports parallel edges.
 	/// </summary>
+	/// <remarks>
+	/// This can be used to ensure algorithms are implemented correctly. 
+	/// </remarks>
 	internal bool SupportsParallelEdges { get; }
 	
 	/// <summary>
 	/// Gets a value indicating whether the graph supports self-loops.
 	/// </summary>
+	/// <remarks>
+	/// This can be used to ensure algorithms are implemented correctly. 
+	/// </remarks>
 	internal bool SupportsSelfLoops { get; }
 
 	/// <summary>

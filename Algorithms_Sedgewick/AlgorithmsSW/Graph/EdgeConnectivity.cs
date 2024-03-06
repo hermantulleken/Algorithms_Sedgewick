@@ -5,13 +5,12 @@ public class EdgeConnectivity
 {
 	public IEnumerable<(int vertex0, int vertex)> Bridges { get; private init; }
 
-	private bool IsEdgeConnected => !Bridges.Any();
+	public bool IsEdgeConnected => !Bridges.Any();
 
-	public static EdgeConnectivity Build(IGraph graph) 
-		=> new()
-		{
-			Bridges = graph.Where(edge => IsBridge(graph, edge)),
-		};
+	public EdgeConnectivity(IGraph graph)
+	{
+		Bridges = graph.Where(edge => IsBridge(graph, edge));
+	}
 
 	private static bool IsBridge(IGraph graph, (int vertex0, int vertex1) edge)
 	{

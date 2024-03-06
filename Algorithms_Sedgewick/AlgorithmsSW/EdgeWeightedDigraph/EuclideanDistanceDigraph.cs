@@ -1,6 +1,8 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Collections;
 using System.Numerics;
+using Digraph;
 using List;
 
 /// <summary>
@@ -36,6 +38,12 @@ public class EuclideanDistanceDigraph : IEdgeWeightedDigraph<double>
 	public IEnumerable<int> GetAdjacents(int vertex) => graph.GetAdjacents(vertex);
 
 	/// <inheritdoc/>
+	public bool SupportsParallelEdges => graph.SupportsParallelEdges;
+	
+	/// <inheritdoc/>
+	public bool SupportsSelfLoops => graph.SupportsSelfLoops;
+
+	/// <inheritdoc/>
 	public IEnumerable<DirectedEdge<double>> GetIncidentEdges(int vertex) => graph.GetIncidentEdges(vertex);
 
 	/// <inheritdoc/>
@@ -50,7 +58,12 @@ public class EuclideanDistanceDigraph : IEdgeWeightedDigraph<double>
 		
 		graph.AddEdge(edge);
 	}
-	
+
+	/// <summary>
+	/// Adds an edge to the digraph.
+	/// </summary>
+	/// <param name="source">The source vertex of the edge.</param>
+	/// <param name="target">The target vertex of the edge.</param>
 	public void AddEdge(int source, int target)
 	{
 		var edge = MakeEdge(source, target);
@@ -58,11 +71,17 @@ public class EuclideanDistanceDigraph : IEdgeWeightedDigraph<double>
 	}
 
 	/// <inheritdoc/>
-	public void RemoveEdge(DirectedEdge<double> edge) => graph.RemoveEdge(edge);
+	public bool RemoveEdge(DirectedEdge<double> edge) => graph.RemoveEdge(edge);
 	
 	public DirectedEdge<double> MakeEdge(int source, int target) 
 		=> new(source, target, GetDistance(source, target));
+	
+	/// <inheritdoc/>
+	public IEnumerator<(int vertex0, int vertex1)> GetEnumerator() => ((IReadOnlyDigraph)this).Edges.GetEnumerator();
 
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+	
 	private double GetDistance(int vertex0, int vertex1)
 	{
 		var vector0 = vertexes[vertex0];

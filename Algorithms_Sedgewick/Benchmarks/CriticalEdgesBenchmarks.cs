@@ -14,24 +14,22 @@ public class CriticalEdgesBenchmarks
 	[Params(0.2, 0.5, 0.7)]
 	public double EdgeFraction { get; set; }
 	
-	private Comparer<double> Comparer = Comparer<double>.Default;
-	
 	[Benchmark]
-	public object? CriticalEdgesExamineShortestPath()
+	public object CriticalEdgesExamineShortestPath()
 	{
 		var graph = MakeGraph((VertexCount, EdgeFraction));
 		CriticalEdgesExamineShortestPath<double> algorithm = new(graph, 0, 1);
 		
-		return algorithm.HasCriticalEdge ? algorithm.CriticalEdge : null;
+		return algorithm.CriticalEdges;
 	}
 	
 	[Benchmark]
-	public object? CriticalEdgesExamineIntersectingShortestPaths()
+	public object CriticalEdgesExamineIntersectingShortestPaths()
 	{
 		var graph = MakeGraph((VertexCount, EdgeFraction));
 		CriticalEdgesExamineIntersectingShortestPaths<double> algorithm = new(graph, 0, 1);
 		
-		return algorithm.HasCriticalEdge ? algorithm.CriticalEdge : null;
+		return algorithm.CriticalEdges;
 	}
 	
 	private IEdgeWeightedDigraph<double> MakeGraph((int vertexCount, double edgeFraction) parameters)

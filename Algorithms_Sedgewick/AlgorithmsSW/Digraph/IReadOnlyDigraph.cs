@@ -1,6 +1,8 @@
 ﻿namespace AlgorithmsSW.Digraph;
 
-public interface IReadOnlyDigraph
+using System.Runtime.CompilerServices;
+
+public interface IReadOnlyDigraph : IEnumerable<(int vertex0, int vertex1)>
 {
 	/// <summary>
 	/// Gets the number of vertices in the graph.
@@ -41,4 +43,17 @@ public interface IReadOnlyDigraph
 	bool AreAdjacent(int item1, int item2) => GetAdjacents(item1).Contains(item2);
 	
 	public IEnumerable<(int source, int target)> Edges { get; }
+	
+	bool SupportsParallelEdges { get; }
+	
+	bool SupportsSelfLoops { get; }
+	
+	// TODO: does this belong here?
+	internal void ValidateVertex(int source, [CallerArgumentExpression(nameof(source))] string? sourceArgName = null)
+	{
+		if (source < 0 || source >= VertexCount)
+		{
+			throw new ArgumentOutOfRangeException(sourceArgName);
+		}
+	}
 }

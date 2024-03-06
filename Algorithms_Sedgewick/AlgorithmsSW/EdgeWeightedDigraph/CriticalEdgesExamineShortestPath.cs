@@ -1,7 +1,7 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using List;
 
 /// <inheritdoc />
 [ExerciseReference(4, 4, 37)]
@@ -9,14 +9,10 @@ public class CriticalEdgesExamineShortestPath<TWeight> : ICriticalEdge<TWeight>
 	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	/// <inheritdoc />
-	[MemberNotNullWhen(true, nameof(CriticalEdge))]
-	public bool HasCriticalEdge => CriticalEdge != null;
-	
-	/// <inheritdoc />
-	public DirectedEdge<TWeight>? CriticalEdge { get; }
+	public IEnumerable<DirectedEdge<TWeight>> CriticalEdges { get; } = [];
 
 	/// <inheritdoc />
-	public TWeight DistanceWithoutCriticalEdge { get; }
+	public TWeight DistanceWithoutCriticalEdge { get; } = TWeight.Zero;
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CriticalEdgesExamineShortestPath{TWeight}"/> class.
@@ -30,7 +26,7 @@ public class CriticalEdgesExamineShortestPath<TWeight> : ICriticalEdge<TWeight>
 		int destination)
 	{
 		var maxDistance = TWeight.Zero;
-		DirectedEdge<TWeight>? maxEdge = null;
+		ResizeableArray<DirectedEdge<TWeight>> maxEdges = [];
 		
 		// We only need to check the edges on the path
 		DijkstraSourceSink<TWeight> dijkstra = new(graph, source, destination);
@@ -48,16 +44,23 @@ public class CriticalEdgesExamineShortestPath<TWeight> : ICriticalEdge<TWeight>
 			graph.RemoveEdge(edge);
 			dijkstra = new(graph, source, destination);
 
-			if (dijkstra.PathExists && dijkstra.Distance > maxDistance)
+			if (dijkstra.PathExists)
 			{
-				maxDistance = dijkstra.Distance;
-				maxEdge = edge;
+				if (dijkstra.Distance > maxDistance)
+				{
+					maxDistance = dijkstra.Distance;
+					maxEdges = [edge];
+				}
+				else if (dijkstra.Distance == maxDistance)
+				{
+					maxEdges.Add(edge);
+				}
 			}
 
 			graph.AddEdge(edge);
 		}
 
-		CriticalEdge = maxEdge;
+		CriticalEdges = maxEdges;
 		DistanceWithoutCriticalEdge = maxDistance;
 	}
 }

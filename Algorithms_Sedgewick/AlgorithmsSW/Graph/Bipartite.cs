@@ -6,12 +6,12 @@ public class Bipartite
 {
 	private readonly bool[] color;
 	
-	private Bipartite(IGraph graph)
+	private Bipartite(IReadOnlyGraph graph)
 	{
 		color = new bool[graph.VertexCount];
 	}
 	
-	public static Bipartite Build(IGraph graph)
+	public static Bipartite Build(IReadOnlyGraph graph)
 	{
 		graph.ThrowIfNull();
 		
@@ -38,7 +38,7 @@ public class Bipartite
 	/// <returns>Either 0 or 1.</returns>
 	public bool GetColor(int vertex) => color[vertex];
 	
-	private void ColorGraph(IGraph graph)
+	private void ColorGraph(IReadOnlyGraph graph)
 	{
 		bool[] marked = new bool[graph.VertexCount];
 		IsBipartite = true; // Unless proven otherwise

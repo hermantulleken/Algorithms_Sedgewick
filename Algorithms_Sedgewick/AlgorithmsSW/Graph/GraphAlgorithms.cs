@@ -1,12 +1,12 @@
-﻿using AlgorithmsSW.Counter;
-using AlgorithmsSW.List;
-using AlgorithmsSW.Stack;
-using AlgorithmsSW.SymbolTable;
-using static System.Diagnostics.Debug;
+﻿namespace AlgorithmsSW.Graph;
 
-namespace AlgorithmsSW.Graph;
-
+using Counter;
+using List;
 using Set;
+using Stack;
+using SymbolTable;
+
+using static System.Diagnostics.Debug;
 
 public static class GraphAlgorithms
 {
@@ -29,7 +29,7 @@ public static class GraphAlgorithms
 	}
 	
 	[ExerciseReference(4, 1, 10)]
-	public static int FindNodeSafeToDelete(IGraph graph)
+	public static int FindNodeSafeToDelete(IReadOnlyGraph graph)
 	{
 		graph.ThrowIfNull();
 
@@ -87,19 +87,19 @@ public static class GraphAlgorithms
 	}
 
 	[ExerciseReference(4, 1, 23)]
-	public static Counter<int> DistanceHistogram<T>(this IGraph graph, int sourceVertex) 
+	public static Counter<int> DistanceHistogram<T>(this IReadOnlyGraph graph, int sourceVertex) 
 		=> BreadthFirstPathsSearch
 			.Build(graph, sourceVertex)
 			.Distances.ToSymbolTable().CountKeysWithValue(Comparer<int>.Default);
 	
-	public static bool AllDegreesEven(this IGraph graph)
+	public static bool AllDegreesEven(this IReadOnlyGraph graph)
 	{
 		graph.ThrowIfNull();
 
 		return graph.Vertexes.All(vertex => graph.GetDegree(vertex) % 2 == 0);
 	}
 	
-	public static bool HasEulerCycle(this IGraph graph)
+	public static bool HasEulerCycle(this IReadOnlyGraph graph)
 	{
 		graph.ThrowIfNull();
 

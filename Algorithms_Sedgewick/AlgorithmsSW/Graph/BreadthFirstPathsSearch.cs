@@ -8,7 +8,7 @@ public sealed class BreadthFirstPathsSearch : GraphPathsSearch
 
 	public IReadonlyRandomAccessList<int> Distances => distances;
 
-	public BreadthFirstPathsSearch(IGraph graph, int sourceVertex) 
+	public BreadthFirstPathsSearch(IReadOnlyGraph graph, int sourceVertex) 
 		: base(graph, sourceVertex)
 	{
 		distances = new ResizeableArray<int>(graph.VertexCount);
@@ -16,7 +16,7 @@ public sealed class BreadthFirstPathsSearch : GraphPathsSearch
 		distances.Fill(-1);
 	}
 
-	public static BreadthFirstPathsSearch Build(IGraph graph, int sourceVertex)
+	public static BreadthFirstPathsSearch Build(IReadOnlyGraph graph, int sourceVertex)
 	{
 		var search = new BreadthFirstPathsSearch(graph, sourceVertex);
 		search.Search(graph, sourceVertex);
@@ -24,7 +24,7 @@ public sealed class BreadthFirstPathsSearch : GraphPathsSearch
 		return search;
 	}
 
-	private void Search(IGraph graph, int vertex)
+	private void Search(IReadOnlyGraph graph, int vertex)
 	{
 		var vertexQueue = new Queue<int>(graph.VertexCount);
 		vertexQueue.Enqueue(vertex);

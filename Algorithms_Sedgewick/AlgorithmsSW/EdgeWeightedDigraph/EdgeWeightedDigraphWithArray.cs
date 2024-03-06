@@ -1,5 +1,8 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Collections;
+using Digraph;
+
 public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeight>
 {
 	/*
@@ -8,15 +11,14 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 		efficiently).
 	*/
 	
-	private readonly DirectedEdge<TWeight>?[,] edges;
+	private readonly DirectedEdge<TWeight>?[,] edges; 
 
 	public int VertexCount { get; }
 
 	/// <inheritdoc/>
 	public int EdgeCount { get; private set; }
-	
-	public IComparer<TWeight> Comparer { get; }
 
+	/// <inheritdoc/>
 	public IEnumerable<DirectedEdge<TWeight>> WeightedEdges
 	{
 		get
@@ -34,10 +36,9 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 		}
 	}
 	
-	public EdgeWeightedDigraphWithArray(int vertexCount, IComparer<TWeight> comparer)
+	public EdgeWeightedDigraphWithArray(int vertexCount)
 	{
 		VertexCount = vertexCount;
-		Comparer = comparer;
 		edges = new DirectedEdge<TWeight>[vertexCount, vertexCount];
 		EdgeCount = 0;
 	}
@@ -52,7 +53,14 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 			}
 		}
 	}
+
+	/// <inheritdoc/>
+	public bool SupportsParallelEdges => false;
 	
+	/// <inheritdoc/>
+	public bool SupportsSelfLoops => true;
+
+	/// <inheritdoc/>
 	public IEnumerable<DirectedEdge<TWeight>> GetIncidentEdges(int vertex)
 	{
 		for (int i = 0; i < VertexCount; i++)
@@ -64,6 +72,7 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 		}
 	}
 
+	/// <inheritdoc/>
 	public void AddEdge(DirectedEdge<TWeight> edge)
 	{
 		if (edges[edge.Source, edge.Target] != null)
@@ -75,15 +84,23 @@ public class EdgeWeightedDigraphWithArray<TWeight> : IEdgeWeightedDigraph<TWeigh
 		EdgeCount++;
 	}
 
-	// IS this correct? should we check it is the same edge??
-	public void RemoveEdge(DirectedEdge<TWeight> edge)
+	// TODO: Is this correct? should we check it is the same edge??
+	/// <inheritdoc/>
+	public bool RemoveEdge(DirectedEdge<TWeight> edge)
 	{
 		if (edges[edge.Source, edge.Target] == null)
 		{
-			throw new ArgumentException("Edge does not exists.");
+			return false;
 		}
 
 		edges[edge.Source, edge.Target] = null;
 		EdgeCount--;
+		return true;
 	}
+
+	/// <inheritdoc/>
+	public IEnumerator<(int vertex0, int vertex1)> GetEnumerator() => ((IReadOnlyDigraph)this).Edges.GetEnumerator();
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

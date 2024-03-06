@@ -30,7 +30,7 @@ public class Connectivity
 	/// Initializes a new instance of the <see cref="Connectivity"/> class from the given graph.
 	/// </summary>
 	/// <param name="graph">The graph to analyze.</param>
-	public Connectivity(IGraph graph)
+	public Connectivity(IReadOnlyGraph graph)
 	{
 		graph.ThrowIfNull();
 		vertexOfComponent = new ResizeableArray<int>();
@@ -79,7 +79,7 @@ public class Connectivity
 		return components[componentIndex].GetPathTo(vertex1);
 	}
 
-	private void FindConnectedComponents(IGraph graph)
+	private void FindConnectedComponents(IReadOnlyGraph graph)
 	{
 		int vertex = 0;
 		ComponentCount = 0;

@@ -8,8 +8,7 @@ using System.Numerics;
 /// floats and integers.
 /// </summary>
 /// <typeparam name="TComparable">The type of value to wrap.</typeparam>
-/*
-	The design of this class is flawed:
+/*	The design of this class is flawed:
 		- It does not work well with the infinities that float and double already can express.
 		- It does not work well with NaN.
 		- It is somewhat awkward to have the negative infinity present for unsigned numbers.

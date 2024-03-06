@@ -12,12 +12,12 @@ public class GraphProperties
 	
 	public int Girth { get; private set; }
 
-	private GraphProperties(IGraph graph)
+	private GraphProperties(IReadOnlyGraph graph)
 	{
 		eccentricities = new int[graph.VertexCount];
 	}
 
-	public static GraphProperties Build(IGraph graph)
+	public static GraphProperties Build(IReadOnlyGraph graph)
 	{
 		var graphProperties = new GraphProperties(graph);
 		graphProperties.CalculateEccentricities(graph);
@@ -33,7 +33,7 @@ public class GraphProperties
 		return eccentricities[vertex];
 	}
 
-	private static int CalculateEccentricity(IGraph graph, int sourceVertex)
+	private static int CalculateEccentricity(IReadOnlyGraph graph, int sourceVertex)
 	{
 		var graphPaths = BreadthFirstPathsSearch.Build(graph, sourceVertex);
 		int longestDistance = 0;
@@ -63,7 +63,7 @@ public class GraphProperties
 	}
 	
 	[ExerciseReference(4, 1, 16)]
-	private void CalculateEccentricities(IGraph graph)
+	private void CalculateEccentricities(IReadOnlyGraph graph)
 	{
 		Radius = graph.VertexCount; // Note: Always bigger than maximum distance
 		Diameter = 0; 
@@ -88,7 +88,7 @@ public class GraphProperties
 	}
 
 	[ExerciseReference(4, 1, 18)]
-	private void CalculateGirth(IGraph graph)
+	private void CalculateGirth(IReadOnlyGraph graph)
 	{
 		Girth = FindCycleLength(graph, 0);
 
@@ -103,7 +103,7 @@ public class GraphProperties
 		}
 	}
 	
-	private int FindCycleLength(IGraph graph, int sourceVertex)
+	private int FindCycleLength(IReadOnlyGraph graph, int sourceVertex)
 	{
 		bool[] marked = new bool[graph.VertexCount];
 		var queue = new Queue<int>();

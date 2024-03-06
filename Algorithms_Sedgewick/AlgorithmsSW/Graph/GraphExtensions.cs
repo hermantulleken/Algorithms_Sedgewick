@@ -7,22 +7,29 @@ using Digraph;
 public static class GraphExtensions
 {
 	[ExerciseReference(4, 1, 4)]
-	public static bool ContainsEdge(this IGraph graph, int vertex1, int vertex2)
+	public static bool ContainsEdge(this IReadOnlyGraph graph, int vertex1, int vertex2)
 		=> graph.GetAdjacents(vertex1).Contains(vertex2);
 
-	public static int GetSelfLoopCount(this IGraph graph)
+	public static int GetSelfLoopCount(this IReadOnlyGraph graph)
 		=> graph.Vertexes.Count(v => graph.ContainsEdge(v, v));
 
-	public static int GetDegree(this IGraph graph, int vertex) 
+	public static bool HasSelfLoops(this IReadOnlyGraph graph)
+		=> graph.Vertexes.Any(v => graph.ContainsEdge(v, v));
+	
+	public static bool HasParallelEdges(this IReadOnlyGraph graph) 
+		=> graph.SupportsParallelEdges 
+			&& graph.GroupBy(e => e).Any(g => g.Count() > 1);
+
+	public static int GetDegree(this IReadOnlyGraph graph, int vertex) 
 		=> graph.GetAdjacents(vertex).Count();
 
-	public static int MaxDegree(this IGraph graph)
+	public static int MaxDegree(this IReadOnlyGraph graph)
 		=> graph
 			.Vertexes
 			.Select(graph.GetDegree)
 			.Max();
 
-	public static float AverageDegree(this IGraph graph)
+	public static float AverageDegree(this IReadOnlyGraph graph)
 		=> 2 * graph.EdgeCount / (float)graph.VertexCount;
 	
 	public static void Add(this IGraph graph, int vertex0, int vertex1) => graph.AddEdge(vertex0, vertex1);
@@ -31,7 +38,7 @@ public static class GraphExtensions
 	/// Converts a graph to a digraph by two edges (in opposite directions) for each edge in the original graph.
 	/// </summary>
 	/// <param name="graph">The graph to convert.</param>
-	public static IDigraph ToDigraph(this IGraph graph)
+	public static IReadOnlyDigraph ToDigraph(this IReadOnlyGraph graph)
 	{
 		var digraph = DataStructures.Digraph(graph.VertexCount);
 
@@ -45,7 +52,7 @@ public static class GraphExtensions
 	}
 }
 
-public static class GraphValiditor
+public static class GraphValidator
 {
 	public static void ValidateInRange(
 		this IGraph graph,

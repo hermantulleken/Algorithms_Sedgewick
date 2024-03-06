@@ -1,5 +1,7 @@
 namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Collections;
+using Digraph;
 using EdgeWeightedGraph;
 using List;
 
@@ -20,6 +22,9 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 
 	/// <inheritdoc />
 	public IEnumerable<int> GetAdjacents(int vertex) => GetIncidentEdges(vertex).Select(edge => edge.Target);
+
+	public bool SupportsParallelEdges => true;
+	public bool SupportsSelfLoops => true;
 
 	/// <inheritdoc />
 	public IEnumerable<DirectedEdge<TWeight>> WeightedEdges => adjacencyLists.SelectMany(list => list);
@@ -79,14 +84,22 @@ public class EdgeWeightedDigraphWithAdjacencyLists<TWeight>
 	}
 
 	/// <inheritdoc />
-	public void RemoveEdge(DirectedEdge<TWeight> edge)
+	public bool RemoveEdge(DirectedEdge<TWeight> edge)
 	{
-		adjacencyLists[edge.Source].Remove(edge);
-		EdgeCount--;
+		bool wasRemoved = adjacencyLists[edge.Source].Remove(edge);
+
+		if (wasRemoved)
+		{
+			EdgeCount--;
+		}
+
+		return wasRemoved;
 	}
 
-	public bool TryGetUniqueEdge(int pairFirst, int pairLast, out DirectedEdge<TWeight> edge)
-	{
-		throw new NotImplementedException();
-	}
+	public bool TryGetUniqueEdge(int pairFirst, int pairLast, out DirectedEdge<TWeight> edge) 
+		=> throw new NotImplementedException();
+
+	public IEnumerator<(int vertex0, int vertex1)> GetEnumerator() => ((IReadOnlyDigraph)this).Edges.GetEnumerator();
+
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
