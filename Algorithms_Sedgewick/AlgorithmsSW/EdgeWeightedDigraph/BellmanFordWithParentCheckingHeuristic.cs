@@ -21,7 +21,7 @@ using Support;
 /// </remarks>
 [ExerciseReference(4, 4, 32)]
 public class BellmanFordWithParentCheckingHeuristic<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly TWeight[] distanceTo;
 	private readonly DirectedEdge<TWeight>?[] edgeTo;

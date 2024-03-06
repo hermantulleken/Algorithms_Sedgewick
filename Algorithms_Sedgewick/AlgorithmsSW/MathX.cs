@@ -47,7 +47,7 @@ public static class MathX
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool ApproximatelyEqual<T>(T a, T b, T tolerance)
-		where T : IFloatingPoint<T>
+		where T : INumber<T>
 		=> T.Abs(a - b) < tolerance;
 			
 	/// <summary>

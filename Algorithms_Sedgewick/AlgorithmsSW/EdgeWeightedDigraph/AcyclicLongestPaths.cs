@@ -4,7 +4,7 @@ using System.Numerics;
 
 [ExerciseReference(4, 4, 28)]
 public class AcyclicLongestPaths<TWeight> : IShortestPath<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	private AcyclicShortestPaths<TWeight> invertedShortestPath;
 	

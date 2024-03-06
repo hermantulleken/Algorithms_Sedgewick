@@ -5,7 +5,7 @@ using List;
 using Support;
 
 public record DirectedPath<TWeight>
-	where TWeight : IFloatingPoint<TWeight>
+	where TWeight : INumber<TWeight>
 {
 	public ResizeableArray<DirectedEdge<TWeight>> Edges { get; }
 	
@@ -139,6 +139,6 @@ public record DirectedPath<TWeight>
 	public bool HasEqualVertices(DirectedPath<TWeight> other) => Vertexes.SequenceEqual(other.Vertexes);
 	
 	private static TFloat Add<TFloat>(TFloat x, TFloat y) 
-		where TFloat : IFloatingPoint<TFloat> 
+		where TFloat : INumber<TFloat> 
 		=> x + y;
 }

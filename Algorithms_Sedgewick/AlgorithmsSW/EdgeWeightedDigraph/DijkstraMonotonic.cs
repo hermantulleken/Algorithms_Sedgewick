@@ -14,7 +14,7 @@ using PriorityQueue;
 	An example of an algorithm to obscure or difficult for Chat GPT (Dec 2023).
 */
 public sealed class DijkstraMonotonic<TWeight>
-	where TWeight : IFloatingPointIeee754<TWeight>
+	where TWeight : INumber<TWeight>
 {
 	private class Path(TWeight weight, DirectedEdge<TWeight> lastEdge)
 	{
@@ -46,7 +46,7 @@ public sealed class DijkstraMonotonic<TWeight>
 		}
 	}
 	
-	private readonly IRandomAccessList<TWeight> distTo;
+	private readonly IRandomAccessList<ExtendedComparable<TWeight>> distTo;
 	private readonly IRandomAccessList<Path?> pathTo;
 	private readonly int source;
 
@@ -62,9 +62,9 @@ public sealed class DijkstraMonotonic<TWeight>
 		this.source = source;
 		int vertexCount = edgeWeightedDigraph.VertexCount;
 
-		var distToMonotonicAscending = DataStructures.List(vertexCount, TWeight.PositiveInfinity);
-		var distToMonotonicDescending = DataStructures.List(vertexCount, TWeight.PositiveInfinity);
-		distTo = DataStructures.List(vertexCount, TWeight.PositiveInfinity);
+		var distToMonotonicAscending = DataStructures.List(vertexCount, ExtendedComparable<TWeight>.PositiveInfinity);
+		var distToMonotonicDescending = DataStructures.List(vertexCount, ExtendedComparable<TWeight>.PositiveInfinity);
+		distTo = DataStructures.List(vertexCount, ExtendedComparable<TWeight>.PositiveInfinity);
 		
 		var pathMonotonicAscending = DataStructures.List<Path?>(vertexCount, null);
 		var pathMonotonicDescending = DataStructures.List<Path?>(vertexCount, null);
@@ -102,15 +102,16 @@ public sealed class DijkstraMonotonic<TWeight>
 	/// Gets the shortest path distance from the source vertex to the specified vertex.
 	/// </summary>
 	/// <param name="vertex">The vertex to which the shortest path distance should be retrieved.</param>
-	/// <returns>The shortest path distance from the source vertex to the specified vertex.</returns>
-	public TWeight DistTo(int vertex) => distTo[vertex];
+	/// <returns>The shortest path distance from the source vertex to the specified vertex, if the path exists.</returns>
+	/// <exception cref="InvalidOperationException">The path does not exist.</exception>
+	public TWeight DistTo(int vertex) => distTo[vertex].FiniteValue;
 
 	/// <summary>
 	/// Determines whether a path exists from the source vertex to the specified vertex.
 	/// </summary>
 	/// <param name="vertex">The vertex to which the presence of a path should be checked.</param>
 	/// <returns><see langword="true"/> if there is a path from the source vertex to the specified vertex; otherwise, <see langword="false"/>.</returns>
-	public bool HasPathTo(int vertex) => distTo[vertex] != TWeight.PositiveInfinity;
+	public bool HasPathTo(int vertex) => distTo[vertex] != ExtendedComparable<TWeight>.PositiveInfinity;
 
 	/// <summary>
 	/// Gets the shortest path from the source vertex to the specified vertex.
@@ -149,14 +150,14 @@ public sealed class DijkstraMonotonic<TWeight>
 	private void RelaxAllEdgesInSpecificOrder(
 		IReadOnlyEdgeWeightedDigraph<TWeight> edgeWeightedDigraph, 
 		IComparer<DirectedEdge<TWeight>> edgesComparator, 
-		IRandomAccessList<TWeight> distToVertex,
+		IRandomAccessList<ExtendedComparable<TWeight>> distToVertex,
 		IRandomAccessList<Path?> pathToVertex, 
 		bool isAscendingOrder)
 	{
 		pathToVertex.ThrowIfNull();
 		var pathComparer = Comparer<Path>.Create((x, y) => x.Weight.CompareTo(y.Weight));
 		var priorityQueue = DataStructures.PriorityQueue(pathComparer);
-		distToVertex[source] = TWeight.Zero;
+		distToVertex[source] = new(TWeight.Zero);
 
 		AddInitialEdges(edgeWeightedDigraph, edgesComparator, priorityQueue);
 
@@ -166,9 +167,9 @@ public sealed class DijkstraMonotonic<TWeight>
 			int nextVertexInPath = currentEdge.Target;
 			
 			if (pathToVertex[nextVertexInPath] == null
-				|| currentShortestPath.Weight < distToVertex[nextVertexInPath])
+				|| (ExtendedComparable<TWeight>)currentShortestPath.Weight < distToVertex[nextVertexInPath])
 			{
-				distToVertex[nextVertexInPath] = currentShortestPath.Weight;
+				distToVertex[nextVertexInPath] = new(currentShortestPath.Weight);
 				pathToVertex[nextVertexInPath] = currentShortestPath;
 			}
 
@@ -196,9 +197,9 @@ public sealed class DijkstraMonotonic<TWeight>
 	}
 
 	private void CompareMonotonicPathsAndComputeShortest(
-		IRandomAccessList<TWeight> distToMonotonicAscending, 
+		IRandomAccessList<ExtendedComparable<TWeight>> distToMonotonicAscending, 
 		IRandomAccessList<Path?> pathMonotonicAscending,
-		IRandomAccessList<TWeight> distToMonotonicDescending,
+		IRandomAccessList<ExtendedComparable<TWeight>> distToMonotonicDescending,
 		IRandomAccessList<Path?> pathMonotonicDescending)
 	{
 		for (int vertex = 0; vertex < distTo.Count; vertex++) 

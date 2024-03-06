@@ -8,7 +8,7 @@ using Digraph;
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 public class AcyclicShortestPaths<TWeight> : IShortestPath<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly DirectedEdge<TWeight>[] edgeTo;
 	private readonly TWeight[] distTo;

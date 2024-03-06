@@ -7,30 +7,42 @@ using PriorityQueue;
 /// Algorithm to find the shortest path from a source vertex to all other vertices in a edge weighted digraph.
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
-[AlgorithmReference(4, 9)]
-public class Dijkstra<TWeight> : IShortestPath<TWeight>
-	where TWeight : 
-		INumber<TWeight>,
-		IMinMaxValue<TWeight>
+[ExerciseReference(4, 4, 39)]
+public class DijkstraLazy<TWeight> : IShortestPath<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
+	class NodeComparer : IComparer<(int node, TWeight weight)>
+	{
+		public int Compare((int node, TWeight weight) x, (int node, TWeight weight) y)
+		{
+			int item1Comparison = Comparer<int>.Default.Compare(x.Item1, y.Item1);
+			if (item1Comparison != 0)
+			{
+				return item1Comparison;
+			}
+
+			return Comparer<TWeight>.Default.Compare(x.Item2, y.Item2);
+		}
+	}
 	private readonly IReadOnlyEdgeWeightedDigraph<TWeight> graph;
 	private readonly DirectedEdge<TWeight>?[] edgeTo;
 	private readonly TWeight[] distTo;
-	private readonly IndexPriorityQueue<TWeight> priorityQueue;
-	
+	private readonly IPriorityQueue<(int node, TWeight weight)> priorityQueue;
+
 	/// <summary>
-	/// Initializes a new instance of the <see cref="Dijkstra{T}"/> class.
+	/// Initializes a new instance of the <see cref="DijkstraLazy{T}"/> class.
 	/// </summary>
 	/// <param name="graph">The graph to find the shortest paths in.</param>
 	/// <param name="source">The source vertex to find the shortest paths from.</param>
-	public Dijkstra(
+	public DijkstraLazy(
 		IReadOnlyEdgeWeightedDigraph<TWeight> graph, 
 		int source)
 	{
 		this.graph = graph;
 		edgeTo = new DirectedEdge<TWeight>[graph.VertexCount];
 		distTo = new TWeight[graph.VertexCount];
-		priorityQueue = new(graph.VertexCount, Comparer<TWeight>.Default);
+		priorityQueue = DataStructures.PriorityQueue(graph.VertexCount, new NodeComparer());
+		var expandedNodes = DataStructures.Set(Comparer<int>.Default);
 		
 		for (int i = 0; i < graph.VertexCount; i++)
 		{
@@ -38,11 +50,20 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 		}
 		
 		distTo[source] = TWeight.Zero;
-		priorityQueue.Insert(source, TWeight.Zero);
+		priorityQueue.Push((source, TWeight.Zero));
 		
-		while (!priorityQueue.IsEmpty)
+		while (!priorityQueue.IsEmpty())
 		{
-			Relax(graph, priorityQueue.PopMin().index);
+			int nextNode = priorityQueue.PopMin().node;
+
+			if (expandedNodes.Contains(nextNode))
+			{
+				continue;
+			}
+			
+			expandedNodes.Add(nextNode);
+			
+			Relax(graph, nextNode);
 		}
 	}
 
@@ -92,14 +113,7 @@ public class Dijkstra<TWeight> : IShortestPath<TWeight>
 			distTo[target] = distTo[vertex] + edge.Weight;
 			edgeTo[target] = edge;
 				
-			if (priorityQueue.Contains(target))
-			{
-				priorityQueue.UpdateValue(target, distTo[target]);
-			}
-			else
-			{
-				priorityQueue.Insert(target, distTo[target]);
-			}
+			priorityQueue.Push((target, distTo[target]));
 		}
 	}
 }

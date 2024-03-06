@@ -7,7 +7,7 @@ using System.Numerics;
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 public interface IMst<TWeight>
-	where TWeight : IFloatingPoint<TWeight>
+	where TWeight : INumber<TWeight>
 {
 	/// <summary>
 	/// Gets the edges that is part of the minimum spanning tree.

@@ -5,7 +5,7 @@ using System.Numerics;
 /// <inheritdoc />
 [ExerciseReference(4, 4, 37)]
 public class CriticalEdgesExamineIntersectingShortestPaths<TWeight> : ICriticalEdge<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	/// <inheritdoc />
 	public bool HasCriticalEdge => CriticalEdge != null;
@@ -37,7 +37,7 @@ public class CriticalEdgesExamineIntersectingShortestPaths<TWeight> : ICriticalE
 			source, 
 			destination);
 
-		var edges = algorithm.Intersection;
+		var edges = algorithm.Intersection; // TODO: can be null, what do we do then?
 
 		foreach (var weightlessEdge in edges)
 		{

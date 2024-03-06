@@ -6,7 +6,7 @@ namespace AlgorithmsSW.EdgeWeightedGraph;
 using System.Numerics;
 
 public class PrimMst<T> : IMst<T> 
-	where T : IComparable<T>, IFloatingPoint<T>
+	where T : IComparable<T>, INumber<T>
 {
 	private readonly Edge<T>[] edgeTo;
 	private readonly T[] distTo;

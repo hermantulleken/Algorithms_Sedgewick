@@ -6,7 +6,7 @@ namespace AlgorithmsSW.EdgeWeightedGraph;
 using System.Numerics;
 
 public class LazyPrimMst<T> : IMst<T>
-	where T : IFloatingPoint<T>
+	where T : INumber<T>
 {
 	private readonly bool[] marked;
 	private readonly IQueue<Edge<T>> mst = DataStructures.Queue<Edge<T>>();

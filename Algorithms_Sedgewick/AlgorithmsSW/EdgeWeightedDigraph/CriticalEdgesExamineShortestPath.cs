@@ -6,7 +6,7 @@ using System.Numerics;
 /// <inheritdoc />
 [ExerciseReference(4, 4, 37)]
 public class CriticalEdgesExamineShortestPath<TWeight> : ICriticalEdge<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	/// <inheritdoc />
 	[MemberNotNullWhen(true, nameof(CriticalEdge))]

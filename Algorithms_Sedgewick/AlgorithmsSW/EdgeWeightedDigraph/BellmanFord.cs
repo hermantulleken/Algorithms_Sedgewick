@@ -9,7 +9,7 @@ using Support;
 using static System.Diagnostics.Debug;
 
 public class BellmanFord<TWeight> : IShortestPath<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly TWeight[] distanceTo;
 	private readonly DirectedEdge<TWeight>?[] edgeTo;

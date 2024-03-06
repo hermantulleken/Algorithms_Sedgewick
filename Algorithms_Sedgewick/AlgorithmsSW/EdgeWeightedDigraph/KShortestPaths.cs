@@ -15,7 +15,7 @@ using Support;
 /// </remarks>
 [ExerciseReference(4, 4, 7)]
 public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
-	where TWeight : IFloatingPoint<TWeight>
+	where TWeight : INumber<TWeight>
 {
 	private readonly ResizeableArray<DirectedPath<TWeight>> shortestPaths;
 
@@ -59,7 +59,7 @@ public class KShortestPaths<TWeight> : IKShortestPaths<TWeight>
 				shortestPaths.Add(shortestPath);
 			}
 
-			/*	The Wikipedia keeps track of the number of paths for each vertex, and has this early bailout.
+			/*	The Wikipedia version keeps track of the number of paths for each vertex, and has this early bailout.
 				However, when there are equal paths, I think this causes the algorithm to find too few paths.
 
 				if (count[u] >= k) continue;

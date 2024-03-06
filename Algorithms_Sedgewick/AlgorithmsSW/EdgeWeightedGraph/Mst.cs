@@ -19,7 +19,7 @@ public class Mst
 	/// <returns>A new MST.</returns>
 	[ExerciseReference(4, 3, 14)]
 	public EdgeWeightedGraphWithAdjacencyLists<T> DeleteEdge<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst, Edge<T> edge)
-		where T : IFloatingPoint<T>
+		where T : INumber<T>
 	{
 		var newMst = new EdgeWeightedGraphWithAdjacencyLists<T>(graph.VertexCount, mst.Edges);
 		graph.RemoveEdge(edge);
@@ -41,7 +41,7 @@ public class Mst
 	/// <returns>A new MST.</returns>
 	[ExerciseReference(4, 3, 15)]
 	public EdgeWeightedGraphWithAdjacencyLists<T> AddEdge<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst, Edge<T> edge)
-		where T : IFloatingPoint<T>
+		where T : INumber<T>
 	{
 		var mstGraph = new GraphWithAdjacentsLists(graph.VertexCount);
 		foreach (var e in mst.Edges)
@@ -79,7 +79,7 @@ public class Mst
 	/// <returns>A new MST.</returns>
 	[ExerciseReference(4, 3, 16)]
 	public T FindMaxWeightThat<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst, (int vertex0, int vertex1) edge)
-		where T : IFloatingPoint<T>
+		where T : INumber<T>
 	{
 		var mstGraph = new GraphWithAdjacentsLists(graph.VertexCount);
 		foreach (var e in mst.Edges)
@@ -151,7 +151,7 @@ public class Mst
 
 	[ExerciseReference(4, 3, 22)]
 	public static IEnumerable<IMst<T>> MstForest<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph)
-		where T : IFloatingPoint<T>
+		where T : INumber<T>
 	{
 		var componentsAlgo = new Components<T>(graph);
 		var components = new EdgeWeightedGraphWithAdjacencyLists<T>?[componentsAlgo.ComponentCount];		
@@ -230,7 +230,7 @@ public class Mst
 
 	[ExerciseReference(4, 3, 33)]
 	private bool IsMst<T>(EdgeWeightedGraphWithAdjacencyLists<T> graph, IMst<T> mst)
-		where T : IFloatingPoint<T>
+		where T : INumber<T>
 	{
 		var comparer = Comparer<int>.Default;
 		var edgeComparer = new EdgeComparer<T>();
@@ -252,7 +252,7 @@ public class Mst
 		Set.ISet<int> partition0,
 		Set.ISet<int> partition1,
 		EdgeComparer<T> comparer) 
-		where T : IFloatingPoint<T>
+		where T : INumber<T>
 	{
 		var joiningEdges = DataStructures.Set(comparer);
 		

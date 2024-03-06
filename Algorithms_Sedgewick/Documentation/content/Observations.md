@@ -16,6 +16,15 @@ necessary operations. For example, weights in graphs can be implemented as eithe
 type with `IComparer` and `Func<TWeight, TWeight, TWeight>` for addition where required. I opted to use the latter, partly
 to be consistent, but also because it allows for more flexibility (reinterpreting weights, for example).
 
+- (Later) I went back on this decision, since adding Zero, Add, MaxValue etc. to each algorithm became too burdensome,
+and was cluttering the interface. I almost added a new type to hold those three things, but of course that is very 
+similar to something like IFloatingPoint, so instead I added constraints to weight types. For now, these are added 
+to the algorithms, not the data structures, still giving flexibility on what you can use as weights but then 
+limiting what algorithms you can use on the graph. 
+- Doing this allowed me to remove the comparers from the graphs (I _could_ leave them if I wanted, but I thought 
+this would make comparisons potentially ambiguous). A consequence of this is that it is not possible to invert certain
+algorithms by flipping the comparer.
+
 ## Sort methods
 Sorting parts of lists are very useful, so in general provide a method to sort a list between specified indexes, and 
 then use that to implement the method to implement the full list.

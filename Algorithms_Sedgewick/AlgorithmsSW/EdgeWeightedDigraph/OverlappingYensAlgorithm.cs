@@ -21,7 +21,7 @@ using static System.Diagnostics.Debug;
 */
 [ExerciseReference(4, 4, 7)]
 public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly ResizeableArray<DirectedPath<TWeight>> shortestPaths;
 	
@@ -88,6 +88,7 @@ public class OverlappingYensAlgorithm<TWeight> : IKShortestPaths<TWeight>
 			Intersection = intersection.PreviousValue;
 		}
 		
+		// TODO: This fails sometimes. Bug or misconception?
 		Assert((shortestPaths.Count > 0) == intersection.HasPreviousValue);
 		
 		return;

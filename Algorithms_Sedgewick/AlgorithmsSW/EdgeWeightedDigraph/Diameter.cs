@@ -9,7 +9,7 @@ using PathTerminals = (int source, int target);
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 [ExerciseReference(4, 4, 8)]
 public class Diameter<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	/// <summary>
 	///  This class allow us to find the maximum of an item by some metric, while keeping both together.

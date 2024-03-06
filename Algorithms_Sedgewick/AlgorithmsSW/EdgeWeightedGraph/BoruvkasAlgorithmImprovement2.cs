@@ -9,7 +9,7 @@ using List;
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 public class BoruvkasAlgorithmImprovement2<TWeight> : IMst<TWeight>
-	where TWeight : IFloatingPoint<TWeight>
+	where TWeight : INumber<TWeight>
 {
 	private readonly Queue<Edge<TWeight>> minimumSpanningTree;
 

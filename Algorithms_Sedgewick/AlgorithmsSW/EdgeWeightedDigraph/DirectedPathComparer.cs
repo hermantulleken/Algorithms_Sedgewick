@@ -10,7 +10,7 @@ using System.Numerics;
 /// <typeparam name="TWeight">The type of the weight.</typeparam>
 public class DirectedPathComparer<TWeight>(IComparer<TWeight> weightComparer)
 	: IComparer<DirectedPath<TWeight>>
-	where TWeight : IFloatingPoint<TWeight>
+	where TWeight : INumber<TWeight>
 {
 	public int Compare(DirectedPath<TWeight>? x, DirectedPath<TWeight>? y)
 	{

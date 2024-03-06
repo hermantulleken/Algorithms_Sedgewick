@@ -5,7 +5,7 @@ using List;
 using static System.Diagnostics.Debug;
 
 public class CriticalPathMethod<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	public IRandomAccessList<IRandomAccessList<DirectedEdge<TWeight>>> CriticalPaths { get; }
 	

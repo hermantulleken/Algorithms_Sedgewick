@@ -47,7 +47,7 @@ public static class ComparerExtensions
 	}
 	
 	public static bool ApproximatelyEqual<T>(this IComparer<T> comparer, T left, T right, T tolerance)
-		where T : IFloatingPoint<T>
+		where T : INumber<T>
 	{
 		comparer.ThrowIfNull();
 		tolerance.ThrowIfNull();

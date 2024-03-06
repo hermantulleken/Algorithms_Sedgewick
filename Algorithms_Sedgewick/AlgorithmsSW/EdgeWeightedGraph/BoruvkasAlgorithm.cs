@@ -5,7 +5,7 @@ using List;
 using Support;
 
 public class BoruvkasAlgorithm<TWeight> : IMst<TWeight>
-	where TWeight : IFloatingPoint<TWeight>
+	where TWeight : INumber<TWeight>
 {
 	private readonly ResizeableArray<Edge<TWeight>> mstEdges = new();
 	

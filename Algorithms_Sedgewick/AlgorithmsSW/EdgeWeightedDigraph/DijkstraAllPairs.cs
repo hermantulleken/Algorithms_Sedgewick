@@ -7,7 +7,7 @@ using System.Numerics;
 /// </summary>
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 public class DijkstraAllPairs<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly Dijkstra<TWeight>[] shortestPaths;
 	

@@ -14,7 +14,7 @@ using static System.Diagnostics.Debug;
 // Note: only implemented for weights of type double.
 [ExerciseReference(4, 4, 23)]
 public class DijkstraSourceSink<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly TWeight distance;
 	private readonly IReadonlyRandomAccessList<DirectedEdge<TWeight>>? path;
@@ -74,16 +74,16 @@ public class DijkstraSourceSink<TWeight>
 					throw new ArgumentException("Negative weights are not allowed.", nameof(graph));
 				}
 				
-				// Not visited.
 				if (edgeTo[edge.Target] == null) 
 				{
+					// Not visited.
 					edgeTo[edge.Target] = edge;
 					distanceTo[edge.Target] = distanceToSource + edge.Weight;
 					queue.Insert(edge.Target, distanceTo[edge.Target]);
 				}
-				// Found a shorter path.
 				else if (distanceToSource + edge.Weight < distanceTo[edge.Target])
 				{
+					// Found a shorter path.
 					edgeTo[edge.Target] = edge;
 					distanceTo[edge.Target] = distanceToSource + edge.Weight;
 
@@ -99,7 +99,13 @@ public class DijkstraSourceSink<TWeight>
 					distance = distanceTo[edge.Target];
 					PathExists = true;
 					path = GetPath(edgeTo, sink);
-					//break;
+					
+					/*	The first time we have a path two the sync it is not necessarily the shortest
+						Example: A-------(20)------B
+								 \--(1)--C--(1)--/
+								 
+						Therefore we cannot break here. 
+					*/
 				}
 			}
 		}
@@ -108,7 +114,6 @@ public class DijkstraSourceSink<TWeight>
 	private IReadonlyRandomAccessList<DirectedEdge<TWeight>> GetPath(DirectedEdge<TWeight>?[] edgeTo, int sink)
 	{
 		Assert(PathExists);
-		
 		var stack = new Stack<DirectedEdge<TWeight>>();
 		
 		for (var edge = edgeTo[sink]; edge != null; edge = edgeTo[edge.Source])

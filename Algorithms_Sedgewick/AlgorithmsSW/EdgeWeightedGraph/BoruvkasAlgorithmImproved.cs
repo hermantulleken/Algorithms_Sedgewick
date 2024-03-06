@@ -13,7 +13,7 @@ using static System.Diagnostics.Debug;
 /// <typeparam name="TWeight">The type of the edge weights.</typeparam>
 /// <remarks>This algorithm is not really better than <see cref="BoruvkasAlgorithm{TWeight}"/>.</remarks>
 public class BoruvkasAlgorithmImproved<TWeight> : IMst<TWeight>
-	where TWeight : IFloatingPoint<TWeight>
+	where TWeight : INumber<TWeight>
 {
 	private readonly int[] component;
 	private readonly ResizeableArray<Edge<TWeight>> mstEdges;

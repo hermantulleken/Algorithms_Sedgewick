@@ -16,7 +16,7 @@ using static System.Diagnostics.Debug;
 [ExerciseReference(4, 4, 7)]
 public class YensAlgorithm<TWeight> 
 	: IKShortestPaths<TWeight>
-	where TWeight : IFloatingPoint<TWeight>, IMinMaxValue<TWeight>
+	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
 	private readonly DirectedPath<TWeight>?[] shortestPaths;
 	

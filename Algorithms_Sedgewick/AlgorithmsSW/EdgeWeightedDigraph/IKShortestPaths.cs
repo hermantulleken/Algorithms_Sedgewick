@@ -3,7 +3,7 @@
 using System.Numerics;
 
 public interface IKShortestPaths<TWeight>
-	where TWeight : IFloatingPoint<TWeight>
+	where TWeight : INumber<TWeight>
 {
 	bool HasPath(int k);
 	

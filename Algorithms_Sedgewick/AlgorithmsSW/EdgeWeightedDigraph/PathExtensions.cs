@@ -34,7 +34,7 @@ public static class PathExtensions
 		TWeight zero,
 		Func<TWeight, TWeight, TWeight> add,
 		out DirectedPath<TWeight>? cycle)
-	where TWeight : IFloatingPoint<TWeight>
+	where TWeight : INumber<TWeight>
 	{
 		// Indexes:        0 1 2 3 4 5 6 7 8
 		// Path:           0 1 2 3 4 5 6 3 8
@@ -59,7 +59,7 @@ public static class PathExtensions
 		IEdgeWeightedDigraph<TWeight> graph, 
 		IEnumerable<int> vertexPath,
 		out DirectedPath<TWeight>? path)
-		where TWeight : IFloatingPoint<TWeight>
+		where TWeight : INumber<TWeight>
 	{
 		var edges = new ResizeableArray<DirectedEdge<TWeight>>();
 		foreach (var pair in vertexPath.SlidingWindow2())
