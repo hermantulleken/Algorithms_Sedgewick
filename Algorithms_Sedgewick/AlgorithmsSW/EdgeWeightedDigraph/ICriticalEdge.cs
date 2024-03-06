@@ -6,6 +6,7 @@
 /// </summary>
 /*	Note: It is not clear whether "but not remove all shortest paths" should be part of the definition or not.
 */
+[ExerciseReference(4, 4, 37)]
 public interface ICriticalEdge<TWeight>
 {
 	/// <summary>

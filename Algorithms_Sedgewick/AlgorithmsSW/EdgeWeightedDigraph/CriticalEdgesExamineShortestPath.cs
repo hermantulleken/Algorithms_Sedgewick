@@ -1,10 +1,9 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
 using System.Numerics;
-using List;
+using static System.Diagnostics.Debug;
 
 /// <inheritdoc />
-[ExerciseReference(4, 4, 37)]
 public class CriticalEdgesExamineShortestPath<TWeight> : ICriticalEdge<TWeight>
 	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
@@ -25,8 +24,7 @@ public class CriticalEdgesExamineShortestPath<TWeight> : ICriticalEdge<TWeight>
 		int source, 
 		int destination)
 	{
-		var maxDistance = TWeight.Zero;
-		ResizeableArray<DirectedEdge<TWeight>> maxEdges = [];
+		var maxAggregator = new MaxAggregator<DirectedEdge<TWeight>, TWeight>(Comparer<TWeight>.Default);
 		
 		// We only need to check the edges on the path
 		DijkstraSourceSink<TWeight> dijkstra = new(graph, source, destination);
@@ -46,21 +44,15 @@ public class CriticalEdgesExamineShortestPath<TWeight> : ICriticalEdge<TWeight>
 
 			if (dijkstra.PathExists)
 			{
-				if (dijkstra.Distance > maxDistance)
-				{
-					maxDistance = dijkstra.Distance;
-					maxEdges = [edge];
-				}
-				else if (dijkstra.Distance == maxDistance)
-				{
-					maxEdges.Add(edge);
-				}
+				maxAggregator.AddIfBigger(edge, dijkstra.Distance);
 			}
 
 			graph.AddEdge(edge);
 		}
 
-		CriticalEdges = maxEdges;
-		DistanceWithoutCriticalEdge = maxDistance;
+		Assert(maxAggregator.HasMaxComparisonValue);
+		
+		CriticalEdges = maxAggregator.MaxValues;
+		DistanceWithoutCriticalEdge = maxAggregator.MaxComparisonComparisonValue;
 	}
 }
