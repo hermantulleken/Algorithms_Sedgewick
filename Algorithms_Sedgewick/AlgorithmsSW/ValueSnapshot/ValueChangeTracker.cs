@@ -1,6 +1,4 @@
-﻿using Support;
-
-namespace AlgorithmsSW.ValueSnapshot;
+﻿namespace AlgorithmsSW.ValueSnapshot;
 
 /// <summary>
 /// Wrapper that can raise an event when a value changes. 

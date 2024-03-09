@@ -59,7 +59,7 @@ public static class RandomGraph
 	}
 	
 	// This maps pairs to a new pair without self loops. 
-	private static (int, int) NoSelfLoop(int vertexCount, int index)
+	private static (int index1, int index2) NoSelfLoop(int vertexCount, int index)
 	{
 		int i = index / (vertexCount - 1);
 		int j = index % (vertexCount - 1);

@@ -90,7 +90,7 @@ public static class CollectionExtensions
 		}
 	}
 	
-	public static IEnumerable<(T, T)> GenerateAllPairs<T>(this IEnumerable<T> source)
+	public static IEnumerable<(T item1, T item2)> GenerateAllPairs<T>(this IEnumerable<T> source)
 	{
 		var enumerable = source as T[] ?? source.ToArray();
 
@@ -103,7 +103,7 @@ public static class CollectionExtensions
 		}
 	}
 
-	public static IEnumerable<(T, T)> GenerateDistinctPairs<T>(this IEnumerable<T> source)
+	public static IEnumerable<(T item1, T item2)> GenerateDistinctPairs<T>(this IEnumerable<T> source)
 	{
 		var enumerable = source as T[] ?? source.ToArray();
 
@@ -116,6 +116,23 @@ public static class CollectionExtensions
 					yield return (enumerable[i], enumerable[j]);
 				}
 			}
+		}
+	}
+	
+	public static void CopyTo<T>(this IEnumerable<T> source, T[] array, int arrayIndex = 0)
+	{
+		source.ThrowIfNull();
+		array.ThrowIfNull();
+		arrayIndex.ThrowIfOutOfRange(0, array.Length);
+		
+		foreach (var item in source)
+		{
+			if (arrayIndex >= array.Length) 
+			{
+				throw new ArgumentException("The destination array was not long enough to copy all the items in the collection starting at the specified array index.");
+			}
+			
+			array[arrayIndex++] = item;
 		}
 	}
 	

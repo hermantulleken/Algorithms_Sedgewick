@@ -13,9 +13,13 @@ public class TopologicalWithQueue : ITopological
 	{
 		var degrees = new Degrees(digraph);
 
-		var indegrees = digraph.Vertexes.Select(degrees.GetIndegree).ToResizableArray(digraph.VertexCount);
+		var inDegrees
+			= digraph.Vertexes
+				.Select(degrees.GetIndegree)
+				.ToResizableArray(digraph.VertexCount);
 
 		var queue = DataStructures.Queue<int>();
+		
 		foreach (int source in degrees.Sources)
 		{
 			queue.Enqueue(source);
@@ -29,8 +33,8 @@ public class TopologicalWithQueue : ITopological
 			order.Add(item);
 			foreach (int target in digraph.GetAdjacents(item))
 			{
-				indegrees[target]--;
-				if (indegrees[target] == 0)
+				inDegrees[target]--;
+				if (inDegrees[target] == 0)
 				{
 					queue.Enqueue(target);
 				}
@@ -42,5 +46,5 @@ public class TopologicalWithQueue : ITopological
 	public bool IsDirectedAcyclic => order.Count == order.Distinct().Count();
 	
 	/// <inheritdoc />
-	public IEnumerable<int>? Order => order;
+	public IEnumerable<int> Order => order;
 }

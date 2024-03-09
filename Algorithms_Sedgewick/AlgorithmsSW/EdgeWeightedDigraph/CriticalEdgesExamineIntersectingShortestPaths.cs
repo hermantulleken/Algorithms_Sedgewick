@@ -2,17 +2,20 @@
 
 using System.Diagnostics;
 using System.Numerics;
-using List;
 
 /// <inheritdoc />
 [ExerciseReference(4, 4, 37)]
 public class CriticalEdgesExamineIntersectingShortestPaths<TWeight> : ICriticalEdge<TWeight>
 	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
+	/// <inheritdoc />
 	public IEnumerable<DirectedEdge<TWeight>> CriticalEdges { get; }
 
 	/// <inheritdoc />
-	public TWeight DistanceWithoutCriticalEdge { get; }
+	public TWeight? DistanceWithoutCriticalEdge { get; } = default;
+	
+	/// <inheritdoc />
+	public bool HasCriticalEdges { get; private set; }
 	
 	/// <summary>
 	/// Initializes a new instance of the
@@ -26,8 +29,6 @@ public class CriticalEdgesExamineIntersectingShortestPaths<TWeight> : ICriticalE
 		int source, 
 		int destination)
 	{
-		DirectedEdge<TWeight>? maxEdge = null;
-		
 		// We only need to check the edges on the path
 		OverlappingYensAlgorithm<TWeight> algorithm = new OverlappingYensAlgorithm<TWeight>(
 			graph, 
@@ -41,10 +42,12 @@ public class CriticalEdgesExamineIntersectingShortestPaths<TWeight> : ICriticalE
 			CriticalEdges = edges.Select(edge => graph.GetUniqueEdge(edge.Item1, edge.Item2));
 			Debug.Assert(algorithm.PathRank >= 1);
 			DistanceWithoutCriticalEdge = algorithm.GetPath(algorithm.PathRank - 1).Distance;
+			HasCriticalEdges = true;
 		}
 		else
 		{
 			CriticalEdges = Array.Empty<DirectedEdge<TWeight>>();
+			HasCriticalEdges = false;
 		}
 	}
 }

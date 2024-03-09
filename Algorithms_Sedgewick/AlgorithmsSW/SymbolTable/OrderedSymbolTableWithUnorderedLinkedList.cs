@@ -36,18 +36,18 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedS
 	public OrderedSymbolTableWithUnorderedLinkedList(IComparer<TKey> comparer)
 	{
 		this.comparer = comparer;
-		list = new List.LinkedList<KeyValuePair<TKey, TValue>>();
+		list = new();
 	}
 
 	public void Add(TKey key, TValue value)
 	{
 		if (TryFindNodeWithKey(key, out var node))
 		{
-			node.Item = new KeyValuePair<TKey, TValue>(key, value);
+			node.Item = new(key, value);
 		}
 		else
 		{
-			list.InsertAtBack(new KeyValuePair<TKey, TValue>(key, value));
+			list.InsertAtBack(new(key, value));
 		}	
 	}
 
@@ -203,8 +203,8 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedS
 	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node? previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
 		MinNodeAndPrevious() 
 		=> NodeAndPrevious.MinBy(pair => pair.node.Item.Key, comparer);
-
-	private bool TryFindNodeWithKey(TKey key, [MaybeNullWhen(false)] out List.LinkedList<KeyValuePair<TKey, TValue>>.Node node)
+	
+	private bool TryFindNodeWithKey(TKey key, [NotNullWhen(true)] out List.LinkedList<KeyValuePair<TKey, TValue>>.Node? node)
 	{
 		if (list.IsEmpty)
 		{

@@ -42,12 +42,6 @@ public static class Generator
 		// ReSharper disable once IteratorNeverReturns
 	}
 
-	private static double NextUniformRandomDouble(double maxValue) 
-		=> Random.NextDouble() * maxValue;
-	
-	private static double NextUniformRandomDouble(double minValue, double maxValue) 
-		=> Random.NextDouble() * (maxValue - minValue) + minValue;
-
 	/// <summary>
 	/// Generates a random integer in the range [0, maxValue).
 	/// </summary>
@@ -102,4 +96,7 @@ public static class Generator
 			.ToList()
 			.ToRandomAccessList();
 	}
+	
+	private static double NextUniformRandomDouble(double minValue, double maxValue) 
+		=> Random.NextDouble() * (maxValue - minValue) + minValue;
 }

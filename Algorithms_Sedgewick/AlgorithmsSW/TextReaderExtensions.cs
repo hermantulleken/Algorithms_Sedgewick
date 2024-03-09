@@ -39,7 +39,7 @@ public static class TextReaderExtensions
 	{
 		while (!reader.IsEndOfStream())
 		{
-			if (char.IsWhiteSpace((char) reader.Peek()))
+			if (char.IsWhiteSpace((char)reader.Peek()))
 			{
 				reader.Read();
 			}

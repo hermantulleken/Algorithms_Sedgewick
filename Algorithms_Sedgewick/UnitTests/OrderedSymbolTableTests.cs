@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using AlgorithmsSW.SearchTrees;
 using AlgorithmsSW.SymbolTable;
-using NUnit.Framework.Legacy;
 
 [TestFixture]
 public class OrderedSymbolTableTests
@@ -110,11 +109,11 @@ public class OrderedSymbolTableTests
 		var symbolTable = factory();
 		AddElements(symbolTable);
 
-		IEnumerable<string> keysInRange = symbolTable.KeysRange("apple", "cherry");
-		CollectionAssert.AreEqual(keysInRange, new List<string> { "apple", "banana" });
+		var keysInRange = symbolTable.KeysRange("apple", "cherry");
+		Assert.That(keysInRange, Is.EquivalentTo(new List<string> { "apple", "banana" }));
 
 		keysInRange = symbolTable.KeysRange("banana", "blueberry");
-		CollectionAssert.AreEqual(keysInRange, new List<string> { "banana" });
+		Assert.That(keysInRange, Is.EquivalentTo(new List<string> { "banana" }));
 	}
 
 	private void AddElements(IOrderedSymbolTable<string, int> symbolTable)

@@ -13,8 +13,9 @@ public class ResizeableArrayTest
 		arr.Add(1);
 		arr.Add(2);
 		arr.Add(3);
-		Assert.AreEqual(3, arr.Count);
-		Assert.AreEqual(ResizeableArray.DefaultCapacity, arr.Capacity);
+		
+		Assert.That(arr, Has.Count.EqualTo(3));
+		Assert.That(arr.Capacity, Is.EqualTo(ResizeableArray.DefaultCapacity));
 	}
 
 	[Test]
@@ -22,21 +23,21 @@ public class ResizeableArrayTest
 	{
 		var arr = new ResizeableArray<int>(10);
 		arr.Add(1);
-		Assert.AreEqual(1, arr.Count);
+		Assert.That(arr, Has.Count.EqualTo(1));
 	}
 
 	[Test]
 	public void Capacity_WithCapacityParameter_ReturnsCapacity()
 	{
 		var arr = new ResizeableArray<int>(10);
-		Assert.AreEqual(10, arr.Capacity);
+		Assert.That(arr.Capacity, Is.EqualTo(10));
 	}
 
 	[Test]
 	public void Count_EmptyArray_ReturnsZero()
 	{
 		var arr = new ResizeableArray<int>();
-		Assert.AreEqual(0, arr.Count);
+		Assert.That(arr, Is.Empty);
 	}
 
 	[Test]
@@ -51,10 +52,10 @@ public class ResizeableArrayTest
 			result.Add(item);
 		}
 
-		Assert.AreEqual(3, result.Count);
-		Assert.AreEqual(1, result[0]);
-		Assert.AreEqual(2, result[1]);
-		Assert.AreEqual(3, result[2]);
+		Assert.That(result, Has.Count.EqualTo(3));
+		Assert.That(result[0], Is.EqualTo(1));
+		Assert.That(result[1], Is.EqualTo(2));
+		Assert.That(result[2], Is.EqualTo(3));
 	}
 
 	[Test]
@@ -88,6 +89,7 @@ public class ResizeableArrayTest
 		array.Add(3);
 
 		Assert.Throws<InvalidOperationException>(() => enumerator.MoveNext());
+		enumerator.Dispose();
 	}
 
 	[Test]
@@ -97,7 +99,7 @@ public class ResizeableArrayTest
 		arr.Add(1);
 		arr.Add(2);
 		var result = arr[1];
-		Assert.AreEqual(2, result);
+		Assert.That(result, Is.EqualTo(2));
 	}
 
 	[Test]
@@ -116,7 +118,7 @@ public class ResizeableArrayTest
 		var arr = new ResizeableArray<int>();
 		arr.Add(1);
 		arr[0] = 2;
-		Assert.AreEqual(2, arr[0]);
+		Assert.That(arr[0], Is.EqualTo(2));
 	}
 
 	[Test]
@@ -140,7 +142,7 @@ public class ResizeableArrayTest
 		arr.Add(1);
 		arr.Add(2);
 		arr.RemoveLast();
-		Assert.AreEqual(1, arr.Count);
+		Assert.That(arr, Has.Count.EqualTo(1));
 	}
 
 	[Test]
@@ -150,7 +152,7 @@ public class ResizeableArrayTest
 		arr.Add(1);
 		arr.Add(2);
 		var result = arr.RemoveLast();
-		Assert.AreEqual(2, result);
+		Assert.That(result, Is.EqualTo(2));
 	}
 
 	[Test]
@@ -207,7 +209,7 @@ public class ResizeableArrayTest
 	{
 		var list = new ResizeableArray<int> { 0, 1, 2 };
 		list.RemoveLast();
-		Assert.That(list.Count, Is.EqualTo(2));
+		Assert.That(list, Has.Count.EqualTo(2));
 	}
 
 	[Test]

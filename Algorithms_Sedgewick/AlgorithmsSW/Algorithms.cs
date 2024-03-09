@@ -528,6 +528,7 @@ public static class Algorithms
 			node = next;
 		}
 
+		// ReSharper disable once HeuristicUnreachableCode
 		Assert(false); // Unreachable
 		return sortedList.Last;
 	}

@@ -12,6 +12,8 @@ public class CriticalEdgesExamineShortestPath<TWeight> : ICriticalEdge<TWeight>
 
 	/// <inheritdoc />
 	public TWeight DistanceWithoutCriticalEdge { get; } = TWeight.Zero;
+
+	public bool HasCriticalEdges { get; } = false;
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CriticalEdgesExamineShortestPath{TWeight}"/> class.
@@ -54,5 +56,6 @@ public class CriticalEdgesExamineShortestPath<TWeight> : ICriticalEdge<TWeight>
 		
 		CriticalEdges = maxAggregator.MaxValues;
 		DistanceWithoutCriticalEdge = maxAggregator.MaxComparisonComparisonValue;
+		HasCriticalEdges = true;
 	}
 }

@@ -3,10 +3,13 @@ using static System.Diagnostics.Debug;
 
 namespace AlgorithmsSW.Digraph;
 
+using System.Diagnostics.CodeAnalysis;
+
 public class EulerianCycle
 {
-	private readonly ResizeableArray<int> path;
+	private readonly ResizeableArray<int>? path;
 	
+	[MemberNotNullWhen(true, nameof(path))]
 	public bool HasEulerianCycle { get; }
 
 	public IEnumerable<int> Path
@@ -32,7 +35,7 @@ public class EulerianCycle
 		}
 
 		bool[] marked = new bool[digraph.VertexCount];
-		path = new ResizeableArray<int>();
+		path = new();
 
 		int node = 0;
 		int length = 0;

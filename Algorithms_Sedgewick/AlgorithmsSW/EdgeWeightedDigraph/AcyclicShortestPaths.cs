@@ -40,22 +40,6 @@ public class AcyclicShortestPaths<TWeight> : IShortestPath<TWeight>
 			Relax(vertex);
 		}
 	}
-	
-	private void Relax(int vertex)
-	{
-		foreach (var edge in graph.GetIncidentEdges(vertex))
-		{
-			int target = edge.Target;
-
-			if (distTo[target] <= distTo[vertex] + edge.Weight)
-			{
-				continue;
-			}
-
-			distTo[target] = distTo[vertex] + edge.Weight;
-			edgeTo[target] = edge;
-		}
-	}
 
 	/// <inheritdoc />
 	public TWeight GetDistanceTo(int vertex) => distTo[vertex];
@@ -79,5 +63,21 @@ public class AcyclicShortestPaths<TWeight> : IShortestPath<TWeight>
 		}
 
 		return path;
+	}
+	
+	private void Relax(int vertex)
+	{
+		foreach (var edge in graph.GetIncidentEdges(vertex))
+		{
+			int target = edge.Target;
+
+			if (distTo[target] <= distTo[vertex] + edge.Weight)
+			{
+				continue;
+			}
+
+			distTo[target] = distTo[vertex] + edge.Weight;
+			edgeTo[target] = edge;
+		}
 	}
 }

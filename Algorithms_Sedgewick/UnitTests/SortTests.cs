@@ -48,19 +48,19 @@ public class SortTests
 		SelectionSort,
 		InsertionSort,
 		ShellSortWithPrattSequence,
-		list => ShellSort(list, new[] { 7, 3, 1 }),
+		list => ShellSort(list, [7, 3, 1]),
 		DequeueSortWithDeque,
 		DequeueSortWithQueue,
 		GnomeSort,
 		HeapSort,
 		MergeSort,
 		list => MergeSort(list, MergeSortConfig.Vanilla with { SkipMergeWhenSorted = true }),
-		list => MergeSort(list, MergeSortConfig.Vanilla with { UseFastMerge = true}),
+		list => MergeSort(list, MergeSortConfig.Vanilla with { UseFastMerge = true }),
 		list => MergeSort(list, MergeSortConfig.Vanilla with { SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
 		MergeSortBottomUp,
-		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with { SkipMergeWhenSorted = true}),
-		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with { UseFastMerge = true}),
-		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with { SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8}),
+		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with { SkipMergeWhenSorted = true }),
+		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with { UseFastMerge = true }),
+		list => MergeSortBottomUp(list, MergeSortConfig.Vanilla with { SmallArraySortAlgorithm = MergeSortConfig.SortAlgorithm.Insert, SmallArraySize = 8 }),
 		list => MergeSortBottomsUpWithQueues(list),
 		
 		list => MergeSortBottomsUpWithQueues(
@@ -100,7 +100,7 @@ public class SortTests
 		
 		var list2 = new[] { 1 }.ToRandomAccessList();
 		sortFunction(list2);
-		Assert.That(list2.Count, Is.EqualTo(1));
+		Assert.That(list2, Has.Count.EqualTo(1));
 		Assert.That(list2[0], Is.EqualTo(1));
 	}
 

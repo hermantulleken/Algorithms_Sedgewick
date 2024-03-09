@@ -1,7 +1,5 @@
 // ReSharper disable MemberCanBeProtected.Global
 
-using Support;
-
 namespace AlgorithmsSW.ValueSnapshot;
 
 using System.Diagnostics.CodeAnalysis;

@@ -11,20 +11,21 @@ using PriorityQueue;
 public class DijkstraLazy<TWeight> : IShortestPath<TWeight>
 	where TWeight : INumber<TWeight>, IMinMaxValue<TWeight>
 {
-	class NodeComparer : IComparer<(int node, TWeight weight)>
+	private class NodeComparer : IComparer<(int node, TWeight weight)>
 	{
 		public int Compare((int node, TWeight weight) x, (int node, TWeight weight) y)
 		{
-			int item1Comparison = Comparer<int>.Default.Compare(x.Item1, y.Item1);
+			int item1Comparison = Comparer<int>.Default.Compare(x.node, y.node);
+			
 			if (item1Comparison != 0)
 			{
 				return item1Comparison;
 			}
 
-			return Comparer<TWeight>.Default.Compare(x.Item2, y.Item2);
+			return Comparer<TWeight>.Default.Compare(x.weight, y.weight);
 		}
 	}
-	private readonly IReadOnlyEdgeWeightedDigraph<TWeight> graph;
+	
 	private readonly DirectedEdge<TWeight>?[] edgeTo;
 	private readonly TWeight[] distTo;
 	private readonly IPriorityQueue<(int node, TWeight weight)> priorityQueue;
@@ -38,7 +39,6 @@ public class DijkstraLazy<TWeight> : IShortestPath<TWeight>
 		IReadOnlyEdgeWeightedDigraph<TWeight> graph, 
 		int source)
 	{
-		this.graph = graph;
 		edgeTo = new DirectedEdge<TWeight>[graph.VertexCount];
 		distTo = new TWeight[graph.VertexCount];
 		priorityQueue = DataStructures.PriorityQueue(graph.VertexCount, new NodeComparer());

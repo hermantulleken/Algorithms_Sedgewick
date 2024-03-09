@@ -16,7 +16,6 @@ using RandomGraph = AlgorithmsSW.Graph.RandomGraph;
 	id: "Quick")]
 public class HeapBasedMstAlgorithms
 {
-	private static readonly IComparer<double> Comparer = Comparer<double>.Default;
 	private readonly Cache<(int vertexCount, double edgeFraction), IEdgeWeightedGraph<double>> graphCache;
 	
 	[Params(100, 200, 400)]
@@ -37,7 +36,7 @@ public class HeapBasedMstAlgorithms
 	public void KruskalMstDWayHeap()
 	{
 		var graph = graphCache[(VertexCount, EdgeFraction)];
-		var algorithm = new KruskalMstDWayHeap<double>(graph, HeapDegree);
+		_ = new KruskalMstDWayHeap<double>(graph, HeapDegree);
 		graphCache.Clear(); // This is a temporary measure since the caching is not 100 correct and give inconsistent results
 	}
 	
@@ -45,7 +44,7 @@ public class HeapBasedMstAlgorithms
 	public void LazyPrimMstDWayHeap()
 	{
 		var graph = graphCache[(VertexCount, EdgeFraction)];
-		var algorithm = new LazyPrimMstDWayHeap<double>(graph, HeapDegree);
+		_ = new LazyPrimMstDWayHeap<double>(graph, HeapDegree);
 		graphCache.Clear();
 	}
 	

@@ -2,13 +2,17 @@
 
 namespace AlgorithmsSW.Digraph;
 
+using System.Diagnostics.CodeAnalysis;
+
 public class ShortestAncestralPath
 {
 	private readonly int bestVertex;
 
-	private readonly ResizeableArray<int> path1;
-	private readonly ResizeableArray<int> path2;
+	private readonly ResizeableArray<int>? path1;
+	private readonly ResizeableArray<int>? path2;
 	
+	[MemberNotNullWhen(true, nameof(path1))]
+	[MemberNotNullWhen(true, nameof(path2))]
 	public bool HasShortestAncestralPath => bestVertex != -1;
 	
 	public IEnumerable<int> Path1
