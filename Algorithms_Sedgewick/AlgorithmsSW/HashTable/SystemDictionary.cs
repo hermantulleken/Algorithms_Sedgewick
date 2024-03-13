@@ -8,6 +8,8 @@ public class SystemDictionary<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	private readonly Dictionary<TKey, TValue> dictionary;
 
+	public IComparer<TKey> Comparer { get; }
+
 	public class EqualityComparer : IEqualityComparer<TKey>
 	{
 		private readonly IComparer<TKey> comparer;
@@ -24,6 +26,7 @@ public class SystemDictionary<TKey, TValue> : ISymbolTable<TKey, TValue>
 
 	public SystemDictionary(int initialCapacity, IComparer<TKey> comparer)
 	{
+		Comparer = comparer;
 		dictionary = new Dictionary<TKey, TValue>(initialCapacity, new EqualityComparer(comparer));
 	}
 

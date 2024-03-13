@@ -136,6 +136,23 @@ public static class CollectionExtensions
 		}
 	}
 	
+	public static void CopyTo<T>(this IEnumerable<T> source, IRandomAccessList<T> array, int arrayIndex = 0)
+	{
+		source.ThrowIfNull();
+		array.ThrowIfNull();
+		arrayIndex.ThrowIfOutOfRange(0, array.Count);
+		
+		foreach (var item in source)
+		{
+			if (arrayIndex >= array.Count) 
+			{
+				throw new ArgumentException("The destination array was not long enough to copy all the items in the collection starting at the specified array index.");
+			}
+			
+			array[arrayIndex++] = item;
+		}
+	}
+	
 	private static IEnumerable<T> GetNextGroup<T>(IEnumerator<T> enumerator, int size)
 	{
 		do

@@ -62,13 +62,13 @@ public sealed class DijkstraMonotonic<TWeight>
 		this.source = source;
 		int vertexCount = edgeWeightedDigraph.VertexCount;
 
-		var distToMonotonicAscending = DataStructures.List(vertexCount, ExtendedComparable<TWeight>.PositiveInfinity);
-		var distToMonotonicDescending = DataStructures.List(vertexCount, ExtendedComparable<TWeight>.PositiveInfinity);
-		distTo = DataStructures.List(vertexCount, ExtendedComparable<TWeight>.PositiveInfinity);
+		var distToMonotonicAscending = DataStructures.FixedSizeList(vertexCount, ExtendedComparable<TWeight>.PositiveInfinity);
+		var distToMonotonicDescending = DataStructures.FixedSizeList(vertexCount, ExtendedComparable<TWeight>.PositiveInfinity);
+		distTo = DataStructures.FixedSizeList(vertexCount, ExtendedComparable<TWeight>.PositiveInfinity);
 		
-		var pathMonotonicAscending = DataStructures.List<Path?>(vertexCount, null);
-		var pathMonotonicDescending = DataStructures.List<Path?>(vertexCount, null);
-		pathTo = DataStructures.List<Path?>(vertexCount, null);
+		var pathMonotonicAscending = DataStructures.FixedSizeList<Path?>(vertexCount, null);
+		var pathMonotonicDescending = DataStructures.FixedSizeList<Path?>(vertexCount, null);
+		pathTo = DataStructures.FixedSizeList<Path?>(vertexCount, null);
 
 		// 1- Relax edges in ascending order to get a monotonic increasing shortest path
 		var edgesComparatorAscending = Comparer<DirectedEdge<TWeight>>.Create((edge1, edge2) => -edge1.Weight.CompareTo(edge2.Weight));

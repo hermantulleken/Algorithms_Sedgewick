@@ -1,5 +1,6 @@
 ﻿namespace UnitTests;
 
+using System.Collections.Generic;
 using System.Linq;
 using AlgorithmsSW;
 using AlgorithmsSW.List;
@@ -13,7 +14,7 @@ public class SortTests
 {
 	private static readonly Action<IRandomAccessList<int>, int, int>[] PartialSortFunctions =
 	{
-		InsertionSort,
+		(list, start, end) => InsertionSort(list, start, end, Comparer<int>.Default),
 	};
 	
 	private static FixedPreInitializedPool<IQueue<IQueue<int>>> CreateMajorQueuePool(int count)
@@ -46,7 +47,7 @@ public class SortTests
 	private static readonly Action<IRandomAccessList<int>>[] SortFunctions = 
 	{
 		SelectionSort,
-		InsertionSort,
+		list => InsertionSort(list, Comparer<int>.Default),
 		ShellSortWithPrattSequence,
 		list => ShellSort(list, [7, 3, 1]),
 		DequeueSortWithDeque,

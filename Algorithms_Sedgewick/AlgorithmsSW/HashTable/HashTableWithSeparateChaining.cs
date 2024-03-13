@@ -8,6 +8,9 @@ public class HashTableWithSeparateChaining<TKey, TValue> : ISymbolTable<TKey, TV
 	private readonly ISymbolTable<TKey, TValue>[] table;
 	private readonly int tableSize;
 
+	/// <inheritdoc />
+	public IComparer<TKey> Comparer { get; }
+	
 	public int Count => table.Select(t => t.Count).Sum();
 
 	public IEnumerable<TKey> Keys 
@@ -27,6 +30,8 @@ public class HashTableWithSeparateChaining<TKey, TValue> : ISymbolTable<TKey, TV
 		{
 			table[i] = new SymbolTableWithKeyArray<TKey, TValue>(comparer);
 		}
+
+		Comparer = comparer;
 	}
 
 	public void Add(TKey key, TValue value)

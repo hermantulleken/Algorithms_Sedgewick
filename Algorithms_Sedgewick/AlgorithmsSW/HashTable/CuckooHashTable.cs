@@ -22,8 +22,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	private const int MaxSteps = 5;
 	private const int Prime1 = 31;
 	private const int Prime2 = 37;
-
-	private readonly IComparer<TKey> comparer;
+	
 	private bool[] keyPresent1; // Necessary if TKey is a value type
 	private bool[] keyPresent2; // TODO: Maybe presence and tables should be their own class?
 
@@ -33,6 +32,9 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	private ParallelArrays<TKey?, TValue?> table2;
 	private int halfTableSize;
 
+	/// <inheritdoc />
+	public IComparer<TKey> Comparer { get; }
+	
 	/// <inheritdoc />
 	public int Count { get; private set; }
 
@@ -78,7 +80,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	{
 		log2TableSize = MathX.IntegerCeilLog2(tableSize);
 		halfTableSize = 1 << (log2TableSize - 1); // Note: Half the size since we use two tables ;)
-		this.comparer = comparer;
+		this.Comparer = comparer;
 		
 		void InitTable(out ParallelArrays<TKey?, TValue?> table)
 		{
@@ -148,7 +150,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	{
 		int index = GetHash1(key);
 		ValidateIndex(index, keyPresent1);
-		if (keyPresent1[index] && comparer.Equal(table1.Keys[index]!, key))
+		if (keyPresent1[index] && Comparer.Equal(table1.Keys[index]!, key))
 		{
 			RemoveKeyAt(table1, index);
 		}
@@ -156,7 +158,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		{
 			index = GetHash2(key);
 			ValidateIndex(index, keyPresent2);
-			if (keyPresent2[index] && comparer.Equal(table2.Keys[index]!, key))
+			if (keyPresent2[index] && Comparer.Equal(table2.Keys[index]!, key))
 			{
 				RemoveKeyAt(table2, index);
 			}
@@ -202,7 +204,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 	{
 		index = GetHash1(key);
 		ValidateIndex(index, keyPresent1);
-		if (keyPresent1[index] && comparer.Equal(table1.Keys[index]!, key))
+		if (keyPresent1[index] && Comparer.Equal(table1.Keys[index]!, key))
 		{
 			table = table1;
 			return true;
@@ -210,7 +212,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		
 		index = GetHash2(key);
 		ValidateIndex(index, keyPresent2);
-		if (keyPresent2[index] && comparer.Equal(table2.Keys[index]!, key))
+		if (keyPresent2[index] && Comparer.Equal(table2.Keys[index]!, key))
 		{
 			table = table2;
 			return true;
@@ -293,7 +295,7 @@ public class CuckooHashTable<TKey, TValue> : ISymbolTable<TKey, TValue>
 		Assert(table2.Values.Count == halfTableSize);
 		
 		var resizedTable 
-			= new CuckooHashTable<TKey, TValue>(newTableSize, comparer);
+			= new CuckooHashTable<TKey, TValue>(newTableSize, Comparer);
 		
 		// These two need to be before all the assignments happen
 		Copy(table1, keyPresent1, resizedTable);

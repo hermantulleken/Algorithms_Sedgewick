@@ -53,13 +53,15 @@ public static class HashTableWithLinearProbing
 [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Generic and non-generic versions.")]
 public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
-	private readonly IComparer<TKey> comparer;
 	private bool[] keyPresent; // Necessary if TKey is a value type
 	private TKey[] keys;
 	private int log2TableSize;
 	private int tableSize;
 	private TValue[] values;
 
+	/// <inheritdoc />
+	public IComparer<TKey> Comparer { get; }
+	
 	public int Count { get; private set; }
 
 	public IEnumerable<TKey> Keys 
@@ -78,7 +80,7 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 	{
 		tableSize = 1 << log2TableSize;
 		this.log2TableSize = log2TableSize;
-		this.comparer = comparer;
+		this.Comparer = comparer;
 		keys = new TKey[tableSize];
 		values = new TValue[tableSize];
 		keyPresent = new bool[tableSize];
@@ -176,7 +178,7 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 		int i;
 		for (i = GetHash(key); keyPresent[i]; GetNextIndex(ref i))
 		{
-			if (comparer.Equal(keys[i], key))
+			if (Comparer.Equal(keys[i], key))
 			{
 				return i;
 			}
@@ -193,7 +195,7 @@ public class HashTableWithLinearProbing<TKey, TValue> : ISymbolTable<TKey, TValu
 
 	private void Resize(int newLog2TableSize) // See page 474.
 	{
-		var newTable = new HashTableWithLinearProbing<TKey, TValue>(newLog2TableSize, comparer);
+		var newTable = new HashTableWithLinearProbing<TKey, TValue>(newLog2TableSize, Comparer);
 		
 		for (int i = 0; i < tableSize; i++)
 		{

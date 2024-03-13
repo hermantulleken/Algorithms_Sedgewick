@@ -2,6 +2,7 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using List;
 
 /// <summary>
 /// Provides extension methods related to <see cref="IComparer{T}"/>.
@@ -67,6 +68,23 @@ public static class ComparerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool LessOrEqual<T>(this IComparer<T> comparer, T left, T right) 
 		=> comparer.Compare(left, right) <= 0;
+	
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool ApproximatelyEqualAt<T>(this IComparer<T> comparer, IReadonlyRandomAccessList<T> list, int leftIndex, int rightIndex, T tolerance)
+		where T : INumber<T>
+		=> comparer.ApproximatelyEqual(list[leftIndex], list[rightIndex], tolerance);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool EqualAt<T>(this IComparer<T> comparer, IReadonlyRandomAccessList<T> list, int leftIndex, int rightIndex) 
+		=> comparer.Compare(list[leftIndex], list[rightIndex]) == 0;
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool LessAt<T>(this IComparer<T> comparer, IReadonlyRandomAccessList<T> list, int leftIndex, int rightIndex) 
+		=> comparer.Compare(list[leftIndex], list[rightIndex]) < 0;
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool LessOrEqualAt<T>(this IComparer<T> comparer, IReadonlyRandomAccessList<T> list, int leftIndex, int rightIndex) 
+		=> comparer.Compare(list[leftIndex], list[rightIndex]) <= 0;
 	
 	public static IComparer<T> Invert<T>(this IComparer<T> comparer)
 	{

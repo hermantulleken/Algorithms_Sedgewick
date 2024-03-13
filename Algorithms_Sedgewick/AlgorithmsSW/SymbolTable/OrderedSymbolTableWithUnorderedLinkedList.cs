@@ -7,10 +7,10 @@ using PriorityQueue;
 
 public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
-	private readonly IComparer<TKey> comparer;
-
 	private readonly List.LinkedList<KeyValuePair<TKey, TValue>> list;
 
+	public IComparer<TKey> Comparer { get; }
+	
 	public int Count => list.Count;
 
 	public IEnumerable<TKey> Keys => list.Select(pair => pair.Key);
@@ -35,7 +35,7 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedS
 
 	public OrderedSymbolTableWithUnorderedLinkedList(IComparer<TKey> comparer)
 	{
-		this.comparer = comparer;
+		this.Comparer = comparer;
 		list = new();
 	}
 
@@ -79,7 +79,7 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedS
 		// This can be made into a field, initialized lazily, and resized as needed.
 		// Also, this is a wrapper class that is slower then the minimum version
 		// We could use two, depending on whether the rank is smaller than Count / 2
-		var queue = new FixedCapacityMaxBinaryHeap<TKey>(rank + 1, comparer);
+		var queue = new FixedCapacityMaxBinaryHeap<TKey>(rank + 1, Comparer);
 
 		void PushToQueue(TKey key1)
 		{
@@ -108,7 +108,7 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedS
 	public TKey LargestKeyLessThanOrEqualTo(TKey key) 
 		=> Keys
 			.Where(leftKey => LessOrEqual(leftKey, key))
-			.Max(comparer);
+			.Max(Comparer);
 
 	public TKey MaxKey() => MaxNodeAndPrevious().node.Item.Key;
 
@@ -174,7 +174,7 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedS
 			.Where(leftKey => LessOrEqual(key, leftKey))
 			.ToArray();
 
-		return tmp.Min(comparer);
+		return tmp.Min(Comparer);
 	}
 
 	public override string ToString() => list.ToString();
@@ -188,21 +188,21 @@ public class OrderedSymbolTableWithUnorderedLinkedList<TKey, TValue> : IOrderedS
 	}
 
 	private bool Equals(TKey left, TKey right) 
-		=> comparer.Compare(left, right) == 0;
+		=> Comparer.Compare(left, right) == 0;
 
 	private bool Less(TKey left, TKey right)
-		=> comparer.Compare(left, right) < 0;
+		=> Comparer.Compare(left, right) < 0;
 
 	private bool LessOrEqual(TKey left, TKey right)
-		=> comparer.Compare(left, right) <= 0;
+		=> Comparer.Compare(left, right) <= 0;
 
 	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node? previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
 		MaxNodeAndPrevious() 
-		=> NodeAndPrevious.MaxBy(pair => pair.node.Item.Key, comparer);
+		=> NodeAndPrevious.MaxBy(pair => pair.node.Item.Key, Comparer);
 
 	private (List.LinkedList<KeyValuePair<TKey, TValue>>.Node? previousNode, List.LinkedList<KeyValuePair<TKey, TValue>>.Node node) 
 		MinNodeAndPrevious() 
-		=> NodeAndPrevious.MinBy(pair => pair.node.Item.Key, comparer);
+		=> NodeAndPrevious.MinBy(pair => pair.node.Item.Key, Comparer);
 	
 	private bool TryFindNodeWithKey(TKey key, [NotNullWhen(true)] out List.LinkedList<KeyValuePair<TKey, TValue>>.Node? node)
 	{

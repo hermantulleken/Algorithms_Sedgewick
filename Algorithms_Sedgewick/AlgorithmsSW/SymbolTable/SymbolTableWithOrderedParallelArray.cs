@@ -7,7 +7,7 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 {
 	private readonly ParallelArrays<TKey, TValue> arrays;
 
-	private readonly IComparer<TKey> comparer;
+	public IComparer<TKey> Comparer { get; }
 
 	public int Count => arrays.Count;
 
@@ -21,7 +21,7 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 	public SymbolTableWithOrderedParallelArray(int initialCapacity, IComparer<TKey> comparer)
 	{
 		arrays = new ParallelArrays<TKey, TValue>(initialCapacity);
-		this.comparer = comparer;
+		this.Comparer = comparer;
 	}
 
 	public void Add(TKey key, TValue value)
@@ -33,7 +33,7 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 		}
 		
 		// TODO Can we use ~index. If not, can we make it so?
-		int insertionIndex = arrays.Keys.FindInsertionIndex(key, comparer);
+		int insertionIndex = arrays.Keys.FindInsertionIndex(key, Comparer);
 		arrays.InsertAt(insertionIndex, key, value);
 	}
 
@@ -63,9 +63,9 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	public TKey LargestKeyLessThanOrEqualTo(TKey key)
 	{
-		int rank = arrays.Keys.BinaryRank(key, comparer);
+		int rank = arrays.Keys.BinaryRank(key, Comparer);
 		
-		if (rank >= 0 && (rank < arrays.Keys.Count && comparer.Compare(arrays.Keys[rank], key) == 0))
+		if (rank >= 0 && (rank < arrays.Keys.Count && Comparer.Compare(arrays.Keys[rank], key) == 0))
 		{
 			// The key is in the list
 			return arrays.Keys[rank];
@@ -84,7 +84,7 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	public TKey MinKey() => arrays.Keys[0];
 
-	public int RankOf(TKey key) => arrays.Keys.BinaryRank(key, comparer);
+	public int RankOf(TKey key) => arrays.Keys.BinaryRank(key, Comparer);
 
 	public void RemoveKey(TKey key)
 	{
@@ -100,9 +100,9 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
-		int rank = arrays.Keys.BinaryRank(key, comparer);
+		int rank = arrays.Keys.BinaryRank(key, Comparer);
 		
-		if (rank < arrays.Keys.Count && comparer.Compare(arrays.Keys[rank], key) >= 0)
+		if (rank < arrays.Keys.Count && Comparer.Compare(arrays.Keys[rank], key) >= 0)
 		{
 			// The key is in the list or there is an element greater than it
 			return arrays.Keys[rank];
@@ -126,7 +126,7 @@ public class SymbolTableWithOrderedParallelArray<TKey, TValue> : IOrderedSymbolT
 
 	private bool TryFindKey(TKey key, out int index)
 	{
-		index = arrays.Keys.BinarySearch(key, comparer);
+		index = arrays.Keys.BinarySearch(key, Comparer);
 		return index != -1;
 	}
 }

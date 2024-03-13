@@ -25,8 +25,7 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 		Present,
 		MarkedForRemoval,
 	}
-
-	private readonly IComparer<TKey> comparer;
+	
 	private Presence[] keyPresent; // Necessary if TKey is a value type
 	private TKey[] keys;
 	private int keysMarkedForRemovalCount;
@@ -34,6 +33,9 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 	private int tableSize;
 	private TValue[] values;
 
+	/// <inheritdoc />
+	public IComparer<TKey> Comparer { get; }
+	
 	public int Count { get; private set; }
 
 	public IEnumerable<TKey> Keys 
@@ -52,7 +54,7 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 	{
 		tableSize = 1 << log2TableSize;
 		this.log2TableSize = log2TableSize;
-		this.comparer = comparer;
+		this.Comparer = comparer;
 		keys = new TKey[tableSize];
 		values = new TValue[tableSize];
 		keyPresent = new Presence[tableSize];
@@ -148,7 +150,7 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 			{
 				indexToAdd = index;
 			}
-			else if (comparer.Equal(keys[index], key))
+			else if (Comparer.Equal(keys[index], key))
 			{
 				return index;
 			}
@@ -166,7 +168,7 @@ public class HashTableWithLinearProbingAndLazyDelete<TKey, TValue> : ISymbolTabl
 
 	private void Resize(int newLog2TableSize) // See page 474.
 	{
-		var newTable = new HashTableWithLinearProbingAndLazyDelete<TKey, TValue>(newLog2TableSize, comparer);
+		var newTable = new HashTableWithLinearProbingAndLazyDelete<TKey, TValue>(newLog2TableSize, Comparer);
 		
 		for (int i = 0; i < tableSize; i++)
 		{

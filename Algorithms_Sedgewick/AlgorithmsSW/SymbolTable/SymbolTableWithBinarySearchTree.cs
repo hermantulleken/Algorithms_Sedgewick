@@ -7,6 +7,8 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 	private readonly IBinarySearchTree<KeyValuePair<TKey, TValue>> tree;
 
 	public int Count => tree.Count;
+	
+	public IComparer<TKey> Comparer { get; }
 
 	public string DisplayString => tree.Pretty();
 
@@ -17,6 +19,7 @@ public sealed class SymbolTableWithBinarySearchTree<TKey, TValue> : IOrderedSymb
 		Func<IComparer<KeyValuePair<TKey, TValue>>, IBinarySearchTree<KeyValuePair<TKey, TValue>>> treeFactory, 
 		IComparer<TKey> comparer)
 	{
+		Comparer = comparer;
 		IComparer<KeyValuePair<TKey, TValue>> pairComparer = new PairComparer<TKey, TValue>(comparer);
 		
 		tree = treeFactory(pairComparer);

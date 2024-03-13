@@ -1,9 +1,12 @@
 ﻿namespace AlgorithmsSW.Counter;
 
+using System.Collections;
+using System.Runtime.CompilerServices;
 using HashTable;
 using SymbolTable;
 
 /// <inheritdoc />
+[CollectionBuilder(typeof(CounterBuilder), nameof(CounterBuilder.Create))]
 public class Counter<T>(IComparer<T> comparer) : ICounter<T>
 {
 	private readonly ISymbolTable<T, int> counts = new HashTableWithLinearProbing2<T, int>(comparer);
@@ -57,4 +60,8 @@ public class Counter<T>(IComparer<T> comparer) : ICounter<T>
 			counts.RemoveKey(item);
 		} // else nothing left to do
 	}
+
+	public IEnumerator<T> GetEnumerator() => Keys.GetEnumerator();
+	
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

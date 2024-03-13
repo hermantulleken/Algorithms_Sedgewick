@@ -5,12 +5,12 @@ using List;
 [ExerciseReference(3, 1, 2)]
 public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
-	private readonly IComparer<TKey> comparer;
-
 	// TODO: Consider a parallel array structure
 	private readonly ResizeableArray<TKey> keys;
 	private readonly ResizeableArray<TValue> values;
 
+	public IComparer<TKey> Comparer { get; }
+	
 	public int Count => keys.Count;
 
 	public IEnumerable<TKey> Keys => keys;
@@ -22,7 +22,7 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 
 	public SymbolTableWithSelfOrderingKeyArray(int initialCapacity, IComparer<TKey> comparer)
 	{
-		this.comparer = comparer;
+		this.Comparer = comparer;
 		keys = new ResizeableArray<TKey>(initialCapacity);
 		values = new ResizeableArray<TValue>(initialCapacity);
 	}
@@ -84,7 +84,7 @@ public class SymbolTableWithSelfOrderingKeyArray<TKey, TValue> : ISymbolTable<TK
 	{
 		for (int i = 0; i < keys.Count; i++)
 		{
-			if (comparer.Equal(keys[i], key))
+			if (Comparer.Equal(keys[i], key))
 			{
 				index = i;
 				return true;

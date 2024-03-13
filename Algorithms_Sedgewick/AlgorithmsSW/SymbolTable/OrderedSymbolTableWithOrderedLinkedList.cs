@@ -4,18 +4,19 @@ using static System.Diagnostics.Debug;
 
 public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
-	private readonly IComparer<TKey> comparer;
 	private readonly List.LinkedList<KeyValuePair<TKey, TValue>> list;
 	private readonly IComparer<KeyValuePair<TKey, TValue>> pairComparer;
 
+	public IComparer<TKey> Comparer { get; }
+	
 	public int Count => list.Count;
 
 	public IEnumerable<TKey> Keys => list.Select(pair => pair.Key);
 
 	public OrderedSymbolTableWithOrderedLinkedList(IComparer<TKey> comparer)
 	{
-		this.comparer = comparer;
-		list = new List.LinkedList<KeyValuePair<TKey, TValue>>();
+		Comparer = comparer;
+		list = new();
 		pairComparer = new PairComparer<TKey, TValue>(comparer);
 	}
 
@@ -23,7 +24,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 	{
 		var newItem = new KeyValuePair<TKey, TValue>(key, value);
 		
-		if (list.IsEmpty || comparer.Less(key, list.First.Item.Key))
+		if (list.IsEmpty || Comparer.Less(key, list.First.Item.Key))
 		{
 			list.InsertAtFront(newItem);
 		}
@@ -33,14 +34,14 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 			
 			var insertionNode = list.FindInsertionNodeUnsafe(newItem, pairComparer);
 				
-			Assert(comparer.LessOrEqual(insertionNode.Item.Key, key));
+			Assert(Comparer.LessOrEqual(insertionNode.Item.Key, key));
 				
 			if (insertionNode.NextNode != null)
 			{
-				Assert(comparer.Less(key, insertionNode.NextNode.Item.Key));
+				Assert(Comparer.Less(key, insertionNode.NextNode.Item.Key));
 			}
 			
-			if (comparer.Equal(key, insertionNode.Item.Key))
+			if (Comparer.Equal(key, insertionNode.Item.Key))
 			{
 				insertionNode.Item = newItem;
 			}
@@ -58,15 +59,15 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 	public IEnumerable<TKey> KeysRange(TKey start, TKey end)
 	{
-		if (list.IsEmpty || comparer.Equal(start, end))
+		if (list.IsEmpty || Comparer.Equal(start, end))
 		{
 			yield break;
 		}
 
 		var startNode = list.FindInsertionNodeUnsafe(KeyToPair(start), pairComparer);
-		var node = comparer.Equal(startNode.Item.Key, start) ? startNode : startNode.NextNode;
+		var node = Comparer.Equal(startNode.Item.Key, start) ? startNode : startNode.NextNode;
 
-		while (node != null && comparer.Less(node.Item.Key, end))
+		while (node != null && Comparer.Less(node.Item.Key, end))
 		{
 			yield return node.Item.Key;
 			node = node.NextNode;
@@ -84,18 +85,18 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 			ThrowHelper.ThrowContainerEmpty();
 		}
 
-		if (comparer.Less(key, list.First.Item.Key))
+		if (Comparer.Less(key, list.First.Item.Key))
 		{
 			ThrowHelper.ThrowException("All keys are larger than the given key.");
 		}
 		
 		var insertionNode = list.FindInsertionNodeUnsafe(KeyToPair(key), pairComparer);
 				
-		Assert(comparer.LessOrEqual(insertionNode.Item.Key, key));
+		Assert(Comparer.LessOrEqual(insertionNode.Item.Key, key));
 				
 		if (insertionNode.NextNode != null)
 		{
-			Assert(comparer.Less(key, insertionNode.NextNode.Item.Key));
+			Assert(Comparer.Less(key, insertionNode.NextNode.Item.Key));
 		}
 
 		return insertionNode.Item.Key;
@@ -107,7 +108,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 	public int RankOf(TKey key)
 	{
-		if (comparer.Less(list.Last.Item.Key, key))
+		if (Comparer.Less(list.Last.Item.Key, key))
 		{
 			return Count;
 		}
@@ -115,7 +116,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 		int i = 0;
 		foreach (var pair in list)
 		{
-			if (comparer.LessOrEqual(key, pair.Key))
+			if (Comparer.LessOrEqual(key, pair.Key))
 			{
 				return i;
 			}
@@ -128,7 +129,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 	public void RemoveKey(TKey key)
 	{
-		if (comparer.Equal(key, list.First.Item.Key))
+		if (Comparer.Equal(key, list.First.Item.Key))
 		{
 			list.RemoveFromFront();
 			return;
@@ -140,7 +141,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 			if (nextNode != null)
 			{
-				switch (comparer.Compare(key, nextNode.Item.Key))
+				switch (Comparer.Compare(key, nextNode.Item.Key))
 				{
 					case 0:
 						list.RemoveAfter(node);
@@ -159,7 +160,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 	{
 		var insertionNode = list.FindInsertionNodeUnsafe(KeyToPair(key), pairComparer);
 
-		while (comparer.Less(insertionNode.Item.Key, key))
+		while (Comparer.Less(insertionNode.Item.Key, key))
 		{
 			if (insertionNode.NextNode != null)
 			{
@@ -182,7 +183,7 @@ public sealed class OrderedSymbolTableWithOrderedLinkedList<TKey, TValue> : IOrd
 
 		while (node != null)
 		{
-			if (comparer.Equal(key, node.Item.Key))
+			if (Comparer.Equal(key, node.Item.Key))
 			{
 				pair = node.Item;
 				found = true;

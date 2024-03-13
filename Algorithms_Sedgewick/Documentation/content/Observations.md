@@ -174,3 +174,22 @@ regressions. Comnfirm that the results match what you would expect from the time
 However, I would recommend keeping it (marking it as internal, obsolete), especially if it is a clear implementation. 
 You may discover some cases where the new implementation is not correct, and it is useful to have the old one to 
 compare.
+
+## Functional Programming
+It would be nice to be able to call something like this:
+```csharp
+InsertSort.ApplyLast(comparer)
+```
+where `InsertSort(IList<T> list, IComparer<T> comparer)` is a method that sorts the list in place, for example.
+
+We can almost get there. We can define a static method that can be called like this:
+```csharp
+ApplyLast(InsertSort, comparer)
+```
+
+Problems arise if we have multiple definitions of ApplyLast that deal with different numbers of parameters, and 
+InsertSort has overloads. In this case, we need to specify the type parameters, which reduces the usefulness of the
+ApplyLast method.
+
+Indeed, it seems to me this issue may be (one reason) why extension methods on method groups are not allowed - it 
+would be too difficult to determine which overload the extension method is being called on. 

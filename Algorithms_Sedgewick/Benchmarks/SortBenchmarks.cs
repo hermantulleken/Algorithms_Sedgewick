@@ -22,7 +22,7 @@ public class SortBenchmarks
 	public int InsertionSort()
 	{
 		ResetList();
-		Sort.InsertionSort(list);
+		Sort.InsertionSort(list, Comparer<int>.Default);
 		
 		return list[0];
 	}

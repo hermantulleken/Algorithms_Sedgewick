@@ -6,7 +6,7 @@ using List;
 public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	// TODO: Should this rather be an equality comparer? 
-	private readonly IComparer<TKey> comparer;
+	public IComparer<TKey> Comparer { get; }
 
 	private readonly ResizeableArray<TKey> keys;
 	private readonly ResizeableArray<TValue> values;
@@ -22,7 +22,7 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 
 	public SymbolTableWithKeyArray(int initialCapacity, IComparer<TKey> comparer)
 	{
-		this.comparer = comparer;
+		this.Comparer = comparer;
 		keys = new ResizeableArray<TKey>(initialCapacity);
 		values = new ResizeableArray<TValue>(initialCapacity);
 	}
@@ -67,7 +67,7 @@ public class SymbolTableWithKeyArray<TKey, TValue> : ISymbolTable<TKey, TValue>
 	{
 		for (int i = 0; i < keys.Count; i++)
 		{
-			if (comparer.Equal(key, keys[i]))
+			if (Comparer.Equal(key, keys[i]))
 			{
 				index = i;
 				return true;

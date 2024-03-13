@@ -6,11 +6,12 @@ using List;
 [ExerciseReference(3, 1, 12)]
 public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
-	private readonly IComparer<TKey> comparer;
 	private readonly ResizeableArray<TKey> keys;
 	private readonly ResizeableArray<TValue> values;
 
 	public int Count => keys.Count;
+	
+	public IComparer<TKey> Comparer { get; }
 
 	public IEnumerable<TKey> Keys => keys;
 
@@ -23,7 +24,7 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 	{
 		keys = new ResizeableArray<TKey>(initialCapacity);
 		values = new ResizeableArray<TValue>(initialCapacity);
-		this.comparer = comparer;
+		this.Comparer = comparer;
 	}
 
 	public void Add(TKey key, TValue value)
@@ -34,7 +35,7 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 			return;
 		}
 			
-		int newIndex = keys.InsertSorted(key, comparer);
+		int newIndex = keys.InsertSorted(key, Comparer);
 		values.InsertAt(value, newIndex);
 	}
 
@@ -65,16 +66,16 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 	public TKey LargestKeyLessThanOrEqualTo(TKey key)
 	{
 		// TODO: Handle edge casese
-		int index = keys.BinaryRank(key, comparer);
+		int index = keys.BinaryRank(key, Comparer);
 
-		return comparer.Equal(keys[index], key) ? keys[index] : keys[index - 1];
+		return Comparer.Equal(keys[index], key) ? keys[index] : keys[index - 1];
 	}
 
 	public TKey MaxKey() => keys[^1];
 
 	public TKey MinKey() => keys[0];
 
-	public int RankOf(TKey key) => keys.BinaryRank(key, comparer);
+	public int RankOf(TKey key) => keys.BinaryRank(key, Comparer);
 
 	public void RemoveKey(TKey key)
 	{
@@ -92,9 +93,9 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 	public TKey SmallestKeyGreaterThanOrEqualTo(TKey key)
 	{
 		// TODO: Handle edge cases
-		int index = keys.BinaryRank(key, comparer);
+		int index = keys.BinaryRank(key, Comparer);
 
-		while (index < Count && comparer.Less(keys[index], key))
+		while (index < Count && Comparer.Less(keys[index], key))
 		{
 			index++;
 		}
@@ -112,7 +113,7 @@ public class OrderedSymbolTableWithOrderedKeyArray<TKey, TValue> : IOrderedSymbo
 
 	private bool TryFindKey(TKey key, out int index)
 	{
-		index = keys.BinarySearch(key, comparer);
+		index = keys.BinarySearch(key, Comparer);
 
 		return index != -1;
 	}

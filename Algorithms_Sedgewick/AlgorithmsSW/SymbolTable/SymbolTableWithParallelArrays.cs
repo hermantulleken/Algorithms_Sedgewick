@@ -5,8 +5,9 @@ using List;
 public class SymbolTableWithParallelArrays<TKey, TValue> : ISymbolTable<TKey, TValue>
 {
 	private readonly ParallelArrays<TKey, TValue> arrays;
-	private readonly IComparer<TKey> comparer;
-
+	
+	public IComparer<TKey> Comparer { get; }
+	
 	public int Count => arrays.Count;
 
 	public IEnumerable<TKey> Keys => arrays.Keys;
@@ -18,7 +19,7 @@ public class SymbolTableWithParallelArrays<TKey, TValue> : ISymbolTable<TKey, TV
 
 	public SymbolTableWithParallelArrays(int initialCapacity, IComparer<TKey> comparer)
 	{
-		this.comparer = comparer;
+		this.Comparer = comparer;
 		arrays = new ParallelArrays<TKey, TValue>(initialCapacity);
 	}
 
@@ -59,7 +60,7 @@ public class SymbolTableWithParallelArrays<TKey, TValue> : ISymbolTable<TKey, TV
 	{
 		for (int i = 0; i < arrays.Count; i++)
 		{
-			if (comparer.Equal(key, arrays.Keys[i]))
+			if (Comparer.Equal(key, arrays.Keys[i]))
 			{
 				index = i;
 				return true;

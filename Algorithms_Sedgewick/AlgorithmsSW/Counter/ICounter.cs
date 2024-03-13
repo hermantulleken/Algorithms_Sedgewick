@@ -6,7 +6,7 @@
 /// <remarks>This is also sometimes called a bag (not to be confused with <see cref="Bag"/>), or multiset
 /// (although a multiset can also refer to an other data structure).
 /// </remarks>
-public interface ICounter<T>
+public interface ICounter<T> : IEnumerable<T>
 {
 	/// <summary>
 	/// Gets the items that have been added (and not removed the same number of times).

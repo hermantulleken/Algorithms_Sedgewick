@@ -5,10 +5,11 @@ using List;
 public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTable<TKey, TValue>
 {
 	private readonly ResizeableArray<KeyValuePair<TKey, TValue>> array;
-	private readonly IComparer<TKey> comparer;
 	private readonly IComparer<KeyValuePair<TKey, TValue>> pairComparer;
 
-	public int Count => array.Count;	
+	public int Count => array.Count;
+	
+	public IComparer<TKey> Comparer { get; }
 
 	public IEnumerable<TKey> Keys => array.Select(pair => pair.Key);
 
@@ -20,7 +21,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 	public OrderedSymbolTableWithOrderedArray(int initialCapacity, IComparer<TKey> comparer)
 	{
 		array = new ResizeableArray<KeyValuePair<TKey, TValue>>(initialCapacity);
-		this.comparer = comparer;
+		this.Comparer = comparer;
 		pairComparer = new PairComparer<TKey, TValue>(comparer);
 	}
 
@@ -63,7 +64,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 	{
 		int rank = array.BinaryRank(KeyToPair(key), pairComparer);
 		
-		if (rank >= 0 && (rank < array.Count && comparer.Compare(array[rank].Key, key) == 0))
+		if (rank >= 0 && (rank < array.Count && Comparer.Compare(array[rank].Key, key) == 0))
 		{
 			// The key is in the list
 			return array[rank].Key;
@@ -98,7 +99,7 @@ public class OrderedSymbolTableWithOrderedArray<TKey, TValue> : IOrderedSymbolTa
 	{
 		int rank = array.BinaryRank(KeyToPair(key), pairComparer);
 		
-		if (rank < array.Count && comparer.Compare(array[rank].Key, key) >= 0)
+		if (rank < array.Count && Comparer.Compare(array[rank].Key, key) >= 0)
 		{
 			// The key is in the list or there is an element greater than it
 			return array[rank].Key;

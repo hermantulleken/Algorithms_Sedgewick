@@ -521,22 +521,18 @@ public static class Sort
 	/// Performs insertion sort algorithm on a list.
 	/// </summary>
 	[AlgorithmReference(2, 2)]
-	public static void InsertionSort<T>(IRandomAccessList<T> list) 
-		where T : IComparable<T>
-	{
-		InsertionSort(list, 0, list.Count);
-	}
+	public static void InsertionSort<T>(IRandomAccessList<T> list, IComparer<T> comparer) 
+		=> InsertionSort(list, 0, list.Count, comparer);
 
 	/// <summary>
 	/// Performs insertion sort algorithm on a list.
 	/// </summary>
-	public static void InsertionSort<T>(IRandomAccessList<T> list, int start, int end) 
-		where T : IComparable<T>
+	public static void InsertionSort<T>(IRandomAccessList<T> list, int start, int end, IComparer<T> comparer) 
 	{
 		for (int i = start + 1; i < end; i++)
 		{ 
 			// Insert a[i] among a[i-1], a[i-2], a[i-3]... ..
-			for (int j = i; j > start && LessAt(list, j, j - 1); j--)
+			for (int j = i; j > start && comparer.LessAt(list, j, j - 1); j--)
 			{
 				list.SwapAt(j, j - 1);
 			}
@@ -872,7 +868,7 @@ public static class Sort
 
 			if (config.SmallArraySortAlgorithm == MergeSortConfig.SortAlgorithm.Insert && end - start < 12)
 			{
-				InsertionSort(list, start, end);
+				InsertionSort(list, start, end, Comparer<T>.Default);
 				RecursionDepthGuard.Dec();
 				return;
 			}
@@ -1054,7 +1050,7 @@ public static class Sort
 				for (int leftListStart = 0; leftListStart < length; leftListStart += mergeStartSize)
 				{
 					int leftListEnd = Math.Min(leftListStart + mergeStartSize, length);
-					InsertionSort(list, leftListStart, leftListEnd);
+					InsertionSort(list, leftListStart, leftListEnd, Comparer<T>.Default);
 				}
 			}
 
@@ -1424,7 +1420,7 @@ public static class Sort
 				return;
 			
 			case <= 5:
-				InsertionSort(list);
+				InsertionSort(list, Comparer<T>.Default);
 				break;
 			
 			case < 12:

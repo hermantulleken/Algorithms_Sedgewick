@@ -9,6 +9,8 @@ namespace AlgorithmsSW.SymbolTable;
 /// <typeparam name="TValue">The type of values in the symbol table.</typeparam>
 public interface IReadOnlySymbolTable<TKey, TValue>
 {
+	IComparer<TKey> Comparer { get; }
+	
 	/// <summary>
 	/// Gets the number of key/value pairs contained in the symbol table.
 	/// </summary>

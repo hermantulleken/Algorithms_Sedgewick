@@ -69,16 +69,15 @@ public static class DataStructures
 	
 	public static IQueue<T> Queue<T>(int capacity) => new QueueWithResizeableArray<T>(capacity);
 	
-	public static IRandomAccessList<T> List<T>() => new ResizeableArray<T>();
+	public static IRandomAccessList<T> ResizeableList<T>() => new ResizeableArray<T>();
 
 	/// <summary>
 	/// Creates a new <see cref="IRandomAccessList{T}"/> list with the specified capacity. 
 	/// </summary>
 	/// <typeparam name="T">The type of elements in the list.</typeparam>
 	/// <returns>A new instance of an empty random access list.</returns>
-	public static IRandomAccessList<T> List<T>(int capacity) => new ResizeableArray<T>(capacity);
-
-	// Note: There may be confusion between count and capacity in the overloads...
+	public static IRandomAccessList<T> ResizeableList<T>(int capacity) => new ResizeableArray<T>(capacity);
+	
 	/// <summary>
 	/// Creates a new <see cref="IRandomAccessList{T}"/> list with the specified count and initial element.
 	/// </summary>
@@ -93,14 +92,25 @@ public static class DataStructures
 	/// Console.WriteLine($"Value at grid[0][1] is {grid[0][1]}"); // Prints 1, not 0, since the same array is in each cell. 
 	/// ]]>
 	/// </code>
-	///
 	/// </param>
 	/// <returns>A new instance of the <see cref="IRandomAccessList{T}"/> interface.</returns>
-	public static IRandomAccessList<T> List<T>(int count, T initialElement)
+	public static IRandomAccessList<T> FixedSizeList<T>(int count, T initialElement)
+	{
+		var list = FixedSizeList<T>(count);
+		list.Fill(initialElement);
+		return list; 
+	}
+
+	/// <summary>
+	/// Creates a new <see cref="IRandomAccessList{T}"/> list with the specified count filed with <see langword="default"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the list.</typeparam>
+	/// <param name="count">The initial count of the list.</param>
+	/// <returns>A new instance of the <see cref="IRandomAccessList{T}"/> interface.</returns>
+	public static IRandomAccessList<T> FixedSizeList<T>(int count)
 	{
 		var list = new ResizeableArray<T>(count);
 		list.SetCount(count);
-		list.Fill(initialElement);
 		return list; 
 	}
 	
