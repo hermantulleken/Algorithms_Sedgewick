@@ -49,4 +49,7 @@ public class Alphabet(string alphabet)
 
 		return new(chars);
 	}
+
+	/// <inheritdoc/>
+	public override string ToString() => alphabet;
 }

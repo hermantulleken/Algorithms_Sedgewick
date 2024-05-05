@@ -16,7 +16,7 @@ public class HamiltonianPathWithDegreesTest
 	{
 		var digraph = new DigraphWithAdjacentsLists(0);
 		var hamiltonianCycle = algorithm(digraph);
-		Assert.True(hamiltonianCycle.HasHamiltonianPath);
+		Assert.That(hamiltonianCycle.HasHamiltonianPath);
 	}
 	
 	[Test, TestCaseSource(nameof(Algorithms))]
@@ -24,7 +24,7 @@ public class HamiltonianPathWithDegreesTest
 	{
 		var digraph = new DigraphWithAdjacentsLists(1);
 		var hamiltonianCycle = algorithm(digraph);
-		Assert.True(hamiltonianCycle.HasHamiltonianPath);
+		Assert.That(hamiltonianCycle.HasHamiltonianPath);
 	}
 	
 	[Test, TestCaseSource(nameof(Algorithms))]
@@ -64,8 +64,8 @@ public class HamiltonianPathWithDegreesTest
 		};
 
 		var hamiltonianCycle = algorithm(digraph);
-		Assert.True(hamiltonianCycle.HasHamiltonianPath);
-		Assert.AreEqual(new[] { 0, 1, 2 }, hamiltonianCycle.Path);
+		Assert.That(hamiltonianCycle.HasHamiltonianPath);
+		Assert.That(new[] { 0, 1, 2 }, Is.EqualTo(hamiltonianCycle.Path));
 	}
 	
 	[Test, TestCaseSource(nameof(Algorithms))]
@@ -79,7 +79,7 @@ public class HamiltonianPathWithDegreesTest
 		};
 
 		var hamiltonianCycle = algorithm(digraph);
-		Assert.False(hamiltonianCycle.HasHamiltonianPath);
+		Assert.That(hamiltonianCycle.HasHamiltonianPath, Is.False);
 		Assert.Throws<InvalidOperationException>(() => _ = hamiltonianCycle.Path);
 	}
 
@@ -94,7 +94,7 @@ public class HamiltonianPathWithDegreesTest
 		};
 		
 		var hamiltonianCycle = algorithm(digraph);
-		Assert.False(hamiltonianCycle.HasHamiltonianPath);
+		Assert.That(hamiltonianCycle.HasHamiltonianPath, Is.False);
 		Assert.Throws<InvalidOperationException>(() => _ = hamiltonianCycle.Path);
 	}
 	
@@ -109,6 +109,6 @@ public class HamiltonianPathWithDegreesTest
 		};
 
 		var hamiltonianCycle = algorithm(digraph);
-		Assert.True(hamiltonianCycle.HasHamiltonianPath);
+		Assert.That(hamiltonianCycle.HasHamiltonianPath);
 	}
 }

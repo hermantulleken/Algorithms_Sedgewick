@@ -61,7 +61,8 @@ public class Counter<T>(IComparer<T> comparer) : ICounter<T>
 		} // else nothing left to do
 	}
 
-	public IEnumerator<T> GetEnumerator() => Keys.GetEnumerator();
+	public IEnumerator<KeyValuePair<T, int>> GetEnumerator() 
+		=> Keys.Select(key => new KeyValuePair<T, int>(key, counts[key])).GetEnumerator();
 	
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

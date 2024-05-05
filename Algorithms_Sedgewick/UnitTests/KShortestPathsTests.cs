@@ -31,8 +31,8 @@ public class KShortestPathsTests
 		var vertexes = path.Vertexes.ToList();
 		var distance = path.Distance;
 		
-		Assert.AreEqual(new[] { 0, 1, 2, 3, 4 }, vertexes);
-		Assert.AreEqual(5.0, distance);
+		Assert.That(vertexes, Is.EqualTo(new[] { 0, 1, 2, 3, 4 }));
+		Assert.That(distance, Is.EqualTo(5.0));
 	}
 
 	[Test]
@@ -44,8 +44,8 @@ public class KShortestPathsTests
 		var vertexes = path.Vertexes.ToList();
 		double distance = path.Distance;
 
-		Assert.AreEqual(new[] { 0, 2, 3, 4 }, vertexes);
-		Assert.AreEqual(5.5, distance);
+		Assert.That(vertexes, Is.EqualTo(new[] { 0, 2, 3, 4 }));
+		Assert.That(distance, Is.EqualTo(5.5));
 	}
 
 	[Test]

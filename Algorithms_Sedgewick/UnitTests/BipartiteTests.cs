@@ -16,7 +16,7 @@ public class BipartiteTests
 	{
 		var emptyGraph = Graph.CreateEmptyGraph(Factory, 0);
 		var bipartite = Bipartite.Build(emptyGraph);
-		Assert.IsTrue(bipartite.IsBipartite);
+		Assert.That(bipartite.IsBipartite);
 	}
 	
 	[Test]
@@ -24,7 +24,7 @@ public class BipartiteTests
 	{
 		var singleVertexGraph = Graph.CreateEmptyGraph(Factory, 1);
 		var bipartite = Bipartite.Build(singleVertexGraph);
-		Assert.IsTrue(bipartite.IsBipartite);
+		Assert.That(bipartite.IsBipartite);
 	}
 	
 	[Test]

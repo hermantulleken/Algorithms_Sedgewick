@@ -231,7 +231,11 @@ $EXPR$.ThrowIfNull();</s:String>
   &lt;/TypePattern&gt;&#xD;
 &lt;/Patterns&gt;</s:String>
 	<s:String x:Key="/Default/Environment/ExternalSources/IlViewer/CodeType/@EntryValue">IL</s:String>
-	<s:Int64 x:Key="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue">2452</s:Int64>
+	<s:Int64 x:Key="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue">2943</s:Int64>
+	
+	
+	
+	
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EAlwaysTreatStructAsNotReorderableMigration/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=322cf734_002Ddd39_002D4df9_002D8b0f_002Dd9e7953d0244/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
@@ -246,4 +250,12 @@ $EXPR$.ThrowIfNull();</s:String>
 	
 	
 	
-	<s:String x:Key="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue">EditorBehavior</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue">RiderDotCoverFilteringPageId</s:String>
+	<s:Boolean x:Key="/Default/Monitoring/IsToolWindowHidden/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=23DEE10098B448469E6922F7C377176B/@KeyIndexDefined">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=52BCA56EEE9A1F43B87A9290E6C53432/@KeyIndexDefined">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=CF221630470D6640B9B05D7309FD5B80/@KeyIndexDefined">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=EDFC430CD2B4934D85583935D90571F4/@KeyIndexDefined">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=EF139E2680DA55458C959C32BEEA3BB5/@KeyIndexDefined">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=F01B513C8D89104E876718BB345F73EA/@KeyIndexDefined">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=F6E4BE5A60AD82499E5911EC6C2766A8/@KeyIndexDefined">False</s:Boolean></wpf:ResourceDictionary>

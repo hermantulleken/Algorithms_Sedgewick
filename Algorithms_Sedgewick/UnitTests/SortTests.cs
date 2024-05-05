@@ -6,6 +6,7 @@ using AlgorithmsSW;
 using AlgorithmsSW.List;
 using AlgorithmsSW.Pool;
 using AlgorithmsSW.Queue;
+using AlgorithmsSW.String;
 using Support;
 using static AlgorithmsSW.Sort.Sort;
 
@@ -80,6 +81,9 @@ public class SortTests
 		MergeSortNatural,
 		list => QuickSort(list, QuickSortConfig.Vanilla),
 		list => QuickSort(list, new() { PivotSelection = QuickSortConfig.PivotSelectionAlgorithm.MedianOfThreeFirst }),
+		list => StringSort.Radix2Insertion(list, 7),
+		list => StringSort.Radix4Insertion(list, 8),
+		list => StringSort.RadixSort(list, 100),
 	};
 
 	private static readonly IReadonlyRandomAccessList<int> TestArray = new[] { 5, 9, 1, 23, 6, 2, 6, 18, 2, 3, 7, 6, 11, 71, 8, 4, 19 }.ToRandomAccessList();
@@ -137,6 +141,16 @@ public class SortTests
 		Assert.That(AreElementsEqual(TestArray, list, 0, startIndex), Is.True);
 		Assert.That(IsSortedAscending(list, startIndex, endIndex));
 		Assert.That(AreElementsEqual(TestArray, list, endIndex, TestArray.Count), Is.True);
+	}
+
+	[Test]
+	public void TestInsertSort_WithStrings()
+	{
+		ResizeableArray<string> list = ["Abc", "abc", "aBc", "abC", "ABc", "AbC", "aBC", "ABC"];
+		InsertionSort(list, StringComparer.Ordinal);
+		Console.WriteLine( $"A less than a? {StringComparer.Ordinal.Less("A", "a")}");
+		Console.WriteLine( $"A compare with a = {StringComparer.Ordinal.Compare("A", "a")}");
+		Assert.That(list, Is.EqualTo(new[] { "ABC", "ABc", "AbC", "Abc", "aBC", "aBc", "abC", "abc" }));
 	}
 
 	[Test]

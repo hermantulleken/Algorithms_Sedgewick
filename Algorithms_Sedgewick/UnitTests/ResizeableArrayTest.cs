@@ -10,6 +10,7 @@ public class ResizeableArrayTest
 	public void Add_WhenFull_IncreasesCapacity()
 	{
 		var arr = new ResizeableArray<int>(2);
+		
 		arr.Add(1);
 		arr.Add(2);
 		arr.Add(3);
@@ -22,7 +23,9 @@ public class ResizeableArrayTest
 	public void Add_WhenNotFull_IncreasesCount()
 	{
 		var arr = new ResizeableArray<int>(10);
+		
 		arr.Add(1);
+		
 		Assert.That(arr, Has.Count.EqualTo(1));
 	}
 

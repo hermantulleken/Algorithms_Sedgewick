@@ -29,6 +29,14 @@ algorithms by flipping the comparer.
 Sorting parts of lists are very useful, so in general provide a method to sort a list between specified indexes, and 
 then use that to implement the method to implement the full list.
 
+## Removing items
+- How to handle items npt found it important, and should be consistent throughout the librry (here, as of no, it i not).
+Options are:
+  - Return a bool indicating whether the item was found
+  - Return the item if found, or null if not
+  - Throw an exception if the item is not found
+  - Return the index of the item if found, or -1 if not
+
 ## Symbol Tables and Sets
 - It is annoying that sets and symbol tables cannot share their implementation in some way without overhead. The central
 question here is really whether to implement a set of KEyValuePairs, or a separate Symbol table that do not construct new
@@ -84,9 +92,17 @@ other containers on top of it. Although I have not done it in the code, sharing 
 similarly be useful (to implement for example stacks and queues).
 
 ## SupportsX
-- Similar to the ReadOnly property of collections, it turns out to be convienient to have a SupportsX property for 
-graphs for certain features, such as whether the graph supports parallel edges, self-loops, etc. rather than rely 
+- Similar to the ReadOnly property of collections, it turns out to be convenient to have a SupportsX property for 
+   - graphs for certain features, such as whether the graph supports parallel edges, self-loops, etc. rather than rely 
 on types.
+   - symbol tables for whether they support empty strings. 
+
+Why an instance property? (And not for example, a type property?) 
+   - It allows us to define types that can do either (perhaps be user configurable, or support it based on some other 
+   property, such as the type p♦arameters used for the type).
+   - It allows use to make tests easier to write against the interface, rather than the implementation. 
+   - It makes it easier to work with the interface in general, so that we do not need to know the type to know whether
+it supports these features. This, in turn, makes it easier to work with privately defined wrapper classes. 
 
 ## Readonly data structures
 - For each container type, I find I need a read only version pretty soon. 
@@ -193,3 +209,14 @@ ApplyLast method.
 
 Indeed, it seems to me this issue may be (one reason) why extension methods on method groups are not allowed - it 
 would be too difficult to determine which overload the extension method is being called on. 
+
+## Annotated Elements
+In many graph algorithms, we may want to add additional information to the entities the algorithms operate on
+(such as labels, weights, etc.). This way the algorithm could operate on "pure" entities but we would
+be able to add our application-dependend information. C# does not support this; however using interface for the
+entities has the same effect (I saw this in the MIConvexHull package) and works pretty well in practice. 
+
+
+## Design Ideas
+- Sometimes the types of generic classes cannot be suitably constrained. One place to do error checking is in the 
+static initializer of the class. 

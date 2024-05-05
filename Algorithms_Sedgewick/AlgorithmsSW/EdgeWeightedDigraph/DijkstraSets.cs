@@ -1,5 +1,6 @@
 ﻿namespace AlgorithmsSW.EdgeWeightedDigraph;
 
+using System.Diagnostics.CodeAnalysis;
 using List;
 using Support;
 using static System.Diagnostics.Debug;
@@ -16,8 +17,9 @@ using static System.Diagnostics.Debug;
 public class DijkstraSets
 {
 	private readonly double distance;
-	private readonly DirectedPath<double> path;
+	private readonly DirectedPath<double>? path;
 	
+	[MemberNotNullWhen(true, nameof(path))]
 	public bool PathExists { get; }
 	
 	public double Distance

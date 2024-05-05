@@ -8,6 +8,8 @@ using Assert = NUnit.Framework.Assert;
 [TestFixture(0)]
 [TestFixture(1)]
 [TestFixture(2)]
+[TestFixture(3)]
+[TestFixture(4)]
 [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "All strings are abstrct examples.")]
 public class StringSortTests
 {
@@ -16,6 +18,8 @@ public class StringSortTests
 		strings => StringSort.LeastSignificantDigitSort(strings, 3, 256),
 		StringSort.MostSignificantDigitSort,
 		StringSort.Quicksort3Way,
+		strings => StringSort.CountSort(strings, StringComparer.Ordinal),
+		strings => StringSort.CountSortWithQueues(strings, StringComparer.Ordinal),
 	];
 	
 	private readonly Action<IRandomAccessList<string>>[] singleCharAlgorithms =
@@ -23,6 +27,8 @@ public class StringSortTests
 		strings => StringSort.LeastSignificantDigitSort(strings, 1, 256),
 		StringSort.MostSignificantDigitSort,
 		StringSort.Quicksort3Way,
+		strings => StringSort.CountSort(strings, StringComparer.Ordinal),
+		strings => StringSort.CountSortWithQueues(strings, StringComparer.Ordinal),
 	];
 	
 	private readonly Action<IRandomAccessList<string>> algorithm;
@@ -76,7 +82,7 @@ public class StringSortTests
 		ResizeableArray<string>? strings = null;
 
 		var exception = Assert.Throws<ArgumentNullException>(() => algorithm(strings!));
-		Assert.That(exception!.ParamName, Is.EqualTo("strings"));
+		Assert.That(exception!.ParamName, Is.EqualTo("list"));
 	}
 
 	[Test]

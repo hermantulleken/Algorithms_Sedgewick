@@ -3,10 +3,23 @@
 using System.Linq;
 using AlgorithmsSW;
 using AlgorithmsSW.EdgeWeightedDigraph;
+using Support;
+
+public class CriticalEdgeTests
+{
+	protected ImplementationFactory<IEdgeWeightedDigraph<double>, int, int, ICriticalEdge<double>> Algorithms =
+	[
+		(graph, source, target) 
+			=> new CriticalEdgesExamineShortestPath<double>(graph, source, target),
+		
+		(graph, source, target) 
+			=> new CriticalEdgesExamineIntersectingShortestPaths<double>(graph, source, target)
+	]; 
+}
 
 [TestFixture(typeof(CriticalEdgesExamineShortestPath<double>))]
 [TestFixture(typeof(CriticalEdgesExamineIntersectingShortestPaths<double>))]
-public class CriticalEdgeTests<TAlgorithm>
+public class CriticalEdgeTests<TAlgorithm> : CriticalEdgeTests
 	where TAlgorithm : ICriticalEdge<double>
 {
 	/*
@@ -30,15 +43,8 @@ public class CriticalEdgeTests<TAlgorithm>
 										"2,3,1.0;" +
 										"1,3,4.0";
 
-	private ICriticalEdge<double> GetAlgorithm(IEdgeWeightedDigraph<double> graph, int source, int target)
-	{
-		return typeof(TAlgorithm) switch
-		{
-			_ when typeof(TAlgorithm) == typeof(CriticalEdgesExamineShortestPath<double>) => new CriticalEdgesExamineShortestPath<double>(graph, source, target),
-			_ when typeof(TAlgorithm) == typeof(CriticalEdgesExamineIntersectingShortestPaths<double>) => new CriticalEdgesExamineIntersectingShortestPaths<double>(graph, source, target),
-			_ => throw new InvalidOperationException($"The type {typeof(TAlgorithm)} is not supported."),
-		};
-	}
+	private ICriticalEdge<double> GetAlgorithm(IEdgeWeightedDigraph<double> graph, int source, int target) 
+		=> Algorithms.GetInstance<TAlgorithm>(graph, source, target);
 
 	[TestCase(SimpleGraph, 0, 3, new[] { 1, 2 })]
 	[TestCase(ComplexGraph, 0, 3, new[] { 3 })]
@@ -51,6 +57,5 @@ public class CriticalEdgeTests<TAlgorithm>
 		
 		Assert.That(algorithm.CriticalEdges.Count(), Is.EqualTo(criticalEdgeIndexes.Length));
 		Assert.That(algorithm.CriticalEdges.Select(e => (e.Source, e.Target, e.Weight)), Is.EquivalentTo(criticalEdges));
-		
 	}
 }

@@ -20,7 +20,7 @@ public class GraphAlgorithmsTests
 		DynamicGraph simpleGraph = new DynamicGraph();
 		simpleGraph.AddVertexes(0);
 		int result = GraphAlgorithms.FindNodeSafeToDelete(simpleGraph);
-		Assert.AreEqual(0, result); 
+		Assert.That(result, Is.EqualTo(0)); 
 	}
 
 	// Test 3: Graph with Isolated Node
@@ -68,7 +68,7 @@ public class GraphAlgorithmsTests
 		graph.RemoveVertex(result);
 		var connectivity = new Connectivity(graph); 
 		
-		Assert.IsTrue(connectivity.IsConnected); 
+		Assert.That(connectivity.IsConnected); 
 	}
 
 	// Test 7: Graph with Cycles
@@ -88,6 +88,6 @@ public class GraphAlgorithmsTests
 		graph.RemoveVertex(result);
 		var connectivity = new Connectivity(graph); 
 		
-		Assert.IsTrue(connectivity.IsConnected); 
+		Assert.That(connectivity.IsConnected); 
 	}
 }

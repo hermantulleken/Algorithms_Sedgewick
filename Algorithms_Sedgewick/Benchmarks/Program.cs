@@ -6,7 +6,7 @@ using BenchmarkDotNet.Running;
 using Benchmarks;
 
 #if DEBUG
-_ = BenchmarkRunner.Run<CriticalEdgesBenchmarks>(new DebugInProcessConfig());
+_ = BenchmarkRunner.Run<RadixSortBenchmarks>(new DebugInProcessConfig());
 #else
-_ = BenchmarkRunner.Run<CriticalEdgesBenchmarks>();
+_ = BenchmarkRunner.Run<RadixSortBenchmarks>();
 #endif

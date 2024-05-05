@@ -90,6 +90,8 @@ nk readability is important at writing correct code.
 - Exercise 3.4.28: Class @AlgorithmsSW.Set.HashSet`1
 - Exercise 3.4.28: Class @AlgorithmsSW.HashTable.HashTableWithLinearProbing2`2
 ### Chapter 4
+#### Algorithms
+- Algorithm 4.9: Class @AlgorithmsSW.EdgeWeightedDigraph.Dijkstra`1
 #### Section 1
 - Exercise 4.1.4: Method @AlgorithmsSW.Graph.GraphExtensions.ContainsEdge*
 - Exercise 4.1.5: Class @AlgorithmsSW.Graph.GraphWithAdjacentsSet
@@ -111,10 +113,12 @@ nk readability is important at writing correct code.
 - Exercise 4.3.22: Method @AlgorithmsSW.EdgeWeightedGraph.Mst.MstForest*
 #### Section 4
 - Exercise 4.4.7: Class @AlgorithmsSW.EdgeWeightedDigraph.KShortestPaths`1
+- Exercise 4.4.7: Class @AlgorithmsSW.EdgeWeightedDigraph.OverlappingYensAlgorithm`1
 - Exercise 4.4.7: Class @AlgorithmsSW.EdgeWeightedDigraph.YensAlgorithm`1
 - Exercise 4.4.8: Class @AlgorithmsSW.EdgeWeightedDigraph.Diameter`1
 - Exercise 4.4.22: Method @AlgorithmsSW.EdgeWeightedDigraph.EdgeWeightedDigraphExtensions.ToEdgeWeightedDigraph*
-- Exercise 4.4.23: Class @AlgorithmsSW.EdgeWeightedDigraph.DijkstraSourceSink
+- Exercise 4.4.23: Class @AlgorithmsSW.EdgeWeightedDigraph.DijkstraBidirectional`1
+- Exercise 4.4.23: Class @AlgorithmsSW.EdgeWeightedDigraph.DijkstraSourceSink`1
 - Exercise 4.4.24: Class @AlgorithmsSW.EdgeWeightedDigraph.DijkstraMultiSource
 - Exercise 4.4.25: Class @AlgorithmsSW.EdgeWeightedDigraph.DijkstraSets
 - Exercise 4.4.27: Class @AlgorithmsSW.EdgeWeightedDigraph.EuclideanDistanceDigraph
@@ -122,5 +126,16 @@ nk readability is important at writing correct code.
 - Exercise 4.4.31: Class @AlgorithmsSW.EdgeWeightedDigraph.LineGraphDistances
 - Exercise 4.4.32: Class @AlgorithmsSW.EdgeWeightedDigraph.BellmanFordWithParentCheckingHeuristic`1
 - Exercise 4.4.33: Method @AlgorithmsSW.Graph.GraphAlgorithms.GetFullGrid*
+- Exercise 4.4.37: Class @AlgorithmsSW.EdgeWeightedDigraph.CriticalEdgesExamineIntersectingShortestPaths`1
+- Exercise 4.4.37: Class @AlgorithmsSW.EdgeWeightedDigraph.ICriticalEdge`1
+- Exercise 4.4.39: Class @AlgorithmsSW.EdgeWeightedDigraph.DijkstraLazy`1
 ### Chapter 5
+#### Algorithms
+- Algorithm 5.1: Method @AlgorithmsSW.String.StringSort.LeastSignificantDigitSort*
+- Algorithm 5.1: Method @AlgorithmsSW.String.StringSort.LeastSignificantDigitSort*
+- Algorithm 5.1: Method @AlgorithmsSW.String.StringSort.LeastSignificantDigitSort*
+- Algorithm 5.2: Method @AlgorithmsSW.String.StringSort.MostSignificantDigitSort*
+#### Section 1
+- Exercise 5.1.1: Method @AlgorithmsSW.String.StringSort.CountSort*
+- Exercise 5.1.7: Method @AlgorithmsSW.String.StringSort.CountSortWithQueues*
 ### Chapter 6

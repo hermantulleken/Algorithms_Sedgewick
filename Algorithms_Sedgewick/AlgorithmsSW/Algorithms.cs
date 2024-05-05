@@ -192,6 +192,8 @@ public static class Algorithms
 	
 	public static ResizeableArray<ResizeableArray<T>> PowerSet<T>(IEnumerable<T> set)
 	{
+		set.ThrowIfNull();
+		
 		ResizeableArray<ResizeableArray<T>> allSubsets = [[]];
 
 		foreach (var element in set)

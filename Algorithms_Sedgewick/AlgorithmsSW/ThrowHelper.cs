@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace AlgorithmsSW;
 
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using List;
 
@@ -106,6 +107,30 @@ internal static class ThrowHelper
 
 		return obj;
 	}
+	
+	internal static string ThrowIfNullOrEmpty(
+		[System.Diagnostics.CodeAnalysis.NotNull, NoEnumeration] this string? obj, 
+		[CallerArgumentExpression("obj")] string? objArgName = null)
+	{
+		if (string.IsNullOrEmpty(obj))
+		{
+			throw new ArgumentNullException(objArgName);
+		}
+
+		return obj;
+	}
+	
+	internal static string ThrowIfNullOrWhiteSpace(
+		[System.Diagnostics.CodeAnalysis.NotNull, NoEnumeration] this string? obj, 
+		[CallerArgumentExpression("obj")] string? objArgName = null)
+	{
+		if (string.IsNullOrWhiteSpace(obj))
+		{
+			throw new ArgumentNullException(objArgName);
+		}
+
+		return obj;
+	}
 
 	internal static int ThrowIfOutOfRange(this int n, int end, [CallerArgumentExpression("n")] string? objArgName = null)
 		=> ThrowIfOutOfRange(n, 0, end, objArgName);
@@ -142,7 +167,29 @@ internal static class ThrowHelper
 
 		return n;
 	}
+	
+	[AssertionMethod]
+	internal static int ThrowIfOdd(this int n, [CallerArgumentExpression("n")] string? objArgName = null)
+	{
+		if (n % 2 == 1)
+		{
+			throw new ArgumentOutOfRangeException(objArgName);
+		}
 
+		return n;
+	}
+
+	[AssertionMethod]
+	internal static int ThrowIfEven(this int n, [CallerArgumentExpression("n")] string? objArgName = null)
+	{
+		if (n % 2 == 0)
+		{
+			throw new ArgumentOutOfRangeException(objArgName);
+		}
+
+		return n;
+	}
+	
 	internal static void ThrowIfVersionMismatch(this int version, int expectedVersion)
 	{
 		if (version != expectedVersion)
@@ -162,9 +209,61 @@ internal static class ThrowHelper
 		throw new InvalidOperationException("Reached the end of the stream.");
 	}
 
-	public static Exception TriedButFailed(string queryMethodName, string hasResultMethodName, string tryQueryMethodName)
+	public static Exception TriedButFailed(string queryMethodName, string hasResultMethodName, string tryQueryMethodName) 
+		=> new InvalidOperationException(
+			$"Tried to get the result of {queryMethodName} but {hasResultMethodName} returned false. " + 
+			$"Try using {tryQueryMethodName} instead, or call {hasResultMethodName} before calling {queryMethodName}.");
+
+	/// <summary>
+	/// Validates if the type argument is either a reference type or a nullable value type.
+	/// </summary>
+	/// <typeparam name="T">The type to validate.</typeparam>
+	/// <exception cref="TypeArgumentException{T}">Thrown when the type argument is neither a reference type nor a nullable value type.</exception>
+	[AssertionMethod, StackTraceHidden]
+	public static void ThrowIfNotReferenceOrNullable<T>()
 	{
-		return new InvalidOperationException($"Tried to get the result of {queryMethodName} but {hasResultMethodName} returned false. " +
-											$"Try using {tryQueryMethodName} instead, or call {hasResultMethodName} before calling {queryMethodName}.");
+		var type = typeof(T);
+		bool isNullableValueType = Nullable.GetUnderlyingType(type) != null;
+		bool isReferenceType = !type.IsValueType;
+
+		if (!isReferenceType && !isNullableValueType)
+		{
+			throw new TypeArgumentException<T>($"Type {typeof(T)} is not a reference type nor a nullable value type.");
+		}
 	}
+}
+
+/// <summary>
+/// Represents an exception that is thrown when a type argument is neither a reference type nor a nullable value type.
+/// </summary>
+/// <typeparam name="T">The type that caused the exception.</typeparam>
+public class TypeArgumentException<T> : ArgumentException
+{
+	
+	/// <summary>
+	/// Gets the type that caused the exception.
+	/// </summary>
+	public Type Type { get; }
+	
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TypeArgumentException{T}"/> class.
+	/// </summary>
+	public TypeArgumentException() => Type = typeof(T);
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TypeArgumentException{T}"/> class with a specified error message.
+	/// </summary>
+	/// <param name="message">The error message that explains the reason for the exception.</param>
+	public TypeArgumentException(string message) 
+		: base(message) 
+		=> Type = typeof(T);
+	
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TypeArgumentException{T}"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.
+	/// </summary>
+	/// <param name="message">The error message that explains the reason for the exception.</param>
+	/// <param name="inner">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+	public TypeArgumentException(string message, Exception inner) 
+		: base(message, inner)
+		=> Type = typeof(T);
 }
